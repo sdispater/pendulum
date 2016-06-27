@@ -1,0 +1,3 @@
+include README.rst LICENSE
+recursive-exclude tests *
+recursive-exclude benchmark *
