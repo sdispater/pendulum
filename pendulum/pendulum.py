@@ -1335,8 +1335,6 @@ class Pendulum(object):
         """
         return self.sub_months(value)
 
-    # TODO: No overflow
-
     def add_days(self, value):
         """
         Add days to the instance. Positive $value travel forward while
@@ -1382,52 +1380,185 @@ class Pendulum(object):
         """
         return self.sub_days(value)
 
-    def add_weekdays(self, value):
+    def add_weeks(self, value):
         """
-        Add weekdays to the instance. Positive $value travel forward while
+        Add weeks to the instance. Positive $value travel forward while
         negative $value travel into the past.
 
-        :param value: The number of weekdays
+        :param value: The number of weeks
         :type value: int
 
         :rtype: Pendulum
         """
-        return self.add(weekdays=value)
+        return self.add(weeks=value)
 
-    def add_weekday(self, value=1):
+    def add_week(self, value=1):
         """
-        Add a weekday to the instance.
+        Add a week to the instance.
 
-        :param value: The number of weekdays
+        :param value: The number of weeks
         :type value: int
 
         :rtype: Pendulum
         """
-        return self.add_days(value)
+        return self.add_weeks(value)
 
-    def sub_weekdays(self, value):
+    def sub_weeks(self, value):
         """
-        Remove weekdays from the instance.
+        Remove weeks from the instance.
 
-        :param value: The number of weekdays
+        :param value: The number of weeks
         :type value: int
 
         :rtype: Pendulum
         """
-        return self.sub(weekdays=value)
+        return self.sub(weeks=value)
 
-    def sub_weekday(self, value=1):
+    def sub_week(self, value=1):
         """
-        Remove a weekday from the instance.
+        Remove a week from the instance.
 
-        :param value: The number of weekdays
+        :param value: The number of weeks
         :type value: int
 
         :rtype: Pendulum
         """
-        return self.sub_weekdays(value)
+        return self.sub_weeks(value)
 
-    # TODO: Remaining durations
+    def add_hours(self, value):
+        """
+        Add hours to the instance. Positive $value travel forward while
+        negative $value travel into the past.
+
+        :param value: The number of hours
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add(hours=value)
+
+    def add_hour(self, value=1):
+        """
+        Add a hour to the instance.
+
+        :param value: The number of hours
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add_hours(value)
+
+    def sub_hours(self, value):
+        """
+        Remove hours from the instance.
+
+        :param value: The number of hours
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub(hours=value)
+
+    def sub_hour(self, value=1):
+        """
+        Remove a hour from the instance.
+
+        :param value: The number of hours
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub_hours(value)
+
+    def add_minutes(self, value):
+        """
+        Add minutes to the instance. Positive $value travel forward while
+        negative $value travel into the past.
+
+        :param value: The number of minutes
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add(minutes=value)
+
+    def add_minute(self, value=1):
+        """
+        Add a minute to the instance.
+
+        :param value: The number of minutes
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add_minutes(value)
+
+    def sub_minutes(self, value):
+        """
+        Remove minutes from the instance.
+
+        :param value: The number of minutes
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub(minutes=value)
+
+    def sub_minute(self, value=1):
+        """
+        Remove a minute from the instance.
+
+        :param value: The number of minutes
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub_minutes(value)
+
+    def add_seconds(self, value):
+        """
+        Add seconds to the instance. Positive $value travel forward while
+        negative $value travel into the past.
+
+        :param value: The number of seconds
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add(seconds=value)
+
+    def add_second(self, value=1):
+        """
+        Add a second to the instance.
+
+        :param value: The number of seconds
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.add_seconds(value)
+
+    def sub_seconds(self, value):
+        """
+        Remove seconds from the instance.
+
+        :param value: The number of seconds
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub(seconds=value)
+
+    def sub_second(self, value=1):
+        """
+        Remove a second from the instance.
+
+        :param value: The number of seconds
+        :type value: int
+
+        :rtype: Pendulum
+        """
+        return self.sub_seconds(value)
 
     def add(self, years=0, months=0, weeks=0, days=0,
             hours=0, minutes=0, seconds=0, microseconds=0,
