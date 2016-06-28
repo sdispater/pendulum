@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
 from .exceptions import PendulumException
-from ._compat import PY33
+from ._compat import PY33, basestring
 
 
 class Pendulum(object):
@@ -117,33 +117,38 @@ class Pendulum(object):
         """
         Constructor.
 
-        :type time: str or None
-
         :type tz: BaseTzInfo or str or None
         """
         self._tz = self._safe_create_datetime_zone(tzinfo)
 
-        now = (datetime.datetime.utcnow()
-               .replace(tzinfo=pytz.UTC)
-               .astimezone(self._tz))
-        if year is None:
-            year = now.year
-
-        if month is None:
-            month = now.month
-
-        if day is None:
-            day = now.day
-
-        if hour is None:
-            hour = now.hour
-            minute = now.minute if minute is None else minute
-            second = now.second if second is None else second
-            microsecond = now.microsecond if microsecond is None else microsecond
-        else:
+        # Default datetime behavior
+        if year is not None and month is not None and day is not None:
+            hour = 0 if hour is None else hour
             minute = 0 if minute is None else minute
             second = 0 if second is None else second
             microsecond = 0 if microsecond is None else microsecond
+        else:
+            now = (datetime.datetime.utcnow()
+                   .replace(tzinfo=pytz.UTC)
+                   .astimezone(self._tz))
+            if year is None:
+                year = now.year
+
+            if month is None:
+                month = now.month
+
+            if day is None:
+                day = now.day
+
+            if hour is None:
+                hour = now.hour
+                minute = now.minute if minute is None else minute
+                second = now.second if second is None else second
+                microsecond = now.microsecond if microsecond is None else microsecond
+            else:
+                minute = 0 if minute is None else minute
+                second = 0 if second is None else second
+                microsecond = 0 if microsecond is None else microsecond
 
         self._datetime = self._tz.localize(datetime.datetime(
             year, month, day,
@@ -859,7 +864,386 @@ class Pendulum(object):
         """
         return self.format(self.W3C)
 
-    # TODO: Comparisons
+    # Comparisons
+
+    def eq(self, other):
+        """
+        Determines if the instance is equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime == self._get_datetime(other)
+
+    def equal_to(self, other):
+        """
+        Determines if the instance is equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return  self.eq(other)
+
+    def __eq__(self, other):
+        return self.eq(other)
+
+    def ne(self, other):
+        """
+        Determines if the instance is not equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime != self._get_datetime(other)
+
+    def not_equal_to(self, other):
+        """
+        Determines if the instance is not equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self.ne(other)
+
+    def __ne__(self, other):
+        return self.ne(other)
+
+    def gt(self, other):
+        """
+        Determines if the instance is greater (after) than another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime > self._get_datetime(other)
+
+    def greater_than(self, other):
+        """
+        Determines if the instance is greater (after) than another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self.gt(other)
+
+    def __gt__(self, other):
+        return self.gt(other)
+
+    def gte(self, other):
+        """
+        Determines if the instance is greater (after) than
+        or equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime >= self._get_datetime(other)
+
+    def greater_than_or_equal_to(self, other):
+        """
+        Determines if the instance is greater (after) than
+        or equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self.gte(other)
+
+    def __ge__(self, other):
+        return self.gte(other)
+
+    def lt(self, other):
+        """
+        Determines if the instance is less (before) than another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime < self._get_datetime(other)
+
+    def less_than(self, other):
+        """
+        Determines if the instance is less (before) than another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self.lt(other)
+
+    def __lt__(self, other):
+        return self.lt(other)
+
+    def lte(self, other):
+        """
+        Determines if the instance is less (before) than
+        or equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self._datetime <= self._get_datetime(other)
+
+    def less_than_or_equal_to(self, other):
+        """
+        Determines if the instance is less (before) than
+        or equal to another.
+
+        :param other: The other instance
+        :type other: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        return self.lte(other)
+
+    def __le__(self, other):
+        return self.lte(other)
+
+    def between(self, dt1, dt2, equal=True):
+        """
+        Determines if the instance is between two others.
+
+        :type dt1: Pendulum or datetime or str or int
+        :type dt2: Pendulum or datetime or str or int
+
+        :param equal: Indicates if a > and < comparison shoud be used or <= and >=
+
+        :rtype: bool
+        """
+        dt1 = self._get_datetime(dt1)
+        dt2 = self._get_datetime(dt2)
+
+        if dt1 > dt2:
+            dt1, dt2 = dt2, dt1
+
+        if equal:
+            return self.gte(dt1) and self.lte(dt2)
+
+        return self.gt(dt1) and self.lt(dt2)
+
+    # TODO: closest, farthest
+
+    def min(self, dt=None):
+        """
+        Get the minimum instance between a given instance (default utcnow)
+        and the current instance.
+
+        :type dt: Pendulum or datetime or str or int
+
+        :rtype: Pendulum
+        """
+        if dt is None:
+            dt = Pendulum.now(self.timezone)
+
+        if self.lt(dt):
+            return self
+
+        return self._get_datetime(dt, True)
+
+    def minimum(self, dt=None):
+        """
+        Get the minimum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Pendulum or datetime or str or int
+
+        :rtype: Pendulum
+        """
+        return self.min(dt)
+
+    def max(self, dt=None):
+        """
+        Get the maximum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Pendulum or datetime or str or int
+
+        :rtype: Pendulum
+        """
+        if dt is None:
+            dt = Pendulum.now(self.timezone)
+
+        if self.gt(dt):
+            return self
+
+        return self._get_datetime(dt, True)
+
+    def maximum(self, dt=None):
+        """
+        Get the maximum instance between a given instance (default utcnow)
+        and the current instance.
+
+        :type dt: Pendulum or datetime or str or int
+
+        :rtype: Pendulum
+        """
+        return self.max(dt)
+
+    def is_week_day(self):
+        """
+        Determines if the instance is a weekday.
+
+        :rtype: bool
+        """
+        return not self.is_weekend()
+
+    def is_weekend(self):
+        """
+        Determines if the instance is a weekend day.
+
+        :rtype: bool
+        """
+        return self.day_of_week in self._weekend_days
+
+    def is_yesterday(self):
+        """
+        Determines if the instance is yesterday.
+
+        :rtype: bool
+        """
+        return self.to_date_string() == self.yesterday(self.timezone).to_date_string()
+
+    def is_today(self):
+        """
+        Determines if the instance is today.
+
+        :rtype: bool
+        """
+        return self.to_date_string() == self.now(self.timezone).to_date_string()
+
+    def is_tomorrow(self):
+        """
+        Determines if the instance is tomorrow.
+
+        :rtype: bool
+        """
+        return self.to_date_string() == self.tomorrow(self.timezone).to_date_string()
+
+    def is_future(self):
+        """
+        Determines if the instance is in the future, ie. greater than now.
+
+        :rtype: bool
+        """
+        return self.gt(self.now(self.tz))
+
+    def is_past(self):
+        """
+        Determines if the instance is in the past, ie. less than now.
+
+        :rtype: bool
+        """
+        return self.lt(self.now(self.tz))
+
+    def is_leap_year(self):
+        """
+        Determines if the instance is a leap year.
+
+        :rtype: bool
+        """
+        return calendar.isleap(self.year)
+
+    def is_same_day(self, dt):
+        """
+        Checks if the passed in date is the same day as the instance current day.
+
+        :type dt: Pendulum or datetime or str or int
+
+        :rtype: bool
+        """
+        dt = self._get_datetime(dt, True)
+
+        return self.to_date_string() == dt.to_date_string()
+
+    def is_sunday(self):
+        """
+        Checks if this day is a sunday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.SUNDAY
+
+    def is_monday(self):
+        """
+        Checks if this day is a monday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.MONDAY
+
+    def is_tuesday(self):
+        """
+        Checks if this day is a tuesday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.TUESDAY
+
+    def is_wednesday(self):
+        """
+        Checks if this day is a wednesday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.WEDNESDAY
+
+    def is_thursday(self):
+        """
+        Checks if this day is a thursday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.THURSDAY
+
+    def is_friday(self):
+        """
+        Checks if this day is a friday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.FRIDAY
+
+    def is_saturday(self):
+        """
+        Checks if this day is a saturday.
+
+        :rtype: bool
+        """
+        return self.day_of_week == self.SATURDAY
+
+    def is_birthday(self, dt=None):
+        """
+        Check if its the birthday. Compares the date/month values of the two dates.
+
+        :rtype: bool
+        """
+        if dt is None:
+            dt = Pendulum.now(self.timezone)
+
+        return self.format('%m%d') == self._get_datetime(dt, True).format('%m%d')
+
+    # ADDITIONS AND SUBSTRACTIONS
 
     def add_years(self, value):
         """
@@ -1482,5 +1866,47 @@ class Pendulum(object):
 
         return self.set_date(self.year, dt.month, dt.day).start_of_day()
 
+    def _get_datetime(self, value, pendulum=False):
+        """
+        Gets a datetime from a given value.
+
+        :param value: The value to get the datetime from.
+        :type value: Pendulum or datetime or int or float or str.
+
+        :param pendulum: Whether to return a Pendulum instance.
+        :type pendulum: bool
+
+        :rtype: datetime or Pendulum
+        """
+        if isinstance(value, Pendulum):
+            return value._datetime if not pendulum else value
+
+        if isinstance(value, datetime.datetime):
+            if value.tzinfo is None:
+                value = self._tz.localize(value)
+
+            return value if not pendulum else Pendulum.instance(value)
+
+        if isinstance(value, (int, float)):
+            d = Pendulum.create_from_timestamp(value, self.timezone)
+            if pendulum:
+                return d
+
+            return d._datetime
+
+        if isinstance(value, basestring):
+            d = Pendulum.parse(value, tz=self.timezone)
+            if pendulum:
+                return d
+
+            return d._datetime
+
+        raise ValueError('Invalid datetime "%s"' % value)
+
     def __getattr__(self, item):
-        return getattr(self._datetime, item)
+        result = getattr(self._datetime, item)
+
+        if isinstance(result, datetime.datetime):
+            return Pendulum.instance(result)
+
+        return result
