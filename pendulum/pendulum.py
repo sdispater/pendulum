@@ -505,7 +505,7 @@ class Pendulum(object):
 
         return self
 
-    def set_time(self, hour, minute, second):
+    def set_time(self, hour, minute, second, microsecond=0):
         """
         Sets the current time to a different time.
 
@@ -518,10 +518,14 @@ class Pendulum(object):
         :param second: The second
         :type second: int
 
+        :param microsecond: The microsecond
+        :type microsecond: int
+
         :rtype: Pendulum
         """
         self._datetime = self._datetime.replace(
-            hour=int(hour), minute=int(minute), second=int(second)
+            hour=int(hour), minute=int(minute), second=int(second),
+            microsecond=microsecond
         )
 
         return self
