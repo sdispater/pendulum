@@ -15,7 +15,6 @@ from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
 from .exceptions import PendulumException
-from .utils import hybrid_property
 from ._compat import PY33
 
 
@@ -345,29 +344,61 @@ class Pendulum(object):
 
     ### Getters/Setters
 
-    @hybrid_property
-    def year(self):
-        return self._datetime.year
+    def year_(self, year):
+        return self.set_year(year)
 
-    @hybrid_property
-    def month(self):
-        return self._datetime.month
+    def set_year(self, year):
+        self._datetime = self._datetime.replace(year=year)
 
-    @hybrid_property
-    def day(self):
-        return self._datetime.day
+        return self
 
-    @hybrid_property
-    def hour(self):
-        return self._datetime.hour
+    def month_(self, month):
+        return self.set_month(month)
 
-    @hybrid_property
-    def minute(self):
-        return self._datetime.minute
+    def set_month(self, month):
+        self._datetime = self._datetime.replace(month=month)
 
-    @hybrid_property
-    def second(self):
-        return self._datetime.second
+        return self
+
+    def day_(self, day):
+        return self.set_day(day)
+
+    def set_day(self, day):
+        self._datetime = self._datetime.replace(day=day)
+
+        return self
+
+    def hour_(self, hour):
+        return self.set_hour(hour)
+
+    def set_hour(self, hour):
+        self._datetime = self._datetime.replace(hour=hour)
+
+        return self
+
+    def minute_(self, minute):
+        return self.set_minute(minute)
+
+    def set_minute(self, minute):
+        self._datetime = self._datetime.replace(minute=minute)
+
+        return self
+
+    def second_(self, second):
+        return self.set_second(second)
+
+    def set_second(self, second):
+        self._datetime = self._datetime.replace(second=second)
+
+        return self
+
+    def microsecond_(self, microsecond):
+        return self.set_microsecond(microsecond)
+
+    def set_microsecond(self, microsecond):
+        self._datetime = self._datetime.replace(microsecond=microsecond)
+
+        return self
 
     @property
     def day_of_week(self):
@@ -1276,7 +1307,7 @@ class Pendulum(object):
         self.start_of_day()
 
         if day_of_week is None:
-            return self.day(1)
+            return self.day_(1)
 
         month = calendar.monthcalendar(self.year, self.month)
 
@@ -1287,7 +1318,7 @@ class Pendulum(object):
         else:
             day_of_month = month[1][calendar_day]
 
-        return self.day(day_of_month)
+        return self.day_(day_of_month)
 
     def last_of_month(self, day_of_week=None):
         """
@@ -1303,7 +1334,7 @@ class Pendulum(object):
         self.start_of_day()
 
         if day_of_week is None:
-            return self.day(self.days_in_month)
+            return self.day_(self.days_in_month)
 
         month = calendar.monthcalendar(self.year, self.month)
 
@@ -1314,7 +1345,7 @@ class Pendulum(object):
         else:
             day_of_month = month[-2][calendar_day]
 
-        return self.day(day_of_month)
+        return self.day_(day_of_month)
 
     def nth_of_month(self, nth, day_of_week):
         """
@@ -1339,7 +1370,7 @@ class Pendulum(object):
             dt.next(day_of_week)
 
         if dt.format('%Y-%m') == check:
-            return self.day(dt.day).start_of_day()
+            return self.day_(dt.day).start_of_day()
 
         return False
 
@@ -1386,7 +1417,7 @@ class Pendulum(object):
         if nth == 1:
             return self.first_of_quarter(day_of_week)
 
-        dt = self.copy().day(1).month(self.quarter * 3)
+        dt = self.copy().day_(1).month_(self.quarter * 3)
         last_month = dt.month
         year = dt.year
         dt.first_of_quarter()
@@ -1409,7 +1440,7 @@ class Pendulum(object):
 
         :rtype: Pendulum
         """
-        return self.month(1).first_of_month(day_of_week)
+        return self.month_(1).first_of_month(day_of_week)
 
     def last_of_year(self, day_of_week=None):
         """
@@ -1422,7 +1453,7 @@ class Pendulum(object):
 
         :rtype: Pendulum
         """
-        return self.month(self.MONTHS_PER_YEAR).last_of_month(day_of_week)
+        return self.month_(self.MONTHS_PER_YEAR).last_of_month(day_of_week)
 
     def nth_of_year(self, nth, day_of_week):
         """
