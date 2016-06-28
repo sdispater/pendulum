@@ -9,10 +9,10 @@ import calendar
 import pytz
 import tzlocal
 import datetime
-import dateparser
 
 from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
+from dateutil import parser as dateparser
 
 from .exceptions import PendulumException
 from .utils import hybrid_property
@@ -67,7 +67,7 @@ class Pendulum(object):
     W3C = '%Y-%m-%dT%H:%M:%S%P'
 
     # Default format to use for __str__ method when type juggling occurs.
-    DEFAULT_TO_STRING_FORMAT = ISO8601_EXTENDED
+    DEFAULT_TO_STRING_FORMAT = None
 
     _to_string_format = DEFAULT_TO_STRING_FORMAT
 
@@ -84,6 +84,9 @@ class Pendulum(object):
     ]
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
+
+    _CUSTOM_FORMATTERS = ['P']
+    _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
 
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
@@ -143,14 +146,6 @@ class Pendulum(object):
             second = 0 if second is None else second
             microsecond = 0 if microsecond is None else microsecond
 
-        self._year = year
-        self._month = month
-        self._day = day
-        self._hour = hour
-        self._minute = minute
-        self._second = second
-        self._microsecond = microsecond
-
         self._datetime = self._tz.localize(datetime.datetime(
             year, month, day,
             hour, minute, second, microsecond,
@@ -192,7 +187,7 @@ class Pendulum(object):
         if time == 'now':
             return cls(tzinfo=None)
 
-        dt = dateparser.parse(time, languages=['en'])
+        dt = dateparser.parse(time)
 
         if not dt:
             raise PendulumException('Invalid time string "%s"' % time)
@@ -663,30 +658,24 @@ class Pendulum(object):
 
         :rtype: str
         """
-        if not fmt:
-            return ''
-
         # Checking for custom formatters
-        custom_formatters = ['P']
-        formatters_regex = re.compile('(.*)(?:%%(%s))(.*)' % '|'.join(custom_formatters))
-
-        m = re.match(formatters_regex, fmt)
-        if m and m.group(2):
-            return self.strftime(m.group(1)) + self._strftime(m.group(2)) + self.strftime(m.group(3))
+        fmt = self._FORMATTERS_REGEX.sub(self._strftime, fmt)
 
         return self._datetime.strftime(fmt)
 
-    def _strftime(self, fmt):
+    def _strftime(self, m):
         """
         Handles custom formatters in format string.
 
         :return: str
         """
+        fmt = m.group(1)
+
         if fmt == 'P':
             offset = self._datetime.utcoffset() or datetime.timedelta()
             minutes = offset.total_seconds() / 60
 
-            if minutes > 0:
+            if minutes >= 0:
                 sign = '+'
             else:
                 sign = '-'
@@ -698,6 +687,9 @@ class Pendulum(object):
         raise PendulumException('Unknown formatter %%%s' % fmt)
 
     def __str__(self):
+        if self._to_string_format is None:
+            return self._datetime.isoformat()
+
         return self.format(self._to_string_format)
 
     def to_date_string(self):

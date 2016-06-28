@@ -24,11 +24,6 @@ class ConstructTest(AbstractTestCase):
 
         self.assertPendulum(p, now.year, now.month, now.day, now.hour, now.minute, now.second)
 
-    def test_parse_with_fancy_string(self):
-        now = Pendulum()
-        p = Pendulum.parse('2 years and 2 months ago')
-        self.assertPendulum(p, now.year - 2, now.month - 2, now.day, now.hour, now.minute)
-
     def test_parse_with_default_timezone(self):
         p = Pendulum.parse('now')
         self.assertEqual('America/Toronto', p.timezone_name)

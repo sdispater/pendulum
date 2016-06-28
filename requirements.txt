@@ -1,4 +1,4 @@
 tzlocal
 pytz
-dateparser
+python-dateutil
 wrapt

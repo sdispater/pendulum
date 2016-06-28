@@ -8,7 +8,9 @@ class StringsTest(AbstractTestCase):
 
     def test_to_string(self):
         d = Pendulum(microsecond=0)
-        self.assertEqual(Pendulum(microsecond=0).to_iso8601_string(True), str(d))
+        self.assertEqual(Pendulum(microsecond=0).to_iso8601_string(), str(d))
+        d = Pendulum(microsecond=123456)
+        self.assertEqual(Pendulum(microsecond=123456).to_iso8601_string(True), str(d))
 
     def test_set_to_string_format(self):
         Pendulum.set_to_string_format('%a, %d %b %y %H:%M:%S %z')
@@ -19,7 +21,7 @@ class StringsTest(AbstractTestCase):
         d = Pendulum(microsecond=0)
         Pendulum.set_to_string_format('123')
         Pendulum.reset_to_string_format()
-        self.assertEqual(d.to_iso8601_string(True), str(d))
+        self.assertEqual(d.to_iso8601_string(), str(d))
 
     def test_to_date_string(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16)
