@@ -127,34 +127,11 @@ class Pendulum(object):
             minute = 0 if minute is None else minute
             second = 0 if second is None else second
             microsecond = 0 if microsecond is None else microsecond
-        else:
-            now = (datetime.datetime.utcnow()
-                   .replace(tzinfo=pytz.UTC)
-                   .astimezone(self._tz))
-            if year is None:
-                year = now.year
 
-            if month is None:
-                month = now.month
-
-            if day is None:
-                day = now.day
-
-            if hour is None:
-                hour = now.hour
-                minute = now.minute if minute is None else minute
-                second = now.second if second is None else second
-                microsecond = now.microsecond if microsecond is None else microsecond
-            else:
-                minute = 0 if minute is None else minute
-                second = 0 if second is None else second
-                microsecond = 0 if microsecond is None else microsecond
-
-        self._datetime = self._tz.localize(datetime.datetime(
-            year, month, day,
-            hour, minute, second, microsecond,
-            tzinfo=None
-        ))
+        self._datetime = self._create_datetime(
+            self._tz, year, month, day,
+            hour, minute, second, microsecond
+        )
 
     @classmethod
     def instance(cls, dt):
@@ -267,6 +244,70 @@ class Pendulum(object):
     # TODO: min_value
 
     @classmethod
+    def _create_datetime(cls, tz, year=None, month=None, day=None,
+                         hour=None, minute=None, second=None, microsecond=None):
+        now = (datetime.datetime.utcnow()
+               .replace(tzinfo=pytz.UTC)
+               .astimezone(tz))
+
+        if year is None:
+            year = now.year
+
+        if month is None:
+            month = now.month
+
+        if day is None:
+            day = now.day
+
+        if hour is None:
+            hour = now.hour
+            minute = now.minute if minute is None else minute
+            second = now.second if second is None else second
+            microsecond = now.microsecond if microsecond is None else microsecond
+        else:
+            minute = 0 if minute is None else minute
+            second = 0 if second is None else second
+            microsecond = 0 if microsecond is None else microsecond
+
+        return tz.localize(datetime.datetime(
+            year, month, day,
+            hour, minute, second, microsecond,
+            tzinfo=None
+        ))
+
+    @classmethod
+    def create(cls, year=None, month=None, day=None,
+               hour=None, minute=None, second=None, microsecond=None,
+               tz=pytz.UTC):
+        """
+        Create a new Carbon instance from a specific date and time.
+
+        If any of year, month or day are set to None their now() values will
+        be used.
+
+        :type year: int
+        :type month: int
+        :type day: int
+        :type hour: int
+        :type minute: int
+        :type second: int
+        :type microsecond: int
+        :type tz: tzinfo or str or int or None
+
+        :rtype: Pendulum
+        """
+        tz = cls._safe_create_datetime_zone(tz)
+
+        self = cls()
+        self._tz = tz
+        self._datetime = cls._create_datetime(
+            tz, year, month, day,
+            hour, minute, second, microsecond
+        )
+
+        return self
+
+    @classmethod
     def create_from_date(cls, year=None, month=None, day=None, tz=pytz.UTC):
         """
         Create a Pendulum instance from just a date.
@@ -279,7 +320,7 @@ class Pendulum(object):
 
         :rtype: Pendulum
         """
-        return cls(year, month, day, tzinfo=tz)
+        return cls.create(year, month, day, tz=tz)
 
     @classmethod
     def create_from_time(cls, hour=None, minute=None, second=None,
@@ -296,8 +337,8 @@ class Pendulum(object):
 
         :rtype: Pendulum
         """
-        return cls(hour=hour, minute=minute, second=second,
-                   microsecond=microsecond, tzinfo=tz)
+        return cls.create(hour=hour, minute=minute, second=second,
+                          microsecond=microsecond, tz=tz)
 
     @classmethod
     def create_from_format(cls, time, fmt, tz=pytz.UTC):

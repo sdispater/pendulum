@@ -13,7 +13,8 @@ class CreateFromDateTest(AbstractTestCase):
 
     def test_create_from_date(self):
         d = Pendulum.create_from_date(1975, 12, 25)
-        self.assertPendulum(d, 1975, 12, 25)
+        now = Pendulum.utcnow()
+        self.assertPendulum(d, 1975, 12, 25, now.hour, now.minute)
 
     def test_create_from_date_with_year(self):
         d = Pendulum.create_from_date(1975)
