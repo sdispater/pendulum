@@ -14,6 +14,7 @@ from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
+from .pendulum_interval import PendulumInterval, AbsolutePendulumInterval
 from .exceptions import PendulumException
 from ._compat import PY33, basestring
 
@@ -82,6 +83,9 @@ class Pendulum(object):
         SUNDAY
     ]
 
+    # A test Pendulum instance to be returned when now instances are created.
+    _test_now = None
+
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
     _CUSTOM_FORMATTERS = ['P']
@@ -119,6 +123,22 @@ class Pendulum(object):
 
         :type tz: BaseTzInfo or str or None
         """
+        # If the class has a test now set and we are trying to create a now()
+        # instance then override as required
+        if (self.has_test_now()
+            and all([year is None, month is None, day is None, hour is None,
+                     minute is None, second is None, microsecond is None])):
+            test_instance = self._test_now.copy()
+
+            if tzinfo is not None and tzinfo != self._test_now.timezone:
+                test_instance.to(tzinfo)
+            else:
+                tzinfo = test_instance.timezone
+
+            year, month, day = test_instance.year, test_instance.month, test_instance.day
+            hour, minute, second = test_instance.hour, test_instance.minute, test_instance.second
+            microsecond = test_instance.microsecond
+
         self._tz = self._safe_create_datetime_zone(tzinfo)
 
         # Default datetime behavior
@@ -163,10 +183,10 @@ class Pendulum(object):
         :rtype: Pendulum
         """
         if time is None:
-            return cls(tzinfo=tz)
+            return cls.now(tz)
 
         if time == 'now':
-            return cls(tzinfo=None)
+            return cls.now(None)
 
         dt = dateparser.parse(time)
 
@@ -697,7 +717,41 @@ class Pendulum(object):
         """
         cls._weekend_days = value
 
-    # TODO: Testing aids
+    # Testing aids
+
+    @classmethod
+    def set_test_now(cls, test_now=None):
+        """
+        Set a Pendulum instance (real or mock) to be returned when a "now"
+        instance is created.  The provided instance will be returned
+        specifically under the following conditions:
+            - A call to the classmethod now() method, ex. Pendulum.now()
+            - When nothing is passed to the constructor or parse(), ex. Pendulum()
+            - When the string "now" is passed to parse(), ex. Pendulum.parse('now')
+
+        Note the timezone parameter was left out of the examples above and
+        has no affect as the mock value will be returned regardless of its value.
+
+        To clear the test instance call this method using the default
+        parameter of null.
+
+        :type test_now: Pendulum or None
+        """
+        cls._test_now = test_now
+
+    @classmethod
+    def get_test_now(cls):
+        """
+        Get the Carbon instance (real or mock) to be returned when a "now"
+        instance is created.
+
+        :rtype: Pendulum or None
+        """
+        return cls._test_now
+
+    @classmethod
+    def has_test_now(cls):
+        return cls.get_test_now() is not None
 
     # TODO: Localization
 
@@ -1687,7 +1741,181 @@ class Pendulum(object):
 
         return self
 
-    ### Modifiers
+    # DIFFERENCES
+
+    def diff_in_years(self, dt=None, abs=True):
+        """
+        Get the difference in years.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return self.diff(dt, abs).total_years()
+
+    def diff_in_months(self, dt=None, abs=True):
+        """
+        Get the difference in months.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return self.diff(dt, abs).total_months()
+
+    def diff_in_days(self, dt=None, abs=True):
+        """
+        Get the difference in days.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return self.diff(dt, abs).total_days()
+
+    def diff_in_hours(self, dt=None, abs=True):
+        """
+        Get the difference in hours.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return self.diff(dt, abs).total_hours()
+
+    def diff_in_minutes(self, dt=None, abs=True):
+        """
+        Get the difference in minutes.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return self.diff(dt, abs).total_minutes()
+
+    def diff_in_seconds(self, dt=None, abs=True):
+        """
+        Get the difference in seconds.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        if dt is None:
+            dt = self.now(self._tz)
+
+        return int(self.diff(dt, abs).total_seconds())
+
+    def diff_in_weeks(self, dt=None, abs=True):
+        """
+        Get the difference in weeks.
+
+        :type dt: Pendulum
+
+        :param: Get the absolute of the difference
+        :type abs: bool
+
+        :rtype: int
+        """
+        return int(self.diff_in_days(dt, abs) / self.DAYS_PER_WEEK)
+
+    def seconds_since_midnight(self):
+        """
+        The number of seconds since midnight.
+
+        :rtype: int
+        """
+        return self.diff_in_seconds(self.copy().start_of_day())
+
+    def seconds_until_end_of_days(self):
+        """
+        The number of seconds until 23:59:59.
+
+        :rtype: int
+        """
+        return self.diff_in_seconds(self.copy().end_of_day())
+
+    def diff(self, dt, abs=True):
+        """
+        Returns the difference between two Pendulum objects represented as a PendulumInterval.
+
+        :type dt: Pendulum
+
+        :rtype: PendulumInterval
+        """
+        delta = self._get_datetime(dt) - self._datetime
+
+        if abs:
+            return AbsolutePendulumInterval.instance(delta)
+
+        return PendulumInterval.instance(delta)
+
+    def diff_for_humans(self, other=None, absolute=False):
+        """
+        Get the difference in a human readable format in the current locale.
+
+        When comparing a value in the past to default now:
+        1 hour ago
+        5 months ago
+
+        When comparing a value in the future to default now:
+        1 hour from now
+        5 months from now
+
+        When comparing a value in the past to another value:
+        1 hour before
+        5 months before
+
+        When comparing a value in the future to another value:
+        1 hour after
+        5 months after
+
+        :type other: Pendulum
+
+        :param absolute: removes time difference modifiers ago, after, etc
+        :type absolute: bool
+
+        :rtype: str
+        """
+        # TODO
+
+    def __sub__(self, other):
+        return self._get_datetime(other, True).diff(self, False)
+
+    # Modifiers
 
     def start_of_day(self):
         """

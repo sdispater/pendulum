@@ -3,6 +3,7 @@
 import tzlocal
 import pytz
 from unittest import TestCase
+from contextlib import contextmanager
 
 from pendulum import Pendulum
 
@@ -36,3 +37,11 @@ class AbstractTestCase(TestCase):
 
     def assertIsInstanceOfPendulum(self, d):
         self.assertIsInstance(d, Pendulum)
+
+    @contextmanager
+    def wrap_with_test_now(self, dt=None):
+        Pendulum.set_test_now(dt or Pendulum.now())
+
+        yield
+
+        Pendulum.set_test_now()
