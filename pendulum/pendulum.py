@@ -3,6 +3,7 @@
 from __future__ import division
 
 import re
+import os
 import time as _time
 import math
 import calendar
@@ -14,9 +15,12 @@ from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
+from python_translate.translations import Translator
+from python_translate.loaders import DictLoader
+
 from .pendulum_interval import PendulumInterval, AbsolutePendulumInterval
 from .exceptions import PendulumException
-from ._compat import PY33, basestring
+from ._compat import PY33, basestring, load_module
 
 
 class Pendulum(object):
@@ -85,6 +89,9 @@ class Pendulum(object):
 
     # A test Pendulum instance to be returned when now instances are created.
     _test_now = None
+
+    # Transaltor
+    _translator = None
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
@@ -753,7 +760,77 @@ class Pendulum(object):
     def has_test_now(cls):
         return cls.get_test_now() is not None
 
-    # TODO: Localization
+    # Localization
+
+    @classmethod
+    def translator(cls):
+        """
+        Initialize the translator instance if necessary.
+
+        :rtype: Translator
+        """
+        if cls._translator is None:
+            cls._translator = Translator('en')
+            cls._translator.add_loader('dict', DictLoader())
+            cls.set_locale('en')
+
+        return cls._translator
+
+    @classmethod
+    def set_translator(cls, translator):
+        """
+        Set the translator instance to use.
+
+        :param translator: The translator
+        :type translator: Translator
+        """
+        cls._translator = translator
+
+    @classmethod
+    def get_locale(cls):
+        """
+        Get the current translator locale.
+
+        :rtype: str
+        """
+        return cls.translator().locale
+
+    @classmethod
+    def set_locale(cls, locale):
+        """
+        Set the current translator locale and
+        indicate if the source locale file exists.
+
+        :type locale: str
+
+        :rtype: bool
+        """
+        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
+        if m:
+            locale = '%s_%s' % (m.group(1).lower(), m.group(2).lower())
+        else:
+            locale = locale.lower()
+
+        root_path = os.path.join(os.path.dirname(__file__), 'lang')
+        root = os.path.join(root_path, '__init__.py')
+        locale_file = os.path.join(root_path, '%s.py' % locale)
+
+        if not os.path.exists(locale_file):
+            return False
+
+        # Loading parent module
+        load_module('lang', root)
+
+        # Loading locale
+        locale_mod = load_module('lang.%s' % locale, locale_file)
+
+        cls.translator().locale = locale
+
+        cls.translator().add_resource('dict', locale_mod.translations, locale)
+
+        return True
+
+    # String Formatting
 
     @classmethod
     def reset_to_string_format(cls):
@@ -1910,7 +1987,56 @@ class Pendulum(object):
 
         :rtype: str
         """
-        # TODO
+        is_now = other is None
+
+        if is_now:
+            other = self.now(self.timezone)
+
+        diff = self.diff(other)
+
+        if diff.y > 0:
+            unit = 'year'
+            count = diff.y
+        elif diff.m > 0:
+            unit = 'month'
+            count = diff.m
+        elif diff.d > 0:
+            unit = 'day'
+            count = diff.d
+            if count >= self.DAYS_PER_WEEK:
+                unit = 'week'
+                count = int(count / self.DAYS_PER_WEEK)
+        elif diff.h > 0:
+            unit = 'hour'
+            count = diff.h
+        elif diff.i > 0:
+            unit = 'minute'
+            count = diff.i
+        else:
+            unit = 'second'
+            count = diff.s
+
+        if count == 0:
+            count = 1
+
+        time = self.translator().transchoice(unit, count, {'count': count})
+
+        if absolute:
+            return time
+
+        is_future = diff.invert
+
+        if is_now:
+            trans_id = 'from_now' if is_future else 'ago'
+        else:
+            trans_id = 'after' if is_future else 'before'
+
+        # Some langs have special pluralization for past and future tense
+        try_key_exists = '%s_%s' % (unit, trans_id)
+        if try_key_exists != self.translator().transchoice(try_key_exists, count):
+            time = self.translator().transchoice(try_key_exists, count, {'count': count})
+
+        return self.translator().trans(trans_id, {'time': time})
 
     def __sub__(self, other):
         return self._get_datetime(other, True).diff(self, False)

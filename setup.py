@@ -33,8 +33,9 @@ setup(
     install_requires=[
         'tzlocal',
         'pytz',
-        'dateparser',
-        'wrapt'
+        'python-dateutil',
+        'wrapt',
+        'python-translate'
     ],
     tests_require=['pytest'],
     test_suite='nose.collector',

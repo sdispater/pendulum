@@ -16,6 +16,7 @@ class PendulumInterval(timedelta):
     _h = None
     _i = None
     _s = None
+    _invert = None
 
     @classmethod
     def instance(cls, delta):
@@ -29,19 +30,19 @@ class PendulumInterval(timedelta):
         return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
     def total_minutes(self):
-        return math.floor(round(self.total_seconds() / 60, 1))
+        return int(math.floor(round(self.total_seconds() / 60, 1)))
 
     def total_hours(self):
-        return math.floor(round(self.total_minutes() / 60, 1))
+        return int(math.floor(round(self.total_minutes() / 60, 1)))
 
     def total_days(self):
-        return math.floor(round(self.total_hours() / 24, 1))
+        return int(math.floor(round(self.total_hours() / 24, 1)))
 
     def total_months(self):
-        return math.floor(round(self.total_days() / 30.436875, 1))
+        return int(math.floor(round(self.total_days() / 30.436875, 1)))
 
     def total_years(self):
-        return math.floor(round(self.total_days() / 365.2425, 1))
+        return int(math.floor(round(self.total_days() / 365.2425, 1)))
 
     @property
     def y(self):
@@ -53,40 +54,66 @@ class PendulumInterval(timedelta):
     @property
     def m(self):
         if self._m is None:
-            self._m = self.total_months()
+            if self.invert:
+                self._m = int(round(self.total_months()))
+            else:
+                self._m = int(self.total_months())
 
         return self._m
 
     @property
     def d(self):
         if self._d is None:
-            self._d = self.total_days()
+            if self.invert:
+                self._d = int(round(self.s / (60 * 60 * 24), 2))
+            else:
+                self._d = int(self.s / (60 * 60 * 24))
 
         return self._d
 
     @property
     def h(self):
         if self._h is None:
-            self._h = self.total_hours()
+            if self.invert:
+                self._h = int(round(self.s / 3600, 2))
+            else:
+                self._h = int(self.s / 3600)
 
         return self._h
 
     @property
     def i(self):
         if self._i is None:
-            self._i = self.total_minutes()
+            if self.invert:
+                self._i = int(round(self.s / 60, 2))
+            else:
+                self._i = int(self.s / 60)
 
         return self._i
 
     @property
     def s(self):
         if self._s is None:
-            self._s = self.total_seconds()
+            if self.invert:
+                self._s = int(round(self.total_seconds()))
+            else:
+                self._s = int(self.total_seconds())
 
         return self._s
+
+    @property
+    def invert(self):
+        if self._invert is None:
+            self._invert = self.total_seconds() < 0
+
+        return self._invert
 
 
 class AbsolutePendulumInterval(PendulumInterval):
     
     def total_seconds(self):
         return abs(super(AbsolutePendulumInterval, self).total_seconds())
+
+    @property
+    def invert(self):
+        return super(AbsolutePendulumInterval, self).total_seconds() < 0
