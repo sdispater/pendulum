@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 from pendulum import Pendulum
 
 from .. import AbstractTestCase
@@ -90,3 +91,21 @@ class SubTest(AbstractTestCase):
 
     def test_sub_second(self):
         self.assertEqual(59, Pendulum(1975, 5, 21, 0, 0, 0).sub_second().second)
+
+    def test_sub_timedelta(self):
+        delta = timedelta(days=6, seconds=16, microseconds=654321)
+        d = Pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+
+        d.sub_timedelta(delta)
+        self.assertEqual(8, d.day)
+        self.assertEqual(11, d.minute)
+        self.assertEqual(59, d.second)
+        self.assertEqual(123456, d.microsecond)
+
+        d = Pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+
+        d = d - delta
+        self.assertEqual(8, d.day)
+        self.assertEqual(11, d.minute)
+        self.assertEqual(59, d.second)
+        self.assertEqual(123456, d.microsecond)

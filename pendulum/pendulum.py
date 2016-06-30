@@ -3,7 +3,6 @@
 from __future__ import division
 
 import re
-import os
 import time as _time
 import math
 import calendar
@@ -19,7 +18,7 @@ from .translator import Translator
 
 from .pendulum_interval import PendulumInterval, AbsolutePendulumInterval
 from .exceptions import PendulumException
-from ._compat import PY33, basestring, load_module
+from ._compat import PY33, basestring
 
 
 class Pendulum(object):
@@ -94,7 +93,7 @@ class Pendulum(object):
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
-    _CUSTOM_FORMATTERS = ['P']
+    _CUSTOM_FORMATTERS = ['P', 't']
     _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
 
     @classmethod
@@ -472,6 +471,15 @@ class Pendulum(object):
 
         return self
 
+    def timezone_(self, tz):
+        return self.set_timezone(tz)
+
+    def tz_(self, tz):
+        return self.set_timezone(tz)
+
+    def timestamp_(self, timestamp):
+        return self.set_timestamp(timestamp)
+
     @property
     def day_of_week(self):
         return int(self.format('%w'))
@@ -538,7 +546,17 @@ class Pendulum(object):
         return self.offset == 0
 
     @property
+    def is_dst(self):
+        dst = self._datetime.dst()
+
+        return dst.total_seconds() != 0
+
+    @property
     def timezone(self):
+        return self.get_timezone()
+
+    @property
+    def tz(self):
         return self.get_timezone()
 
     @property
@@ -875,6 +893,11 @@ class Pendulum(object):
             hour, minute = divmod(abs(int(minutes)), 60)
 
             return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
+        elif fmt == 't':
+            if 10 <= self.day % 100 < 20:
+                return 'th'
+            else:
+                return {1: 'st', 2: 'nd', 3: 'rd'}.get(self.day % 10, "th")
 
         raise PendulumException('Unknown formatter %%%s' % fmt)
 
@@ -883,6 +906,9 @@ class Pendulum(object):
             return self._datetime.isoformat()
 
         return self.format(self._to_string_format)
+
+    def __repr__(self):
+        return self.__str__()
 
     def to_date_string(self):
         """
@@ -1798,6 +1824,30 @@ class Pendulum(object):
 
         return self
 
+    def add_timedelta(self, delta):
+        """
+        Add timedelta duration to the instance.
+
+        :param delta: The timedelta instance
+        :type delta: datetime.timedelta
+
+        :rtype: Pendulum
+        """
+        return self.add(days=delta.days, seconds=delta.seconds,
+                        microseconds=delta.microseconds)
+
+    def sub_timedelta(self, delta):
+        """
+        Remove timedelta duration from the instance.
+
+        :param delta: The timedelta instance
+        :type delta: datetime.timedelta
+
+        :rtype: Pendulum
+        """
+        return self.sub(days=delta.days, seconds=delta.seconds,
+                        microseconds=delta.microseconds)
+
     # DIFFERENCES
 
     def diff_in_years(self, dt=None, abs=True):
@@ -2020,9 +2070,6 @@ class Pendulum(object):
             time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
 
         return self.translator().trans(trans_id, {'time': time}, locale=locale)
-
-    def __sub__(self, other):
-        return self._get_datetime(other, True).diff(self, False)
 
     # Modifiers
 
@@ -2423,3 +2470,15 @@ class Pendulum(object):
             return Pendulum.instance(result)
 
         return result
+
+    def __sub__(self, other):
+        if isinstance(other, datetime.timedelta):
+            return self.copy().sub_timedelta(other)
+
+        return self._get_datetime(other, True).diff(self, False)
+
+    def __add__(self, other):
+        if isinstance(other, datetime.timedelta):
+            return self.copy().add_timedelta(other)
+
+        return self._datetime + other

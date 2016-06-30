@@ -30,13 +30,13 @@ class PendulumInterval(timedelta):
         return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
     def total_minutes(self):
-        return int(math.floor(round(self.total_seconds() / 60, 1)))
+        return int(math.floor(round(self.total_seconds() / 60, 2)))
 
     def total_hours(self):
-        return int(math.floor(round(self.total_minutes() / 60, 1)))
+        return int(math.floor(round(self.total_minutes() / 60, 2)))
 
     def total_days(self):
-        return int(math.floor(round(self.total_hours() / 24, 1)))
+        return int(math.floor(round(self.total_hours() / 24, 2)))
 
     def total_months(self):
         return int(math.floor(round(self.total_days() / 30.436875, 1)))

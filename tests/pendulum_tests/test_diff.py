@@ -134,7 +134,7 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_minutes_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(1, dt.diff_in_minutes(dt.copy().add_minute().add_seconds(31)))
+        self.assertEqual(1, dt.diff_in_minutes(dt.copy().add_minute().add_seconds(59)))
 
     def test_diff_in_seconds_positive(self):
         dt = Pendulum.create_from_date(2000, 1, 1)

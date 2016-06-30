@@ -106,3 +106,7 @@ class StringsTest(AbstractTestCase):
     def test_to_w3c_string(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual('1975-12-25T14:15:16-05:00', d.to_w3c_string())
+
+    def test_custom_formatters(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual('Thursday 25th of December 1975 02:15:16 PM -05:00', d.format('%A %-d%t of %B %Y %I:%M:%S %p %P'))
