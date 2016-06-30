@@ -15,8 +15,7 @@ from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
-from python_translate.translations import Translator
-from python_translate.loaders import DictLoader
+from .translator import Translator
 
 from .pendulum_interval import PendulumInterval, AbsolutePendulumInterval
 from .exceptions import PendulumException
@@ -771,7 +770,6 @@ class Pendulum(object):
         """
         if cls._translator is None:
             cls._translator = Translator('en')
-            cls._translator.add_loader('dict', DictLoader())
             cls.set_locale('en')
 
         return cls._translator
@@ -805,28 +803,10 @@ class Pendulum(object):
 
         :rtype: bool
         """
-        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
-        if m:
-            locale = '%s_%s' % (m.group(1).lower(), m.group(2).lower())
-        else:
-            locale = locale.lower()
-
-        root_path = os.path.join(os.path.dirname(__file__), 'lang')
-        root = os.path.join(root_path, '__init__.py')
-        locale_file = os.path.join(root_path, '%s.py' % locale)
-
-        if not os.path.exists(locale_file):
+        if not cls.translator().register_resource(locale):
             return False
 
-        # Loading parent module
-        load_module('lang', root)
-
-        # Loading locale
-        locale_mod = load_module('lang.%s' % locale, locale_file)
-
         cls.translator().locale = locale
-
-        cls.translator().add_resource('dict', locale_mod.translations, locale)
 
         return True
 
@@ -1960,7 +1940,7 @@ class Pendulum(object):
 
         return PendulumInterval.instance(delta)
 
-    def diff_for_humans(self, other=None, absolute=False):
+    def diff_for_humans(self, other=None, absolute=False, locale=None):
         """
         Get the difference in a human readable format in the current locale.
 
@@ -1984,6 +1964,9 @@ class Pendulum(object):
 
         :param absolute: removes time difference modifiers ago, after, etc
         :type absolute: bool
+
+        :param locale: The locale to use for localization
+        :type locale: str
 
         :rtype: str
         """
@@ -2019,7 +2002,7 @@ class Pendulum(object):
         if count == 0:
             count = 1
 
-        time = self.translator().transchoice(unit, count, {'count': count})
+        time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
 
         if absolute:
             return time
@@ -2033,10 +2016,10 @@ class Pendulum(object):
 
         # Some langs have special pluralization for past and future tense
         try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self.translator().transchoice(try_key_exists, count):
-            time = self.translator().transchoice(try_key_exists, count, {'count': count})
+        if try_key_exists != self.translator().transchoice(try_key_exists, count, locale=locale):
+            time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
 
-        return self.translator().trans(trans_id, {'time': time})
+        return self.translator().trans(trans_id, {'time': time}, locale=locale)
 
     def __sub__(self, other):
         return self._get_datetime(other, True).diff(self, False)
