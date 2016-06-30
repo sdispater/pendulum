@@ -143,13 +143,20 @@ class StartEndOfTest(AbstractTestCase):
         self.assertPendulum(d, 2100, 12, 31, 23, 59, 59)
 
     def test_average_is_fluid(self):
-        self.skipTest('Not Implemented')
+        d = Pendulum.now().average()
+        self.assertIsInstanceOfPendulum(d)
 
     def test_average_from_same(self):
-        self.skipTest('Not Implemented')
+        d1 = Pendulum.create(2000, 1, 31, 2, 3, 4)
+        d2 = Pendulum.create(2000, 1, 31, 2, 3, 4).average(d1)
+        self.assertPendulum(d2, 2000, 1, 31, 2, 3, 4)
 
     def test_average_from_greater(self):
-        self.skipTest('Not Implemented')
+        d1 = Pendulum.create(2000, 1, 1, 1, 1, 1, tz='local')
+        d2 = Pendulum.create(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
+        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30)
 
     def test_average_from_lower(self):
-        self.skipTest('Not Implemented')
+        d1 = Pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
+        d2 = Pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
+        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30)

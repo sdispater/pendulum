@@ -2426,6 +2426,22 @@ class Pendulum(object):
 
         return self.set_date(self.year, dt.month, dt.day).start_of_day()
 
+    def average(self, dt=None):
+        """
+        Modify the current instance to the average
+        of a given instance (default now) and the current instance.
+
+        :type dt: Pendulum or datetime
+
+        :rtype: Pendulum
+        """
+        if dt is None:
+            dt = Pendulum.now(self._tz)
+
+        print(int(self.diff_in_seconds(dt, False) / 2))
+
+        return self.add_seconds(int(self.diff_in_seconds(dt, False) / 2))
+
     def _get_datetime(self, value, pendulum=False):
         """
         Gets a datetime from a given value.

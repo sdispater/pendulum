@@ -31,14 +31,6 @@ class StringsTest(AbstractTestCase):
         d = Pendulum(1975, 12, 25, 14, 15, 16)
         self.assertEqual('Dec 25, 1975', d.to_formatted_date_string())
 
-    def test_to_localized_formatted_date_string(self):
-        # TODO
-        self.skipTest('Not yet implemented')
-
-    def test_to_localized_formatted_timezoned_date_string(self):
-        # TODO
-        self.skipTest('Not yet implemented')
-
     def test_to_timestring(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16)
         self.assertEqual('14:15:16', d.to_time_string())
