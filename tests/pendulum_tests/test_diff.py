@@ -10,7 +10,14 @@ class DiffTest(AbstractTestCase):
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):
-        yield super(DiffTest, self).wrap_with_test_now(dt or Pendulum.create_from_date(2012, 1, 1))
+        if dt is None:
+            dt = Pendulum.create(2012, 1, 1, 1, 2, 3)
+
+        Pendulum.set_test_now(dt)
+
+        yield
+
+        Pendulum.set_test_now()
 
     def test_diff_in_years_positive(self):
         dt = Pendulum.create_from_date(2000, 1, 1)

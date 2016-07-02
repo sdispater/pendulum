@@ -808,6 +808,7 @@ class Pendulum(object):
         Get the current translator locale.
 
         :rtype: str
+        :rtype: str
         """
         return cls.translator().locale
 
@@ -1864,7 +1865,7 @@ class Pendulum(object):
         if dt is None:
             dt = self.now(self._tz)
 
-        return self.diff(dt, abs).total_years()
+        return int(self.diff(dt, abs).total_years())
 
     def diff_in_months(self, dt=None, abs=True):
         """
@@ -1880,7 +1881,7 @@ class Pendulum(object):
         if dt is None:
             dt = self.now(self._tz)
 
-        return self.diff(dt, abs).total_months()
+        return int(self.diff(dt, abs).total_months())
 
     def diff_in_days(self, dt=None, abs=True):
         """
@@ -1896,7 +1897,7 @@ class Pendulum(object):
         if dt is None:
             dt = self.now(self._tz)
 
-        return self.diff(dt, abs).total_days()
+        return int(self.diff(dt, abs).total_days())
 
     def diff_in_hours(self, dt=None, abs=True):
         """
@@ -1912,7 +1913,7 @@ class Pendulum(object):
         if dt is None:
             dt = self.now(self._tz)
 
-        return self.diff(dt, abs).total_hours()
+        return int(self.diff(dt, abs).total_hours())
 
     def diff_in_minutes(self, dt=None, abs=True):
         """
@@ -1928,7 +1929,7 @@ class Pendulum(object):
         if dt is None:
             dt = self.now(self._tz)
 
-        return self.diff(dt, abs).total_minutes()
+        return int(self.diff(dt, abs).total_minutes())
 
     def diff_in_seconds(self, dt=None, abs=True):
         """
@@ -2027,27 +2028,27 @@ class Pendulum(object):
 
         diff = self.diff(other)
 
-        if diff.y > 0:
+        if diff.years > 0:
             unit = 'year'
-            count = diff.y
-        elif diff.m > 0:
+            count = diff.years
+        elif diff.months > 0:
             unit = 'month'
-            count = diff.m
-        elif diff.d > 0:
+            count = diff.months
+        elif diff.weeks > 0:
+            unit = 'week'
+            count = diff.weeks
+        elif diff.days > 0:
             unit = 'day'
-            count = diff.d
-            if count >= self.DAYS_PER_WEEK:
-                unit = 'week'
-                count = int(count / self.DAYS_PER_WEEK)
-        elif diff.h > 0:
+            count = diff.days
+        elif diff.hours > 0:
             unit = 'hour'
-            count = diff.h
-        elif diff.i > 0:
+            count = diff.hours
+        elif diff.minutes > 0:
             unit = 'minute'
-            count = diff.i
+            count = diff.minutes
         else:
             unit = 'second'
-            count = diff.s
+            count = diff.seconds
 
         if count == 0:
             count = 1
@@ -2437,8 +2438,6 @@ class Pendulum(object):
         """
         if dt is None:
             dt = Pendulum.now(self._tz)
-
-        print(int(self.diff_in_seconds(dt, False) / 2))
 
         return self.add_seconds(int(self.diff_in_seconds(dt, False) / 2))
 

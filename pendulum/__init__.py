@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .pendulum import Pendulum
+from .pendulum_interval import PendulumInterval
 
 # Helpers
 instance = Pendulum.instance
@@ -16,3 +17,6 @@ from_time = Pendulum.create_from_time
 from_format = Pendulum.create_from_format
 strptime = Pendulum.strptime
 from_timestamp = Pendulum.create_from_timestamp
+
+# Interval
+interval = PendulumInterval
