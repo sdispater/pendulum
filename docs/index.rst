@@ -1023,11 +1023,6 @@ you can use the appropriate methods.
     it.total_seconds()
     101700084.001234
 
-.. note::
-
-    Note that ``it.years`` and ``it.months`` are approximations since an interval is without
-    context, it cannot know about leap years and the number of days in months.
-
 It also has a handy ``for_humans()``, which determines the interval representation when printed,
 that prints the interval for humans.
 
