@@ -284,7 +284,7 @@ article ul li {
 .rst-content table.docutils,
 .rst-content table.field-list {
     border: medium none;
-    width: 100%;
+    width: 90%;
 }
 
 .rst-content table.docutils thead th,
@@ -313,6 +313,11 @@ article ul li {
 .wy-table-striped tr:nth-child(2n-1) td,
 .rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
     background: none;
+}
+
+.wy-table td, .rst-content table.docutils td, .rst-content table.docutils th {
+    font-size: 100% !important;
+    padding: 20px;
 }
 
 .rst-content table.docutils tbody td tt.code,
@@ -569,19 +574,15 @@ p > code.docutils {
 }
 
 .rst-content .note {
-    border-left: 1px dotted rgba(50, 154, 188, 0.3);
-    border-right: 1px dotted rgba(50, 154, 188, 0.3);
-    background: rgba(50, 154, 188, 0.02);
-    color: #3399BB !important;
-    box-shadow: 0 0 2px rgba(50, 154, 188, 0.1);
+    border: 1px dotted rgba(50, 154, 188, 0.4);
+    background: rgba(50, 154, 188, 0.1);
+    color: #3389BB !important;
 }
 
 .rst-content .tip {
-    border-left: 1px dotted rgba(73,182,127, 0.3);
-    border-right: 1px dotted rgba(73,182,127, 0.3);
-    background: rgba(73,182,127, 0.02);
+    border: 1px dotted rgba(73,182,127, 0.4);
+    background: rgba(73,182,127, 0.1);
     color: #49B67F !important;
-    box-shadow: 0 0 2px rgba(73,182,127, 0.1);
 }
 
 .rst-content .tip > p {
@@ -594,11 +595,9 @@ p > code.docutils {
 
 .rst-content .warning,
 .rst-content .caution {
-    border-left: 1px dotted rgba(249, 145, 87, 0.3);
-    border-right: 1px dotted rgba(249, 145, 87, 0.3);
-    background: rgba(249, 145, 87, 0.02);
+    border: 1px dotted rgba(249, 145, 87, 0.4);
+    background: rgba(249, 145, 87, 0.1);
     color: #F99157 !important;
-    box-shadow: 0 0 2px rgba(249, 145, 87, 0.1);
 }
 
 .rst-content .note > p {
@@ -614,13 +613,11 @@ p > code.docutils {
 .rst-content .versionadded,
 .rst-content .versionchanged
 {
-    border-left: 1px dotted rgba(102, 119, 187, 0.3);
-    border-right: 1px dotted rgba(102, 119, 187, 0.3);
-    background: rgba(102, 119, 187, 0.02);
+    border: 1px dotted rgba(102, 119, 187, 0.4);
+    background: rgba(102, 119, 187, 0.1);
     color: #6677BB !important;
     margin-bottom: 20px;
     position: relative;
-    box-shadow: 0 0 2px rgba(102, 119, 187, 0.1);
 }
 
 .rst-content .versionadded > p > span,
@@ -800,6 +797,10 @@ p > code.docutils {
 .rst-content dl:not(.docutils) dl.method > dt > em.property {
     font-weight: 400;
     color: #7AC;
+}
+
+.rst-content dl dt {
+    font-weight: 600;
 }
 
 
