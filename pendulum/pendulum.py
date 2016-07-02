@@ -490,7 +490,7 @@ class Pendulum(object):
 
     @property
     def week_of_year(self):
-        return int(self.format('%-W'))
+        return self.isocalendar()[1]
 
     @property
     def days_in_month(self):
@@ -1346,6 +1346,16 @@ class Pendulum(object):
         :rtype: bool
         """
         return calendar.isleap(self.year)
+
+    def is_long_year(self):
+        """
+        Determines if the instance is a long year
+
+        See link `https://en.wikipedia.org/wiki/ISO_8601#Week_dates`_
+
+        :rtype: bool
+        """
+        return Pendulum.create(self.year, 12, 28, 0, 0, 0, tz=self._tz).isocalendar()[1] == 53
 
     def is_same_day(self, dt):
         """
