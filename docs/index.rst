@@ -195,7 +195,7 @@ As expected the date, time and timezone values are all copied to the new instanc
 
     # dt was unchanged and still holds the value of Pendulum.now()
 
-Finally, if you find yourself inheriting a ``datetime`` instancey,
+Finally, if you find yourself inheriting a ``datetime`` instance,
 you can create a Pendulum instance via the ``instance()`` function.
 
 .. code-block:: python
@@ -937,7 +937,8 @@ It has many improvements over the base class.
 .. note::
 
     Even though, it inherits from the ``timedelta`` class, its behavior is slightly different.
-    The more important to notice is that the native normalization does not happen to be more intuitive.
+    The more important to notice is that the native normalization does not happen, this is so that
+    it feels more intuituve.
 
     .. code-block:: python
 
