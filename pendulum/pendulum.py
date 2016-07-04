@@ -1238,7 +1238,39 @@ class Pendulum(object):
 
         return self.gt(dt1) and self.lt(dt2)
 
-    # TODO: closest, farthest
+    def closest(self, dt1, dt2):
+        """
+        Get the closest date from the instance.
+
+        :type dt1: Pendulum or datetime
+        :type dt2: Pendulum or datetime
+
+        :rtype: Pendulum
+        """
+        dt1 = self._get_datetime(dt1, True)
+        dt2 = self._get_datetime(dt2, True)
+
+        if self.diff_in_seconds(dt1) < self.diff_in_seconds(dt2):
+            return dt1
+
+        return dt2
+
+    def farthest(self, dt1, dt2):
+        """
+        Get the farthest date from the instance.
+
+        :type dt1: Pendulum or datetime
+        :type dt2: Pendulum or datetime
+
+        :rtype: Pendulum
+        """
+        dt1 = self._get_datetime(dt1, True)
+        dt2 = self._get_datetime(dt2, True)
+
+        if self.diff_in_seconds(dt1) > self.diff_in_seconds(dt2):
+            return dt1
+
+        return dt2
 
     def min_(self, dt=None):
         """

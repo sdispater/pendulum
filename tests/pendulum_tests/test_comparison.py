@@ -399,13 +399,45 @@ class ComparisonTest(AbstractTestCase):
         self.assertTrue(d3.is_birthday(d1))
 
     def test_closest(self):
-        self.skipTest('Not Implemented')
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = Pendulum.create(2015, 5, 28, 11, 0, 0)
+        dt2 = Pendulum.create(2015, 5, 28, 14, 0, 0)
+        closest = instance.closest(dt1, dt2)
+        self.assertEqual(dt1, closest)
+
+    def test_closest_with_datetime(self):
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = datetime(2015, 5, 28, 11, 0, 0)
+        dt2 = datetime(2015, 5, 28, 14, 0, 0)
+        closest = instance.closest(dt1, dt2)
+        self.assertIsInstanceOfPendulum(closest)
+        self.assertPendulum(closest, 2015, 5, 28, 11, 0, 0)
 
     def test_closest_with_equals(self):
-        self.skipTest('Not Implemented')
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt2 = Pendulum.create(2015, 5, 28, 14, 0, 0)
+        closest = instance.closest(dt1, dt2)
+        self.assertEqual(dt1, closest)
 
     def test_farthest(self):
-        self.skipTest('Not Implemented')
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = Pendulum.create(2015, 5, 28, 11, 0, 0)
+        dt2 = Pendulum.create(2015, 5, 28, 14, 0, 0)
+        closest = instance.farthest(dt1, dt2)
+        self.assertEqual(dt2, closest)
+
+    def test_farthest_with_datetime(self):
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = datetime(2015, 5, 28, 11, 0, 0)
+        dt2 = datetime(2015, 5, 28, 14, 0, 0)
+        closest = instance.farthest(dt1, dt2)
+        self.assertIsInstanceOfPendulum(closest)
+        self.assertPendulum(closest, 2015, 5, 28, 14, 0, 0)
 
     def test_farthest_with_equals(self):
-        self.skipTest('Not Implemented')
+        instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt1 = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt2 = Pendulum.create(2015, 5, 28, 14, 0, 0)
+        closest = instance.farthest(dt1, dt2)
+        self.assertEqual(dt2, closest)
