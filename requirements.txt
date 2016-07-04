@@ -1,5 +1,4 @@
 tzlocal
 pytz
 python-dateutil
-wrapt
 python-translate

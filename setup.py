@@ -23,7 +23,7 @@ setup(
     name='pendulum',
     license='MIT',
     version=__version__,
-    description='Dates and times in Python made easy.',
+    description='Python datetimes made easy.',
     long_description=open('README.rst').read(),
     author='Sébastien Eustace',
     author_email='sebastien@eustace.io',
@@ -34,7 +34,6 @@ setup(
         'tzlocal',
         'pytz',
         'python-dateutil',
-        'wrapt',
         'python-translate'
     ],
     tests_require=['pytest'],
