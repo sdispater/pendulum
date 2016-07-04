@@ -22,7 +22,7 @@ from .exceptions import PendulumException
 from ._compat import PY33, basestring
 
 
-class Pendulum(object):
+class Pendulum(datetime.datetime):
 
     # The day constants
     SUNDAY = 0
@@ -134,14 +134,24 @@ class Pendulum(object):
 
         return tzlocal.get_localzone()
 
-    def __init__(self, year=None, month=None, day=None,
-                 hour=None, minute=None, second=None, microsecond=None,
-                 tzinfo=pytz.UTC):
+    def __new__(cls, year=1970, month=1, day=1,
+                 hour=0, minute=0, second=0, microsecond=0,
+                 tzinfo=None):
         """
         Constructor.
 
-        :type tz: BaseTzInfo or str or None
+        This will just create a dummy datetime. The heavy lifting will be done
+        in __init__().
+
+        :type year: int or str
         """
+        obj = super(Pendulum, cls).__new__(cls, year, month, day, hour, minute, second, microsecond, None)
+
+        return obj
+
+    def __init__(self, year=None, month=None, day=None,
+                 hour=None, minute=None, second=None, microsecond=None,
+                 tzinfo=pytz.UTC):
         # If the class has a test now set and we are trying to create a now()
         # instance then override as required
         if (self.has_test_now()
@@ -489,6 +499,38 @@ class Pendulum(object):
 
     def timestamp_(self, timestamp):
         return self.set_timestamp(timestamp)
+
+    @property
+    def year(self):
+        return self._datetime.year
+
+    @property
+    def month(self):
+        return self._datetime.month
+
+    @property
+    def day(self):
+        return self._datetime.day
+
+    @property
+    def hour(self):
+        return self._datetime.hour
+
+    @property
+    def minute(self):
+        return self._datetime.minute
+
+    @property
+    def second(self):
+        return self._datetime.second
+
+    @property
+    def microsecond(self):
+        return self._datetime.microsecond
+
+    @property
+    def tzinfo(self):
+        return self._datetime.tzinfo
 
     @property
     def day_of_week(self):
@@ -936,7 +978,7 @@ class Pendulum(object):
         return self.format(self._to_string_format)
 
     def __repr__(self):
-        return self.__str__()
+        return str(self)
 
     def to_date_string(self):
         """
@@ -2558,19 +2600,14 @@ class Pendulum(object):
         """
         return str(self)
 
-    def __getattr__(self, item):
-        result = getattr(self._datetime, item)
-
-        if isinstance(result, datetime.datetime):
-            return Pendulum.instance(result)
-
-        return result
-
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
             return self.copy().sub_timedelta(other)
 
         return self._get_datetime(other, True).diff(self, False)
+
+    def __rsub__(self, other):
+        return self.diff(self._get_datetime(other, True), False)
 
     def __add__(self, other):
         if isinstance(other, datetime.timedelta):
@@ -2583,6 +2620,101 @@ class Pendulum(object):
 
         return result
 
+    def __radd__(self, other):
+        print('__radd__', other)
+        return self.__add__(other)
 
-Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))
+    # Native methods override
+
+    @classmethod
+    def fromtimestamp(cls, t, tz=None):
+        return cls.create_from_timestamp(t, tz)
+
+    @classmethod
+    def utcfromtimestamp(cls, t):
+        return cls.create_from_timestamp(t)
+
+    @classmethod
+    def fromordinal(cls, n):
+        return cls.instance(datetime.datetime.fromordinal(n))
+
+    @classmethod
+    def combine(cls, date, time):
+        return cls.instance(datetime.datetime.combine(date, time))
+
+    def timetuple(self):
+        return self._datetime.timetuple()
+
+    def utctimetuple(self):
+        return self._datetime.utctimetuple()
+
+    def date(self):
+        return self._datetime.date()
+
+    def time(self):
+        return self._datetime.time()
+
+    def timetz(self):
+        return self._datetime.timetz()
+
+    def replace(self, year=None, month=None, day=None, hour=None,
+                minute=None, second=None, microsecond=None, tzinfo=True):
+        return self.instance(
+            self._datetime.replace(year, month, day,
+                                   hour, minute, second, microsecond, tzinfo)
+        )
+
+    def astimezone(self, tz=None):
+        return self._datetime.astimezone(tz)
+
+    def ctime(self):
+        return self._datetime.ctime()
+
+    def isoformat(self, sep='T'):
+        return self._datetime.isoformat(sep)
+
+    def utcoffset(self):
+        return self._datetime.utcoffset()
+
+    def tzname(self):
+        return self._datetime.tzname()
+
+    def dst(self):
+        return self._datetime.dst()
+
+    def toordinal(self):
+        return self._datetime.toordinal()
+
+    def weekday(self):
+        return self._datetime.weekday()
+
+    def isoweekday(self):
+        return self._datetime.isoweekday()
+
+    def isocalendar(self):
+        return self._datetime.isocalendar()
+
+    def __format__(self, format_spec):
+        return self.strftime(format_spec)
+
+    def __getnewargs__(self):
+        return(self, )
+
+    def _getstate(self):
+        return (
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond,
+            self.timezone
+        )
+
+    def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
+        self._datetime = self._create_datetime(
+            tz, year, month, day,
+            hour, minute, second, microsecond
+        )
+
+    def __reduce__(self):
+        return self.__class__, self._getstate()
+
+min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))
 Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=pytz.UTC))

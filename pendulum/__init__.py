@@ -20,6 +20,10 @@ from_timestamp = Pendulum.create_from_timestamp
 set_test_now = Pendulum.set_test_now
 min = Pendulum.min
 max = Pendulum.max
+fromtimestamp = Pendulum.fromtimestamp
+utcfromtimestamp = Pendulum.utcfromtimestamp
+fromordinal = Pendulum.fromordinal
+combine = Pendulum.combine
 
 # Interval
 interval = PendulumInterval

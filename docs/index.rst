@@ -20,9 +20,10 @@ Pendulum is a Python package to ease datetimes manipulation.
 It is heavily inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
 
 The ``Pendulum`` class is a drop-in replacement for the native ``datetime``
-class.
-So, you can still use the base functionality of the native object if anything is missing
-from Pendulum.
+class (it is inherited from it) with the exception that its mutable.
+
+Unlike the native class, most of the methods modify the current instance
+of ``Pendulum`` in place. If you want to modify a copy just use the ``copy()`` method.
 
 Special care has been taken to ensure timezones are handled correctly,
 and where appropriate are based on the underlying ``tzinfo`` implementation.
@@ -76,11 +77,14 @@ There are several different methods available to create a new instance of Pendul
 First there is a constructor. It overrides the parent constructor to be more flexible.
 Basically, unlike ``datetime`` you can omit parameters and any omitted parameter will
 default to its ``now()`` value. However, if you provide the ``year``, ``month``, ``day``
-it will use the default ``datetime`` behavior.
+it will emulate the default ``datetime`` behavior.
 
 .. code-block:: python
 
     dt = Pendulum() # equivalent to Pendulum.utcnow()
+    isinstance(dt, datetime)
+    True
+
     dt = Pendulum(2015, 2, 5, tzinfo='America/Vancouver')
     dt = Pendulum.now(-5)
 
@@ -98,11 +102,13 @@ This is again shown in the next example which also introduces the ``now()`` func
 
     # or just pass the timezone as a string
     now_in_london_tz = Pendulum.now('Europe/London')
-    print(now_in_london_tz.timezone_name) # Europe/London
+    print(now_in_london_tz.timezone_name)
+    'Europe/London'
 
     # or to create a date with a timezone of +1 to GMT
     # during DST then just pass an integer
-    print(Pendulum.now(1).timezone_name)) # None
+    print(Pendulum.now(1).timezone_name))
+    None
 
 .. note::
 
