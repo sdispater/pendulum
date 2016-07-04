@@ -17,6 +17,7 @@ from_time = Pendulum.create_from_time
 from_format = Pendulum.create_from_format
 strptime = Pendulum.strptime
 from_timestamp = Pendulum.create_from_timestamp
+set_test_now = Pendulum.set_test_now
 min = Pendulum.min
 max = Pendulum.max
 
