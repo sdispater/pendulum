@@ -329,8 +329,8 @@ Pendulum gives access to more attributes and properties than the default `dateti
     Pendulum.now().timezone_name
 
 
-Fluent Setter
-=============
+Fluent Setters
+==============
 
 Unlike the native ``datetime`` class, ``Pendulum`` instances are mutable.
 However, none of the setters, with the exception of explicitely setting the
