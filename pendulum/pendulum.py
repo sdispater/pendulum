@@ -822,12 +822,29 @@ class Pendulum(object):
 
         :rtype: bool
         """
+        locale = cls.format_locale(locale)
         if not cls.translator().register_resource(locale):
             return False
 
         cls.translator().locale = locale
 
         return True
+
+    @classmethod
+    def format_locale(cls, locale):
+        """
+        Properly format locale.
+
+        :param locale: The locale
+        :type locale: str
+
+        :rtype: str
+        """
+        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
+        if m:
+            return '%s_%s' % (m.group(1).lower(), m.group(2).lower())
+        else:
+            return locale.lower()
 
     # String Formatting
 
@@ -2063,6 +2080,9 @@ class Pendulum(object):
         if count == 0:
             count = 1
 
+        if locale:
+            locale = self.format_locale(locale)
+
         time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
 
         if absolute:
@@ -2487,6 +2507,14 @@ class Pendulum(object):
             return d._datetime
 
         raise ValueError('Invalid datetime "%s"' % value)
+
+    def for_json(self):
+        """
+        Methods for automatic json serialization by simplejson
+
+        :rtype: str
+        """
+        return str(self)
 
     def __getattr__(self, item):
         result = getattr(self._datetime, item)

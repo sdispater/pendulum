@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
 import os
 from python_translate.translations import Translator as BaseTranslator, MessageCatalogue
 from python_translate.loaders import DictLoader, NotFoundResourceException
@@ -38,12 +37,6 @@ class Translator(BaseTranslator):
             self._do_load_catalogue(locale)
 
     def register_resource(self, locale):
-        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
-        if m:
-            locale = '%s_%s' % (m.group(1).lower(), m.group(2).lower())
-        else:
-            locale = locale.lower()
-
         root_path = os.path.join(os.path.dirname(__file__), 'lang')
         root = os.path.join(root_path, '__init__.py')
         locale_file = os.path.join(root_path, '%s.py' % locale)
