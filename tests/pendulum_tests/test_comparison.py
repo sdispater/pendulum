@@ -357,30 +357,30 @@ class ComparisonTest(AbstractTestCase):
 
     def test_min_is_fluid(self):
         d = Pendulum.now()
-        self.assertIsInstanceOfPendulum(d.min())
-        self.assertIsInstanceOfPendulum(d.min(datetime(1975, 1, 1)))
+        self.assertIsInstanceOfPendulum(d.min_())
+        self.assertIsInstanceOfPendulum(d.min_(datetime(1975, 1, 1)))
 
     def test_min_with_now(self):
-        d = Pendulum(2012, 1, 1, 0, 0, 0).min()
+        d = Pendulum(2012, 1, 1, 0, 0, 0).min_()
         self.assertPendulum(d, 2012, 1, 1, 0, 0, 0)
 
     def test_min_with_instance(self):
         d1 = Pendulum(2013, 12, 31, 23, 59, 59)
-        d2 = Pendulum(2012, 1, 1, 0, 0, 0).min(d1)
+        d2 = Pendulum(2012, 1, 1, 0, 0, 0).min_(d1)
         self.assertPendulum(d2, 2012, 1, 1, 0, 0, 0)
 
     def test_max_is_fluid(self):
         d = Pendulum.now()
-        self.assertIsInstanceOfPendulum(d.max())
-        self.assertIsInstanceOfPendulum(d.max(datetime(2099, 12, 31, 23, 59, 59)))
+        self.assertIsInstanceOfPendulum(d.max_())
+        self.assertIsInstanceOfPendulum(d.max_(datetime(2099, 12, 31, 23, 59, 59)))
 
     def test_max_with_now(self):
-        d = Pendulum(2099, 12, 31, 23, 59, 59).max()
+        d = Pendulum(2099, 12, 31, 23, 59, 59).max_()
         self.assertPendulum(d, 2099, 12, 31, 23, 59, 59)
 
     def test_max_with_instance(self):
         d1 = Pendulum(2012, 1, 1, 0, 0, 0)
-        d2 = Pendulum(2099, 12, 31, 23, 59, 59).max(d1)
+        d2 = Pendulum(2099, 12, 31, 23, 59, 59).max_(d1)
         self.assertPendulum(d2, 2099, 12, 31, 23, 59, 59)
 
     def test_is_birthday(self):

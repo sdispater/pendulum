@@ -264,10 +264,6 @@ class Pendulum(object):
         """
         return cls.today(tz).sub_day()
 
-    # TODO: max_value
-
-    # TODO: min_value
-
     @classmethod
     def _create_datetime(cls, tz, year=None, month=None, day=None,
                          hour=None, minute=None, second=None, microsecond=None):
@@ -1244,7 +1240,7 @@ class Pendulum(object):
 
     # TODO: closest, farthest
 
-    def min(self, dt=None):
+    def min_(self, dt=None):
         """
         Get the minimum instance between a given instance (default utcnow)
         and the current instance.
@@ -1272,7 +1268,7 @@ class Pendulum(object):
         """
         return self.min(dt)
 
-    def max(self, dt=None):
+    def max_(self, dt=None):
         """
         Get the maximum instance between a given instance (default now)
         and the current instance.
@@ -2535,3 +2531,7 @@ class Pendulum(object):
             return self.copy().add_timedelta(other)
 
         return self._datetime + other
+
+
+Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))
+Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=pytz.UTC))
