@@ -3,6 +3,7 @@
 from __future__ import division
 
 import re
+import os
 import time as _time
 import math
 import calendar
@@ -106,7 +107,7 @@ class Pendulum(object):
         :rtype: BaseTzInfo
         """
         if obj is None or obj == 'local':
-            return tzlocal.get_localzone()
+            return cls._local_timezone()
 
         if isinstance(obj, tzinfo):
             return obj
@@ -119,6 +120,19 @@ class Pendulum(object):
         tz = pytz.timezone(obj)
 
         return tz
+
+    @classmethod
+    def _local_timezone(cls):
+        """
+        Returns the local timezone using tzlocal.get_localzone
+        or the TZ environment variable.
+
+        :rtype: tzinfo
+        """
+        if os.getenv('TZ'):
+            return pytz.timezone(os.environ['TZ'])
+
+        return tzlocal.get_localzone()
 
     def __init__(self, year=None, month=None, day=None,
                  hour=None, minute=None, second=None, microsecond=None,
@@ -535,7 +549,7 @@ class Pendulum(object):
 
     @property
     def local(self):
-        return self.offset == self.copy().set_timezone(tzlocal.get_localzone()).offset
+        return self.offset == self.copy().set_timezone(self._local_timezone()).offset
 
     @property
     def utc(self):
@@ -2562,7 +2576,12 @@ class Pendulum(object):
         if isinstance(other, datetime.timedelta):
             return self.copy().add_timedelta(other)
 
-        return self._datetime + other
+        result = self._datetime + other
+
+        if isinstance(result, datetime.datetime):
+            return Pendulum.instance(result)
+
+        return result
 
 
 Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))

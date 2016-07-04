@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import pytz
 from datetime import datetime
 from pendulum import Pendulum
@@ -7,6 +8,12 @@ from .. import AbstractTestCase
 
 
 class ConstructTest(AbstractTestCase):
+
+    def tearDown(self):
+        super(ConstructTest, self).tearDown()
+
+        if os.getenv('TZ'):
+            del os.environ['TZ']
 
     def test_creates_an_instance_default_to_utcnow(self):
         p = Pendulum()
@@ -68,3 +75,8 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(timezone, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
+    def test_honor_tz_env_variable(self):
+        os.environ['TZ'] = 'Europe/Paris'
+        with self.wrap_with_test_now():
+            now = Pendulum.now()
+            self.assertEqual(now.timezone_name, 'Europe/Paris')
