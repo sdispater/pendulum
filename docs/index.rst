@@ -1,11 +1,3 @@
-Pendulum
-########
-
-Dates and times in Python made easy.
-
-It is inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
-
-
 Installation
 ============
 
@@ -23,7 +15,9 @@ You can install Pendulum in 2 different ways:
 Introduction
 ============
 
-Pendulum is a Python package to ease dates and times manipulation.
+Pendulum is a Python package to ease datetimes manipulation.
+
+It is heavily inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
 
 The ``Pendulum`` class is a drop-in replacement for the native ``datetime``
 class.
@@ -728,21 +722,21 @@ Difference for Humans
 The ``diff_for_humans()`` method will add a phrase after the difference value relative
 to the instance and the passed in instance. There are 4 possibilities:
 
-    * When comparing a value in the past to default now:
-        * 1 hour ago
-        * 5 months ago
+* When comparing a value in the past to default now:
+    * 1 hour ago
+    * 5 months ago
 
-    * When comparing a value in the future to default now:
-        * 1 hour from now
-        * 5 months from now
+* When comparing a value in the future to default now:
+    * 1 hour from now
+    * 5 months from now
 
-    * When comparing a value in the past to another value:
-        * 1 hour before
-        * 5 months before
+* When comparing a value in the past to another value:
+    * 1 hour before
+    * 5 months before
 
-    * When comparing a value in the future to another value:
-        * 1 hour after
-        * 5 months after
+* When comparing a value in the future to another value:
+    * 1 hour after
+    * 5 months after
 
 You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `from now`, etc.
 
