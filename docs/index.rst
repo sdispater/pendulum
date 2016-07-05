@@ -591,10 +591,10 @@ the ``now()`` is created in the same timezone as the instance.
     True
 
 
-Addition and Substraction
-=========================
+Addition and Subtraction
+========================
 
-To easily adding and substracting time, you can use the ``add_xxx()``/``sub_xxx()``
+To easily adding and subtracting time, you can use the ``add_xxx()``/``sub_xxx()``
 methods or the more generic ones ``add()``/``sub()``.
 
 .. code-block:: python
