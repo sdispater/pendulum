@@ -10,7 +10,7 @@ before_install:
 install:
   - pip install -r tests-requirements.txt
 
-script: py.test tests/
+script: py.test --cov=pendulum tests/
 
 after_success:
   - codecov
