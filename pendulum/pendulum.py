@@ -1955,6 +1955,9 @@ class Pendulum(datetime.datetime):
 
         :type dt: Pendulum or None
 
+        :param abs: Whether to return an absolute interval or not
+        :type abs: bool
+
         :rtype: PendulumInterval
         """
         if dt is None:
