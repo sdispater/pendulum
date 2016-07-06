@@ -81,6 +81,8 @@ it will emulate the default ``datetime`` behavior.
 
 .. code-block:: python
 
+    from pendulum import Pendulum
+
     dt = Pendulum() # equivalent to Pendulum.utcnow()
     isinstance(dt, datetime)
     True
