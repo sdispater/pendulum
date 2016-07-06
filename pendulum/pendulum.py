@@ -157,10 +157,10 @@ class Pendulum(datetime.datetime):
         if (self.has_test_now()
             and all([year is None, month is None, day is None, hour is None,
                      minute is None, second is None, microsecond is None])):
-            test_instance = self._test_now.copy()
+            test_instance = self._test_now
 
             if tzinfo is not None and tzinfo != self._test_now.timezone:
-                test_instance.to(tzinfo)
+                test_instance = test_instance.to(tzinfo)
             else:
                 tzinfo = test_instance.timezone
 
@@ -419,7 +419,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls.now(tz).set_timestamp(timestamp)
+        return cls.now(tz).with_timestamp(timestamp)
 
     @classmethod
     def strptime(cls, time, fmt):
@@ -436,69 +436,36 @@ class Pendulum(datetime.datetime):
     ### Getters/Setters
 
     def year_(self, year):
-        return self.set_year(year)
-
-    def set_year(self, year):
-        self._datetime = self._datetime.replace(year=year)
-
-        return self
+        return self.instance(self._datetime.replace(year=year))
 
     def month_(self, month):
-        return self.set_month(month)
-
-    def set_month(self, month):
-        self._datetime = self._datetime.replace(month=month)
-
-        return self
+        return self.instance(self._datetime.replace(month=month))
 
     def day_(self, day):
-        return self.set_day(day)
-
-    def set_day(self, day):
-        self._datetime = self._datetime.replace(day=day)
-
-        return self
+        return self.instance(self._datetime.replace(day=day))
 
     def hour_(self, hour):
-        return self.set_hour(hour)
-
-    def set_hour(self, hour):
-        self._datetime = self._datetime.replace(hour=hour)
-
-        return self
+        return self.instance(self._datetime.replace(hour=hour))
 
     def minute_(self, minute):
-        return self.set_minute(minute)
-
-    def set_minute(self, minute):
-        self._datetime = self._datetime.replace(minute=minute)
-
-        return self
+        return self.instance(self._datetime.replace(minute=minute))
 
     def second_(self, second):
-        return self.set_second(second)
-
-    def set_second(self, second):
-        self._datetime = self._datetime.replace(second=second)
-
-        return self
+        return self.instance(self._datetime.replace(second=second))
 
     def microsecond_(self, microsecond):
-        return self.set_microsecond(microsecond)
-
-    def set_microsecond(self, microsecond):
-        self._datetime = self._datetime.replace(microsecond=microsecond)
-
-        return self
+        return self.instance(self._datetime.replace(microsecond=microsecond))
 
     def timezone_(self, tz):
-        return self.set_timezone(tz)
+        tz = self._safe_create_datetime_zone(tz)
+
+        return self.instance(self._datetime.replace(tzinfo=tz))
 
     def tz_(self, tz):
-        return self.set_timezone(tz)
+        return self.timezone_(tz)
 
-    def timestamp_(self, timestamp):
-        return self.set_timestamp(timestamp)
+    def timestamp_(self, timestamp, tz=pytz.UTC):
+        return self.create_from_timestamp(timestamp, tz)
 
     @property
     def year(self):
@@ -591,7 +558,7 @@ class Pendulum(datetime.datetime):
 
     @property
     def local(self):
-        return self.offset == self.copy().set_timezone(self._local_timezone()).offset
+        return self.offset == self.with_timezone(self._local_timezone()).offset
 
     @property
     def utc(self):
@@ -621,9 +588,9 @@ class Pendulum(datetime.datetime):
     def get_offset(self):
         return int(self._datetime.utcoffset().total_seconds())
 
-    def set_date(self, year, month, day):
+    def with_date(self, year, month, day):
         """
-        Sets the current date to a different date.
+        Returns a new instance with the current date set to a different date.
 
         :param year: The year
         :type year: int
@@ -636,15 +603,15 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        self._datetime = self._datetime.replace(
+        dt = self._datetime.replace(
             year=int(year), month=int(month), day=int(day)
         )
 
-        return self
+        return self.instance(dt)
 
-    def set_time(self, hour, minute, second, microsecond=0):
+    def with_time(self, hour, minute, second, microsecond=0):
         """
-        Sets the current time to a different time.
+        Returns a new instance with the current time to a different time.
 
         :param hour: The hour
         :type hour: int
@@ -660,16 +627,16 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        self._datetime = self._datetime.replace(
+        dt = self._datetime.replace(
             hour=int(hour), minute=int(minute), second=int(second),
             microsecond=microsecond
         )
 
-        return self
+        return self.instance(dt)
 
-    def set_date_time(self, year, month, day, hour, minute, second=0):
+    def with_date_time(self, year, month, day, hour, minute, second, microsecond=0):
         """
-        Set the date and time all together.
+        Return a new instance with the date and time set to the given values.
 
         :type year: int
         :type month: int
@@ -680,11 +647,17 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date(year, month, day).set_time(hour, minute, second)
+        dt = self._datetime.replace(
+            year=year, month=month, day=day,
+            hour=int(hour), minute=int(minute), second=int(second),
+            microsecond=microsecond
+        )
 
-    def set_time_from_string(self, time):
+        return self.instance(dt)
+
+    def with_time_from_string(self, time):
         """
-        Set the time by time string.
+        Returns a new instance with the time set by time string.
 
         :param time: The time string
         :type time: str
@@ -697,21 +670,20 @@ class Pendulum(datetime.datetime):
         minute = time[1] if len(time) > 1 else 0
         second = time[2] if len(time) > 2 else 0
 
-        return self.set_time(hour, minute, second)
+        return self.with_time(hour, minute, second)
 
-    def set_timezone(self, value):
+    def with_timezone(self, value):
         """
-        Set the instance's timezone from a string or object.
+        Returns a new instance with the timezone set to the given value.
 
         :param value: The timezone
         :type value: BaseTzInfo or str or None
 
         :rtype: Pendulum
         """
-        self._tz = self._safe_create_datetime_zone(value)
-        self._datetime = self._datetime.astimezone(self._tz)
+        tz = self._safe_create_datetime_zone(value)
 
-        return self
+        return self.instance(self._datetime.astimezone(tz))
 
     def to(self, tz):
         """
@@ -722,20 +694,19 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_timezone(tz)
+        return self.with_timezone(tz)
 
-    def set_timestamp(self, timestamp):
+    def with_timestamp(self, timestamp):
         """
         Set the date and time based on a Unix timestamp.
 
         :param timestamp: The timestamp
         :type timestamp: int or float
-
         :rtype: Pendulum
         """
-        self._datetime = datetime.datetime.fromtimestamp(timestamp, pytz.UTC).astimezone(self._tz)
+        dt = datetime.datetime.fromtimestamp(timestamp, pytz.UTC).astimezone(self._tz)
 
-        return self
+        return self.instance(dt)
 
     ### Special week days
 
@@ -1891,9 +1862,8 @@ class Pendulum(datetime.datetime):
             hours=hours, minutes=minutes, seconds=seconds,
             microseconds=microseconds, weekday=weekdays
         )
-        self._datetime = self._datetime + delta
 
-        return self
+        return self.instance(self._datetime + delta)
 
     def sub(self, years=0, months=0, weeks=0, days=0,
             hours=0, minutes=0, seconds=0, microseconds=0,
@@ -1932,9 +1902,8 @@ class Pendulum(datetime.datetime):
             hours=hours, minutes=minutes, seconds=seconds,
             microseconds=microseconds, weekday=weekdays
         )
-        self._datetime = self._datetime - delta
 
-        return self
+        return self.instance(self._datetime - delta)
 
     def add_timedelta(self, delta):
         """
@@ -2077,7 +2046,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: int
         """
-        return self.diff_in_seconds(self.copy().start_of_day())
+        return self.diff_in_seconds(self.start_of_day())
 
     def seconds_until_end_of_days(self):
         """
@@ -2085,7 +2054,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: int
         """
-        return self.diff_in_seconds(self.copy().end_of_day())
+        return self.diff_in_seconds(self.end_of_day())
 
     def diff(self, dt, abs=True):
         """
@@ -2194,7 +2163,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_time(0, 0, 0)
+        return self.with_time(0, 0, 0)
 
     def end_of_day(self):
         """
@@ -2202,7 +2171,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_time(23, 59, 59)
+        return self.with_time(23, 59, 59)
 
     def start_of_month(self):
         """
@@ -2210,7 +2179,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date_time(self.year, self.month, 1, 0, 0, 0)
+        return self.with_date_time(self.year, self.month, 1, 0, 0, 0)
 
     def end_of_month(self):
         """
@@ -2218,8 +2187,8 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date_time(
-            self.year, self.month, self.days_in_month, 23, 59, 59
+        return self.with_date_time(
+            self.year, self.month, self.days_in_month, 23, 59, 59, 999999
         )
 
     def start_of_year(self):
@@ -2228,7 +2197,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date_time(self.year, 1, 1, 0, 0, 0)
+        return self.with_date_time(self.year, 1, 1, 0, 0, 0)
 
     def end_of_year(self):
         """
@@ -2236,8 +2205,8 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date_time(
-            self.year, 12, 31, 23, 59, 59
+        return self.with_date_time(
+            self.year, 12, 31, 23, 59, 59, 999999
         )
 
     def start_of_decade(self):
@@ -2248,7 +2217,7 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         year = self.year - self.year % self.YEARS_PER_DECADE
-        return self.set_date_time(year, 1, 1, 0, 0, 0)
+        return self.with_date_time(year, 1, 1, 0, 0, 0)
 
     def end_of_decade(self):
         """
@@ -2259,8 +2228,8 @@ class Pendulum(datetime.datetime):
         """
         year = self.year - self.year % self.YEARS_PER_DECADE + self.YEARS_PER_DECADE - 1
 
-        return self.set_date_time(
-            year, 12, 31, 23, 59, 59
+        return self.with_date_time(
+            year, 12, 31, 23, 59, 59, 999999
         )
 
     def start_of_century(self):
@@ -2271,7 +2240,8 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + 1
-        return self.set_date_time(year, 1, 1, 0, 0, 0)
+
+        return self.with_date_time(year, 1, 1, 0, 0, 0)
 
     def end_of_century(self):
         """
@@ -2282,8 +2252,8 @@ class Pendulum(datetime.datetime):
         """
         year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + self.YEARS_PER_CENTURY
 
-        return self.set_date_time(
-            year, 12, 31, 23, 59, 59
+        return self.with_date_time(
+            year, 12, 31, 23, 59, 59, 999999
         )
 
     def start_of_week(self):
@@ -2293,10 +2263,12 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        if self.day_of_week != self._week_starts_at:
-            self.previous(self._week_starts_at)
+        dt = self
 
-        return self.start_of_day()
+        if self.day_of_week != self._week_starts_at:
+            dt = self.previous(self._week_starts_at)
+
+        return dt.start_of_day()
 
     def end_of_week(self):
         """
@@ -2305,10 +2277,12 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        if self.day_of_week != self._week_ends_at:
-            self.next(self._week_ends_at)
+        dt = self
 
-        return self.end_of_day()
+        if self.day_of_week != self._week_ends_at:
+            dt = self.next(self._week_ends_at)
+
+        return dt.end_of_day()
 
     def next(self, day_of_week=None):
         """
@@ -2327,7 +2301,7 @@ class Pendulum(datetime.datetime):
 
         dt = self.start_of_day().add_day()
         while dt.day_of_week != day_of_week:
-            dt.add_day()
+            dt = dt.add_day()
 
         return dt
 
@@ -2348,7 +2322,7 @@ class Pendulum(datetime.datetime):
 
         dt = self.start_of_day().sub_day()
         while dt.day_of_week != day_of_week:
-            dt.sub_day()
+            dt = dt.sub_day()
 
         return dt
 
@@ -2363,12 +2337,12 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        self.start_of_day()
+        dt = self.start_of_day()
 
         if day_of_week is None:
-            return self.day_(1)
+            return dt.day_(1)
 
-        month = calendar.monthcalendar(self.year, self.month)
+        month = calendar.monthcalendar(dt.year, dt.month)
 
         calendar_day = (day_of_week - 1) % 7
 
@@ -2377,7 +2351,7 @@ class Pendulum(datetime.datetime):
         else:
             day_of_month = month[1][calendar_day]
 
-        return self.day_(day_of_month)
+        return dt.day_(day_of_month)
 
     def last_of_month(self, day_of_week=None):
         """
@@ -2390,12 +2364,12 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        self.start_of_day()
+        dt = self.start_of_day()
 
         if day_of_week is None:
-            return self.day_(self.days_in_month)
+            return dt.day_(self.days_in_month)
 
-        month = calendar.monthcalendar(self.year, self.month)
+        month = calendar.monthcalendar(dt.year, dt.month)
 
         calendar_day = (day_of_week - 1) % 7
 
@@ -2404,7 +2378,7 @@ class Pendulum(datetime.datetime):
         else:
             day_of_month = month[-2][calendar_day]
 
-        return self.day_(day_of_month)
+        return dt.day_(day_of_month)
 
     def nth_of_month(self, nth, day_of_week):
         """
@@ -2423,10 +2397,10 @@ class Pendulum(datetime.datetime):
         if nth == 1:
             return self.first_of_month(day_of_week)
 
-        dt = self.copy().first_of_month()
+        dt = self.first_of_month()
         check = dt.format('%Y-%m')
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
-            dt.next(day_of_week)
+            dt = dt.next(day_of_week)
 
         if dt.format('%Y-%m') == check:
             return self.day_(dt.day).start_of_day()
@@ -2444,7 +2418,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date(self.year, self.quarter * 3 - 2, 1).first_of_month(day_of_week)
+        return self.with_date(self.year, self.quarter * 3 - 2, 1).first_of_month(day_of_week)
 
     def last_of_quarter(self, day_of_week=None):
         """
@@ -2457,7 +2431,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.set_date(self.year, self.quarter * 3, 1).last_of_month(day_of_week)
+        return self.with_date(self.year, self.quarter * 3, 1).last_of_month(day_of_week)
 
     def nth_of_quarter(self, nth, day_of_week):
         """
@@ -2476,17 +2450,17 @@ class Pendulum(datetime.datetime):
         if nth == 1:
             return self.first_of_quarter(day_of_week)
 
-        dt = self.copy().day_(1).month_(self.quarter * 3)
+        dt = self.day_(1).month_(self.quarter * 3)
         last_month = dt.month
         year = dt.year
-        dt.first_of_quarter()
+        dt = dt.first_of_quarter()
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
-            dt.next(day_of_week)
+            dt = dt.next(day_of_week)
 
         if last_month < dt.month or year != dt.year:
             return False
 
-        return self.set_date(self.year, dt.month, dt.day).start_of_day()
+        return self.with_date(self.year, dt.month, dt.day).start_of_day()
 
     def first_of_year(self, day_of_week=None):
         """
@@ -2531,15 +2505,15 @@ class Pendulum(datetime.datetime):
         if nth == 1:
             return self.first_of_year(day_of_week)
 
-        dt = self.copy().first_of_year()
+        dt = self.first_of_year()
         year = dt.year
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
-            dt.next(day_of_week)
+            dt = dt.next(day_of_week)
 
         if year != dt.year:
             return False
 
-        return self.set_date(self.year, dt.month, dt.day).start_of_day()
+        return self.with_date(self.year, dt.month, dt.day).start_of_day()
 
     def average(self, dt=None):
         """
@@ -2602,7 +2576,7 @@ class Pendulum(datetime.datetime):
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
-            return self.copy().sub_timedelta(other)
+            return self.sub_timedelta(other)
 
         return self._get_datetime(other, True).diff(self, False)
 
@@ -2611,7 +2585,7 @@ class Pendulum(datetime.datetime):
 
     def __add__(self, other):
         if isinstance(other, datetime.timedelta):
-            return self.copy().add_timedelta(other)
+            return self.add_timedelta(other)
 
         result = self._datetime + other
 
@@ -2621,7 +2595,6 @@ class Pendulum(datetime.datetime):
         return result
 
     def __radd__(self, other):
-        print('__radd__', other)
         return self.__add__(other)
 
     # Native methods override
@@ -2697,6 +2670,9 @@ class Pendulum(datetime.datetime):
     def __format__(self, format_spec):
         return self.strftime(format_spec)
 
+    def __hash__(self):
+        return self._datetime.__hash__()
+
     def __getnewargs__(self):
         return(self, )
 
@@ -2716,5 +2692,5 @@ class Pendulum(datetime.datetime):
     def __reduce__(self):
         return self.__class__, self._getstate()
 
-min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))
+Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=pytz.UTC))
 Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=pytz.UTC))

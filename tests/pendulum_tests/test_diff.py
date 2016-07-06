@@ -178,10 +178,10 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_now_and_second_with_timezone(self):
         van_now = Pendulum.now('America/Vancouver')
-        here_now = van_now.copy().to(Pendulum.now().timezone)
+        here_now = van_now.to(Pendulum.now().timezone)
 
         with self.wrap_with_test_now(here_now):
-            self.assertEqual('1 second ago', van_now.diff_for_humans())
+            self.assertEqual('1 second ago', here_now.diff_for_humans())
 
     def test_diff_for_humans_now_and_seconds(self):
         with self.wrap_with_test_now():

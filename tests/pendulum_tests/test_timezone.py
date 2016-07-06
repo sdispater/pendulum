@@ -7,13 +7,13 @@ from .. import AbstractTestCase
 
 class TimezoneTest(AbstractTestCase):
 
-    def test_set_timezone(self):
+    def test_with_timezone(self):
         d = Pendulum(2015, 1, 15, 18, 15, 34)
         now = Pendulum(2015, 1, 15, 18, 15, 34)
         self.assertEqual('UTC', d.timezone_name)
         self.assertPendulum(d, now.year, now.month, now.day, now.hour, now.minute)
 
-        d.set_timezone('Europe/Paris')
+        d = d.with_timezone('Europe/Paris')
         self.assertEqual('Europe/Paris', d.timezone_name)
         self.assertPendulum(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
@@ -23,6 +23,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('UTC', d.timezone_name)
         self.assertPendulum(d, now.year, now.month, now.day, now.hour, now.minute)
 
-        d.to('Europe/Paris')
+        d = d.to('Europe/Paris')
         self.assertEqual('Europe/Paris', d.timezone_name)
         self.assertPendulum(d, now.year, now.month, now.day, now.hour + 1, now.minute)

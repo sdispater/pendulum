@@ -15,6 +15,11 @@ You can install Pendulum in 2 different ways:
 Introduction
 ============
 
+.. warning::
+
+    Pendulum is still in development, so expect (not to many I hope) breaking API changes in
+    the future.
+
 Pendulum is a Python package to ease datetimes manipulation.
 
 It is heavily inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
@@ -335,11 +340,12 @@ Pendulum gives access to more attributes and properties than the default `dateti
     Pendulum.now().timezone_name
 
 
-Fluent Setters
+Fluent Helpers
 ==============
 
-Unlike the native ``datetime`` class, ``Pendulum`` instances are mutable.
-However, none of the setters, with the exception of explicitely setting the
+Pendulum provides helpers that returns a new instance with some attributes
+modified compared to the original instance.
+However, none of these helpers, with the exception of explicitely setting the
 timezone, will change the timezone of the instance. Specifically,
 setting the timestamp will not set the corresponding timezone to UTC.
 
@@ -350,7 +356,7 @@ setting the timestamp will not set the corresponding timezone to UTC.
     dt.year_(1975).month_(5).day_(21).hour_(22).minute_(32).second_(5).to_datetime_string()
     '1975-05-21 22:32:05'
 
-    dt.set_date(1975, 5, 21).set_time(22, 32, 5).to_datetime_string()
+    dt.with_date(1975, 5, 21).with_time(22, 32, 5).to_datetime_string()
     '1975-05-21 22:32:05'
 
     dt.timestamp_(169957925).timezone_('Europe/London')
@@ -596,6 +602,7 @@ Addition and Subtraction
 
 To easily adding and subtracting time, you can use the ``add_xxx()``/``sub_xxx()``
 methods or the more generic ones ``add()``/``sub()``.
+Each method returns a new ``Pendulum`` instance.
 
 .. code-block:: python
 
@@ -604,72 +611,72 @@ methods or the more generic ones ``add()``/``sub()``.
     dt.to_datetime_string()
     '2012-01-31 00:00:00'
 
-    dt.add_years(5)
+    dt = dt.add_years(5)
     '2017-01-31 00:00:00'
-    dt.add_year()
+    dt = dt.add_year()
     '2018-01-31 00:00:00'
-    dt.sub_year()
+    dt = dt.sub_year()
     '2017-01-31 00:00:00'
-    dt.sub_years(5)
+    dt = dt.sub_years(5)
     '2012-01-31 00:00:00'
 
-    dt.add_months(60)
+    dt = dt.add_months(60)
     '2017-01-31 00:00:00'
-    dt.add_month()
+    dt = dt.add_month()
     '2017-02-28 00:00:00'
-    dt.sub_month()
+    dt = dt.sub_month()
     '2017-01-28 00:00:00'
-    dt.sub_months(60)
+    dt = dt.sub_months(60)
     '2012-01-28 00:00:00'
 
-    dt.add_days(29)
+    dt = dt.add_days(29)
     '2012-02-26 00:00:00'
-    dt.add_day()
+    dt = dt.add_day()
     '2012-02-27 00:00:00'
-    dt.sub_day()
+    dt = dt.sub_day()
     '2012-02-26 00:00:00'
-    dt.sub_days(29)
+    dt = dt.sub_days(29)
     '2012-01-28 00:00:00'
 
-    dt.add_weeks(3)
+    dt = dt.add_weeks(3)
     '2012-02-18 00:00:00'
-    dt.add_week()
+    dt = dt.add_week()
     '2012-02-25 00:00:00'
-    dt.sub_week()
+    dt = dt.sub_week()
     '2012-02-18 00:00:00'
-    dt.sub_weeks(3)
+    dt = dt.sub_weeks(3)
     '2012-01-28 00:00:00'
 
-    dt.add_hours(24)
+    dt = dt.add_hours(24)
     '2012-01-29 00:00:00'
-    dt.add_hour()
+    dt = dt.add_hour()
     '2012-02-25 01:00:00'
-    dt.sub_hour()
+    dt = dt.sub_hour()
     '2012-02-29 00:00:00'
-    dt.sub_hours(24)
+    dt = dt.sub_hours(24)
     '2012-01-28 00:00:00'
 
-    dt.add_minutes(61)
+    dt = dt.add_minutes(61)
     '2012-01-28 01:01:00'
-    dt.add_minute()
+    dt = dt.add_minute()
     '2012-01-28 01:02:00'
-    dt.sub_minute()
+    dt = dt.sub_minute()
     '2012-01-28 01:01:00'
-    dt.sub_minutes(24)
+    dt = dt.sub_minutes(24)
     '2012-01-28 00:00:00'
 
-    dt.add_seconds(61)
+    dt = dt.add_seconds(61)
     '2012-01-28 00:01:01'
-    dt.add_second()
+    dt = dt.add_second()
     '2012-01-28 00:01:02'
-    dt.sub_second()
+    dt = dt.sub_second()
     '2012-01-28 00:01:01'
-    dt.sub_seconds(61)
+    dt = dt.sub_seconds(61)
     '2012-01-28 00:00:00'
 
-    dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
+    dt = dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
     '2015-04-03 12:31:43'
-    dt.sub(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
+    dt = dt.sub(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
     '2012-01-28 00:00:00'
 
     # You can also add or remove a timedelta
@@ -764,9 +771,9 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     '1 year after'
 
     dt = Pendulum.create_from_date(2011, 8, 1)
-    dt.diff_for_humans(dt.copy.add_month())
+    dt.diff_for_humans(dt.add_month())
     '1 month before'
-    dt.diff_for_humans(dt.copy.sub_month())
+    dt.diff_for_humans(dt.sub_month())
     '1 month after'
 
     Pendulum.now().add_seconds(5).diff_for_humans()
@@ -794,7 +801,7 @@ argument. See the `Localization`_ section for more detail.
 Modifiers
 =========
 
-These group of methods perform helpful modifications to the current instance.
+These group of methods perform helpful modifications to a copy of the current instance.
 You'll notice that the ``start_of_xxx()``, ``next()`` and ``previous()`` methods
 set the time to ``00:00:00`` and the ``end_of_xxx()`` methods set the time to ``23:59:59``.
 

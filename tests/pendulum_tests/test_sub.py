@@ -96,7 +96,7 @@ class SubTest(AbstractTestCase):
         delta = timedelta(days=6, seconds=16, microseconds=654321)
         d = Pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
 
-        d.sub_timedelta(delta)
+        d = d.sub_timedelta(delta)
         self.assertEqual(8, d.day)
         self.assertEqual(11, d.minute)
         self.assertEqual(59, d.second)
