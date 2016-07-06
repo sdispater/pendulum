@@ -19,7 +19,7 @@ setup: setup-python
 
 # test your application (tests in the tests/ directory)
 test:
-	@py.test tests -sq
+	@py.test --cov=pendulum --cov-config .coveragerc tests/ -sq
 
 # run tests against all supported python versions
 tox:

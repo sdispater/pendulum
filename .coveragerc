@@ -1,0 +1,2 @@
+[run]
+omit = pendulum/lang/*,pendulum/_compat.py,pendulum/version.py
