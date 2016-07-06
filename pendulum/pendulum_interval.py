@@ -172,6 +172,27 @@ class PendulumInterval(timedelta):
 
         return self._invert
 
+    def in_years(self):
+        return int(self.total_years())
+
+    def in_months(self):
+        return int(self.total_months())
+
+    def in_weeks(self):
+        return int(self.total_weeks())
+
+    def in_days(self):
+        return int(self.total_days())
+
+    def in_hours(self):
+        return int(self.total_hours())
+
+    def in_minutes(self):
+        return int(self.total_minutes())
+
+    def in_seconds(self):
+        return int(self.total_seconds())
+
     def _sign(self, value):
         if value < 0:
             return -1

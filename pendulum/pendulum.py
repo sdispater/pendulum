@@ -540,7 +540,7 @@ class Pendulum(datetime.datetime):
 
     @property
     def age(self):
-        return self.diff_in_years()
+        return self.diff().in_years()
 
     @property
     def quarter(self):
@@ -1277,7 +1277,7 @@ class Pendulum(datetime.datetime):
         dt1 = self._get_datetime(dt1, True)
         dt2 = self._get_datetime(dt2, True)
 
-        if self.diff_in_seconds(dt1) < self.diff_in_seconds(dt2):
+        if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
             return dt1
 
         return dt2
@@ -1294,7 +1294,7 @@ class Pendulum(datetime.datetime):
         dt1 = self._get_datetime(dt1, True)
         dt2 = self._get_datetime(dt2, True)
 
-        if self.diff_in_seconds(dt1) > self.diff_in_seconds(dt2):
+        if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
             return dt1
 
         return dt2
@@ -1931,115 +1931,6 @@ class Pendulum(datetime.datetime):
 
     # DIFFERENCES
 
-    def diff_in_years(self, dt=None, abs=True):
-        """
-        Get the difference in years.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_years())
-
-    def diff_in_months(self, dt=None, abs=True):
-        """
-        Get the difference in months.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_months())
-
-    def diff_in_days(self, dt=None, abs=True):
-        """
-        Get the difference in days.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_days())
-
-    def diff_in_hours(self, dt=None, abs=True):
-        """
-        Get the difference in hours.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_hours())
-
-    def diff_in_minutes(self, dt=None, abs=True):
-        """
-        Get the difference in minutes.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_minutes())
-
-    def diff_in_seconds(self, dt=None, abs=True):
-        """
-        Get the difference in seconds.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        if dt is None:
-            dt = self.now(self._tz)
-
-        return int(self.diff(dt, abs).total_seconds())
-
-    def diff_in_weeks(self, dt=None, abs=True):
-        """
-        Get the difference in weeks.
-
-        :type dt: Pendulum
-
-        :param: Get the absolute of the difference
-        :type abs: bool
-
-        :rtype: int
-        """
-        return int(self.diff_in_days(dt, abs) / self.DAYS_PER_WEEK)
-
     def seconds_since_midnight(self):
         """
         The number of seconds since midnight.
@@ -2048,7 +1939,7 @@ class Pendulum(datetime.datetime):
         """
         return self.diff_in_seconds(self.start_of_day())
 
-    def seconds_until_end_of_days(self):
+    def seconds_until_end_of_day(self):
         """
         The number of seconds until 23:59:59.
 
@@ -2056,14 +1947,17 @@ class Pendulum(datetime.datetime):
         """
         return self.diff_in_seconds(self.end_of_day())
 
-    def diff(self, dt, abs=True):
+    def diff(self, dt=None, abs=True):
         """
         Returns the difference between two Pendulum objects represented as a PendulumInterval.
 
-        :type dt: Pendulum
+        :type dt: Pendulum or None
 
         :rtype: PendulumInterval
         """
+        if dt is None:
+            dt = self.now(self._tz)
+
         delta = self._get_datetime(dt) - self._datetime
 
         if abs:
@@ -2527,7 +2421,7 @@ class Pendulum(datetime.datetime):
         if dt is None:
             dt = Pendulum.now(self._tz)
 
-        return self.add_seconds(int(self.diff_in_seconds(dt, False) / 2))
+        return self.add_seconds(int(self.diff(dt, False).in_seconds() / 2))
 
     def _get_datetime(self, value, pendulum=False):
         """

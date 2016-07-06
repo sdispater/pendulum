@@ -691,9 +691,12 @@ Each method returns a new ``Pendulum`` instance.
 Difference
 ==========
 
-These functions always return *the total difference expressed* in the specified time requested.
+The ``diff()`` method returns a `PendulumInterval`_ instance that represents the total duration
+between two ``Pendulum`` instances. This interval can be then expressed in various units.
+These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
-Each function below has a default first parameter which is the Pendulum instance to compare to,
+
+The ``diff()`` method has a default first parameter which is the ``Pendulum`` instance to compare to,
 or ``None`` if you want to use ``now()``.
 The 2nd parameter is optional and indicates if you want the return value to be the absolute value
 or a relative value that might have a ``-`` (negative) sign if the passed in date
@@ -705,33 +708,33 @@ This will default to ``True``, return the absolute value. The comparisons are do
     dt_ottawa = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
     dt_vancouver = Pendulum.create_from_date(200, 1, 1, 'America/Vancouver')
 
-    dt_ottawa.diff_in_hours(dt_vancouver)
+    dt_ottawa.diff(dt_vancouver).in_hours()
     3
-    dt_ottawa.diff_in_hours(dt_vancouver, False)
+    dt_ottawa.diff(dt_vancouver, False).in_hours()
     3
-    dt_vancouver.diff_in_hours(dt_ottawa, False)
+    dt_vancouver.diff(dt_ottawa, False).in_hours()
     -3
 
     dt = Pendulum.create(2012, 1, 31, 0)
-    dt.diff_in_days(dt.copy().add_month())
+    dt.diff(dt.add_month()).in_days()
     29
-    dt.diff_in_days(dt.copy().sub_month(), False)
+    dt.diff(dt.sub_month(), False).in_days()
     -31
 
     dt = Pendulum.create(2012, 4, 30, 0)
-    dt.diff_in_days(dt.copy().add_month())
+    dt.diff(dt.add_month()).in_days()
     30
-    dt.diff_in_days(dt.copy().add_week())
+    dt.diff(dt.add_week()).in_days()
     7
 
     dt = Pendulum.create(2012, 1, 1, 0)
-    dt.diff_in_minutes(dt.copy().add_seconds(59))
+    dt.diff(dt.add_seconds(59)).in_minutes()
     0
-    dt.diff_in_minutes(dt.copy().add_seconds(60))
+    dt.diff(dt.add_seconds(60)).in_minutes()
     1
-    dt.diff_in_minutes(dt.copy().add_seconds(119))
+    dt.diff(dt.add_seconds(119)).in_minutes()
     1
-    dt.diff_in_minutes(dt.copy().add_seconds(120))
+    dt.diff(dt.add_seconds(120)).in_minutes()
     2
 
     dt.add_seconds(120).seconds_since_midnight()
