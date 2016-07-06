@@ -342,11 +342,12 @@ Pendulum gives access to more attributes and properties than the default `dateti
     Pendulum.now().timezone_name
 
 
-Fluent Setters
+Fluent Helpers
 ==============
 
-Unlike the native ``datetime`` class, ``Pendulum`` instances are mutable.
-However, none of the setters, with the exception of explicitely setting the
+Pendulum provides helpers that returns a new instance with some attributes
+modified compared to the original instance.
+However, none of these helpers, with the exception of explicitely setting the
 timezone, will change the timezone of the instance. Specifically,
 setting the timestamp will not set the corresponding timezone to UTC.
 
@@ -357,7 +358,7 @@ setting the timestamp will not set the corresponding timezone to UTC.
     dt.year_(1975).month_(5).day_(21).hour_(22).minute_(32).second_(5).to_datetime_string()
     '1975-05-21 22:32:05'
 
-    dt.set_date(1975, 5, 21).set_time(22, 32, 5).to_datetime_string()
+    dt.with_date(1975, 5, 21).with_time(22, 32, 5).to_datetime_string()
     '1975-05-21 22:32:05'
 
     dt.timestamp_(169957925).timezone_('Europe/London')
@@ -603,6 +604,7 @@ Addition and Subtraction
 
 To easily adding and subtracting time, you can use the ``add_xxx()``/``sub_xxx()``
 methods or the more generic ones ``add()``/``sub()``.
+Each method returns a new ``Pendulum`` instance.
 
 .. code-block:: python
 
@@ -611,72 +613,72 @@ methods or the more generic ones ``add()``/``sub()``.
     dt.to_datetime_string()
     '2012-01-31 00:00:00'
 
-    dt.add_years(5)
+    dt = dt.add_years(5)
     '2017-01-31 00:00:00'
-    dt.add_year()
+    dt = dt.add_year()
     '2018-01-31 00:00:00'
-    dt.sub_year()
+    dt = dt.sub_year()
     '2017-01-31 00:00:00'
-    dt.sub_years(5)
+    dt = dt.sub_years(5)
     '2012-01-31 00:00:00'
 
-    dt.add_months(60)
+    dt = dt.add_months(60)
     '2017-01-31 00:00:00'
-    dt.add_month()
+    dt = dt.add_month()
     '2017-02-28 00:00:00'
-    dt.sub_month()
+    dt = dt.sub_month()
     '2017-01-28 00:00:00'
-    dt.sub_months(60)
+    dt = dt.sub_months(60)
     '2012-01-28 00:00:00'
 
-    dt.add_days(29)
+    dt = dt.add_days(29)
     '2012-02-26 00:00:00'
-    dt.add_day()
+    dt = dt.add_day()
     '2012-02-27 00:00:00'
-    dt.sub_day()
+    dt = dt.sub_day()
     '2012-02-26 00:00:00'
-    dt.sub_days(29)
+    dt = dt.sub_days(29)
     '2012-01-28 00:00:00'
 
-    dt.add_weeks(3)
+    dt = dt.add_weeks(3)
     '2012-02-18 00:00:00'
-    dt.add_week()
+    dt = dt.add_week()
     '2012-02-25 00:00:00'
-    dt.sub_week()
+    dt = dt.sub_week()
     '2012-02-18 00:00:00'
-    dt.sub_weeks(3)
+    dt = dt.sub_weeks(3)
     '2012-01-28 00:00:00'
 
-    dt.add_hours(24)
+    dt = dt.add_hours(24)
     '2012-01-29 00:00:00'
-    dt.add_hour()
+    dt = dt.add_hour()
     '2012-02-25 01:00:00'
-    dt.sub_hour()
+    dt = dt.sub_hour()
     '2012-02-29 00:00:00'
-    dt.sub_hours(24)
+    dt = dt.sub_hours(24)
     '2012-01-28 00:00:00'
 
-    dt.add_minutes(61)
+    dt = dt.add_minutes(61)
     '2012-01-28 01:01:00'
-    dt.add_minute()
+    dt = dt.add_minute()
     '2012-01-28 01:02:00'
-    dt.sub_minute()
+    dt = dt.sub_minute()
     '2012-01-28 01:01:00'
-    dt.sub_minutes(24)
+    dt = dt.sub_minutes(24)
     '2012-01-28 00:00:00'
 
-    dt.add_seconds(61)
+    dt = dt.add_seconds(61)
     '2012-01-28 00:01:01'
-    dt.add_second()
+    dt = dt.add_second()
     '2012-01-28 00:01:02'
-    dt.sub_second()
+    dt = dt.sub_second()
     '2012-01-28 00:01:01'
-    dt.sub_seconds(61)
+    dt = dt.sub_seconds(61)
     '2012-01-28 00:00:00'
 
-    dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
+    dt = dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
     '2015-04-03 12:31:43'
-    dt.sub(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
+    dt = dt.sub(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
     '2012-01-28 00:00:00'
 
     # You can also add or remove a timedelta
@@ -689,9 +691,12 @@ methods or the more generic ones ``add()``/``sub()``.
 Difference
 ==========
 
-These functions always return *the total difference expressed* in the specified time requested.
+The ``diff()`` method returns a `PendulumInterval`_ instance that represents the total duration
+between two ``Pendulum`` instances. This interval can be then expressed in various units.
+These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
-Each function below has a default first parameter which is the Pendulum instance to compare to,
+
+The ``diff()`` method has a default first parameter which is the ``Pendulum`` instance to compare to,
 or ``None`` if you want to use ``now()``.
 The 2nd parameter is optional and indicates if you want the return value to be the absolute value
 or a relative value that might have a ``-`` (negative) sign if the passed in date
@@ -703,33 +708,33 @@ This will default to ``True``, return the absolute value. The comparisons are do
     dt_ottawa = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
     dt_vancouver = Pendulum.create_from_date(200, 1, 1, 'America/Vancouver')
 
-    dt_ottawa.diff_in_hours(dt_vancouver)
+    dt_ottawa.diff(dt_vancouver).in_hours()
     3
-    dt_ottawa.diff_in_hours(dt_vancouver, False)
+    dt_ottawa.diff(dt_vancouver, False).in_hours()
     3
-    dt_vancouver.diff_in_hours(dt_ottawa, False)
+    dt_vancouver.diff(dt_ottawa, False).in_hours()
     -3
 
     dt = Pendulum.create(2012, 1, 31, 0)
-    dt.diff_in_days(dt.copy().add_month())
+    dt.diff(dt.add_month()).in_days()
     29
-    dt.diff_in_days(dt.copy().sub_month(), False)
+    dt.diff(dt.sub_month(), False).in_days()
     -31
 
     dt = Pendulum.create(2012, 4, 30, 0)
-    dt.diff_in_days(dt.copy().add_month())
+    dt.diff(dt.add_month()).in_days()
     30
-    dt.diff_in_days(dt.copy().add_week())
+    dt.diff(dt.add_week()).in_days()
     7
 
     dt = Pendulum.create(2012, 1, 1, 0)
-    dt.diff_in_minutes(dt.copy().add_seconds(59))
+    dt.diff(dt.add_seconds(59)).in_minutes()
     0
-    dt.diff_in_minutes(dt.copy().add_seconds(60))
+    dt.diff(dt.add_seconds(60)).in_minutes()
     1
-    dt.diff_in_minutes(dt.copy().add_seconds(119))
+    dt.diff(dt.add_seconds(119)).in_minutes()
     1
-    dt.diff_in_minutes(dt.copy().add_seconds(120))
+    dt.diff(dt.add_seconds(120)).in_minutes()
     2
 
     dt.add_seconds(120).seconds_since_midnight()
@@ -771,9 +776,9 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     '1 year after'
 
     dt = Pendulum.create_from_date(2011, 8, 1)
-    dt.diff_for_humans(dt.copy.add_month())
+    dt.diff_for_humans(dt.add_month())
     '1 month before'
-    dt.diff_for_humans(dt.copy.sub_month())
+    dt.diff_for_humans(dt.sub_month())
     '1 month after'
 
     Pendulum.now().add_seconds(5).diff_for_humans()
@@ -801,9 +806,9 @@ argument. See the `Localization`_ section for more detail.
 Modifiers
 =========
 
-These group of methods perform helpful modifications to the current instance.
-You'll notice that the ``start_of_xxx()``, ``next()`` and ``previous()`` methods
-set the time to ``00:00:00`` and the ``end_of_xxx()`` methods set the time to ``23:59:59``.
+These group of methods perform helpful modifications to a copy of the current instance.
+You'll notice that the ``start_of()``, ``next()`` and ``previous()`` methods
+set the time to ``00:00:00`` and the ``end_of()`` methods set the time to ``23:59:59``.
 
 The only one slightly different is the ``average()`` method.
 It moves your instance to the middle date between itself and the provided Pendulum argument.
@@ -811,59 +816,59 @@ It moves your instance to the middle date between itself and the provided Pendul
 .. code-block:: python
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_day()
+    dt.start_of('day')
     '2012-01-31 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_day()
+    dt.end_of('day')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_month()
+    dt.start_of('month')
     '2012-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_month()
+    dt.end_of('month')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_year()
+    dt.start_of('year')
     '2012-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_year()
+    dt.end_of('year')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_decade()
+    dt.start_of('decade')
     '2010-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_decade()
+    dt.end_of('decade')
     '2019-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_century()
+    dt.start_of('century')
     '2000-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_century()
+    dt.end_of('century')
     '2099-12-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_week()
+    dt.start_of('week')
     '2012-01-30 00:00:00'
     dt.day_of_week == Pendulum.MONDAY
     True # ISO8601 week starts on Monday
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_week()
+    dt.end_of('week')
     '2012-02-05 23:59:59'
     dt.day_of_week == Pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_week()
+    dt.end_of('week')
     '2012-02-05 23:59:59'
     dt.day_of_week == Pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
@@ -894,9 +899,8 @@ It moves your instance to the middle date between itself and the provided Pendul
     '2014-01-15 12:00:00'
 
     # others that are defined that are similar
-    # first_of_month(), last_of_month(), nth_of_month()
-    # first_of_quarter(), last_of_quarter(), nth_of_quarter()
-    # first_of_year(), last_of_year(), nth_of_year()
+    # and tha accept month, quarter and year units
+    # first_of(), last_of(), nth_of()
 
 
 Constants

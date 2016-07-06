@@ -80,3 +80,19 @@ class ConstructTest(AbstractTestCase):
         with self.wrap_with_test_now():
             now = Pendulum.now()
             self.assertEqual(now.timezone_name, 'Europe/Paris')
+
+    def test_today(self):
+        today = Pendulum.today()
+        self.assertIsInstanceOfPendulum(today)
+
+    def test_tomorrow(self):
+        now = Pendulum.now().start_of('day')
+        tomorrow = Pendulum.tomorrow()
+        self.assertIsInstanceOfPendulum(tomorrow)
+        self.assertEqual(1, now.diff(tomorrow).in_days())
+
+    def test_yesterday(self):
+        now = Pendulum.now().start_of('day')
+        yesterday = Pendulum.yesterday()
+        self.assertIsInstanceOfPendulum(yesterday)
+        self.assertEqual(-1, now.diff(yesterday, False).in_days())

@@ -99,7 +99,7 @@ class AddTest(AbstractTestCase):
         delta = timedelta(days=6, seconds=45, microseconds=123456)
         d = Pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
 
-        d.add_timedelta(delta)
+        d = d.add_timedelta(delta)
         self.assertEqual(20, d.day)
         self.assertEqual(13, d.minute)
         self.assertEqual(0, d.second)
