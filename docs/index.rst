@@ -34,7 +34,7 @@ For example all comparisons are done in UTC or in the timezone of the datetime b
     dt_toronto = Pendulum.create_from_date(2012, 1, 1, 'America/Toronto')
     dt_vancouver = Pendulum.create_from_date(2012, 1, 1, 'America/Vancouver')
 
-    print(dt.vancouver.diff_in_hours(dt_toronto)) # 3
+    print(dt_vancouver.diff_in_hours(dt_toronto)) # 3
 
 The default timezone, except when using the ``now()`` method will always be ``UTC``.
 
