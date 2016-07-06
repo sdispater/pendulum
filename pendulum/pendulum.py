@@ -2265,14 +2265,85 @@ class Pendulum(datetime.datetime):
 
         return dt
 
-    def first_of_month(self, day_of_week=None):
+    def first_of(self, unit, day_of_week=None):
+        """
+        Returns an instance set to the first occurrence
+        of a given day of the week in the current unit.
+        If no day_of_week is provided, modify to the first day of the unit.
+        Use the supplied consts to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+
+        Supported units are month, quarter and year.
+
+        :param unit: The unit to use
+        :type unit: str
+
+        :type day_of_week: int or None
+
+        :rtype: Pendulum
+        """
+        if unit not in ['month', 'quarter', 'year']:
+            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+
+        return getattr(self, '_first_of_%s' % unit)(day_of_week)
+
+    def last_of(self, unit, day_of_week=None):
+        """
+        Returns an instance set to the last occurrence
+        of a given day of the week in the current unit.
+        If no day_of_week is provided, modify to the last day of the unit.
+        Use the supplied consts to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+
+        Supported units are month, quarter and year.
+
+        :param unit: The unit to use
+        :type unit: str
+
+        :type day_of_week: int or None
+
+        :rtype: Pendulum
+        """
+        if unit not in ['month', 'quarter', 'year']:
+            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+
+        return getattr(self, '_last_of_%s' % unit)(day_of_week)
+
+    def nth_of(self, unit, nth, day_of_week):
+        """
+        Returns a new instance set to the given occurrence
+        of a given day of the week in the current unit.
+        If the calculated occurrence is outside the scope of the current unit,
+        then raise an error. Use the supplied consts
+        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+
+        Supported units are month, quarter and year.
+
+        :param unit: The unit to use
+        :type unit: str
+
+        :type nth: int
+
+        :type day_of_week: int or None
+
+        :rtype: Pendulum
+        """
+        if unit not in ['month', 'quarter', 'year']:
+            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+
+        dt = getattr(self, '_nth_of_%s' % unit)(nth, day_of_week)
+        if dt is False:
+            raise PendulumException('Unable to find occurence %d of %s in %s'
+                                    % (nth, self._days[day_of_week], unit))
+
+        return dt
+
+    def _first_of_month(self, day_of_week):
         """
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
         modify to the first day of the month. Use the supplied consts
         to indicate the desired day_of_week, ex. Pendulum.MONDAY.
 
-        :type day_of_week: int or None
+        :type day_of_week: int
 
         :rtype: Pendulum
         """
@@ -2292,7 +2363,7 @@ class Pendulum(datetime.datetime):
 
         return dt.day_(day_of_month)
 
-    def last_of_month(self, day_of_week=None):
+    def _last_of_month(self, day_of_week=None):
         """
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -2319,7 +2390,7 @@ class Pendulum(datetime.datetime):
 
         return dt.day_(day_of_month)
 
-    def nth_of_month(self, nth, day_of_week):
+    def _nth_of_month(self, nth, day_of_week):
         """
         Modify to the given occurrence of a given day of the week
         in the current month. If the calculated occurrence is outside,
@@ -2334,9 +2405,9 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if nth == 1:
-            return self.first_of_month(day_of_week)
+            return self.first_of('month', day_of_week)
 
-        dt = self.first_of_month()
+        dt = self.first_of('month')
         check = dt.format('%Y-%m')
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
@@ -2346,7 +2417,7 @@ class Pendulum(datetime.datetime):
 
         return False
 
-    def first_of_quarter(self, day_of_week=None):
+    def _first_of_quarter(self, day_of_week=None):
         """
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -2357,9 +2428,9 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_date(self.year, self.quarter * 3 - 2, 1).first_of_month(day_of_week)
+        return self.with_date(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
 
-    def last_of_quarter(self, day_of_week=None):
+    def _last_of_quarter(self, day_of_week=None):
         """
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -2370,9 +2441,9 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_date(self.year, self.quarter * 3, 1).last_of_month(day_of_week)
+        return self.with_date(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
 
-    def nth_of_quarter(self, nth, day_of_week):
+    def _nth_of_quarter(self, nth, day_of_week):
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
@@ -2387,12 +2458,12 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if nth == 1:
-            return self.first_of_quarter(day_of_week)
+            return self.first_of('quarter', day_of_week)
 
         dt = self.day_(1).month_(self.quarter * 3)
         last_month = dt.month
         year = dt.year
-        dt = dt.first_of_quarter()
+        dt = dt.first_of('quarter')
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
@@ -2401,7 +2472,7 @@ class Pendulum(datetime.datetime):
 
         return self.with_date(self.year, dt.month, dt.day).start_of('day')
 
-    def first_of_year(self, day_of_week=None):
+    def _first_of_year(self, day_of_week=None):
         """
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -2412,9 +2483,9 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.month_(1).first_of_month(day_of_week)
+        return self.month_(1).first_of('month', day_of_week)
 
-    def last_of_year(self, day_of_week=None):
+    def _last_of_year(self, day_of_week=None):
         """
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -2425,9 +2496,9 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.month_(self.MONTHS_PER_YEAR).last_of_month(day_of_week)
+        return self.month_(self.MONTHS_PER_YEAR).last_of('month', day_of_week)
 
-    def nth_of_year(self, nth, day_of_week):
+    def _nth_of_year(self, nth, day_of_week):
         """
         Modify to the given occurrence of a given day of the week
         in the current year. If the calculated occurrence is outside,
@@ -2442,9 +2513,9 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if nth == 1:
-            return self.first_of_year(day_of_week)
+            return self.first_of('year', day_of_week)
 
-        dt = self.first_of_year()
+        dt = self.first_of('year')
         year = dt.year
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)

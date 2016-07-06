@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pendulum import Pendulum
+from pendulum.exceptions import PendulumException
 
 from .. import AbstractTestCase
 
@@ -72,140 +73,140 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         self.assertPendulum(d, 1975, 5, 17, 0, 0, 0)
 
     def test_first_day_of_month(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_month()
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('month', )
         self.assertPendulum(d, 1975, 11, 1, 0, 0, 0)
 
     def test_first_wednesday_of_month(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_month(Pendulum.WEDNESDAY)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('month', Pendulum.WEDNESDAY)
         self.assertPendulum(d, 1975, 11, 5, 0, 0, 0)
 
     def test_first_friday_of_month(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_month(5)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('month', 5)
         self.assertPendulum(d, 1975, 11, 7, 0, 0, 0)
 
     def test_last_day_of_month(self):
-        d = Pendulum.create_from_date(1975, 12, 5).last_of_month()
+        d = Pendulum.create_from_date(1975, 12, 5).last_of('month', )
         self.assertPendulum(d, 1975, 12, 31, 0, 0, 0)
 
     def test_last_tuesday_of_month(self):
-        d = Pendulum.create_from_date(1975, 12, 1).last_of_month(Pendulum.TUESDAY)
+        d = Pendulum.create_from_date(1975, 12, 1).last_of('month', Pendulum.TUESDAY)
         self.assertPendulum(d, 1975, 12, 30, 0, 0, 0)
 
     def test_last_friday_of_month(self):
-        d = Pendulum.create_from_date(1975, 12, 5).last_of_month(5)
+        d = Pendulum.create_from_date(1975, 12, 5).last_of('month', 5)
         self.assertPendulum(d, 1975, 12, 26, 0, 0, 0)
 
     def test_nth_of_month_outside_scope(self):
         d = Pendulum.create_from_date(1975, 12, 5)
 
-        self.assertFalse(d.nth_of_month(6, Pendulum.MONDAY))
+        self.assertRaises(PendulumException, d.nth_of, 'month', 6, Pendulum.MONDAY)
 
     def test_nth_of_month_outside_year(self):
         d = Pendulum.create_from_date(1975, 12, 5)
 
-        self.assertFalse(d.nth_of_month(55, Pendulum.MONDAY))
+        self.assertRaises(PendulumException, d.nth_of, 'month', 55, Pendulum.MONDAY)
 
     def test_2nd_monday_of_month(self):
-        d = Pendulum.create_from_date(1975, 12, 5).nth_of_month(2, Pendulum.MONDAY)
+        d = Pendulum.create_from_date(1975, 12, 5).nth_of('month', 2, Pendulum.MONDAY)
 
         self.assertPendulum(d, 1975, 12, 8, 0, 0, 0)
 
     def test_3rd_wednesday_of_month(self):
-        d = Pendulum.create_from_date(1975, 12, 5).nth_of_month(3, 3)
+        d = Pendulum.create_from_date(1975, 12, 5).nth_of('month', 3, 3)
 
         self.assertPendulum(d, 1975, 12, 17, 0, 0, 0)
 
     def test_first_day_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_quarter()
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('quarter', )
         self.assertPendulum(d, 1975, 10, 1, 0, 0, 0)
 
     def test_first_wednesday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_quarter(Pendulum.WEDNESDAY)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('quarter', Pendulum.WEDNESDAY)
         self.assertPendulum(d, 1975, 10, 1, 0, 0, 0)
 
     def test_first_friday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_quarter(5)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('quarter', 5)
         self.assertPendulum(d, 1975, 10, 3, 0, 0, 0)
 
     def test_first_of_quarter_from_a_day_that_will_not_exist_in_the_first_month(self):
-        d = Pendulum.create_from_date(2014, 5, 31).first_of_quarter()
+        d = Pendulum.create_from_date(2014, 5, 31).first_of('quarter', )
         self.assertPendulum(d, 2014, 4, 1, 0, 0, 0)
 
     def test_last_day_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_quarter()
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('quarter', )
         self.assertPendulum(d, 1975, 9, 30, 0, 0, 0)
 
     def test_last_tuesday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_quarter(Pendulum.TUESDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('quarter', Pendulum.TUESDAY)
         self.assertPendulum(d, 1975, 9, 30, 0, 0, 0)
 
     def test_last_friday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_quarter(Pendulum.FRIDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('quarter', Pendulum.FRIDAY)
         self.assertPendulum(d, 1975, 9, 26, 0, 0, 0)
 
     def test_last_day_of_quarter_that_will_not_exist_in_the_last_month(self):
-        d = Pendulum.create_from_date(2014, 5, 31).last_of_quarter()
+        d = Pendulum.create_from_date(2014, 5, 31).last_of('quarter', )
         self.assertPendulum(d, 2014, 6, 30, 0, 0, 0)
 
     def test_nth_of_quarter_outside_scope(self):
         d = Pendulum.create_from_date(1975, 1, 5)
 
-        self.assertFalse(d.nth_of_quarter(20, Pendulum.MONDAY))
+        self.assertRaises(PendulumException, d.nth_of, 'quarter', 20, Pendulum.MONDAY)
 
     def test_nth_of_quarter_outside_year(self):
         d = Pendulum.create_from_date(1975, 1, 5)
 
-        self.assertFalse(d.nth_of_quarter(55, Pendulum.MONDAY))
+        self.assertRaises(PendulumException, d.nth_of, 'quarter', 55, Pendulum.MONDAY)
 
     def test_nth_of_quarter_from_a_day_that_will_not_exist_in_the_first_month(self):
-        d = Pendulum.create_from_date(2014, 5, 31).nth_of_quarter(2, Pendulum.MONDAY)
+        d = Pendulum.create_from_date(2014, 5, 31).nth_of('quarter', 2, Pendulum.MONDAY)
         self.assertPendulum(d, 2014, 4, 14, 0, 0, 0)
 
     def test_2nd_monday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 8, 5).nth_of_quarter(2, Pendulum.MONDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).nth_of('quarter', 2, Pendulum.MONDAY)
         self.assertPendulum(d, 1975, 7, 14, 0, 0, 0)
 
     def test_3rd_wednesday_of_quarter(self):
-        d = Pendulum.create_from_date(1975, 8, 5).nth_of_quarter(3, 3)
+        d = Pendulum.create_from_date(1975, 8, 5).nth_of('quarter', 3, 3)
         self.assertPendulum(d, 1975, 7, 16, 0, 0, 0)
 
     def test_first_day_of_year(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_year()
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('year', )
         self.assertPendulum(d, 1975, 1, 1, 0, 0, 0)
 
     def test_first_wednesday_of_year(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_year(Pendulum.WEDNESDAY)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('year', Pendulum.WEDNESDAY)
         self.assertPendulum(d, 1975, 1, 1, 0, 0, 0)
 
     def test_first_friday_of_year(self):
-        d = Pendulum.create_from_date(1975, 11, 21).first_of_year(5)
+        d = Pendulum.create_from_date(1975, 11, 21).first_of('year', 5)
         self.assertPendulum(d, 1975, 1, 3, 0, 0, 0)
 
     def test_last_day_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_year()
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('year', )
         self.assertPendulum(d, 1975, 12, 31, 0, 0, 0)
 
     def test_last_tuesday_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_year(Pendulum.TUESDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('year', Pendulum.TUESDAY)
         self.assertPendulum(d, 1975, 12, 30, 0, 0, 0)
 
     def test_last_friday_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 5).last_of_year(5)
+        d = Pendulum.create_from_date(1975, 8, 5).last_of('year', 5)
         self.assertPendulum(d, 1975, 12, 26, 0, 0, 0)
 
     def test_nth_of_year_outside_scope(self):
         d = Pendulum.create_from_date(1975, 1, 5)
 
-        self.assertFalse(d.nth_of_year(55, Pendulum.MONDAY))
+        self.assertRaises(PendulumException, d.nth_of, 'year', 55, Pendulum.MONDAY)
 
     def test_2nd_monday_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 5).nth_of_year(2, Pendulum.MONDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).nth_of('year', 2, Pendulum.MONDAY)
         self.assertPendulum(d, 1975, 1, 13, 0, 0, 0)
 
     def test_2rd_wednesday_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 5).nth_of_year(3, Pendulum.WEDNESDAY)
+        d = Pendulum.create_from_date(1975, 8, 5).nth_of('year', 3, Pendulum.WEDNESDAY)
         self.assertPendulum(d, 1975, 1, 15, 0, 0, 0)
 
     def test_7th_thursday_of_year(self):
-        d = Pendulum.create_from_date(1975, 8, 31).nth_of_year(7, Pendulum.THURSDAY)
+        d = Pendulum.create_from_date(1975, 8, 31).nth_of('year', 7, Pendulum.THURSDAY)
         self.assertPendulum(d, 1975, 2, 13, 0, 0, 0)

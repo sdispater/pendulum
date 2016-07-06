@@ -899,9 +899,8 @@ It moves your instance to the middle date between itself and the provided Pendul
     '2014-01-15 12:00:00'
 
     # others that are defined that are similar
-    # first_of_month(), last_of_month(), nth_of_month()
-    # first_of_quarter(), last_of_quarter(), nth_of_quarter()
-    # first_of_year(), last_of_year(), nth_of_year()
+    # and tha accept month, quarter and year units
+    # first_of(), last_of(), nth_of()
 
 
 Constants
