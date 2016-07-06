@@ -24,27 +24,27 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         Pendulum.set_week_starts_at(Pendulum.MONDAY)
 
     def test_start_of_week(self):
-        d = Pendulum(1980, 8, 7, 12, 11, 9).start_of_week()
+        d = Pendulum(1980, 8, 7, 12, 11, 9).start_of('week')
         self.assertPendulum(d, 1980, 8, 4, 0, 0, 0)
 
     def test_start_of_week_from_week_start(self):
-        d = Pendulum(1980, 8, 4).start_of_week()
+        d = Pendulum(1980, 8, 4).start_of('week')
         self.assertPendulum(d, 1980, 8, 4, 0, 0, 0)
 
     def test_start_of_week_crossing_year_boundary(self):
-        d = Pendulum.create_from_date(2014, 1, 1).start_of_week()
+        d = Pendulum.create_from_date(2014, 1, 1).start_of('week')
         self.assertPendulum(d, 2013, 12, 30, 0, 0, 0)
 
     def test_end_of_week(self):
-        d = Pendulum(1980, 8, 7, 12, 11, 9).end_of_week()
+        d = Pendulum(1980, 8, 7, 12, 11, 9).end_of('week')
         self.assertPendulum(d, 1980, 8, 10, 23, 59, 59)
 
     def test_end_of_week_from_week_end(self):
-        d = Pendulum(1980, 8, 10).end_of_week()
+        d = Pendulum(1980, 8, 10).end_of('week')
         self.assertPendulum(d, 1980, 8, 10, 23, 59, 59)
 
     def test_end_of_week_crossing_year_boundary(self):
-        d = Pendulum.create_from_date(2013, 12, 31).end_of_week()
+        d = Pendulum.create_from_date(2013, 12, 31).end_of('week')
         self.assertPendulum(d, 2014, 1, 5, 23, 59, 59)
 
     def test_next(self):
