@@ -97,6 +97,8 @@ class Pendulum(datetime.datetime):
     _CUSTOM_FORMATTERS = ['P', 't']
     _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
 
+    _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
+
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
         """
@@ -262,7 +264,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls.now(tz).start_of_day()
+        return cls.now(tz).start_of('day')
 
     @classmethod
     def tomorrow(cls, tz=None):
@@ -2050,8 +2052,51 @@ class Pendulum(datetime.datetime):
         return self.translator().trans(trans_id, {'time': time}, locale=locale)
 
     # Modifiers
+    def start_of(self, unit):
+        """
+        Returns a copy of the instance with the time reset
+        with the following rules:
 
-    def start_of_day(self):
+        * day: time to 00:00:00
+        * week: date to first day of the week and time to 00:00:00
+        * month: date to first day of the month and time to 00:00:00
+        * year: date to first day of the year and time to 00:00:00
+        * decade: date to first day of the decade and time to 00:00:00
+        * century: date to first day of century and time to 00:00:00
+
+        :param unit: The unit to reset to
+        :type unit: str
+
+        :rtype: Pendulum
+        """
+        if unit not in self._MODIFIERS_VALID_UNITS:
+            raise PendulumException('Invalid unit "%s" for start_of()' % unit)
+
+        return getattr(self, '_start_of_%s' % unit)()
+
+    def end_of(self, unit):
+        """
+        Returns a copy of the instance with the time reset
+        with the following rules:
+
+        * day: time to 23:59:59
+        * week: date to last day of the week and time to 23:59:59
+        * month: date to last day of the month and time to 23:59:59
+        * year: date to last day of the year and time to 23:59:59
+        * decade: date to last day of the decade and time to 23:59:59
+        * century: date to last day of century and time to 23:59:59
+
+        :param unit: The unit to reset to
+        :type unit: str
+
+        :rtype: Pendulum
+        """
+        if unit not in self._MODIFIERS_VALID_UNITS:
+            raise PendulumException('Invalid unit "%s" for end_of()' % unit)
+
+        return getattr(self, '_end_of_%s' % unit)()
+
+    def _start_of_day(self):
         """
         Reset the time to 00:00:00
 
@@ -2059,7 +2104,7 @@ class Pendulum(datetime.datetime):
         """
         return self.with_time(0, 0, 0)
 
-    def end_of_day(self):
+    def _end_of_day(self):
         """
         Reset the time to 23:59:59
 
@@ -2067,7 +2112,7 @@ class Pendulum(datetime.datetime):
         """
         return self.with_time(23, 59, 59)
 
-    def start_of_month(self):
+    def _start_of_month(self):
         """
         Reset the date to the first day of the month and the time to 00:00:00.
 
@@ -2075,7 +2120,7 @@ class Pendulum(datetime.datetime):
         """
         return self.with_date_time(self.year, self.month, 1, 0, 0, 0)
 
-    def end_of_month(self):
+    def _end_of_month(self):
         """
         Reset the date to the last day of the month and the time to 23:59:59.
 
@@ -2085,7 +2130,7 @@ class Pendulum(datetime.datetime):
             self.year, self.month, self.days_in_month, 23, 59, 59, 999999
         )
 
-    def start_of_year(self):
+    def _start_of_year(self):
         """
         Reset the date to the first day of the year and the time to 00:00:00.
 
@@ -2093,7 +2138,7 @@ class Pendulum(datetime.datetime):
         """
         return self.with_date_time(self.year, 1, 1, 0, 0, 0)
 
-    def end_of_year(self):
+    def _end_of_year(self):
         """
         Reset the date to the last day of the year and the time to 23:59:59.
 
@@ -2103,7 +2148,7 @@ class Pendulum(datetime.datetime):
             self.year, 12, 31, 23, 59, 59, 999999
         )
 
-    def start_of_decade(self):
+    def _start_of_decade(self):
         """
         Reset the date to the first day of the decade
         and the time to 00:00:00.
@@ -2113,7 +2158,7 @@ class Pendulum(datetime.datetime):
         year = self.year - self.year % self.YEARS_PER_DECADE
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
-    def end_of_decade(self):
+    def _end_of_decade(self):
         """
         Reset the date to the last day of the decade
         and the time to 23:59:59.
@@ -2126,7 +2171,7 @@ class Pendulum(datetime.datetime):
             year, 12, 31, 23, 59, 59, 999999
         )
 
-    def start_of_century(self):
+    def _start_of_century(self):
         """
         Reset the date to the first day of the century
         and the time to 00:00:00.
@@ -2137,7 +2182,7 @@ class Pendulum(datetime.datetime):
 
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
-    def end_of_century(self):
+    def _end_of_century(self):
         """
         Reset the date to the last day of the century
         and the time to 23:59:59.
@@ -2150,7 +2195,7 @@ class Pendulum(datetime.datetime):
             year, 12, 31, 23, 59, 59, 999999
         )
 
-    def start_of_week(self):
+    def _start_of_week(self):
         """
         Reset the date to the first day of the week
         and the time to 00:00:00.
@@ -2162,9 +2207,9 @@ class Pendulum(datetime.datetime):
         if self.day_of_week != self._week_starts_at:
             dt = self.previous(self._week_starts_at)
 
-        return dt.start_of_day()
+        return dt.start_of('day')
 
-    def end_of_week(self):
+    def _end_of_week(self):
         """
         Reset the date to the last day of the week
         and the time to 23:59:59.
@@ -2176,7 +2221,7 @@ class Pendulum(datetime.datetime):
         if self.day_of_week != self._week_ends_at:
             dt = self.next(self._week_ends_at)
 
-        return dt.end_of_day()
+        return dt.end_of('day')
 
     def next(self, day_of_week=None):
         """
@@ -2193,7 +2238,7 @@ class Pendulum(datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of_day().add_day()
+        dt = self.start_of('day').add_day()
         while dt.day_of_week != day_of_week:
             dt = dt.add_day()
 
@@ -2214,7 +2259,7 @@ class Pendulum(datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of_day().sub_day()
+        dt = self.start_of('day').sub_day()
         while dt.day_of_week != day_of_week:
             dt = dt.sub_day()
 
@@ -2231,7 +2276,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = self.start_of_day()
+        dt = self.start_of('day')
 
         if day_of_week is None:
             return dt.day_(1)
@@ -2258,7 +2303,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = self.start_of_day()
+        dt = self.start_of('day')
 
         if day_of_week is None:
             return dt.day_(self.days_in_month)
@@ -2297,7 +2342,7 @@ class Pendulum(datetime.datetime):
             dt = dt.next(day_of_week)
 
         if dt.format('%Y-%m') == check:
-            return self.day_(dt.day).start_of_day()
+            return self.day_(dt.day).start_of('day')
 
         return False
 
@@ -2354,7 +2399,7 @@ class Pendulum(datetime.datetime):
         if last_month < dt.month or year != dt.year:
             return False
 
-        return self.with_date(self.year, dt.month, dt.day).start_of_day()
+        return self.with_date(self.year, dt.month, dt.day).start_of('day')
 
     def first_of_year(self, day_of_week=None):
         """
@@ -2407,7 +2452,7 @@ class Pendulum(datetime.datetime):
         if year != dt.year:
             return False
 
-        return self.with_date(self.year, dt.month, dt.day).start_of_day()
+        return self.with_date(self.year, dt.month, dt.day).start_of('day')
 
     def average(self, dt=None):
         """
