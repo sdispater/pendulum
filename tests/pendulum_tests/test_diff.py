@@ -537,3 +537,11 @@ class DiffTest(AbstractTestCase):
         with self.wrap_with_test_now():
             self.assertEqual('1 year', Pendulum.now().diff_for_humans(Pendulum.now().sub_years(1), True))
             self.assertEqual('1 year', Pendulum.now().diff_for_humans(Pendulum.now().add_years(1), True))
+
+    def test_seconds_since_midnight(self):
+        d = Pendulum.create(2016, 7, 5, 12, 32, 25, 0)
+        self.assertEqual(25 + 32 * 60 + 12 * 3600, d.seconds_since_midnight())
+
+    def test_seconds_until_end_of_day(self):
+        d = Pendulum.create(2016, 7, 5, 12, 32, 25, 0)
+        self.assertEqual(34 + 27 * 60 + 11 * 3600, d.seconds_until_end_of_day())

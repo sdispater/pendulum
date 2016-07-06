@@ -1939,7 +1939,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: int
         """
-        return self.diff_in_seconds(self.start_of_day())
+        return self.diff(self.start_of('day')).in_seconds()
 
     def seconds_until_end_of_day(self):
         """
@@ -1947,7 +1947,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: int
         """
-        return self.diff_in_seconds(self.end_of_day())
+        return self.diff(self.end_of('day')).in_seconds()
 
     def diff(self, dt=None, abs=True):
         """
