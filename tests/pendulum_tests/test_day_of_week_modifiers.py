@@ -13,6 +13,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
             [Pendulum.SATURDAY, Pendulum.SUNDAY],
             Pendulum.get_weekend_days()
         )
+        Pendulum.set_weekend_days([Pendulum.FRIDAY, Pendulum.SATURDAY])
+        self.assertEqual(
+            [Pendulum.FRIDAY, Pendulum.SATURDAY],
+            Pendulum.get_weekend_days()
+        )
+        Pendulum.set_weekend_days([Pendulum.SATURDAY, Pendulum.SUNDAY])
 
     def test_get_week_ends_at(self):
         Pendulum.set_week_ends_at(Pendulum.SATURDAY)

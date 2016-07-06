@@ -49,6 +49,25 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(49, new.second)
         self.assertEqual(20, d.second)
 
+    def test_fluid_microsecond_setter(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20, 123456)
+        new = d.microsecond_(987654)
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual(987654, new.microsecond)
+        self.assertEqual(123456, d.microsecond)
+
+    def test_fluid_timezone_setter(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20)
+        new = d.timezone_('Europe/Paris')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual('Europe/Paris', new.timezone_name)
+
+    def test_fluid_tz_setter(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20)
+        new = d.tz_('Europe/Paris')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual('Europe/Paris', new.timezone_name)
+
     def test_fluid_with_date(self):
         d = Pendulum.create(2016, 7, 2, 0, 41, 20)
         new = d.with_date(1995, 11, 9)
@@ -84,6 +103,17 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(2016, d.year)
         self.assertEqual(7, d.month)
         self.assertEqual(2, d.day)
+        self.assertEqual(0, d.hour)
+        self.assertEqual(41, d.minute)
+        self.assertEqual(20, d.second)
+
+    def test_with_time_from_string(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20)
+        new = d.with_time_from_string('05:32:49')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual(5, new.hour)
+        self.assertEqual(32, new.minute)
+        self.assertEqual(49, new.second)
         self.assertEqual(0, d.hour)
         self.assertEqual(41, d.minute)
         self.assertEqual(20, d.second)

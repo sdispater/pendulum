@@ -18,6 +18,14 @@ class LocalizationTest(AbstractTestCase):
         'PT_BR'
     ]
 
+    def test_get_locale(self):
+        self.assertEqual('en', Pendulum.get_locale())
+
+    def test_set_locale(self):
+        Pendulum.set_locale('fr')
+        self.assertEqual('fr', Pendulum.get_locale())
+        Pendulum.set_locale('en')
+
     def test_set_locale_malformed_locales(self):
         for locale in self.malformed_locales:
             self.assertTrue(Pendulum.set_locale(locale))

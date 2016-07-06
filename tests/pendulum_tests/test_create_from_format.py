@@ -31,3 +31,9 @@ class CreateFromFormatTest(AbstractTestCase):
         )
         self.assertPendulum(d, 1975, 5, 21, 22, 32, 11)
         self.assertEqual(123456, d.microsecond)
+
+    def test_strptime_is_create_from_format(self):
+        d = Pendulum.strptime('1975-05-21 22:32:11', '%Y-%m-%d %H:%M:%S')
+        self.assertPendulum(d, 1975, 5, 21, 22, 32, 11)
+        self.assertIsInstanceOfPendulum(d)
+        self.assertEqual('UTC', d.timezone_name)

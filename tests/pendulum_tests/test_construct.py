@@ -75,6 +75,9 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(timezone, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
+    def test_parse_with_invalid_string(self):
+        self.assertRaises(ValueError, Pendulum.parse, 'Invalid_string')
+
     def test_honor_tz_env_variable(self):
         os.environ['TZ'] = 'Europe/Paris'
         with self.wrap_with_test_now():

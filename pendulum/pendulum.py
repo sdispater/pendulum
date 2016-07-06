@@ -942,7 +942,7 @@ class Pendulum(datetime.datetime):
             else:
                 return {1: 'st', 2: 'nd', 3: 'rd'}.get(self.day % 10, "th")
 
-        raise PendulumException('Unknown formatter %%%s' % fmt)
+        raise ValueError('Unknown formatter %%%s' % fmt)
 
     def __str__(self):
         if self._to_string_format is None:
@@ -1327,7 +1327,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.min(dt)
+        return self.min_(dt)
 
     def max_(self, dt=None):
         """
@@ -1355,7 +1355,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.max(dt)
+        return self.max_(dt)
 
     def is_week_day(self):
         """
@@ -2073,7 +2073,7 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise PendulumException('Invalid unit "%s" for start_of()' % unit)
+            raise ValueError('Invalid unit "%s" for start_of()' % unit)
 
         return getattr(self, '_start_of_%s' % unit)()
 
@@ -2095,7 +2095,7 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise PendulumException('Invalid unit "%s" for end_of()' % unit)
+            raise ValueError('Invalid unit "%s" for end_of()' % unit)
 
         return getattr(self, '_end_of_%s' % unit)()
 

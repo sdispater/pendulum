@@ -185,3 +185,9 @@ class StartEndOfTest(AbstractTestCase):
         d1 = Pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
         d2 = Pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
         self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30)
+
+    def start_of_with_invalid_unit(self):
+        self.assertRaises(ValueError, Pendulum.now().start_of('invalid'))
+
+    def end_of_with_invalid_unit(self):
+        self.assertRaises(ValueError, Pendulum.now().end_of('invalid'))

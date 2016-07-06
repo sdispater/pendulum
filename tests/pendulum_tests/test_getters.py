@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pytz
 from pendulum import Pendulum
 
 from .. import AbstractTestCase
@@ -38,6 +39,10 @@ class GettersTest(AbstractTestCase):
         d = Pendulum(1234, 5, 6, 7, 8, 9, 101112)
         self.assertEqual(101112, d.microsecond)
 
+    def test_tzinfo(self):
+        d = Pendulum.now()
+        self.assertEqual(pytz.timezone('America/Toronto').zone, d.tzinfo.zone)
+
     def test_day_of_week(self):
         d = Pendulum(2012, 5, 7, 7, 8, 9)
         self.assertEqual(Pendulum.MONDAY, d.day_of_week)
@@ -54,6 +59,10 @@ class GettersTest(AbstractTestCase):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
         self.assertEqual(0, d.timestamp)
         self.assertEqual(60, d.add_minute().timestamp)
+
+    def test_float_timestamp(self):
+        d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
+        self.assertEqual(0.123456, d.float_timestamp)
 
     def test_age(self):
         d = Pendulum.now()
@@ -141,3 +150,56 @@ class GettersTest(AbstractTestCase):
 
         d = Pendulum.create_from_date(2000, 1, 1, -5)
         self.assertEqual(None, d.timezone_name)
+
+    def test_is_week_day(self):
+        d = Pendulum.now().next(Pendulum.MONDAY)
+        self.assertTrue(d.is_week_day())
+        d = d.next(Pendulum.SATURDAY)
+        self.assertFalse(d.is_week_day())
+
+    def test_is_weekend(self):
+        d = Pendulum.now().next(Pendulum.MONDAY)
+        self.assertFalse(d.is_weekend())
+        d = d.next(Pendulum.SATURDAY)
+        self.assertTrue(d.is_weekend())
+
+    def test_is_today(self):
+        d = Pendulum.now()
+        self.assertTrue(d.is_today())
+        d = d.sub(days=1)
+        self.assertFalse(d.is_today())
+
+    def test_is_yesterday(self):
+        d = Pendulum.now()
+        self.assertFalse(d.is_yesterday())
+        d = d.sub(days=1)
+        self.assertTrue(d.is_yesterday())
+
+    def test_is_tomorrow(self):
+        d = Pendulum.now()
+        self.assertFalse(d.is_tomorrow())
+        d = d.add(days=1)
+        self.assertTrue(d.is_tomorrow())
+
+    def test_is_future(self):
+        d = Pendulum.now()
+        self.assertFalse(d.is_future())
+        d = d.add(days=1)
+        self.assertTrue(d.is_future())
+
+    def test_is_past(self):
+        with self.wrap_with_test_now():
+            d = Pendulum.now()
+            self.assertFalse(d.is_past())
+            d = d.sub(days=1)
+            self.assertTrue(d.is_past())
+
+    def is_same_day(self):
+        d = Pendulum.now()
+        d2 = d.start_of('day')
+        self.assertTrue(d.is_same_day(d2))
+
+    def is_day_of_week(self):
+        for i in Pendulum._days.values():
+            d = Pendulum.now().next(getattr(Pendulum, i.upper()))
+            self.assertTrue(getattr(d, 'is_%s' % i.lower())())
