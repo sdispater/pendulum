@@ -807,8 +807,8 @@ Modifiers
 =========
 
 These group of methods perform helpful modifications to a copy of the current instance.
-You'll notice that the ``start_of_xxx()``, ``next()`` and ``previous()`` methods
-set the time to ``00:00:00`` and the ``end_of_xxx()`` methods set the time to ``23:59:59``.
+You'll notice that the ``start_of()``, ``next()`` and ``previous()`` methods
+set the time to ``00:00:00`` and the ``end_of()`` methods set the time to ``23:59:59``.
 
 The only one slightly different is the ``average()`` method.
 It moves your instance to the middle date between itself and the provided Pendulum argument.
@@ -816,59 +816,59 @@ It moves your instance to the middle date between itself and the provided Pendul
 .. code-block:: python
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_day()
+    dt.start_of('day')
     '2012-01-31 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_day()
+    dt.end_of('day')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_month()
+    dt.start_of('month')
     '2012-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_month()
+    dt.end_of('month')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_year()
+    dt.start_of('year')
     '2012-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_year()
+    dt.end_of('year')
     '2012-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_decade()
+    dt.start_of('decade')
     '2010-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_decade()
+    dt.end_of('decade')
     '2019-01-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_century()
+    dt.start_of('century')
     '2000-01-01 00:00:00'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_century()
+    dt.end_of('century')
     '2099-12-31 23:59:59'
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.start_of_week()
+    dt.start_of('week')
     '2012-01-30 00:00:00'
     dt.day_of_week == Pendulum.MONDAY
     True # ISO8601 week starts on Monday
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_week()
+    dt.end_of('week')
     '2012-02-05 23:59:59'
     dt.day_of_week == Pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
 
     dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.end_of_week()
+    dt.end_of('week')
     '2012-02-05 23:59:59'
     dt.day_of_week == Pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
