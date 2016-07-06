@@ -481,7 +481,7 @@ The following are methods to display a ``Pendulum`` instance as a common format:
 Comparison
 ==========
 
-Simple comparison is offered up via the following functions or the basic operators.
+Simple comparison is offered up via the basic operators.
 Remember that the comparison is done in the UTC timezone so things aren't always as they seem.
 
 .. code-block:: python
@@ -498,33 +498,34 @@ Remember that the comparison is done in the UTC timezone so things aren't always
     second.timezone_name
     'America/Vancouver'
 
-    first.eq(second) # ==
+    first == second
     True
-    first.ne(second) # !=
+    first != second
     False
-    first.gt(second) # >
+    first > second
     False
-    first.gte(second) # >=
+    first >= second
     True
-    first.lt(second) # <
+    first < second
     False
-    first.lte(second) # <=
+    first <= second
     True
 
-    first.set_date_time(2012, 1, 1, 0, 0, 0)
-    second.set_date_time(2012, 1, 1, 0, 0, 0) # tz is still America/Vancouver
+    first = first.with_date_time(2012, 1, 1, 0, 0, 0)
+    second = second.with_date_time(2012, 1, 1, 0, 0, 0)
+    # tz is still America/Vancouver for second
 
-    first.eq(second)
+    first == second
     False
-    first.ne(second)
+    first != second
     True
-    first.gt(second)
+    first > second
     False
-    first.gte(second)
+    first >= second
     False
-    first.lt(second)
+    first < second
     True
-    first.lte(second)
+    first <= second
     True
 
 To determine if the current instance is between two other instances you can use the ``between()`` method.

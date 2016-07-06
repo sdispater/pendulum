@@ -14,8 +14,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 1, 2, 3)
         d3 = datetime(2000, 1, 1, 1, 2, 3)
 
-        self.assertTrue(d1.eq(d2))
-        self.assertTrue(d1.eq(d3))
         self.assertEqual(d1, d2)
         self.assertEqual(d1, d3)
 
@@ -24,8 +22,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 2, 1, 2, 3)
         d3 = datetime(2000, 1, 2, 1, 2, 3)
 
-        self.assertFalse(d1.eq(d2))
-        self.assertFalse(d1.eq(d3))
         self.assertNotEqual(d1, d2)
         self.assertNotEqual(d1, d3)
 
@@ -34,8 +30,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 9, 0, 0, tzinfo='America/Vancouver')
         d3 = datetime(2000, 1, 1, 12, 0, 0)
 
-        self.assertTrue(d1.eq(d2))
-        self.assertTrue(d1.eq(d3))
         self.assertEqual(d1, d2)
         self.assertEqual(d1, d3)
 
@@ -44,8 +38,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, tzinfo='America/Vancouver')
         d3 = datetime(2000, 1, 1)
 
-        self.assertFalse(d1.eq(d2))
-        self.assertTrue(d1.eq(d3))
         self.assertNotEqual(d1, d2)
         self.assertEqual(d1, d3)
 
@@ -54,8 +46,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 2, 1, 2, 3)
         d3 = datetime(2000, 1, 2, 1, 2, 3)
 
-        self.assertTrue(d1.ne(d2))
-        self.assertTrue(d1.ne(d3))
         self.assertNotEqual(d1, d2)
         self.assertNotEqual(d1, d3)
 
@@ -64,8 +54,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 1, 2, 3)
         d3 = datetime(2000, 1, 1, 1, 2, 3)
 
-        self.assertFalse(d1.ne(d2))
-        self.assertFalse(d1.ne(d3))
         self.assertEqual(d1, d2)
         self.assertEqual(d1, d3)
 
@@ -74,16 +62,13 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, tzinfo='America/Vancouver')
         d3 = datetime(2000, 1, 1)
 
-        self.assertTrue(d1.ne(d2))
-        self.assertFalse(d1.ne(d3))
+        self.assertNotEqual(d1, d2)
+        self.assertEqual(d1, d3)
 
     def test_greater_than_true(self):
         d1 = Pendulum(2000, 1, 1)
         d2 = Pendulum(1999, 12, 31)
         d3 = datetime(1999, 12, 31)
-
-        self.assertTrue(d1.gt(d2))
-        self.assertTrue(d1.gt(d3))
 
         self.assertTrue(d1 > d2)
         self.assertTrue(d1 > d3)
@@ -93,9 +78,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 2)
         d3 = datetime(2000, 1, 2)
 
-        self.assertFalse(d1.gt(d2))
-        self.assertFalse(d1.gt(d3))
-
         self.assertFalse(d1 > d2)
         self.assertFalse(d1 > d3)
 
@@ -103,9 +85,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d2 = Pendulum(2000, 1, 1, 8, 59, 59, tzinfo='America/Vancouver')
         d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 8, 59, 59))
-
-        self.assertTrue(d1.gt(d2))
-        self.assertTrue(d1.gt(d3))
 
         self.assertTrue(d1 > d2)
         self.assertTrue(d1 > d3)
@@ -115,9 +94,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 9, 0, 1, tzinfo='America/Vancouver')
         d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 9, 0, 1))
 
-        self.assertFalse(d1.gt(d2))
-        self.assertFalse(d1.gt(d3))
-
         self.assertFalse(d1 > d2)
         self.assertFalse(d1 > d3)
 
@@ -125,9 +101,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1)
         d2 = Pendulum(1999, 12, 31)
         d3 = datetime(1999, 12, 31)
-
-        self.assertTrue(d1.gte(d2))
-        self.assertTrue(d1.gte(d3))
 
         self.assertTrue(d1 >= d2)
         self.assertTrue(d1 >= d3)
@@ -137,9 +110,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1)
         d3 = datetime(2000, 1, 1)
 
-        self.assertTrue(d1.gte(d2))
-        self.assertTrue(d1.gte(d3))
-
         self.assertTrue(d1 >= d2)
         self.assertTrue(d1 >= d3)
 
@@ -147,9 +117,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1)
         d2 = Pendulum(2000, 1, 2)
         d3 = datetime(2000, 1, 2)
-
-        self.assertFalse(d1.gte(d2))
-        self.assertFalse(d1.gte(d3))
 
         self.assertFalse(d1 >= d2)
         self.assertFalse(d1 >= d3)
@@ -159,9 +126,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 8, 59, 59, tzinfo='America/Vancouver')
         d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 8, 59, 59))
 
-        self.assertTrue(d1.gte(d2))
-        self.assertTrue(d1.gte(d3))
-
         self.assertTrue(d1 >= d2)
         self.assertTrue(d1 >= d3)
 
@@ -169,9 +133,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d2 = Pendulum(2000, 1, 1, 9, 0, 1, tzinfo='America/Vancouver')
         d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 9, 0, 1))
-
-        self.assertFalse(d1.gte(d2))
-        self.assertFalse(d1.gte(d3))
 
         self.assertFalse(d1 >= d2)
         self.assertFalse(d1 >= d3)
@@ -181,9 +142,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 2)
         d3 = datetime(2000, 1, 2)
 
-        self.assertTrue(d1.lt(d2))
-        self.assertTrue(d1.lt(d3))
-
         self.assertTrue(d1 < d2)
         self.assertTrue(d1 < d3)
 
@@ -191,9 +149,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 2)
         d2 = Pendulum(2000, 1, 1)
         d3 = datetime(2000, 1, 1)
-
-        self.assertFalse(d1.lt(d2))
-        self.assertFalse(d1.lt(d3))
 
         self.assertFalse(d1 < d2)
         self.assertFalse(d1 < d3)
@@ -203,9 +158,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
 
-        self.assertTrue(d1.lt(d2))
-        self.assertTrue(d1.lt(d3))
-
         self.assertTrue(d1 < d2)
         self.assertTrue(d1 < d3)
 
@@ -213,9 +165,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 9, 0, 1, tzinfo='America/Vancouver')
         d2 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
-
-        self.assertFalse(d1.lt(d2))
-        self.assertFalse(d1.lt(d3))
 
         self.assertFalse(d1 < d2)
         self.assertFalse(d1 < d3)
@@ -225,9 +174,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 2)
         d3 = datetime(2000, 1, 2)
 
-        self.assertTrue(d1.lte(d2))
-        self.assertTrue(d1.lte(d3))
-
         self.assertTrue(d1 <= d2)
         self.assertTrue(d1 <= d3)
 
@@ -235,9 +181,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1)
         d2 = Pendulum(2000, 1, 1)
         d3 = datetime(2000, 1, 1)
-
-        self.assertTrue(d1.lte(d2))
-        self.assertTrue(d1.lte(d3))
 
         self.assertTrue(d1 <= d2)
         self.assertTrue(d1 <= d3)
@@ -247,9 +190,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1)
         d3 = datetime(2000, 1, 1)
 
-        self.assertFalse(d1.lte(d2))
-        self.assertFalse(d1.lte(d3))
-
         self.assertFalse(d1 <= d2)
         self.assertFalse(d1 <= d3)
 
@@ -258,9 +198,6 @@ class ComparisonTest(AbstractTestCase):
         d2 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
 
-        self.assertTrue(d1.lte(d2))
-        self.assertTrue(d1.lte(d3))
-
         self.assertTrue(d1 <= d2)
         self.assertTrue(d1 <= d3)
 
@@ -268,9 +205,6 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 9, 0, 1, tzinfo='America/Vancouver')
         d2 = Pendulum(2000, 1, 1, 12, 0, 0, tzinfo='America/Toronto')
         d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
-
-        self.assertFalse(d1.lte(d2))
-        self.assertFalse(d1.lte(d3))
 
         self.assertFalse(d1 <= d2)
         self.assertFalse(d1 <= d3)

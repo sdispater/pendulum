@@ -1090,160 +1090,23 @@ class Pendulum(datetime.datetime):
         return self.format(self.W3C)
 
     # Comparisons
-
-    def eq(self, other):
-        """
-        Determines if the instance is equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
+    def __eq__(self, other):
         return self._datetime == self._get_datetime(other)
 
-    def equal_to(self, other):
-        """
-        Determines if the instance is equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return  self.eq(other)
-
-    def __eq__(self, other):
-        return self.eq(other)
-
-    def ne(self, other):
-        """
-        Determines if the instance is not equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
+    def __ne__(self, other):
         return self._datetime != self._get_datetime(other)
 
-    def not_equal_to(self, other):
-        """
-        Determines if the instance is not equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self.ne(other)
-
-    def __ne__(self, other):
-        return self.ne(other)
-
-    def gt(self, other):
-        """
-        Determines if the instance is greater (after) than another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
+    def __gt__(self, other):
         return self._datetime > self._get_datetime(other)
 
-    def greater_than(self, other):
-        """
-        Determines if the instance is greater (after) than another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self.gt(other)
-
-    def __gt__(self, other):
-        return self.gt(other)
-
-    def gte(self, other):
-        """
-        Determines if the instance is greater (after) than
-        or equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
+    def __ge__(self, other):
         return self._datetime >= self._get_datetime(other)
 
-    def greater_than_or_equal_to(self, other):
-        """
-        Determines if the instance is greater (after) than
-        or equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self.gte(other)
-
-    def __ge__(self, other):
-        return self.gte(other)
-
-    def lt(self, other):
-        """
-        Determines if the instance is less (before) than another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
+    def __lt__(self, other):
         return self._datetime < self._get_datetime(other)
 
-    def less_than(self, other):
-        """
-        Determines if the instance is less (before) than another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self.lt(other)
-
-    def __lt__(self, other):
-        return self.lt(other)
-
-    def lte(self, other):
-        """
-        Determines if the instance is less (before) than
-        or equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self._datetime <= self._get_datetime(other)
-
-    def less_than_or_equal_to(self, other):
-        """
-        Determines if the instance is less (before) than
-        or equal to another.
-
-        :param other: The other instance
-        :type other: Pendulum or datetime or str or int
-
-        :rtype: bool
-        """
-        return self.lte(other)
-
     def __le__(self, other):
-        return self.lte(other)
+        return self._datetime <= self._get_datetime(other)
 
     def between(self, dt1, dt2, equal=True):
         """
@@ -1263,9 +1126,9 @@ class Pendulum(datetime.datetime):
             dt1, dt2 = dt2, dt1
 
         if equal:
-            return self.gte(dt1) and self.lte(dt2)
+            return self >= dt1 and self <= dt2
 
-        return self.gt(dt1) and self.lt(dt2)
+        return self > dt1 and self < dt2
 
     def closest(self, dt1, dt2):
         """
@@ -1313,7 +1176,7 @@ class Pendulum(datetime.datetime):
         if dt is None:
             dt = Pendulum.now(self.timezone)
 
-        if self.lt(dt):
+        if self < dt:
             return self
 
         return self._get_datetime(dt, True)
@@ -1341,7 +1204,7 @@ class Pendulum(datetime.datetime):
         if dt is None:
             dt = Pendulum.now(self.timezone)
 
-        if self.gt(dt):
+        if self > dt:
             return self
 
         return self._get_datetime(dt, True)
@@ -1403,7 +1266,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: bool
         """
-        return self.gt(self.now(self.tz))
+        return self > self.now(self.tz)
 
     def is_past(self):
         """
@@ -1411,7 +1274,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: bool
         """
-        return self.lt(self.now(self.tz))
+        return self < self.now(self.tz)
 
     def is_leap_year(self):
         """
