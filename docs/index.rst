@@ -363,7 +363,13 @@ setting the timestamp will not set the corresponding timezone to UTC.
 
     dt.timestamp_(169957925).timezone_('Europe/London')
 
-    dt.tz_('America/Toronto').to('America/Vancouver')
+    dt.tz_('America/Toronto').in_timezone('America/Vancouver')
+
+.. note::
+
+    ``timezone_()`` and ``tz_()`` just modify the timezone information without
+    making any conversion while ``in_timezone()`` converts the time in the
+    appropriate timezone.
 
 
 String Formatting

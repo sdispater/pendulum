@@ -162,7 +162,7 @@ class Pendulum(datetime.datetime):
             test_instance = self._test_now
 
             if tzinfo is not None and tzinfo != self._test_now.timezone:
-                test_instance = test_instance.to(tzinfo)
+                test_instance = test_instance.in_timezone(tzinfo)
             else:
                 tzinfo = test_instance.timezone
 
@@ -560,7 +560,7 @@ class Pendulum(datetime.datetime):
 
     @property
     def local(self):
-        return self.offset == self.with_timezone(self._local_timezone()).offset
+        return self.offset == self.in_timezone(self._local_timezone()).offset
 
     @property
     def utc(self):
@@ -674,20 +674,7 @@ class Pendulum(datetime.datetime):
 
         return self.with_time(hour, minute, second)
 
-    def with_timezone(self, value):
-        """
-        Returns a new instance with the timezone set to the given value.
-
-        :param value: The timezone
-        :type value: BaseTzInfo or str or None
-
-        :rtype: Pendulum
-        """
-        tz = self._safe_create_datetime_zone(value)
-
-        return self.instance(self._datetime.astimezone(tz))
-
-    def to(self, tz):
+    def in_timezone(self, tz):
         """
         Set the instance's timezone from a string or object.
 
@@ -696,7 +683,20 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_timezone(tz)
+        tz = self._safe_create_datetime_zone(tz)
+
+        return self.instance(self._datetime.astimezone(tz))
+
+    def in_tz(self, tz):
+        """
+        Set the instance's timezone from a string or object.
+
+        :param value: The timezone
+        :type value: BaseTzInfo or str or None
+
+        :rtype: Pendulum
+        """
+        return self.in_timezone(tz)
 
     def with_timestamp(self, timestamp):
         """
@@ -1266,7 +1266,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: bool
         """
-        return self > self.now(self.tz)
+        return self > self.now(self.timezone)
 
     def is_past(self):
         """
@@ -1274,7 +1274,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: bool
         """
-        return self < self.now(self.tz)
+        return self < self.now(self.timezone)
 
     def is_leap_year(self):
         """

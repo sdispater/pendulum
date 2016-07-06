@@ -13,7 +13,7 @@ Python datetimes made easy.
 
     now_in_paris = pendulum.now('Europe/Paris')
     '2016-07-04T00:49:58.502116+02:00'
-    now_in_paris.to('UTC')
+    now_in_paris.in_timezone('UTC')
     '2016-07-03T22:49:58.502116+00:00'
 
     tomorrow = pendulum.now().add_day()
