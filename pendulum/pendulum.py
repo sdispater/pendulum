@@ -867,7 +867,7 @@ class Pendulum(datetime.datetime):
         """
         m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
         if m:
-            return '{}_{}'.format((m.group(1).lower(), m.group(2).lower()))
+            return '{}_{}'.format(m.group(1).lower(), m.group(2).lower())
         else:
             return locale.lower()
 
@@ -942,7 +942,7 @@ class Pendulum(datetime.datetime):
             else:
                 return {1: 'st', 2: 'nd', 3: 'rd'}.get(self.day % 10, "th")
 
-        raise ValueError('Unknown formatter %%%s' % fmt)
+        raise ValueError('Unknown formatter %%{}'.format(fmt))
 
     def __str__(self):
         if self._to_string_format is None:
