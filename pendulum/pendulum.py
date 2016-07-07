@@ -2198,7 +2198,7 @@ class Pendulum(datetime.datetime):
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
             raise PendulumException('Unable to find occurence {} of {} in {}'.format(
-                                    (nth, self._days[day_of_week], unit)))
+                                     nth, self._days[day_of_week], unit))
 
         return dt
 
