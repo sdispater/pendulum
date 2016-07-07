@@ -14,7 +14,7 @@ class ForHumansTest(AbstractTestCase):
 
     def test_week(self):
         self.assertEqual('52 weeks', PendulumInterval(days=364).in_words())
-        self.assertEqual('1 week', PendulumInterval(days=7).for_humans())
+        self.assertEqual('1 week', PendulumInterval(days=7).in_words())
 
     def test_week_to_string(self):
         self.assertEqual('52 weeks', str(PendulumInterval(days=364)))

@@ -226,10 +226,10 @@ class PendulumInterval(timedelta):
         return ' '.join(parts)
 
     def __str__(self):
-        return self.for_humans()
+        return self.in_words()
 
     def __repr__(self):
-        return self.for_humans()
+        return self.in_words()
 
     def __add__(self, other):
         if isinstance(other, timedelta):
