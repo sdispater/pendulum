@@ -30,7 +30,7 @@ Python datetimes made easy.
     delta.hours
     23
     delta.for_humans(locale='fr')
-    '6 jours 23 heures 58 minutes'
+    '6 days 23 hours 58 minutes'
 
 Resources
 =========
