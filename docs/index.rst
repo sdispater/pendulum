@@ -33,10 +33,12 @@ For example all comparisons are done in UTC or in the timezone of the datetime b
 
 .. code-block:: python
 
-    dt_toronto = Pendulum.create_from_date(2012, 1, 1, 'America/Toronto')
-    dt_vancouver = Pendulum.create_from_date(2012, 1, 1, 'America/Vancouver')
+    import pendulum
 
-    print(dt_vancouver.diff_in_hours(dt_toronto))
+    dt_toronto = pendulum.from_date(2012, 1, 1, 'America/Toronto')
+    dt_vancouver = pendulum.from_date(2012, 1, 1, 'America/Vancouver')
+
+    print(dt_vancouver.diff(dt_toronto).in_hours())
     3
 
 The default timezone, except when using the ``now()``, method will always be ``UTC``.
@@ -45,7 +47,7 @@ The default timezone, except when using the ``now()``, method will always be ``U
 
     Also ``is`` comparisons (like ``is_today()``) are done in the timezone of the provided Pendulum instance.
     For example, my current timezone is -13 hours from Tokyo.
-    So ``Pendulum.now('Asia/Tokyo').is_today()`` would only return ``False`` for any time past 1 PM my time.
+    So ``pendulum.now('Asia/Tokyo').is_today()`` would only return ``False`` for any time past 1 PM my time.
     This doesn't make sense since ``now()`` in tokyo is always today in Tokyo.
     Thus the comparison to ``now()`` is done in the same timezone as the current instance.
 
@@ -53,7 +55,7 @@ The default timezone, except when using the ``now()``, method will always be ``U
 .. note::
 
     Every class methods that will be covered in this documentation are also accessible at module
-    level:
+    level and vice-versa with the following correspondences:
 
     ============================= =====================
     Class Method                  Module Function
@@ -140,7 +142,7 @@ besides behaving as expected, all accept a timezone parameter and each has their
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
-The next group of static helpers are the ``create_xxx()`` helpers.
+The next group of static helpers are the ``from_xxx()`` and ``create()`` helpers.
 Most of the static ``create`` functions allow you to provide
 as many or as few arguments as you want and will provide default values for all others.
 Generally default values are the current date, time or timezone.
@@ -151,7 +153,7 @@ Generally default values are the current date, time or timezone.
     pendulum.from_time(hour, minute, second, microsecond, tz)
     pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
-``create_from_date()`` will default the time to now. ``create_from_time()`` will default the date to today.
+``from_date()`` will default the time to now. ``from_time()`` will default the date to today.
 ``create()`` will default any null parameter to the current respective value.
 As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``tzinfo`` instance
 or simply a string timezone value. The only special case for default values occurs when an hour value
@@ -159,7 +161,8 @@ is specified but no minutes or seconds, they will get defaulted to ``0``.
 
 .. code-block:: python
 
-    xmas_this_year = pendulum._from_date(None, 12, 25) # Year defaults to current year
+    xmas_this_year = pendulum.from_date(None, 12, 25)
+    # Year defaults to current year
     y2k = pendulum.create(2000, 1, 1, 0, 0, 0)
     noon_london_tz = pendulum.from_time(12, 0, 0, tz='Europe/London')
 
@@ -167,7 +170,7 @@ is specified but no minutes or seconds, they will get defaulted to ``0``.
 
     pendulum.from_format(time, format, tz)
 
-``create_from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
+``from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
 The difference being the addition the ``tz`` argument that can be a ``tzinfo`` instance or a string timezone value
 (defaults to ``UTC``).
 
@@ -182,7 +185,7 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
     pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
 
 The final ``create`` function is for working with unix timestamps.
-``create_from_timestamp()`` will create a Pendulum instance equal to the given timestamp
+``from_timestamp()`` will create a ``Pendulum`` instance equal to the given timestamp
 and will set the timezone as well or default it to ``UTC``.
 
 .. code-block:: python
@@ -197,7 +200,7 @@ and will set the timezone as well or default it to ``UTC``.
     pendulum.fromtimestamp(-1).to_datetime_string()
     '1969-12-31 23:59:59'
 
-You can also create a ``copy()`` of an existing Pendulum instance.
+You can also create a ``copy()`` of an existing ``Pendulum`` instance.
 As expected the date, time and timezone values are all copied to the new instance.
 
 .. code-block:: python
@@ -228,6 +231,7 @@ native ``strftime`` datetime function.
 .. code-block:: python
 
     import locale
+    from pendulum import Pendulum
 
     dt = Pendulum(1975, 5, 21)
 
@@ -240,23 +244,25 @@ native ``strftime`` datetime function.
     'Wednesday 21 May 1975'
 
 ``diff_for_humans()`` is also localized, you can set the Pendulum locale
-by using the class method ``Pendulum.set_locale()``.
+by using the class method ``pendulum.set_locale()``.
 
 .. code-block:: python
 
-    Pendulum.set_locale('de')
-    print(Pendulum.now().add_year().diff_for_humans())
+    import pendulum
+
+    pendulum.set_locale('de')
+    print(pendulum.now().add_year().diff_for_humans())
     'in 1 Jahr'
 
-    Pendulum.set_locale('en')
+    pendulum.set_locale('en')
 
 However, you might not want to set the locale globally. The ``diff_for_humans()``
 method accept a ``locale`` keyword argument to use a locale for a specific call.
 
 .. code-block:: python
 
-    Pendulum.set_locale('de')
-    print(Pendulum.now().add_year().diff_for_humans(locale='fr'))
+    pendulum.set_locale('de')
+    print(pendulum.now().add_year().diff_for_humans(locale='fr'))
     'dans 1 an'
 
 
@@ -267,7 +273,9 @@ Pendulum gives access to more attributes and properties than the default `dateti
 
 .. code-block:: python
 
-    dt = Pendulum.parse('2012-9-5 23:26:11.123789')
+    import pendulum
+
+    dt = pendulum.parse('2012-9-5 23:26:11.123789')
 
     # These properties specifically return integers
     dt.year
@@ -296,7 +304,7 @@ Pendulum gives access to more attributes and properties than the default `dateti
     30
     dt.timestamp
     1346887571
-    dt.create_from_date(1975, 5, 21).age
+    pendulum.from_date(1975, 5, 21).age
     41 # calculated vs now in the same tz
     dt.quarter
     3
@@ -305,41 +313,41 @@ Pendulum gives access to more attributes and properties than the default `dateti
     1346887571.123789
 
     # Returns an int of seconds difference from UTC (+/- sign included)
-    Pendulum.create_from_timestamp(0).offset
+    pendulum.from_timestamp(0).offset
     0
-    Pendulum.create_from_timestamp(0, 'America/Toronto').offset
+    pendulum.from_timestamp(0, 'America/Toronto').offset
     -18000
 
     # Returns an int of hours difference from UTC (+/- sign included)
-    Pendulum.create_from_timestamp(0, 'America/Toronto').offset_hours
+    pendulum.from_timestamp(0, 'America/Toronto').offset_hours
     -5
 
     # Indicates if day light savings time is on
-    Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').is_dst
+    pendulum.from_date(2012, 1, 1, 'America/Toronto').is_dst
     False
-    Pendulum.create_from_date(2012, 9, 1, 'America/Toronto').is_dst
+    pendulum.from_date(2012, 9, 1, 'America/Toronto').is_dst
     True
 
     # Indicates if the instance is in the same timezone as the local timezone
-    Pendulum.now().local
+    pendulum.now().local
     True
-    Pendulum.now('Europe/London').local
+    pendulum.now('Europe/London').local
     False
 
     # Indicates if the instance is in the UTC timezone
-    Pendulum.now().utc
+    pendulum.now().utc
     False
-    Pendulum.now('Europe/London').local
+    pendulum.now('Europe/London').local
     False
-    Pendulum.utcnow().utc
+    pendulum.utcnow().utc
     True
 
     # Gets the timezone instance
-    Pendulum.now().timezone
-    Pendulum.now().tz
+    pendulum.now().timezone
+    pendulum.now().tz
 
     # Gets the timezone name
-    Pendulum.now().timezone_name
+    pendulum.now().timezone_name
 
 
 Fluent Helpers
@@ -353,7 +361,9 @@ setting the timestamp will not set the corresponding timezone to UTC.
 
 .. code-block:: python
 
-    dt = Pendulum.now()
+    import pendulum
+
+    dt = pendulum.now()
 
     dt.year_(1975).month_(5).day_(21).hour_(22).minute_(32).second_(5).to_datetime_string()
     '1975-05-21 22:32:05'
@@ -377,11 +387,13 @@ String Formatting
 
 All the ``to_xxx_string()`` methods rely on the native ``datetime.strftime()`` with additional
 directives available.
-The ``__str__`` magic method is defined which allows Pendulum instance to be printed
+The ``__str__`` magic method is defined which allows ``Pendulum`` instances to be printed
 as a pretty date string when used in a string context.
 The default string representation is the same as the one returned by the ``isoformat()`` method.
 
 .. code-block:: python
+
+    from pendulum import Pendulum
 
     dt = Pendulum(1975, 12, 25, 14, 15, 16)
 
@@ -415,12 +427,14 @@ You can also set the default ``__str__`` format.
 
 .. code-block:: python
 
-    Pendulum.set_to_string_format('%-d%t of %B, %Y %-I:%M:%S %p')
+    import pendulum
+
+    pendulum.set_to_string_format('%-d%t of %B, %Y %-I:%M:%S %p')
 
     print(dt)
     '25th of December, 1975 2:15:16 PM'
 
-    Pendulum.reset_to_string_format()
+    pendulum.reset_to_string_format()
     print(dt)
     '25th of December, 1975 2:15:16 PM'
 
@@ -448,7 +462,9 @@ The following are methods to display a ``Pendulum`` instance as a common format:
 
 .. code-block:: python
 
-    dt = Pendulum.now()
+    import pendulum
+
+    dt = pendulum.now()
 
     dt.to_atom_string()
     '1975-12-25T14:15:16-05:00'
@@ -492,8 +508,10 @@ Remember that the comparison is done in the UTC timezone so things aren't always
 
 .. code-block:: python
 
-    first = Pendulum.create(2012, 9, 5, 23, 26, 11, 0, tz='America/Toronto')
-    second = Pendulum.create(2012, 9, 5, 20, 26, 11, 0, tz='America/Vancouver')
+    import pendulum
+
+    first = pendulum.create(2012, 9, 5, 23, 26, 11, 0, tz='America/Toronto')
+    second = pendulum.create(2012, 9, 5, 20, 26, 11, 0, tz='America/Vancouver')
 
     first.to_datetime_string()
     '2012-09-05 23:26:11'
@@ -540,14 +558,16 @@ The default is ``True`` which determines if its between or equal to the boundari
 
 .. code-block:: python
 
-    first = Pendulum.create(2012, 9, 5, 1)
-    second = Pendulum.create(2012, 9, 5, 5)
+    import pendulum
 
-    Pendulum.create(2012, 9, 5, 3).between(first, second)
+    first = pendulum.create(2012, 9, 5, 1)
+    second = pendulum.create(2012, 9, 5, 5)
+
+    pendulum.create(2012, 9, 5, 3).between(first, second)
     True
-    Pendulum.create(2012, 9, 5, 3).between(first, second)
+    pendulum.create(2012, 9, 5, 3).between(first, second)
     True
-    Pendulum.create(2012, 9, 5, 5).between(first, second, False)
+    pendulum.create(2012, 9, 5, 5).between(first, second, False)
     False
 
 There are also the ``min_()`` and ``max_()`` methods.
@@ -555,8 +575,10 @@ As usual the default parameter is ``now`` if ``None`` is specified.
 
 .. code-block:: python
 
-    dt1 =  Pendulum.create(2012, 1, 1, 0, 0, 0, 0)
-    dt2 =  Pendulum.create(2014, 1, 30, 0, 0, 0, 0)
+    import pendulum
+
+    dt1 =  pendulum.create(2012, 1, 1, 0, 0, 0, 0)
+    dt2 =  pendulum.create(2014, 1, 30, 0, 0, 0, 0)
 
     print(dt1.min_(dt2))
     '2012-01-01T00:00:00+00:00'
@@ -580,6 +602,8 @@ the ``now()`` is created in the same timezone as the instance.
 
 .. code-block:: python
 
+    import pendulum
+
     dt = Pendulum.now()
 
     dt.is_weekday()
@@ -592,10 +616,10 @@ the ``now()`` is created in the same timezone as the instance.
     dt.is_leap_year()
     dt.is_same_day(Pendulum.now())
 
-    born = Pendulum.create_from_date(1987, 4, 23)
-    not_birthday = Pendulum.create_from_date(2014, 9, 26)
-    birthday = Pendulum.create_from_date(2014, 2, 23)
-    past_birthday = Pendulum.now().sub_years(50)
+    born = pendulum.from_date(1987, 4, 23)
+    not_birthday = pendulum.from_date(2014, 9, 26)
+    birthday = pendulum.from_date(2014, 2, 23)
+    past_birthday = pendulum.now().sub_years(50)
 
     born.is_birthday(not_birthday)
     False
@@ -615,7 +639,9 @@ Each method returns a new ``Pendulum`` instance.
 
 .. code-block:: python
 
-    dt = Pendulum.create(2012, 1, 31, 0)
+    import pendulum
+
+    dt = pendulum.create(2012, 1, 31, 0)
 
     dt.to_datetime_string()
     '2012-01-31 00:00:00'
@@ -712,8 +738,10 @@ This will default to ``True``, return the absolute value. The comparisons are do
 
 .. code-block:: python
 
-    dt_ottawa = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
-    dt_vancouver = Pendulum.create_from_date(200, 1, 1, 'America/Vancouver')
+    import pendulum
+
+    dt_ottawa = pendulum.from_date(2000, 1, 1, 'America/Toronto')
+    dt_vancouver = pendulum.from_date(200, 1, 1, 'America/Vancouver')
 
     dt_ottawa.diff(dt_vancouver).in_hours()
     3
@@ -722,19 +750,19 @@ This will default to ``True``, return the absolute value. The comparisons are do
     dt_vancouver.diff(dt_ottawa, False).in_hours()
     -3
 
-    dt = Pendulum.create(2012, 1, 31, 0)
+    dt = pendulum.create(2012, 1, 31, 0)
     dt.diff(dt.add_month()).in_days()
     29
     dt.diff(dt.sub_month(), False).in_days()
     -31
 
-    dt = Pendulum.create(2012, 4, 30, 0)
+    dt = pendulum.create(2012, 4, 30, 0)
     dt.diff(dt.add_month()).in_days()
     30
     dt.diff(dt.add_week()).in_days()
     7
 
-    dt = Pendulum.create(2012, 1, 1, 0)
+    dt = pendulum.create(2012, 1, 1, 0)
     dt.diff(dt.add_seconds(59)).in_minutes()
     0
     dt.diff(dt.add_seconds(60)).in_minutes()
@@ -773,40 +801,44 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
 
 .. code-block:: python
 
+    import pendulum
+
     # The most typical usage is for comments
     # The instance is the date the comment was created
     # and its being compared to default now()
-    Pendulum.now().sub_days().diff_for_humans()
+    pendulum.now().sub_days().diff_for_humans()
     '5 days ago'
 
-    Pendulum.now().diff_for_humans(Pendulum.now().sub_year())
+    pendulum.now().diff_for_humans(Pendulum.now().sub_year())
     '1 year after'
 
-    dt = Pendulum.create_from_date(2011, 8, 1)
+    dt = pendulum.from_date(2011, 8, 1)
     dt.diff_for_humans(dt.add_month())
     '1 month before'
     dt.diff_for_humans(dt.sub_month())
     '1 month after'
 
-    Pendulum.now().add_seconds(5).diff_for_humans()
+    pendulum.now().add_seconds(5).diff_for_humans()
     '5 seconds from now'
 
-    Pendulum.now().sub_days(24).diff_for_humans()
+    pendulum.now().sub_days(24).diff_for_humans()
     '3 weeks ago'
 
-    Pendulum.now().sub_days(24).diff_for_humans(absolute=True)
+    pendulum.now().sub_days(24).diff_for_humans(absolute=True)
     '3 weeks'
 
-You can also change the locale of the string either globally by using ``Pendulum.set_locale('fr')``
+You can also change the locale of the string either globally by using ``pendulum.set_locale('fr')``
 before the ``diff_for_humans()`` call or specifically for the call by passing the ``locale`` keyword
 argument. See the `Localization`_ section for more detail.
 
 .. code-block:: python
 
-    Pendulum.set_locale('de')
-    Pendulum.now().add_year().diff_for_humans()
+    import pendulum
+
+    pendulum.set_locale('de')
+    pendulum.now().add_year().diff_for_humans()
     'in 1 Jahr'
-    Pendulum.now().add_year().diff_for_humans(locale='fr')
+    pendulum.now().add_year().diff_for_humans(locale='fr')
     'dans 1 an'
 
 
@@ -822,31 +854,33 @@ It moves your instance to the middle date between itself and the provided Pendul
 
 .. code-block:: python
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    import pendulum
+
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('day')
     '2012-01-31 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('day')
     '2012-01-31 23:59:59'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('month')
     '2012-01-01 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('month')
     '2012-01-31 23:59:59'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('year')
     '2012-01-01 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('year')
     '2012-01-31 23:59:59'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('decade')
     '2010-01-01 00:00:00'
 
@@ -854,54 +888,54 @@ It moves your instance to the middle date between itself and the provided Pendul
     dt.end_of('decade')
     '2019-01-31 23:59:59'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('century')
     '2000-01-01 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('century')
     '2099-12-31 23:59:59'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.start_of('week')
     '2012-01-30 00:00:00'
-    dt.day_of_week == Pendulum.MONDAY
+    dt.day_of_week == pendulum.MONDAY
     True # ISO8601 week starts on Monday
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('week')
     '2012-02-05 23:59:59'
-    dt.day_of_week == Pendulum.SUNDAY
+    dt.day_of_week == pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('week')
     '2012-02-05 23:59:59'
-    dt.day_of_week == Pendulum.SUNDAY
+    dt.day_of_week == pendulum.SUNDAY
     True # ISO8601 week ends on SUNDAY
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.next(Pendulum.WEDNESDAY)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt.next(pendulum.WEDNESDAY)
     '2012-02-01 00:00:00'
-    dt.day_of_week == Pendulum.WEDNESDAY
+    dt.day_of_week == pendulum.WEDNESDAY
     True
 
     dt = Pendulum.create(2012, 1, 1, 12, 0, 0)
     dt.next()
     '2012-01-08 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
-    dt.previous(Pendulum.WEDNESDAY)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt.previous(pendulum.WEDNESDAY)
     '2012-01-25 00:00:00'
-    dt.day_of_week == Pendulum.WEDNESDAY
+    dt.day_of_week == pendulum.WEDNESDAY
     True
 
-    dt = Pendulum.create(2012, 1, 1, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 1, 12, 0, 0)
     dt.previous()
     '2011-12-25 00:00:00'
 
-    start = Pendulum.create(2014, 1, 1, 0, 0, 0)
-    end = Pendulum.create(2014, 1, 30, 0, 0, 0)
+    start = pendulum.create(2014, 1, 1, 0, 0, 0)
+    end = pendulum.create(2014, 1, 30, 0, 0, 0)
     start.average(end)
     '2014-01-15 12:00:00'
 
@@ -989,12 +1023,14 @@ You can create an instance in the following ways:
 
 .. code-block:: python
 
-    it = PendulumInterval(days=1177, seconds=7284, microseconds=1234)
+    import pendulum
+
+    it = pendulum.PendulumInterval(days=1177, seconds=7284, microseconds=1234)
     it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
     # You can use an existing timedelta instance
     delta = timedelta(days=1177, seconds=7284, microseconds=1234)
-    it = PendulumInterval.instance(delta)
+    it = pendulum.interval.instance(delta)
 
 Properties and Duration Methods
 -------------------------------
@@ -1004,7 +1040,9 @@ The ``PendulumInterval`` class brings more properties than the default ``days``,
 
 .. code-block:: python
 
-    it = PendulumInterval(days=1177, seconds=7284, microseconds=1234)
+    import pendulum
+
+    it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
     # Both weeks and days are based on the total of days
     it.weeks
@@ -1053,10 +1091,12 @@ that prints the interval for humans.
 
 .. code-block:: python
 
-    PendulumInterval.set_locale('fr')
+    import pendulum
+
+    pendulum.interval.set_locale('fr')
     # or pendulum.interval.set_locale('fr')
 
-    it = PendulumInterval(days=1177, seconds=7284, microseconds=1234)
+    it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
     it.for_humans()
     '168 semaines 1 jour 2 heures 1 minute 24 secondes'
