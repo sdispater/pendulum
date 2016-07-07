@@ -29,7 +29,7 @@ Python datetimes made easy.
     delta = past - last_week
     delta.hours
     23
-    delta.for_humans(locale='fr')
+    delta.for_humans(locale='en')
     '6 days 23 hours 58 minutes'
 
 Resources
