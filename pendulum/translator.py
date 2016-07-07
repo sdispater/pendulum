@@ -32,7 +32,7 @@ class Translator(BaseTranslator):
                 )
         else:
             if not self.register_resource(locale):
-                raise NotFoundResourceException('Resource for locale "%s" could not be found' % locale)
+                raise NotFoundResourceException('Resource for locale "{}" could not be found'.format(locale))
 
             self._do_load_catalogue(locale)
 
@@ -48,7 +48,7 @@ class Translator(BaseTranslator):
         load_module('lang', root)
 
         # Loading locale
-        locale_mod = load_module('lang.%s' % locale, locale_file)
+        locale_mod = load_module('lang.{}'.format(locale), locale_file)
 
         self.add_resource('dict', locale_mod.translations, locale)
 

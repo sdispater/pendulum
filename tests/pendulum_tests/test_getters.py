@@ -202,4 +202,4 @@ class GettersTest(AbstractTestCase):
     def is_day_of_week(self):
         for i in Pendulum._days.values():
             d = Pendulum.now().next(getattr(Pendulum, i.upper()))
-            self.assertTrue(getattr(d, 'is_%s' % i.lower())())
+            self.assertTrue(getattr(d, 'is_{}s'.format(i.lower()))())

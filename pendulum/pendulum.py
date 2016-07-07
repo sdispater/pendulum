@@ -222,7 +222,7 @@ class Pendulum(datetime.datetime):
         dt = dateparser.parse(time)
 
         if not dt:
-            raise PendulumException('Invalid time string "%s"' % time)
+            raise PendulumException('Invalid time string "{}"'.format(time))
 
         return cls(
             dt.year, dt.month, dt.day,
@@ -867,7 +867,7 @@ class Pendulum(datetime.datetime):
         """
         m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
         if m:
-            return '%s_%s' % (m.group(1).lower(), m.group(2).lower())
+            return '{}_{}'.format(m.group(1).lower(), m.group(2).lower())
         else:
             return locale.lower()
 
@@ -942,7 +942,7 @@ class Pendulum(datetime.datetime):
             else:
                 return {1: 'st', 2: 'nd', 3: 'rd'}.get(self.day % 10, "th")
 
-        raise ValueError('Unknown formatter %%%s' % fmt)
+        raise ValueError('Unknown formatter %%{}'.format(fmt))
 
     def __str__(self):
         if self._to_string_format is None:
@@ -1936,9 +1936,9 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise ValueError('Invalid unit "%s" for start_of()' % unit)
+            raise ValueError('Invalid unit "{}" for start_of()'.format(unit))
 
-        return getattr(self, '_start_of_%s' % unit)()
+        return getattr(self, '_start_of_{}'.format(unit))()
 
     def end_of(self, unit):
         """
@@ -2148,9 +2148,9 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
 
-        return getattr(self, '_first_of_%s' % unit)(day_of_week)
+        return getattr(self, '_first_of_{}'.format(unit))(day_of_week)
 
     def last_of(self, unit, day_of_week=None):
         """
@@ -2169,9 +2169,9 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
 
-        return getattr(self, '_last_of_%s' % unit)(day_of_week)
+        return getattr(self, '_last_of_{}'.format(unit))(day_of_week)
 
     def nth_of(self, unit, nth, day_of_week):
         """
@@ -2193,12 +2193,12 @@ class Pendulum(datetime.datetime):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "%s" for first_of()' % unit)
+            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
 
-        dt = getattr(self, '_nth_of_%s' % unit)(nth, day_of_week)
+        dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
-            raise PendulumException('Unable to find occurence %d of %s in %s'
-                                    % (nth, self._days[day_of_week], unit))
+            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
+                                     nth, self._days[day_of_week], unit))
 
         return dt
 
@@ -2440,7 +2440,7 @@ class Pendulum(datetime.datetime):
 
             return d._datetime
 
-        raise ValueError('Invalid datetime "%s"' % value)
+        raise ValueError('Invalid datetime "{}"'.format(value))
 
     def for_json(self):
         """
