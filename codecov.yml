@@ -1,6 +1,7 @@
 comment: false
 
-status:
-  patch:
-    default:
-      enabled: false
+coverage:
+  status:
+    patch:
+      default:
+        enabled: false
