@@ -1086,8 +1086,27 @@ you can use the appropriate methods.
     it.total_seconds()
     101700084.001234
 
-It also has a handy ``for_humans()``, which determines the interval representation when printed,
-that prints the interval for humans.
+Similarly, it has the ``in_xxx()`` methods which returns to total duration in each
+supported unit as a truncated integer.
+
+.. code-block:: python
+
+    it.in_weeks()
+    168
+
+    it.in_days()
+    1177
+
+    it.in_hours()
+    28250
+
+    it.in_minutes()
+    1695001
+
+    it.in_seconds()
+    101700084
+
+It also has a handy ``in_words()``, which determines the interval representation when printed.
 
 .. code-block:: python
 
@@ -1098,11 +1117,11 @@ that prints the interval for humans.
 
     it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
-    it.for_humans()
+    it.in_words()
     '168 semaines 1 jour 2 heures 1 minute 24 secondes'
 
     print(it)
     '168 semaines 1 jour 2 heures 1 minute 24 secondes'
 
-    it.for_humans(locale='de')
+    it.in_words(locale='de')
     '168 Wochen 1 Tag 2 Stunden 1 Minute 24 Sekunden'

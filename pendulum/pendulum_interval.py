@@ -199,10 +199,11 @@ class PendulumInterval(timedelta):
 
         return 1
 
-    def for_humans(self, locale=None):
+    def in_words(self, locale=None):
         """
-        Get the current interval in a human readable format
-        in the current locale.
+        Get the current interval in words in the current locale.
+
+        Ex: 6 jours 23 heures 58 minutes
 
         :rtype: str
         """
