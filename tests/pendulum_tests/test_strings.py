@@ -7,10 +7,10 @@ from .. import AbstractTestCase
 class StringsTest(AbstractTestCase):
 
     def test_to_string(self):
-        d = Pendulum(microsecond=0)
-        self.assertEqual(Pendulum(microsecond=0).to_iso8601_string(), str(d))
-        d = Pendulum(microsecond=123456)
-        self.assertEqual(Pendulum(microsecond=123456).to_iso8601_string(True), str(d))
+        d = Pendulum.create(microsecond=0)
+        self.assertEqual(Pendulum.create(microsecond=0).to_iso8601_string(), str(d))
+        d = Pendulum.create(microsecond=123456)
+        self.assertEqual(Pendulum.create(microsecond=123456).to_iso8601_string(True), str(d))
 
     def test_set_to_string_format(self):
         Pendulum.set_to_string_format('%a, %d %b %y %H:%M:%S %z')
@@ -18,7 +18,7 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('Mon, 27 Jun 16 15:39:30 +0000', str(d))
 
     def test_reset_to_string_format(self):
-        d = Pendulum(microsecond=0)
+        d = Pendulum.create(microsecond=0)
         Pendulum.set_to_string_format('123')
         Pendulum.reset_to_string_format()
         self.assertEqual(d.to_iso8601_string(), str(d))

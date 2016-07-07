@@ -136,9 +136,9 @@ class Pendulum(datetime.datetime):
 
         return tzlocal.get_localzone()
 
-    def __new__(cls, year=1970, month=1, day=1,
-                 hour=0, minute=0, second=0, microsecond=0,
-                 tzinfo=None):
+    def __new__(cls, year, month, day,
+                hour=0, minute=0, second=0, microsecond=0,
+                tzinfo=None):
         """
         Constructor.
 
@@ -151,33 +151,10 @@ class Pendulum(datetime.datetime):
 
         return obj
 
-    def __init__(self, year=None, month=None, day=None,
-                 hour=None, minute=None, second=None, microsecond=None,
+    def __init__(self, year, month, day,
+                 hour=0, minute=0, second=0, microsecond=0,
                  tzinfo=pytz.UTC):
-        # If the class has a test now set and we are trying to create a now()
-        # instance then override as required
-        if (self.has_test_now()
-            and all([year is None, month is None, day is None, hour is None,
-                     minute is None, second is None, microsecond is None])):
-            test_instance = self._test_now
-
-            if tzinfo is not None and tzinfo != self._test_now.timezone:
-                test_instance = test_instance.in_timezone(tzinfo)
-            else:
-                tzinfo = test_instance.timezone
-
-            year, month, day = test_instance.year, test_instance.month, test_instance.day
-            hour, minute, second = test_instance.hour, test_instance.minute, test_instance.second
-            microsecond = test_instance.microsecond
-
         self._tz = self._safe_create_datetime_zone(tzinfo)
-
-        # Default datetime behavior
-        if year is not None and month is not None and day is not None:
-            hour = 0 if hour is None else hour
-            minute = 0 if minute is None else minute
-            second = 0 if second is None else second
-            microsecond = 0 if microsecond is None else microsecond
 
         self._datetime = self._create_datetime(
             self._tz, year, month, day,
@@ -240,7 +217,17 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls(tzinfo=tz)
+        # If the class has a test now set and we are trying to create a now()
+        # instance then override as required
+        if (cls.has_test_now()):
+            test_instance = cls._test_now
+
+            if tz is not None and tz != cls._test_now.timezone:
+                test_instance = test_instance.in_timezone(tz)
+
+            return test_instance.copy()
+
+        return cls.create(tz=tz)
 
     @classmethod
     def utcnow(cls):
@@ -345,14 +332,12 @@ class Pendulum(datetime.datetime):
         """
         tz = cls._safe_create_datetime_zone(tz)
 
-        self = cls()
-        self._tz = tz
-        self._datetime = cls._create_datetime(
+        dt = cls._create_datetime(
             tz, year, month, day,
             hour, minute, second, microsecond
         )
 
-        return self
+        return cls.instance(dt)
 
     @classmethod
     def create_from_date(cls, year=None, month=None, day=None, tz=pytz.UTC):

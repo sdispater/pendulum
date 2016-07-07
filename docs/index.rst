@@ -25,10 +25,7 @@ Pendulum is a Python package to ease datetimes manipulation.
 It is heavily inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
 
 The ``Pendulum`` class is a drop-in replacement for the native ``datetime``
-class (it is inherited from it) with the exception that its mutable.
-
-Unlike the native class, most of the methods modify the current instance
-of ``Pendulum`` in place. If you want to modify a copy just use the ``copy()`` method.
+class (it is inherited from it).
 
 Special care has been taken to ensure timezones are handled correctly,
 and where appropriate are based on the underlying ``tzinfo`` implementation.
@@ -39,9 +36,10 @@ For example all comparisons are done in UTC or in the timezone of the datetime b
     dt_toronto = Pendulum.create_from_date(2012, 1, 1, 'America/Toronto')
     dt_vancouver = Pendulum.create_from_date(2012, 1, 1, 'America/Vancouver')
 
-    print(dt_vancouver.diff_in_hours(dt_toronto)) # 3
+    print(dt_vancouver.diff_in_hours(dt_toronto))
+    3
 
-The default timezone, except when using the ``now()`` method will always be ``UTC``.
+The default timezone, except when using the ``now()``, method will always be ``UTC``.
 
 .. note::
 
@@ -79,20 +77,16 @@ Instantiation
 =============
 
 There are several different methods available to create a new instance of Pendulum.
-First there is a constructor. It overrides the parent constructor to be more flexible.
-Basically, unlike ``datetime`` you can omit parameters and any omitted parameter will
-default to its ``now()`` value. However, if you provide the ``year``, ``month``, ``day``
-it will emulate the default ``datetime`` behavior.
+First there is a constructor. It accepts the same parameters as the standard class.
 
 .. code-block:: python
 
     from pendulum import Pendulum
 
-    dt = Pendulum() # equivalent to Pendulum.utcnow()
+    dt = Pendulum(2015, 2, 5, tzinfo='America/Vancouver')
     isinstance(dt, datetime)
     True
 
-    dt = Pendulum(2015, 2, 5, tzinfo='America/Vancouver')
     dt = Pendulum.now(-5)
 
 You'll notice above that the timezone (2nd) parameter was passed as a string and an integer
@@ -103,18 +97,20 @@ This is again shown in the next example which also introduces the ``now()`` func
 
 .. code-block:: python
 
-    now = Pendulum.now()
+    import pendulum
 
-    now_in_london_tz = Pendulum.now(pytz.timezone('Europe/London'))
+    now = pendulum.now()
+
+    now_in_london_tz = pendulum.now(pytz.timezone('Europe/London'))
 
     # or just pass the timezone as a string
-    now_in_london_tz = Pendulum.now('Europe/London')
+    now_in_london_tz = pendulum.now('Europe/London')
     print(now_in_london_tz.timezone_name)
     'Europe/London'
 
     # or to create a date with a timezone of +1 to GMT
     # during DST then just pass an integer
-    print(Pendulum.now(1).timezone_name))
+    print(pendulum.now(1).timezone_name))
     None
 
 .. note::
@@ -128,19 +124,19 @@ besides behaving as expected, all accept a timezone parameter and each has their
 
 .. code-block:: python
 
-    now = Pendulum.now()
+    now = pendulum.now()
     print(now)
     '2016-06-28T16:51:45.978473-05:00'
 
-    today = Pendulum.today()
+    today = pendulum.today()
     print(today)
     '2016-06-28T00:00:00-05:00'
 
-    tomorrow = Pendulum.tomorrow('Europe/London')
+    tomorrow = pendulum.tomorrow('Europe/London')
     print(tomorrow)
     '2016-06-29T00:00:00+01:00'
 
-    yesterday = Pendulum.yesterday()
+    yesterday = pendulum.yesterday()
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
@@ -151,9 +147,9 @@ Generally default values are the current date, time or timezone.
 
 .. code-block:: python
 
-    Pendulum.create_from_date(year, month, day, tz)
-    Pendulum.create_from_time(hour, minute, second, microsecond, tz)
-    Pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
+    pendulum.from_date(year, month, day, tz)
+    pendulum.from_time(hour, minute, second, microsecond, tz)
+    pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
 ``create_from_date()`` will default the time to now. ``create_from_time()`` will default the date to today.
 ``create()`` will default any null parameter to the current respective value.
@@ -163,13 +159,13 @@ is specified but no minutes or seconds, they will get defaulted to ``0``.
 
 .. code-block:: python
 
-    xmas_this_year = Pendulum.create_from_date(None, 12, 25) # Year defaults to current year
-    y2k = Pendulum.create(2000, 1, 1, 0, 0, 0)
-    noon_london_tz = Pendulum.create_from_time(12, 0, 0, tz='Europe/London')
+    xmas_this_year = pendulum._from_date(None, 12, 25) # Year defaults to current year
+    y2k = pendulum.create(2000, 1, 1, 0, 0, 0)
+    noon_london_tz = pendulum.from_time(12, 0, 0, tz='Europe/London')
 
 .. code-block:: python
 
-    Pendulum.create_from_format(time, format, tz)
+    pendulum.from_format(time, format, tz)
 
 ``create_from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
 The difference being the addition the ``tz`` argument that can be a ``tzinfo`` instance or a string timezone value
@@ -177,13 +173,13 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
 
 .. code-block:: python
 
-    Pendulum.create_from_format('1975-05-21 22', '%Y-%m-%d %H').to_datetime_string()
+    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H').to_datetime_string()
     '1975-05-21 22:00:00'
-    Pendulum.create_from_format('1975-05-21 22', '%Y-%m-%d %H', 'Europe/London').isoformat()
+    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', 'Europe/London').isoformat()
     '1975-05-21T22:00:00+01:00'
 
     # Using strptime is also possible (the timezone will be UTC)
-    Pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
+    pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
 
 The final ``create`` function is for working with unix timestamps.
 ``create_from_timestamp()`` will create a Pendulum instance equal to the given timestamp
@@ -191,30 +187,34 @@ and will set the timezone as well or default it to ``UTC``.
 
 .. code-block:: python
 
-    Pendulum.create_from_timestamp(-1).to_datetime_string()
+    pendulum.from_timestamp(-1).to_datetime_string()
     '1969-12-31 23:59:59'
 
-    Pendulum.create_from_timestamp(-1, 'Europe/London').to_datetime_string()
+    pendulum.from_timestamp(-1, 'Europe/London').to_datetime_string()
     '1970-01-01 00:59:59'
+
+    # Using the standard fromtimestamp is also possible
+    pendulum.fromtimestamp(-1).to_datetime_string()
+    '1969-12-31 23:59:59'
 
 You can also create a ``copy()`` of an existing Pendulum instance.
 As expected the date, time and timezone values are all copied to the new instance.
 
 .. code-block:: python
 
-    dt = Pendulum.now()
-    print(dt.diff_in_years(dt.copy().add_year()))
+    dt = pendulum.now()
+    print(dt.diff(dt.copy().add_year()).in_years())
     1
 
-    # dt was unchanged and still holds the value of Pendulum.now()
+    # dt was unchanged and still holds the value of pendulum.now()
 
 Finally, if you find yourself inheriting a ``datetime`` instance,
-you can create a Pendulum instance via the ``instance()`` function.
+you can create a ``Pendulum`` instance via the ``instance()`` function.
 
 .. code-block:: python
 
     dt = datetime(2008, 1, 1)
-    p = Pendulum.instance(dt)
+    p = pendulum.instance(dt)
     print(p.to_datetime_string())
     '2008-01-01 00:00:00'
 

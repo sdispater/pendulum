@@ -9,28 +9,28 @@ from .. import AbstractTestCase
 class SubTest(AbstractTestCase):
 
     def test_sub_years_positive(self):
-        self.assertEqual(1974, Pendulum(1975).sub_years(1).year)
+        self.assertEqual(1974, Pendulum.create(1975).sub_years(1).year)
 
     def test_sub_years_zero(self):
-        self.assertEqual(1975, Pendulum(1975).sub_years(0).year)
+        self.assertEqual(1975, Pendulum.create(1975).sub_years(0).year)
 
     def test_sub_years_negative(self):
-        self.assertEqual(1976, Pendulum(1975).sub_years(-1).year)
+        self.assertEqual(1976, Pendulum.create(1975).sub_years(-1).year)
 
     def test_sub_year(self):
-        self.assertEqual(1974, Pendulum(1975).sub_year().year)
+        self.assertEqual(1974, Pendulum.create(1975).sub_year().year)
 
     def test_sub_months_positive(self):
-        self.assertEqual(11, Pendulum(1975, 12).sub_months(1).month)
+        self.assertEqual(11, Pendulum.create(1975, 12).sub_months(1).month)
 
     def test_sub_months_zero(self):
-        self.assertEqual(12, Pendulum(1975, 12).sub_months(0).month)
+        self.assertEqual(12, Pendulum.create(1975, 12).sub_months(0).month)
 
     def test_sub_months_negative(self):
-        self.assertEqual(1, Pendulum(1975, 12).sub_months(-1).month)
+        self.assertEqual(1, Pendulum.create(1975, 12).sub_months(-1).month)
 
     def test_sub_month(self):
-        self.assertEqual(11, Pendulum(1975, 12).sub_month().month)
+        self.assertEqual(11, Pendulum.create(1975, 12).sub_month().month)
 
     def test_sub_days_positive(self):
         self.assertEqual(30, Pendulum(1975, 5, 31).sub_days(1).day)

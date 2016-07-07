@@ -16,8 +16,8 @@ class ConstructTest(AbstractTestCase):
             del os.environ['TZ']
 
     def test_creates_an_instance_default_to_utcnow(self):
-        p = Pendulum()
         now = Pendulum.utcnow()
+        p = Pendulum(now.year, now.month, now.day, now.hour, now.minute, now.second)
         self.assertIsInstanceOfPendulum(p)
         self.assertEqual(p.timezone_name, now.timezone_name)
 
@@ -41,7 +41,7 @@ class ConstructTest(AbstractTestCase):
         dt = datetime.utcnow()
         offset = dtz.utcoffset(dt).total_seconds() / 3600
 
-        p = Pendulum(tzinfo=dtz)
+        p = Pendulum(dt.year, dt.month, dt.day, tzinfo=dtz)
         self.assertEqual(timezone, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
@@ -61,7 +61,7 @@ class ConstructTest(AbstractTestCase):
         dt = datetime.utcnow()
         offset = dtz.utcoffset(dt).total_seconds() / 3600
 
-        p = Pendulum(tzinfo=timezone)
+        p = Pendulum(dt.year, dt.month, dt.day, tzinfo=timezone)
         self.assertEqual(timezone, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 

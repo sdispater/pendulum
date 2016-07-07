@@ -24,7 +24,7 @@ class TestingAidsTest(AbstractTestCase):
         test_now = Pendulum.yesterday()
         Pendulum.set_test_now(test_now)
 
-        self.assertEqual(test_now, Pendulum())
+        self.assertEqual(test_now, Pendulum.now())
 
     def test_now_with_test_value_set(self):
         test_now = Pendulum.yesterday()

@@ -9,28 +9,28 @@ from pendulum import Pendulum
 class AddTest(AbstractTestCase):
 
     def test_add_years_positive(self):
-        self.assertEqual(1976, Pendulum(1975).add_years(1).year)
+        self.assertEqual(1976, Pendulum.create(1975).add_years(1).year)
 
     def test_add_years_zero(self):
-        self.assertEqual(1975, Pendulum(1975).add_years(0).year)
+        self.assertEqual(1975, Pendulum.create(1975).add_years(0).year)
 
     def test_add_years_negative(self):
-        self.assertEqual(1974, Pendulum(1975).add_years(-1).year)
+        self.assertEqual(1974, Pendulum.create(1975).add_years(-1).year)
 
     def test_add_year(self):
-        self.assertEqual(1976, Pendulum(1975).add_year().year)
+        self.assertEqual(1976, Pendulum.create(1975).add_year().year)
 
     def test_add_months_positive(self):
-        self.assertEqual(1, Pendulum(1975, 12).add_months(1).month)
+        self.assertEqual(1, Pendulum.create(1975, 12).add_months(1).month)
 
     def test_add_months_zero(self):
-        self.assertEqual(12, Pendulum(1975, 12).add_months(0).month)
+        self.assertEqual(12, Pendulum.create(1975, 12).add_months(0).month)
 
     def test_add_months_negative(self):
-        self.assertEqual(11, Pendulum(1975, 12).add_months(-1).month)
+        self.assertEqual(11, Pendulum.create(1975, 12).add_months(-1).month)
 
     def test_add_month(self):
-        self.assertEqual(1, Pendulum(1975, 12).add_month().month)
+        self.assertEqual(1, Pendulum.create(1975, 12).add_month().month)
 
     def test_add_month_with_overflow(self):
         self.assertEqual(2, Pendulum(2012, 1, 31).add_month().month)

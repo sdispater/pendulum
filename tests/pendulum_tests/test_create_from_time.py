@@ -10,7 +10,7 @@ class CreateFromTimeTest(AbstractTestCase):
 
     def test_create_from_time_with_defaults(self):
         d = Pendulum.create_from_time()
-        self.assertEqual(d.timestamp, Pendulum().timestamp)
+        self.assertEqual(d.timestamp, Pendulum.now().timestamp)
         self.assertEqual('UTC', d.timezone_name)
 
     def test_create_from_time(self):
