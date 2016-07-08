@@ -987,11 +987,11 @@ level.
     60
 
 
-PendulumInterval
-================
+Interval
+========
 
-When you subtract a ``Pendulum`` instance to another, it will return a ``PendulumInterval`` instance.
-The ``PendulumInterval`` class is inherited from the native ``timedelta`` class.
+When you subtract a ``Pendulum`` instance to another, it will return a ``Interval`` instance.
+The ``Interval`` class is inherited from the native ``timedelta`` class.
 It has many improvements over the base class.
 
 .. note::
@@ -1027,7 +1027,7 @@ You can create an instance in the following ways:
 
     import pendulum
 
-    it = pendulum.PendulumInterval(days=1177, seconds=7284, microseconds=1234)
+    it = pendulum.Interval(days=1177, seconds=7284, microseconds=1234)
     it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
     # You can use an existing timedelta instance
@@ -1037,7 +1037,7 @@ You can create an instance in the following ways:
 Properties and Duration Methods
 -------------------------------
 
-The ``PendulumInterval`` class brings more properties than the default ``days``, ``seconds`` and
+The ``Interval`` class brings more properties than the default ``days``, ``seconds`` and
 ``microseconds``.
 
 .. code-block:: python
