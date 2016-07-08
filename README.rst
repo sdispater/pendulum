@@ -32,6 +32,14 @@ Python datetimes made easy.
     delta.in_words(locale='en')
     '6 days 23 hours 58 minutes'
 
+Installation
+============
+You can install Pendeulum on Windows with Pip and Python using the following command:
+
+.. code-block:: python
+
+   pip install pendelum
+
 Resources
 =========
 
