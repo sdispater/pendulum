@@ -263,7 +263,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls.today(tz).add_day()
+        return cls.today(tz).add(days=1)
 
     @classmethod
     def yesterday(cls, tz=None):
@@ -275,7 +275,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls.today(tz).sub_day()
+        return cls.today(tz).sub(days=1)
 
     @classmethod
     def _create_datetime(cls, tz, year=None, month=None, day=None,
@@ -1360,321 +1360,6 @@ class Pendulum(datetime.datetime):
 
     # ADDITIONS AND SUBSTRACTIONS
 
-    def add_years(self, value):
-        """
-        Add years to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of years
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(years=value)
-
-    def add_year(self, value=1):
-        """
-        Add a year to the instance.
-
-        :param value: The number of years
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_years(value)
-
-    def sub_years(self, value):
-        """
-        Remove years from the instance.
-
-        :param value: The number of years
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(years=value)
-
-    def sub_year(self, value=1):
-        """
-        Remove a year from the instance.
-
-        :param value: The number of years
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_years(value)
-
-    def add_months(self, value):
-        """
-        Add months to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of months
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(months=value)
-
-    def add_month(self, value=1):
-        """
-        Add a month to the instance.
-
-        :param value: The number of month
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_months(value)
-
-    def sub_months(self, value):
-        """
-        Remove months from the instance.
-
-        :param value: The number of months
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(months=value)
-
-    def sub_month(self, value=1):
-        """
-        Remove a month from the instance.
-
-        :param value: The number of months
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_months(value)
-
-    def add_days(self, value):
-        """
-        Add days to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of days
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(days=value)
-
-    def add_day(self, value=1):
-        """
-        Add a day to the instance.
-
-        :param value: The number of days
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_days(value)
-
-    def sub_days(self, value):
-        """
-        Remove days from the instance.
-
-        :param value: The number of days
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(days=value)
-
-    def sub_day(self, value=1):
-        """
-        Remove a day from the instance.
-
-        :param value: The number of days
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_days(value)
-
-    def add_weeks(self, value):
-        """
-        Add weeks to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of weeks
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(weeks=value)
-
-    def add_week(self, value=1):
-        """
-        Add a week to the instance.
-
-        :param value: The number of weeks
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_weeks(value)
-
-    def sub_weeks(self, value):
-        """
-        Remove weeks from the instance.
-
-        :param value: The number of weeks
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(weeks=value)
-
-    def sub_week(self, value=1):
-        """
-        Remove a week from the instance.
-
-        :param value: The number of weeks
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_weeks(value)
-
-    def add_hours(self, value):
-        """
-        Add hours to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of hours
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(hours=value)
-
-    def add_hour(self, value=1):
-        """
-        Add a hour to the instance.
-
-        :param value: The number of hours
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_hours(value)
-
-    def sub_hours(self, value):
-        """
-        Remove hours from the instance.
-
-        :param value: The number of hours
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(hours=value)
-
-    def sub_hour(self, value=1):
-        """
-        Remove a hour from the instance.
-
-        :param value: The number of hours
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_hours(value)
-
-    def add_minutes(self, value):
-        """
-        Add minutes to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of minutes
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(minutes=value)
-
-    def add_minute(self, value=1):
-        """
-        Add a minute to the instance.
-
-        :param value: The number of minutes
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_minutes(value)
-
-    def sub_minutes(self, value):
-        """
-        Remove minutes from the instance.
-
-        :param value: The number of minutes
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(minutes=value)
-
-    def sub_minute(self, value=1):
-        """
-        Remove a minute from the instance.
-
-        :param value: The number of minutes
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_minutes(value)
-
-    def add_seconds(self, value):
-        """
-        Add seconds to the instance. Positive $value travel forward while
-        negative $value travel into the past.
-
-        :param value: The number of seconds
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add(seconds=value)
-
-    def add_second(self, value=1):
-        """
-        Add a second to the instance.
-
-        :param value: The number of seconds
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.add_seconds(value)
-
-    def sub_seconds(self, value):
-        """
-        Remove seconds from the instance.
-
-        :param value: The number of seconds
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub(seconds=value)
-
-    def sub_second(self, value=1):
-        """
-        Remove a second from the instance.
-
-        :param value: The number of seconds
-        :type value: int
-
-        :rtype: Pendulum
-        """
-        return self.sub_seconds(value)
-
     def add(self, years=0, months=0, weeks=0, days=0,
             hours=0, minutes=0, seconds=0, microseconds=0,
             weekdays=None):
@@ -2089,9 +1774,9 @@ class Pendulum(datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').add_day()
+        dt = self.start_of('day').add(days=1)
         while dt.day_of_week != day_of_week:
-            dt = dt.add_day()
+            dt = dt.add(days=1)
 
         return dt
 
@@ -2110,9 +1795,9 @@ class Pendulum(datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').sub_day()
+        dt = self.start_of('day').sub(days=1)
         while dt.day_of_week != day_of_week:
-            dt = dt.sub_day()
+            dt = dt.sub(days=1)
 
         return dt
 
@@ -2388,7 +2073,7 @@ class Pendulum(datetime.datetime):
         if dt is None:
             dt = Pendulum.now(self._tz)
 
-        return self.add_seconds(int(self.diff(dt, False).in_seconds() / 2))
+        return self.add(seconds=int(self.diff(dt, False).in_seconds() / 2))
 
     def _get_datetime(self, value, pendulum=False):
         """

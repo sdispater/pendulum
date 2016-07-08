@@ -58,7 +58,7 @@ class GettersTest(AbstractTestCase):
     def test_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
         self.assertEqual(0, d.timestamp)
-        self.assertEqual(60, d.add_minute().timestamp)
+        self.assertEqual(60, d.add(minutes=1).timestamp)
 
     def test_float_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
@@ -67,7 +67,7 @@ class GettersTest(AbstractTestCase):
     def test_age(self):
         d = Pendulum.now()
         self.assertEqual(0, d.age)
-        self.assertEqual(1, d.add_year().age)
+        self.assertEqual(1, d.add(years=1).age)
 
     def test_local(self):
         self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').local)

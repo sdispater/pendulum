@@ -206,7 +206,7 @@ As expected the date, time and timezone values are all copied to the new instanc
 .. code-block:: python
 
     dt = pendulum.now()
-    print(dt.diff(dt.copy().add_year()).in_years())
+    print(dt.diff(dt.copy().add(years=1)).in_years())
     1
 
     # dt was unchanged and still holds the value of pendulum.now()
@@ -251,7 +251,7 @@ by using the class method ``pendulum.set_locale()``.
     import pendulum
 
     pendulum.set_locale('de')
-    print(pendulum.now().add_year().diff_for_humans())
+    print(pendulum.now().add(years=1).diff_for_humans())
     'in 1 Jahr'
 
     pendulum.set_locale('en')
@@ -262,7 +262,7 @@ method accept a ``locale`` keyword argument to use a locale for a specific call.
 .. code-block:: python
 
     pendulum.set_locale('de')
-    print(pendulum.now().add_year().diff_for_humans(locale='fr'))
+    print(pendulum.now().add(years=1).diff_for_humans(locale='fr'))
     'dans 1 an'
 
 
@@ -619,7 +619,7 @@ the ``now()`` is created in the same timezone as the instance.
     born = pendulum.from_date(1987, 4, 23)
     not_birthday = pendulum.from_date(2014, 9, 26)
     birthday = pendulum.from_date(2014, 2, 23)
-    past_birthday = pendulum.now().sub_years(50)
+    past_birthday = pendulum.now().sub(years=50)
 
     born.is_birthday(not_birthday)
     False
@@ -633,8 +633,8 @@ the ``now()`` is created in the same timezone as the instance.
 Addition and Subtraction
 ========================
 
-To easily adding and subtracting time, you can use the ``add_xxx()``/``sub_xxx()``
-methods or the more generic ones ``add()``/``sub()``.
+To easily adding and subtracting time, you can use the ``add()`` and ``sub()``
+methods`.
 Each method returns a new ``Pendulum`` instance.
 
 .. code-block:: python
@@ -646,67 +646,67 @@ Each method returns a new ``Pendulum`` instance.
     dt.to_datetime_string()
     '2012-01-31 00:00:00'
 
-    dt = dt.add_years(5)
+    dt = dt.add(years=5)
     '2017-01-31 00:00:00'
-    dt = dt.add_year()
+    dt = dt.add(years=1)
     '2018-01-31 00:00:00'
-    dt = dt.sub_year()
+    dt = dt.sub(years=1)
     '2017-01-31 00:00:00'
-    dt = dt.sub_years(5)
+    dt = dt.sub(years=5)
     '2012-01-31 00:00:00'
 
-    dt = dt.add_months(60)
+    dt = dt.add(months=60)
     '2017-01-31 00:00:00'
-    dt = dt.add_month()
+    dt = dt.add(months=1)
     '2017-02-28 00:00:00'
-    dt = dt.sub_month()
+    dt = dt.sub(months=1)
     '2017-01-28 00:00:00'
-    dt = dt.sub_months(60)
+    dt = dt.sub(months=60)
     '2012-01-28 00:00:00'
 
-    dt = dt.add_days(29)
+    dt = dt.add(days=29)
     '2012-02-26 00:00:00'
-    dt = dt.add_day()
+    dt = dt.add(days=1)
     '2012-02-27 00:00:00'
-    dt = dt.sub_day()
+    dt = dt.sub(days=1)
     '2012-02-26 00:00:00'
-    dt = dt.sub_days(29)
+    dt = dt.sub(days=29)
     '2012-01-28 00:00:00'
 
-    dt = dt.add_weeks(3)
+    dt = dt.add(weeks=3)
     '2012-02-18 00:00:00'
-    dt = dt.add_week()
+    dt = dt.add(weeks=1)
     '2012-02-25 00:00:00'
-    dt = dt.sub_week()
+    dt = dt.sub(weeks=1)
     '2012-02-18 00:00:00'
-    dt = dt.sub_weeks(3)
+    dt = dt.sub(weeks=3)
     '2012-01-28 00:00:00'
 
-    dt = dt.add_hours(24)
+    dt = dt.add(hours=24)
     '2012-01-29 00:00:00'
-    dt = dt.add_hour()
+    dt = dt.add(hours=1)
     '2012-02-25 01:00:00'
-    dt = dt.sub_hour()
+    dt = dt.sub(hours=1)
     '2012-02-29 00:00:00'
-    dt = dt.sub_hours(24)
+    dt = dt.sub(hours=24)
     '2012-01-28 00:00:00'
 
-    dt = dt.add_minutes(61)
+    dt = dt.add(minutes=61)
     '2012-01-28 01:01:00'
-    dt = dt.add_minute()
+    dt = dt.add(minutes=1)
     '2012-01-28 01:02:00'
-    dt = dt.sub_minute()
+    dt = dt.sub(minutes=1)
     '2012-01-28 01:01:00'
-    dt = dt.sub_minutes(24)
+    dt = dt.sub(minutes=24)
     '2012-01-28 00:00:00'
 
-    dt = dt.add_seconds(61)
+    dt = dt.add(seconds=61)
     '2012-01-28 00:01:01'
-    dt = dt.add_second()
+    dt = dt.add(seconds=1)
     '2012-01-28 00:01:02'
-    dt = dt.sub_second()
+    dt = dt.sub(seconds=1)
     '2012-01-28 00:01:01'
-    dt = dt.sub_seconds(61)
+    dt = dt.sub(seconds=61)
     '2012-01-28 00:00:00'
 
     dt = dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
@@ -751,28 +751,28 @@ This will default to ``True``, return the absolute value. The comparisons are do
     -3
 
     dt = pendulum.create(2012, 1, 31, 0)
-    dt.diff(dt.add_month()).in_days()
+    dt.diff(dt.add(months=1)).in_days()
     29
-    dt.diff(dt.sub_month(), False).in_days()
+    dt.diff(dt.sub(months=1), False).in_days()
     -31
 
     dt = pendulum.create(2012, 4, 30, 0)
-    dt.diff(dt.add_month()).in_days()
+    dt.diff(dt.add(months=1)).in_days()
     30
-    dt.diff(dt.add_week()).in_days()
+    dt.diff(dt.add(weeks=1)).in_days()
     7
 
     dt = pendulum.create(2012, 1, 1, 0)
-    dt.diff(dt.add_seconds(59)).in_minutes()
+    dt.diff(dt.add(seconds=59)).in_minutes()
     0
-    dt.diff(dt.add_seconds(60)).in_minutes()
+    dt.diff(dt.add(seconds=60)).in_minutes()
     1
-    dt.diff(dt.add_seconds(119)).in_minutes()
+    dt.diff(dt.add(seconds=119)).in_minutes()
     1
-    dt.diff(dt.add_seconds(120)).in_minutes()
+    dt.diff(dt.add(seconds=120)).in_minutes()
     2
 
-    dt.add_seconds(120).seconds_since_midnight()
+    dt.add(seconds=120).seconds_since_midnight()
     120
 
 Difference for Humans
@@ -806,25 +806,25 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     # The most typical usage is for comments
     # The instance is the date the comment was created
     # and its being compared to default now()
-    pendulum.now().sub_days().diff_for_humans()
+    pendulum.now().sub(dayss=1).diff_for_humans()
     '5 days ago'
 
-    pendulum.now().diff_for_humans(Pendulum.now().sub_year())
+    pendulum.now().diff_for_humans(Pendulum.now().sub(years=1))
     '1 year after'
 
     dt = pendulum.from_date(2011, 8, 1)
-    dt.diff_for_humans(dt.add_month())
+    dt.diff_for_humans(dt.add(months=1))
     '1 month before'
-    dt.diff_for_humans(dt.sub_month())
+    dt.diff_for_humans(dt.sub(months=1))
     '1 month after'
 
-    pendulum.now().add_seconds(5).diff_for_humans()
+    pendulum.now().add(seconds=5).diff_for_humans()
     '5 seconds from now'
 
-    pendulum.now().sub_days(24).diff_for_humans()
+    pendulum.now().sub(days=24).diff_for_humans()
     '3 weeks ago'
 
-    pendulum.now().sub_days(24).diff_for_humans(absolute=True)
+    pendulum.now().sub(days=24).diff_for_humans(absolute=True)
     '3 weeks'
 
 You can also change the locale of the string either globally by using ``pendulum.set_locale('fr')``
@@ -836,9 +836,9 @@ argument. See the `Localization`_ section for more detail.
     import pendulum
 
     pendulum.set_locale('de')
-    pendulum.now().add_year().diff_for_humans()
+    pendulum.now().add(years=1).diff_for_humans()
     'in 1 Jahr'
-    pendulum.now().add_year().diff_for_humans(locale='fr')
+    pendulum.now().add(years=1).diff_for_humans(locale='fr')
     'dans 1 an'
 
 

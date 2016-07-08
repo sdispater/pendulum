@@ -16,13 +16,13 @@ Python datetimes made easy.
     now_in_paris.in_timezone('UTC')
     '2016-07-03T22:49:58.502116+00:00'
 
-    tomorrow = pendulum.now().add_day()
-    last_week = pendulum.now().sub_week()
+    tomorrow = pendulum.now().add(days=1)
+    last_week = pendulum.now().sub(weeks=1)
 
     if pendulum.now().is_weekend():
         print('Party!')
 
-    past = pendulum.now().sub_minutes(2)
+    past = pendulum.now().sub(minutes=2)
     past.diff_for_humans()
     '2 minutes ago'
 
