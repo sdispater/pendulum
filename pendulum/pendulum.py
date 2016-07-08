@@ -2184,7 +2184,7 @@ class Pendulum(datetime.datetime):
         )
 
     def astimezone(self, tz=None):
-        return self._datetime.astimezone(tz)
+        return self.instance(self._datetime.astimezone(tz))
 
     def ctime(self):
         return self._datetime.ctime()
