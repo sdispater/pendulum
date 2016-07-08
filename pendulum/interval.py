@@ -229,7 +229,7 @@ class Interval(timedelta):
         return self.in_words()
 
     def __repr__(self):
-        return self.in_words()
+        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
 
     def __add__(self, other):
         if isinstance(other, timedelta):

@@ -936,7 +936,7 @@ class Pendulum(datetime.datetime):
         return self.format(self._to_string_format)
 
     def __repr__(self):
-        return str(self)
+        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
 
     def to_date_string(self):
         """
