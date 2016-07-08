@@ -5,7 +5,7 @@ import pytz
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import Pendulum, PendulumInterval
+from pendulum import Pendulum, Interval
 
 
 class AbstractTestCase(TestCase):
@@ -62,7 +62,7 @@ class AbstractTestCase(TestCase):
         self.assertIsInstance(d, Pendulum)
 
     def assertIsInstanceOfInterval(self, d):
-        self.assertIsInstance(d, PendulumInterval)
+        self.assertIsInstance(d, Interval)
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):

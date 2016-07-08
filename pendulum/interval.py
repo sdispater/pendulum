@@ -5,7 +5,7 @@ from datetime import timedelta
 from .translator import Translator
 
 
-class PendulumInterval(timedelta):
+class Interval(timedelta):
 
     _y = None
     _m = None
@@ -32,11 +32,11 @@ class PendulumInterval(timedelta):
     @classmethod
     def instance(cls, delta):
         """
-        Creates a PendulumInterval from a timedelta
+        Creates a Interval from a timedelta
 
         :type delta: timedelta
 
-        :rtype: PendulumInterval
+        :rtype: Interval
         """
         return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
@@ -233,7 +233,7 @@ class PendulumInterval(timedelta):
 
     def __add__(self, other):
         if isinstance(other, timedelta):
-            return PendulumInterval(seconds=self.total_seconds() + other.total_seconds())
+            return Interval(seconds=self.total_seconds() + other.total_seconds())
 
         return NotImplemented
 
@@ -241,48 +241,48 @@ class PendulumInterval(timedelta):
         if isinstance(other, timedelta):
             # for CPython compatibility, we cannot use
             # our __class__ here, but need a real timedelta
-            return PendulumInterval(seconds=self.total_seconds() - other.total_seconds())
+            return Interval(seconds=self.total_seconds() - other.total_seconds())
 
         return NotImplemented
 
     def __neg__(self):
         # for CPython compatibility, we cannot use
         # our __class__ here, but need a real timedelta
-        return PendulumInterval(seconds=-self.total_seconds())
+        return Interval(seconds=-self.total_seconds())
 
 
-class AbsolutePendulumInterval(PendulumInterval):
+class AbsoluteInterval(Interval):
 
     def total_seconds(self):
-        return abs(super(AbsolutePendulumInterval, self).total_seconds())
+        return abs(super(AbsoluteInterval, self).total_seconds())
 
     @property
     def weeks(self):
-        return abs(super(AbsolutePendulumInterval, self).weeks)
+        return abs(super(AbsoluteInterval, self).weeks)
 
     @property
     def days(self):
-        return abs(super(AbsolutePendulumInterval, self).days)
+        return abs(super(AbsoluteInterval, self).days)
 
     @property
     def hours(self):
-        return abs(super(AbsolutePendulumInterval, self).hours)
+        return abs(super(AbsoluteInterval, self).hours)
 
     @property
     def minutes(self):
-        return abs(super(AbsolutePendulumInterval, self).minutes)
+        return abs(super(AbsoluteInterval, self).minutes)
 
     @property
     def seconds(self):
-        return abs(super(AbsolutePendulumInterval, self).seconds)
+        return abs(super(AbsoluteInterval, self).seconds)
 
     @property
     def microseconds(self):
-        return abs(super(AbsolutePendulumInterval, self).microseconds)
+        return abs(super(AbsoluteInterval, self).microseconds)
 
     @property
     def invert(self):
-        return super(AbsolutePendulumInterval, self).total_seconds() < 0
+        return super(AbsoluteInterval, self).total_seconds() < 0
 
     def _sign(self, value):
         return 1

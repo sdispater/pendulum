@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .pendulum import Pendulum
-from .pendulum_interval import PendulumInterval
+from .interval import Interval
 
 # Constants
 MONDAY = Pendulum.MONDAY
@@ -54,4 +54,4 @@ fromordinal = Pendulum.fromordinal
 combine = Pendulum.combine
 
 # Interval
-interval = PendulumInterval
+interval = Interval

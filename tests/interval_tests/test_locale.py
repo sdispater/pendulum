@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pendulum import PendulumInterval
+from pendulum import Interval
 from pendulum.translator import Translator
 
 from .. import AbstractTestCase
@@ -9,7 +9,7 @@ from .. import AbstractTestCase
 class LocaleTest(AbstractTestCase):
 
     def test_get_locale(self):
-        pi = PendulumInterval
+        pi = Interval
         self.assertEqual('en', pi.get_locale())
 
         pi.set_locale('fr')
@@ -18,11 +18,11 @@ class LocaleTest(AbstractTestCase):
         pi.set_locale('en')
 
     def test_set_invalid_locale(self):
-        pi = PendulumInterval
+        pi = Interval
         self.assertFalse(pi.set_locale('invalid'))
 
     def test_set_translator(self):
-        pi = PendulumInterval
+        pi = Interval
         t = Translator('en')
         pi.set_translator(t)
         self.assertIs(t, pi.translator())

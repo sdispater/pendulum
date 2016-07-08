@@ -17,7 +17,7 @@ from dateutil import parser as dateparser
 
 from .translator import Translator
 
-from .pendulum_interval import PendulumInterval, AbsolutePendulumInterval
+from .interval import Interval, AbsoluteInterval
 from .exceptions import PendulumException
 from ._compat import PY33, basestring
 
@@ -1484,14 +1484,14 @@ class Pendulum(datetime.datetime):
 
     def diff(self, dt=None, abs=True):
         """
-        Returns the difference between two Pendulum objects represented as a PendulumInterval.
+        Returns the difference between two Pendulum objects represented as a Interval.
 
         :type dt: Pendulum or None
 
         :param abs: Whether to return an absolute interval or not
         :type abs: bool
 
-        :rtype: PendulumInterval
+        :rtype: Interval
         """
         if dt is None:
             dt = self.now(self._tz)
@@ -1499,9 +1499,9 @@ class Pendulum(datetime.datetime):
         delta = self._get_datetime(dt) - self._datetime
 
         if abs:
-            return AbsolutePendulumInterval.instance(delta)
+            return AbsoluteInterval.instance(delta)
 
-        return PendulumInterval.instance(delta)
+        return Interval.instance(delta)
 
     def diff_for_humans(self, other=None, absolute=False, locale=None):
         """
