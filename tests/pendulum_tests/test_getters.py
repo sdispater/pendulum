@@ -166,13 +166,13 @@ class GettersTest(AbstractTestCase):
     def test_is_today(self):
         d = Pendulum.now()
         self.assertTrue(d.is_today())
-        d = d.sub(days=1)
+        d = d.subtract(days=1)
         self.assertFalse(d.is_today())
 
     def test_is_yesterday(self):
         d = Pendulum.now()
         self.assertFalse(d.is_yesterday())
-        d = d.sub(days=1)
+        d = d.subtract(days=1)
         self.assertTrue(d.is_yesterday())
 
     def test_is_tomorrow(self):
@@ -191,7 +191,7 @@ class GettersTest(AbstractTestCase):
         with self.wrap_with_test_now():
             d = Pendulum.now()
             self.assertFalse(d.is_past())
-            d = d.sub(days=1)
+            d = d.subtract(days=1)
             self.assertTrue(d.is_past())
 
     def is_same_day(self):

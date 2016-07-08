@@ -13,46 +13,46 @@ class FaTest(AbstractLocalizationTestCase, AbstractTestCase):
 
     def diff_for_humans(self):
         with self.wrap_with_test_now():
-            d = Pendulum.now().sub(seconds=1)
+            d = Pendulum.now().subtract(seconds=1)
             self.assertEqual('1 ثانیه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(seconds=2)
+            d = Pendulum.now().subtract(seconds=2)
             self.assertEqual('2 ثانیه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(minutes=1)
+            d = Pendulum.now().subtract(minutes=1)
             self.assertEqual('1 دقیقه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(minutes=2)
+            d = Pendulum.now().subtract(minutes=2)
             self.assertEqual('2 دقیقه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(hours=1)
+            d = Pendulum.now().subtract(hours=1)
             self.assertEqual('1 ساعت پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(hours=2)
+            d = Pendulum.now().subtract(hours=2)
             self.assertEqual('2 ساعت پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(days=1)
+            d = Pendulum.now().subtract(days=1)
             self.assertEqual('1 روز پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(days=2)
+            d = Pendulum.now().subtract(days=2)
             self.assertEqual('2 روز پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(weeks=1)
+            d = Pendulum.now().subtract(weeks=1)
             self.assertEqual('1 هفته پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(weeks=2)
+            d = Pendulum.now().subtract(weeks=2)
             self.assertEqual('2 هفته پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(months=1)
+            d = Pendulum.now().subtract(months=1)
             self.assertEqual('1 ماه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(months=2)
+            d = Pendulum.now().subtract(months=2)
             self.assertEqual('2 ماه پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(years=1)
+            d = Pendulum.now().subtract(years=1)
             self.assertEqual('1 سال پیش', d.diff_for_humans())
 
-            d = Pendulum.now().sub(years=2)
+            d = Pendulum.now().subtract(years=2)
             self.assertEqual('2 سال پیش', d.diff_for_humans())
 
             d = Pendulum.now().add(seconds=1)

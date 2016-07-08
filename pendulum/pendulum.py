@@ -275,7 +275,7 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return cls.today(tz).sub(days=1)
+        return cls.today(tz).subtract(days=1)
 
     @classmethod
     def _create_datetime(cls, tz, year=None, month=None, day=None,
@@ -1400,7 +1400,7 @@ class Pendulum(datetime.datetime):
 
         return self.instance(self._datetime + delta)
 
-    def sub(self, years=0, months=0, weeks=0, days=0,
+    def subtract(self, years=0, months=0, weeks=0, days=0,
             hours=0, minutes=0, seconds=0, microseconds=0,
             weekdays=None):
         """
@@ -1452,7 +1452,7 @@ class Pendulum(datetime.datetime):
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
 
-    def sub_timedelta(self, delta):
+    def subtract_timedelta(self, delta):
         """
         Remove timedelta duration from the instance.
 
@@ -1461,8 +1461,8 @@ class Pendulum(datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.sub(days=delta.days, seconds=delta.seconds,
-                        microseconds=delta.microseconds)
+        return self.subtract(days=delta.days, seconds=delta.seconds,
+                             microseconds=delta.microseconds)
 
     # DIFFERENCES
 
@@ -1795,9 +1795,9 @@ class Pendulum(datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').sub(days=1)
+        dt = self.start_of('day').subtract(days=1)
         while dt.day_of_week != day_of_week:
-            dt = dt.sub(days=1)
+            dt = dt.subtract(days=1)
 
         return dt
 
@@ -2122,7 +2122,7 @@ class Pendulum(datetime.datetime):
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
-            return self.sub_timedelta(other)
+            return self.subtract_timedelta(other)
 
         return self._get_datetime(other, True).diff(self, False)
 

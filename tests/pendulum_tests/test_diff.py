@@ -25,15 +25,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_years_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-1, dt.diff(dt.copy().sub(years=1), False).in_years())
+        self.assertEqual(-1, dt.diff(dt.copy().subtract(years=1), False).in_years())
 
     def test_diff_in_years_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(1, dt.diff(dt.copy().sub(years=1)).in_years())
+        self.assertEqual(1, dt.diff(dt.copy().subtract(years=1)).in_years())
 
     def test_diff_in_years_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(1, Pendulum.now().sub(years=1).diff().in_years())
+            self.assertEqual(1, Pendulum.now().subtract(years=1).diff().in_years())
 
     def test_diff_in_years_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -45,15 +45,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_months_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-11, dt.diff(dt.copy().sub(years=1).add(months=1), False).in_months())
+        self.assertEqual(-11, dt.diff(dt.copy().subtract(years=1).add(months=1), False).in_months())
 
     def test_diff_in_months_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(11, dt.diff(dt.copy().sub(years=1).add(months=1)).in_months())
+        self.assertEqual(11, dt.diff(dt.copy().subtract(years=1).add(months=1)).in_months())
 
     def test_diff_in_months_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(12, Pendulum.now().sub(years=1).diff().in_months())
+            self.assertEqual(12, Pendulum.now().subtract(years=1).diff().in_months())
 
     def test_diff_in_months_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -65,15 +65,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_days_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-365, dt.diff(dt.copy().sub(years=1), False).in_days())
+        self.assertEqual(-365, dt.diff(dt.copy().subtract(years=1), False).in_days())
 
     def test_diff_in_days_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(365, dt.diff(dt.copy().sub(years=1)).in_days())
+        self.assertEqual(365, dt.diff(dt.copy().subtract(years=1)).in_days())
 
     def test_diff_in_days_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(7, Pendulum.now().sub(weeks=1).diff().in_days())
+            self.assertEqual(7, Pendulum.now().subtract(weeks=1).diff().in_days())
 
     def test_diff_in_days_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -85,19 +85,19 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_weeks_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-52, dt.diff(dt.copy().sub(years=1), False).in_weeks())
+        self.assertEqual(-52, dt.diff(dt.copy().subtract(years=1), False).in_weeks())
 
     def test_diff_in_weeks_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(52, dt.diff(dt.copy().sub(years=1)).in_weeks())
+        self.assertEqual(52, dt.diff(dt.copy().subtract(years=1)).in_weeks())
 
     def test_diff_in_weeks_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(1, Pendulum.now().sub(weeks=1).diff().in_weeks())
+            self.assertEqual(1, Pendulum.now().subtract(weeks=1).diff().in_weeks())
 
     def test_diff_in_weeks_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(0, dt.diff(dt.copy().add(weeks=1).sub(days=1)).in_weeks())
+        self.assertEqual(0, dt.diff(dt.copy().add(weeks=1).subtract(days=1)).in_weeks())
 
     def test_diff_in_hours_positive(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -105,15 +105,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_hours_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-22, dt.diff(dt.copy().sub(days=1).add(hours=2), False).in_hours())
+        self.assertEqual(-22, dt.diff(dt.copy().subtract(days=1).add(hours=2), False).in_hours())
 
     def test_diff_in_hours_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(22, dt.diff(dt.copy().sub(days=1).add(hours=2)).in_hours())
+        self.assertEqual(22, dt.diff(dt.copy().subtract(days=1).add(hours=2)).in_hours())
 
     def test_diff_in_hours_vs_default_now(self):
         with self.wrap_with_test_now(Pendulum.create_from_date(2012, 1, 15)):
-            self.assertEqual(48, Pendulum.now().sub(days=2).diff().in_hours())
+            self.assertEqual(48, Pendulum.now().subtract(days=2).diff().in_hours())
 
     def test_diff_in_hours_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -129,15 +129,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_minutes_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-58, dt.diff(dt.copy().sub(hours=1).add(minutes=2), False).in_minutes())
+        self.assertEqual(-58, dt.diff(dt.copy().subtract(hours=1).add(minutes=2), False).in_minutes())
 
     def test_diff_in_minutes_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(58, dt.diff(dt.copy().sub(hours=1).add(minutes=2)).in_minutes())
+        self.assertEqual(58, dt.diff(dt.copy().subtract(hours=1).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(60, Pendulum.now().sub(hours=1).diff().in_minutes())
+            self.assertEqual(60, Pendulum.now().subtract(hours=1).diff().in_minutes())
 
     def test_diff_in_minutes_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -153,15 +153,15 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_in_seconds_negative_with_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(-58, dt.diff(dt.copy().sub(minutes=1).add(seconds=2), False).in_seconds())
+        self.assertEqual(-58, dt.diff(dt.copy().subtract(minutes=1).add(seconds=2), False).in_seconds())
 
     def test_diff_in_seconds_negative_no_sign(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
-        self.assertEqual(58, dt.diff(dt.copy().sub(minutes=1).add(seconds=2)).in_seconds())
+        self.assertEqual(58, dt.diff(dt.copy().subtract(minutes=1).add(seconds=2)).in_seconds())
 
     def test_diff_in_seconds_vs_default_now(self):
         with self.wrap_with_test_now():
-            self.assertEqual(3600, Pendulum.now().sub(hours=1).diff().in_seconds())
+            self.assertEqual(3600, Pendulum.now().subtract(hours=1).diff().in_seconds())
 
     def test_diff_in_seconds_ensure_is_truncated(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
@@ -185,80 +185,80 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_now_and_seconds(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 seconds ago', Pendulum.now().sub(seconds=2).diff_for_humans())
+            self.assertEqual('2 seconds ago', Pendulum.now().subtract(seconds=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_minute(self):
         with self.wrap_with_test_now():
-            self.assertEqual('59 seconds ago', Pendulum.now().sub(seconds=59).diff_for_humans())
+            self.assertEqual('59 seconds ago', Pendulum.now().subtract(seconds=59).diff_for_humans())
 
     def test_diff_for_humans_now_and_minute(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 minute ago', Pendulum.now().sub(minutes=1).diff_for_humans())
+            self.assertEqual('1 minute ago', Pendulum.now().subtract(minutes=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_minutes(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 minutes ago', Pendulum.now().sub(minutes=2).diff_for_humans())
+            self.assertEqual('2 minutes ago', Pendulum.now().subtract(minutes=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_hour(self):
         with self.wrap_with_test_now():
-            self.assertEqual('59 minutes ago', Pendulum.now().sub(minutes=59).diff_for_humans())
+            self.assertEqual('59 minutes ago', Pendulum.now().subtract(minutes=59).diff_for_humans())
 
     def test_diff_for_humans_now_and_hour(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 hour ago', Pendulum.now().sub(hours=1).diff_for_humans())
+            self.assertEqual('1 hour ago', Pendulum.now().subtract(hours=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_hours(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 hours ago', Pendulum.now().sub(hours=2).diff_for_humans())
+            self.assertEqual('2 hours ago', Pendulum.now().subtract(hours=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_day(self):
         with self.wrap_with_test_now():
-            self.assertEqual('23 hours ago', Pendulum.now().sub(hours=23).diff_for_humans())
+            self.assertEqual('23 hours ago', Pendulum.now().subtract(hours=23).diff_for_humans())
 
     def test_diff_for_humans_now_and_day(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 day ago', Pendulum.now().sub(days=1).diff_for_humans())
+            self.assertEqual('1 day ago', Pendulum.now().subtract(days=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_days(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 days ago', Pendulum.now().sub(days=2).diff_for_humans())
+            self.assertEqual('2 days ago', Pendulum.now().subtract(days=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_week(self):
         with self.wrap_with_test_now():
-            self.assertEqual('6 days ago', Pendulum.now().sub(days=6).diff_for_humans())
+            self.assertEqual('6 days ago', Pendulum.now().subtract(days=6).diff_for_humans())
 
     def test_diff_for_humans_now_and_week(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 week ago', Pendulum.now().sub(weeks=1).diff_for_humans())
+            self.assertEqual('1 week ago', Pendulum.now().subtract(weeks=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_weeks(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 weeks ago', Pendulum.now().sub(weeks=2).diff_for_humans())
+            self.assertEqual('2 weeks ago', Pendulum.now().subtract(weeks=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_month(self):
         with self.wrap_with_test_now():
-            self.assertEqual('3 weeks ago', Pendulum.now().sub(weeks=3).diff_for_humans())
+            self.assertEqual('3 weeks ago', Pendulum.now().subtract(weeks=3).diff_for_humans())
 
     def test_diff_for_humans_now_and_month(self):
         with self.wrap_with_test_now():
-            self.assertEqual('4 weeks ago', Pendulum.now().sub(weeks=4).diff_for_humans())
-            self.assertEqual('1 month ago', Pendulum.now().sub(months=1).diff_for_humans())
+            self.assertEqual('4 weeks ago', Pendulum.now().subtract(weeks=4).diff_for_humans())
+            self.assertEqual('1 month ago', Pendulum.now().subtract(months=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_months(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 months ago', Pendulum.now().sub(months=2).diff_for_humans())
+            self.assertEqual('2 months ago', Pendulum.now().subtract(months=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_year(self):
         with self.wrap_with_test_now():
-            self.assertEqual('11 months ago', Pendulum.now().sub(months=11).diff_for_humans())
+            self.assertEqual('11 months ago', Pendulum.now().subtract(months=11).diff_for_humans())
 
     def test_diff_for_humans_now_and_year(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 year ago', Pendulum.now().sub(years=1).diff_for_humans())
+            self.assertEqual('1 year ago', Pendulum.now().subtract(years=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_years(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 years ago', Pendulum.now().sub(years=2).diff_for_humans())
+            self.assertEqual('2 years ago', Pendulum.now().subtract(years=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_second(self):
         with self.wrap_with_test_now():
@@ -424,118 +424,118 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_other_and_future_second(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 second after', Pendulum.now().diff_for_humans(Pendulum.now().sub(seconds=1)))
+            self.assertEqual('1 second after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(seconds=1)))
 
     def test_diff_for_humans_other_and_future_seconds(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 seconds after', Pendulum.now().diff_for_humans(Pendulum.now().sub(seconds=2)))
+            self.assertEqual('2 seconds after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(seconds=2)))
 
     def test_diff_for_humans_other_and_nearly_future_minute(self):
         with self.wrap_with_test_now():
-            self.assertEqual('59 seconds after', Pendulum.now().diff_for_humans(Pendulum.now().sub(seconds=59)))
+            self.assertEqual('59 seconds after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(seconds=59)))
 
     def test_diff_for_humans_other_and_future_minute(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 minute after', Pendulum.now().diff_for_humans(Pendulum.now().sub(minutes=1)))
+            self.assertEqual('1 minute after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(minutes=1)))
 
     def test_diff_for_humans_other_and_future_minutes(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 minutes after', Pendulum.now().diff_for_humans(Pendulum.now().sub(minutes=2)))
+            self.assertEqual('2 minutes after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(minutes=2)))
 
     def test_diff_for_humans_other_and_nearly_future_hour(self):
         with self.wrap_with_test_now():
-            self.assertEqual('59 minutes after', Pendulum.now().diff_for_humans(Pendulum.now().sub(minutes=59)))
+            self.assertEqual('59 minutes after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(minutes=59)))
 
     def test_diff_for_humans_other_and_future_hour(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 hour after', Pendulum.now().diff_for_humans(Pendulum.now().sub(hours=1)))
+            self.assertEqual('1 hour after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(hours=1)))
 
     def test_diff_for_humans_other_and_future_hours(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 hours after', Pendulum.now().diff_for_humans(Pendulum.now().sub(hours=2)))
+            self.assertEqual('2 hours after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(hours=2)))
 
     def test_diff_for_humans_other_and_nearly_future_day(self):
         with self.wrap_with_test_now():
-            self.assertEqual('23 hours after', Pendulum.now().diff_for_humans(Pendulum.now().sub(hours=23)))
+            self.assertEqual('23 hours after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(hours=23)))
 
     def test_diff_for_humans_other_and_future_day(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 day after', Pendulum.now().diff_for_humans(Pendulum.now().sub(days=1)))
+            self.assertEqual('1 day after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(days=1)))
 
     def test_diff_for_humans_other_and_future_days(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 days after', Pendulum.now().diff_for_humans(Pendulum.now().sub(days=2)))
+            self.assertEqual('2 days after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(days=2)))
 
     def test_diff_for_humans_other_and_nearly_future_week(self):
         with self.wrap_with_test_now():
-            self.assertEqual('6 days after', Pendulum.now().diff_for_humans(Pendulum.now().sub(days=6)))
+            self.assertEqual('6 days after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(days=6)))
 
     def test_diff_for_humans_other_and_future_week(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 week after', Pendulum.now().diff_for_humans(Pendulum.now().sub(weeks=1)))
+            self.assertEqual('1 week after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(weeks=1)))
 
     def test_diff_for_humans_other_and_future_weeks(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().sub(weeks=2)))
+            self.assertEqual('2 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(weeks=2)))
 
     def test_diff_for_humans_other_and_nearly_future_month(self):
         with self.wrap_with_test_now():
-            self.assertEqual('3 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().sub(weeks=3)))
+            self.assertEqual('3 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(weeks=3)))
 
     def test_diff_for_humans_other_and_future_month(self):
         with self.wrap_with_test_now():
-            self.assertEqual('4 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().sub(weeks=4)))
-            self.assertEqual('1 month after', Pendulum.now().diff_for_humans(Pendulum.now().sub(months=1)))
+            self.assertEqual('4 weeks after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(weeks=4)))
+            self.assertEqual('1 month after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(months=1)))
 
     def test_diff_for_humans_other_and_future_months(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 months after', Pendulum.now().diff_for_humans(Pendulum.now().sub(months=2)))
+            self.assertEqual('2 months after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(months=2)))
 
     def test_diff_for_humans_other_and_nearly_future_year(self):
         with self.wrap_with_test_now():
-            self.assertEqual('11 months after', Pendulum.now().diff_for_humans(Pendulum.now().sub(months=11)))
+            self.assertEqual('11 months after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(months=11)))
 
     def test_diff_for_humans_other_and_future_year(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 year after', Pendulum.now().diff_for_humans(Pendulum.now().sub(years=1)))
+            self.assertEqual('1 year after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(years=1)))
 
     def test_diff_for_humans_other_and_future_years(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 years after', Pendulum.now().diff_for_humans(Pendulum.now().sub(years=2)))
+            self.assertEqual('2 years after', Pendulum.now().diff_for_humans(Pendulum.now().subtract(years=2)))
 
     def test_diff_for_humans_absolute_seconds(self):
         with self.wrap_with_test_now():
-            self.assertEqual('59 seconds', Pendulum.now().diff_for_humans(Pendulum.now().sub(seconds=59), True))
+            self.assertEqual('59 seconds', Pendulum.now().diff_for_humans(Pendulum.now().subtract(seconds=59), True))
             self.assertEqual('59 seconds', Pendulum.now().diff_for_humans(Pendulum.now().add(seconds=59), True))
 
     def test_diff_for_humans_absolute_minutes(self):
         with self.wrap_with_test_now():
-            self.assertEqual('30 minutes', Pendulum.now().diff_for_humans(Pendulum.now().sub(minutes=30), True))
+            self.assertEqual('30 minutes', Pendulum.now().diff_for_humans(Pendulum.now().subtract(minutes=30), True))
             self.assertEqual('30 minutes', Pendulum.now().diff_for_humans(Pendulum.now().add(minutes=30), True))
 
     def test_diff_for_humans_absolute_hours(self):
         with self.wrap_with_test_now():
-            self.assertEqual('3 hours', Pendulum.now().diff_for_humans(Pendulum.now().sub(hours=3), True))
+            self.assertEqual('3 hours', Pendulum.now().diff_for_humans(Pendulum.now().subtract(hours=3), True))
             self.assertEqual('3 hours', Pendulum.now().diff_for_humans(Pendulum.now().add(hours=3), True))
 
     def test_diff_for_humans_absolute_days(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 days', Pendulum.now().diff_for_humans(Pendulum.now().sub(days=2), True))
+            self.assertEqual('2 days', Pendulum.now().diff_for_humans(Pendulum.now().subtract(days=2), True))
             self.assertEqual('2 days', Pendulum.now().diff_for_humans(Pendulum.now().add(days=2), True))
 
     def test_diff_for_humans_absolute_weeks(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 weeks', Pendulum.now().diff_for_humans(Pendulum.now().sub(weeks=2), True))
+            self.assertEqual('2 weeks', Pendulum.now().diff_for_humans(Pendulum.now().subtract(weeks=2), True))
             self.assertEqual('2 weeks', Pendulum.now().diff_for_humans(Pendulum.now().add(weeks=2), True))
 
     def test_diff_for_humans_absolute_months(self):
         with self.wrap_with_test_now():
-            self.assertEqual('2 months', Pendulum.now().diff_for_humans(Pendulum.now().sub(months=2), True))
+            self.assertEqual('2 months', Pendulum.now().diff_for_humans(Pendulum.now().subtract(months=2), True))
             self.assertEqual('2 months', Pendulum.now().diff_for_humans(Pendulum.now().add(months=2), True))
 
     def test_diff_for_humans_absolute_years(self):
         with self.wrap_with_test_now():
-            self.assertEqual('1 year', Pendulum.now().diff_for_humans(Pendulum.now().sub(years=1), True))
+            self.assertEqual('1 year', Pendulum.now().diff_for_humans(Pendulum.now().subtract(years=1), True))
             self.assertEqual('1 year', Pendulum.now().diff_for_humans(Pendulum.now().add(years=1), True))
 
     def test_seconds_since_midnight(self):
