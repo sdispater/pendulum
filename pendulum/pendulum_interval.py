@@ -233,26 +233,22 @@ class PendulumInterval(timedelta):
 
     def __add__(self, other):
         if isinstance(other, timedelta):
-            return PendulumInterval(self._days + other._days,
-                                    self._seconds + other._seconds,
-                                    self._microseconds + other._microseconds)
+            return PendulumInterval(seconds=self.total_seconds() + other.total_seconds())
+
         return NotImplemented
 
     def __sub__(self, other):
         if isinstance(other, timedelta):
             # for CPython compatibility, we cannot use
             # our __class__ here, but need a real timedelta
-            return PendulumInterval(self._days - other._days,
-                                    self._seconds - other._seconds,
-                                    self._microseconds - other._microseconds)
+            return PendulumInterval(seconds=self.total_seconds() - other.total_seconds())
+
         return NotImplemented
 
     def __neg__(self):
         # for CPython compatibility, we cannot use
         # our __class__ here, but need a real timedelta
-        return PendulumInterval(-self._days,
-                                -self._seconds,
-                                -self._microseconds)
+        return PendulumInterval(seconds=-self.total_seconds())
 
 
 class AbsolutePendulumInterval(PendulumInterval):

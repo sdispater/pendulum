@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 from pendulum import PendulumInterval
+from pendulum.pendulum_interval import AbsolutePendulumInterval
 
 from .. import AbstractTestCase
 
@@ -40,3 +42,19 @@ class ConstructTest(AbstractTestCase):
     def test_all(self):
         pi = PendulumInterval(days=1177, seconds=7284, microseconds=1000000)
         self.assertInterval(pi, 168, 1, 2, 1, 25)
+
+    def test_instance(self):
+        pi = PendulumInterval.instance(timedelta(days=1177, seconds=7284, microseconds=1000000))
+        self.assertInterval(pi, 168, 1, 2, 1, 25)
+
+    def test_absolute_interval(self):
+        pi = AbsolutePendulumInterval(days=-1177, seconds=-7284, microseconds=-1000001)
+        self.assertInterval(pi, 168, 1, 2, 1, 25)
+        self.assertEqual(999999, pi.microseconds)
+
+    def test_invert(self):
+        pi = PendulumInterval(days=1177, seconds=7284, microseconds=1000000)
+        self.assertFalse(pi.invert)
+
+        pi = PendulumInterval(days=-1177, seconds=-7284, microseconds=-1000000)
+        self.assertTrue(pi.invert)
