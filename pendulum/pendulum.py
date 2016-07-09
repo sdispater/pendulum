@@ -203,10 +203,7 @@ class Pendulum(datetime.datetime):
             raise PendulumException('Invalid time string "{}"'.format(time))
 
         if dt.tzinfo:
-            if isinstance(dt.tzinfo, tzoffset):
-                tz = int(dt.tzinfo.utcoffset(None).total_seconds() / 3600)
-            else:
-                tz = tzinfo
+            tz = int(dt.tzinfo.utcoffset(None).total_seconds() / 3600)
 
         return cls(
             dt.year, dt.month, dt.day,
