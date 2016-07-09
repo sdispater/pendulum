@@ -14,6 +14,7 @@ import datetime
 from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
+from dateutil.tz import tzoffset
 
 from .translator import Translator
 
@@ -200,6 +201,12 @@ class Pendulum(datetime.datetime):
 
         if not dt:
             raise PendulumException('Invalid time string "{}"'.format(time))
+
+        if dt.tzinfo:
+            if isinstance(dt.tzinfo, tzoffset):
+                tz = int(dt.tzinfo.utcoffset(None).total_seconds() / 3600)
+            else:
+                tz = tzinfo
 
         return cls(
             dt.year, dt.month, dt.day,
