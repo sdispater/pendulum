@@ -175,7 +175,7 @@ class Pendulum(datetime.datetime):
         return cls(
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute, dt.second, dt.microsecond,
-            tzinfo=dt.tzinfo
+            tzinfo=dt.tzinfo or pytz.UTC
         )
 
     @classmethod
@@ -188,7 +188,7 @@ class Pendulum(datetime.datetime):
 
         :param tz: The timezone
         :type tz: BaseTzInfo or str or None
-
+q
         :rtype: Pendulum
         """
         if time is None:

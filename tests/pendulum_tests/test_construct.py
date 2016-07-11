@@ -105,3 +105,11 @@ class ConstructTest(AbstractTestCase):
         yesterday = Pendulum.yesterday()
         self.assertIsInstanceOfPendulum(yesterday)
         self.assertEqual(-1, now.diff(yesterday, False).in_days())
+
+    def test_instance_naive_datetime_defaults_to_utc(self):
+        now = Pendulum.instance(datetime.now())
+        self.assertEqual('UTC', now.timezone_name)
+
+    def test_instance_timezone_aware_datetime(self):
+        now = Pendulum.instance(datetime.now(pytz.timezone('Europe/Paris')))
+        self.assertEqual('Europe/Paris', now.timezone_name)
