@@ -38,3 +38,11 @@ class TestingAidsTest(AbstractTestCase):
 
         self.assertEqual(test_now, Pendulum.parse())
         self.assertEqual(test_now, Pendulum.parse('now'))
+
+    def test_context_manager(self):
+        test_now = Pendulum.yesterday()
+
+        with Pendulum.test(test_now):
+            self.assertEqual(test_now, Pendulum.now())
+
+        self.assertNotEqual(test_now, Pendulum.now())

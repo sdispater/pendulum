@@ -11,10 +11,10 @@ import pytz
 import tzlocal
 import datetime
 
+from contextlib import contextmanager
 from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
-from dateutil.tz import tzoffset
 
 from .translator import Translator
 
@@ -756,6 +756,20 @@ q
         cls._weekend_days = value
 
     # Testing aids
+
+    @classmethod
+    @contextmanager
+    def test(cls, mock):
+        """
+        Context manager to temporarily set the test_now value.
+
+        :type mock: Pendulum or None
+        """
+        cls.set_test_now(mock)
+
+        yield
+
+        cls.set_test_now()
 
     @classmethod
     def set_test_now(cls, test_now=None):
