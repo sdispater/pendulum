@@ -35,6 +35,7 @@ from_time = Pendulum.create_from_time
 from_format = Pendulum.create_from_format
 strptime = Pendulum.strptime
 from_timestamp = Pendulum.create_from_timestamp
+test = Pendulum.test
 set_test_now = Pendulum.set_test_now
 has_test_now = Pendulum.has_test_now
 get_test_now = Pendulum.get_test_now
