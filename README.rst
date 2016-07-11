@@ -34,6 +34,56 @@ Python datetimes made easy.
    >>> delta.in_words(locale='en')
    '6 days 23 hours 58 minutes'
 
+
+Why Pendulum?
+=============
+
+Unlike other datetime libraries for Python, Pendulum is a drop-in replacement
+for the standard ``datetime`` class (it inherits from it), so, basically, you can replace all your ``datetime``
+instances by ``Pendulum`` instances in you code (exceptions exist for libraries that check
+the type of the objects by using the ``type`` function like ``sqlite3`` or ``PyMySQL`` for instance).
+
+It also removes the notion of naive datetimes: each ``Pendulum`` instance is timezone-aware
+and by default in ``UTC`` for ease of use.
+
+Pendulum also improves the standard ``timedelta`` class by providing more intuitive methods and properties.
+See the `Documentation <http://pendulum.eustace.io/docs/#interval>`_ for more information.
+
+
+Why not Arrow?
+==============
+
+Arrow is the most popular datetime library for Python right now, however its behavior
+and API can be erratic and unpredictable. The ``get()`` method can receive pretty much anything
+and it will try its best to return something while silently failing to handle some cases:
+
+.. code-block:: python
+
+    arrow.get('2016-1-17')
+    #<Arrow [2016-01-01T00:00:00+00:00]>
+
+    pendulum.parse('2016-1-17')
+    #<Pendulum [2016-01-17T00:00:00+00:00]>
+
+    # Parsing of a date with wrong day
+    arrow.get('2015-06-31')
+    #<Arrow [2015-06-01T00:00:00+00:00]>
+
+    pendulum.parse('2016-06-31')
+    # ValueError: day is out of range for month
+
+    # fromtimestamp with timezone displays wrong offset
+    arrow.Arrow.fromtimestamp(0, pytz.timezone('Europe/Paris'))
+    #<Arrow [1970-01-01T01:00:00+00:09]>
+
+    pendulum.from_timestamp(0, pytz.timezone('Europe/Paris'))
+    # fromtimestamp() is also possible
+    #<Pendulum [1970-01-01T01:00:00+01:00]>
+
+Those are a few examples showing that Arrow cannot always be trusted to have a consistent
+behavior with the data you are passing to it.
+
+
 Resources
 =========
 
