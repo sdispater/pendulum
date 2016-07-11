@@ -726,7 +726,7 @@ Each method returns a new ``Pendulum`` instance.
 Difference
 ==========
 
-The ``diff()`` method returns a `PendulumInterval`_ instance that represents the total duration
+The ``diff()`` method returns a `Interval`_ instance that represents the total duration
 between two ``Pendulum`` instances. This interval can be then expressed in various units.
 These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
