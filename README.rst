@@ -22,7 +22,7 @@ Python datetimes made easy.
 
    >>> if pendulum.now().is_weekend():
    ...     print('Party!')
-   Party!
+   'Party!'
 
    >>> past = pendulum.now().sub(minutes=2)
    >>> past.diff_for_humans()
@@ -47,7 +47,6 @@ It also removes the notion of naive datetimes: each ``Pendulum`` instance is tim
 and by default in ``UTC`` for ease of use.
 
 Pendulum also improves the standard ``timedelta`` class by providing more intuitive methods and properties.
-See the `Documentation <http://pendulum.eustace.io/docs/#interval>`_ for more information.
 
 
 Why not Arrow?
