@@ -60,25 +60,39 @@ and it will try its best to return something while silently failing to handle so
 .. code-block:: python
 
     arrow.get('2016-1-17')
-    #<Arrow [2016-01-01T00:00:00+00:00]>
+    # <Arrow [2016-01-01T00:00:00+00:00]>
 
     pendulum.parse('2016-1-17')
-    #<Pendulum [2016-01-17T00:00:00+00:00]>
+    # <Pendulum [2016-01-17T00:00:00+00:00]>
 
     # Parsing of a date with wrong day
     arrow.get('2015-06-31')
-    #<Arrow [2015-06-01T00:00:00+00:00]>
+    # <Arrow [2015-06-01T00:00:00+00:00]>
 
     pendulum.parse('2016-06-31')
     # ValueError: day is out of range for month
 
     # fromtimestamp with timezone displays wrong offset
     arrow.Arrow.fromtimestamp(0, pytz.timezone('Europe/Paris'))
-    #<Arrow [1970-01-01T01:00:00+00:09]>
+    # <Arrow [1970-01-01T01:00:00+00:09]>
 
     pendulum.from_timestamp(0, pytz.timezone('Europe/Paris'))
     # fromtimestamp() is also possible
-    #<Pendulum [1970-01-01T01:00:00+01:00]>
+    # <Pendulum [1970-01-01T01:00:00+01:00]>
+
+    # Working with DST
+    just_before = arrow.Arrow(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    just_after = just_before.replace(microseconds=1)
+
+    (just_after.to('utc') - just_before.to('utc')).total_seconds()
+    -3599.999999
+    # Should be 1e-06
+
+    just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    just_after = just_before.add(microseconds=1)
+
+    (just_after.in_timezone('utc') - just_before.in_timezone('utc')).total_seconds()
+    1e-06
 
 Those are a few examples showing that Arrow cannot always be trusted to have a consistent
 behavior with the data you are passing to it.
