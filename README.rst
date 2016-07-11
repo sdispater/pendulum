@@ -18,13 +18,13 @@ Python datetimes made easy.
    '2016-07-03T22:49:58.502116+00:00'
 
    >>> tomorrow = pendulum.now().add(days=1)
-   >>> last_week = pendulum.now().sub(weeks=1)
+   >>> last_week = pendulum.now().subtract(weeks=1)
 
    >>> if pendulum.now().is_weekend():
    ...     print('Party!')
    'Party!'
 
-   >>> past = pendulum.now().sub(minutes=2)
+   >>> past = pendulum.now().subtract(minutes=2)
    >>> past.diff_for_humans()
    >>> '2 minutes ago'
 
