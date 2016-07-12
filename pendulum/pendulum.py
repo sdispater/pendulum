@@ -203,7 +203,11 @@ q
             raise PendulumException('Invalid time string "{}"'.format(time))
 
         if dt.tzinfo:
-            tz = int(dt.tzinfo.utcoffset(None).total_seconds() / 3600)
+            offset = dt.tzinfo.utcoffset(dt)
+            if not offset:
+                offset = datetime.timedelta()
+
+            tz = offset.total_seconds() / 3600
 
         return cls(
             dt.year, dt.month, dt.day,

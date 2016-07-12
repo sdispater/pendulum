@@ -41,6 +41,12 @@ class ConstructTest(AbstractTestCase):
         self.assertIsNone(p.timezone_name)
         self.assertEqual(-18000, p.offset)
 
+    def test_parse_with_partial_offset_in_string(self):
+        p = Pendulum.parse('2016-04-15T18:21:08.7454873-00:30')
+        self.assertPendulum(p, 2016, 4, 15, 18, 21, 8)
+        self.assertIsNone(p.timezone_name)
+        self.assertEqual(-1800, p.offset)
+
     def test_setting_timezone(self):
         timezone = 'Europe/London'
         dtz = pytz.timezone(timezone)
