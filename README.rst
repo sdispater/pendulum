@@ -7,6 +7,9 @@ Pendulum
 
 Python datetimes made easy.
 
+Supports Python **2.7+** and **3.2+**.
+
+
 .. code-block:: python
 
    >>> import pendulum
