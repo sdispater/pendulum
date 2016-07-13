@@ -1,3 +1,10 @@
+### 0.3.1
+
+(July 13th, 2016)
+
+- Fixes parsing of string with partial offset.
+
+
 ### 0.3
 
 (July 11th, 2016)
