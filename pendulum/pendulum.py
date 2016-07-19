@@ -109,11 +109,11 @@ class Pendulum(datetime.datetime):
 
         :rtype: BaseTzInfo
         """
-        if obj is None or obj == 'local':
-            return cls._local_timezone()
-
         if isinstance(obj, tzinfo):
             return obj
+
+        if obj is None or obj == 'local':
+            return cls._local_timezone()
 
         if isinstance(obj, (int, float)):
             timezone_offset = obj * 60
@@ -188,7 +188,7 @@ class Pendulum(datetime.datetime):
 
         :param tz: The timezone
         :type tz: BaseTzInfo or str or None
-q
+
         :rtype: Pendulum
         """
         if time is None:
@@ -235,7 +235,15 @@ q
 
             return test_instance.copy()
 
-        return cls.create(tz=tz)
+        dt = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+        if not tz:
+            tz = cls._local_timezone()
+        else:
+            tz = cls._safe_create_datetime_zone(tz)
+
+        dt = tz.normalize(dt)
+
+        return cls.instance(dt)
 
     @classmethod
     def utcnow(cls):
@@ -288,33 +296,33 @@ q
     @classmethod
     def _create_datetime(cls, tz, year=None, month=None, day=None,
                          hour=None, minute=None, second=None, microsecond=None):
-        now = (datetime.datetime.utcnow()
-               .replace(tzinfo=pytz.UTC)
-               .astimezone(tz))
+        if any([year is None, month is None, day is None,
+                hour is None, minute is None, second is None, microsecond is None]):
+            now = pytz.UTC.localize(datetime.datetime.utcnow())
+            now = tz.normalize(now)
 
-        if year is None:
-            year = now.year
+            if year is None:
+                year = now.year
 
-        if month is None:
-            month = now.month
+            if month is None:
+                month = now.month
 
-        if day is None:
-            day = now.day
+            if day is None:
+                day = now.day
 
-        if hour is None:
-            hour = now.hour
-            minute = now.minute if minute is None else minute
-            second = now.second if second is None else second
-            microsecond = now.microsecond if microsecond is None else microsecond
-        else:
-            minute = 0 if minute is None else minute
-            second = 0 if second is None else second
-            microsecond = 0 if microsecond is None else microsecond
+            if hour is None:
+                hour = now.hour
+                minute = now.minute if minute is None else minute
+                second = now.second if second is None else second
+                microsecond = now.microsecond if microsecond is None else microsecond
+            else:
+                minute = 0 if minute is None else minute
+                second = 0 if second is None else second
+                microsecond = 0 if microsecond is None else microsecond
 
         return tz.localize(datetime.datetime(
             year, month, day,
-            hour, minute, second, microsecond,
-            tzinfo=None
+            hour, minute, second, microsecond
         ))
 
     @classmethod
@@ -414,7 +422,16 @@ q
 
         :rtype: Pendulum
         """
-        return cls.now(tz).with_timestamp(timestamp)
+        dt = datetime.datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.UTC)
+
+        if not tz:
+            tz = cls._local_timezone()
+        else:
+            tz = cls._safe_create_datetime_zone(tz)
+
+        dt = tz.normalize(dt)
+
+        return cls.instance(dt)
 
     @classmethod
     def strptime(cls, time, fmt):

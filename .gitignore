@@ -21,3 +21,7 @@ nosetests.xml
 
 /test.py
 /test_*.py
+/benchmark/*
+benchmark.py
+results.json
+profile.html
