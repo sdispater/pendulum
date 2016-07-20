@@ -16,14 +16,13 @@ from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
-from .translator import Translator
-
-from .interval import Interval, AbsoluteInterval
+from .interval import IntervalFactory
 from .exceptions import PendulumException
+from .mixins.default import TranslatableMixin
 from ._compat import PY33, basestring
 
 
-class Pendulum(datetime.datetime):
+class Pendulum(datetime.datetime, TranslatableMixin):
 
     # The day constants
     SUNDAY = 0
@@ -89,9 +88,6 @@ class Pendulum(datetime.datetime):
 
     # A test Pendulum instance to be returned when now instances are created.
     _test_now = None
-
-    # Transaltor
-    _translator = None
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
@@ -826,75 +822,6 @@ class Pendulum(datetime.datetime):
     def has_test_now(cls):
         return cls.get_test_now() is not None
 
-    # Localization
-
-    @classmethod
-    def translator(cls):
-        """
-        Initialize the translator instance if necessary.
-
-        :rtype: Translator
-        """
-        if cls._translator is None:
-            cls._translator = Translator('en')
-            cls.set_locale('en')
-
-        return cls._translator
-
-    @classmethod
-    def set_translator(cls, translator):
-        """
-        Set the translator instance to use.
-
-        :param translator: The translator
-        :type translator: Translator
-        """
-        cls._translator = translator
-
-    @classmethod
-    def get_locale(cls):
-        """
-        Get the current translator locale.
-
-        :rtype: str
-        :rtype: str
-        """
-        return cls.translator().locale
-
-    @classmethod
-    def set_locale(cls, locale):
-        """
-        Set the current translator locale and
-        indicate if the source locale file exists.
-
-        :type locale: str
-
-        :rtype: bool
-        """
-        locale = cls.format_locale(locale)
-        if not cls.translator().register_resource(locale):
-            return False
-
-        cls.translator().locale = locale
-
-        return True
-
-    @classmethod
-    def format_locale(cls, locale):
-        """
-        Properly format locale.
-
-        :param locale: The locale
-        :type locale: str
-
-        :rtype: str
-        """
-        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
-        if m:
-            return '{}_{}'.format(m.group(1).lower(), m.group(2).lower())
-        else:
-            return locale.lower()
-
     # String Formatting
 
     @classmethod
@@ -1535,12 +1462,7 @@ class Pendulum(datetime.datetime):
         if dt is None:
             dt = self.now(self._tz)
 
-        delta = self._get_datetime(dt) - self._datetime
-
-        if abs:
-            return AbsoluteInterval.instance(delta)
-
-        return Interval.instance(delta)
+        return IntervalFactory.get(self._get_datetime(dt), self._datetime, absolute=abs)
 
     def diff_for_humans(self, other=None, absolute=False, locale=None):
         """

@@ -2,10 +2,13 @@
 
 from datetime import timedelta
 
-from .translator import Translator
+from .mixins.interval import WordableIntervalMixin, AbsoluteIntervalMixin
 
 
-class Interval(timedelta):
+class BaseInterval(timedelta):
+    """
+    Base class for all inherited interval classes.
+    """
 
     _y = None
     _m = None
@@ -15,8 +18,6 @@ class Interval(timedelta):
     _i = None
     _s = None
     _invert = None
-
-    _translator = None
 
     def __init__(self, days=0, seconds=0, microseconds=0,
                 milliseconds=0, minutes=0, hours=0, weeks=0):
@@ -28,68 +29,6 @@ class Interval(timedelta):
         self._microseconds = total - int(total)
         self._seconds = abs(int(total)) % 86400 * m
         self._days = abs(int(total)) // 86400 * m
-
-    @classmethod
-    def instance(cls, delta):
-        """
-        Creates a Interval from a timedelta
-
-        :type delta: timedelta
-
-        :rtype: Interval
-        """
-        return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
-
-    # Localization
-
-    @classmethod
-    def translator(cls):
-        """
-        Initialize the translator instance if necessary.
-
-        :rtype: Translator
-        """
-        if cls._translator is None:
-            cls._translator = Translator('en')
-            cls.set_locale('en')
-
-        return cls._translator
-
-    @classmethod
-    def set_translator(cls, translator):
-        """
-        Set the translator instance to use.
-
-        :param translator: The translator
-        :type translator: Translator
-        """
-        cls._translator = translator
-
-    @classmethod
-    def get_locale(cls):
-        """
-        Get the current translator locale.
-
-        :rtype: str
-        """
-        return cls.translator().locale
-
-    @classmethod
-    def set_locale(cls, locale):
-        """
-        Set the current translator locale and
-        indicate if the source locale file exists.
-
-        :type locale: str
-
-        :rtype: bool
-        """
-        if not cls.translator().register_resource(locale):
-            return False
-
-        cls.translator().locale = locale
-
-        return True
 
     def total_minutes(self):
         return self.total_seconds() / 60
@@ -199,90 +138,102 @@ class Interval(timedelta):
 
         return 1
 
-    def in_words(self, locale=None):
-        """
-        Get the current interval in words in the current locale.
-
-        Ex: 6 jours 23 heures 58 minutes
-
-        :rtype: str
-        """
-        periods = [
-            ('week', self.weeks),
-            ('day', self.days_exclude_weeks),
-            ('hour', self.hours),
-            ('minute', self.minutes),
-            ('second', self.seconds)
-        ]
-
-        parts = []
-        for period in periods:
-            unit, count = period
-            if abs(count) > 0:
-                parts.append(
-                    self.translator().transchoice(unit, count, {'count': count}, locale=locale)
-                )
-
-        return ' '.join(parts)
-
-    def __str__(self):
-        return self.in_words()
-
-    def __repr__(self):
-        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
-
     def __add__(self, other):
         if isinstance(other, timedelta):
-            return Interval(seconds=self.total_seconds() + other.total_seconds())
+            return self.__class__(seconds=self.total_seconds() + other.total_seconds())
 
         return NotImplemented
 
     def __sub__(self, other):
         if isinstance(other, timedelta):
-            # for CPython compatibility, we cannot use
-            # our __class__ here, but need a real timedelta
-            return Interval(seconds=self.total_seconds() - other.total_seconds())
+            return self.__class__(seconds=self.total_seconds() - other.total_seconds())
 
         return NotImplemented
 
     def __neg__(self):
-        # for CPython compatibility, we cannot use
-        # our __class__ here, but need a real timedelta
-        return Interval(seconds=-self.total_seconds())
+        return self.__class__(seconds=-self.total_seconds())
 
 
-class AbsoluteInterval(Interval):
+class Interval(WordableIntervalMixin, BaseInterval):
+    """
+    Replacement for the standard timedelta class.
 
-    def total_seconds(self):
-        return abs(super(AbsoluteInterval, self).total_seconds())
+    Provides several improvements over the base class.
+    """
 
-    @property
-    def weeks(self):
-        return abs(super(AbsoluteInterval, self).weeks)
+    @classmethod
+    def instance(cls, delta):
+        """
+        Creates a Interval from a timedelta
 
-    @property
-    def days(self):
-        return abs(super(AbsoluteInterval, self).days)
+        :type delta: timedelta
 
-    @property
-    def hours(self):
-        return abs(super(AbsoluteInterval, self).hours)
+        :rtype: Interval
+        """
+        return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
-    @property
-    def minutes(self):
-        return abs(super(AbsoluteInterval, self).minutes)
 
-    @property
-    def seconds(self):
-        return abs(super(AbsoluteInterval, self).seconds)
+class AbsoluteInterval(AbsoluteIntervalMixin, Interval):
+    """
+    Interval that expresses a time difference in absolute values.
+    """
 
-    @property
-    def microseconds(self):
-        return abs(super(AbsoluteInterval, self).microseconds)
 
-    @property
-    def invert(self):
-        return super(AbsoluteInterval, self).total_seconds() < 0
+class DatetimeAwareInterval(WordableIntervalMixin, BaseInterval):
+    """
+    Interval class that is aware of the datetimes that generated the
+    time difference.
+    """
 
-    def _sign(self, value):
-        return 1
+    def __new__(cls, dt1, dt2, days=0, seconds=0, microseconds=0,
+                 milliseconds=0, minutes=0, hours=0, weeks=0):
+        return super(DatetimeAwareInterval, cls).__new__(
+            cls, days, seconds, microseconds, milliseconds, minutes, hours, weeks
+        )
+
+    def __init__(self, dt1, dt2, days=0, seconds=0, microseconds=0,
+                 milliseconds=0, minutes=0, hours=0, weeks=0):
+        super(DatetimeAwareInterval, self).__init__(
+            days, seconds, microseconds, milliseconds, minutes, hours, weeks
+        )
+
+        self._dt1 = dt1
+        self._dt2 = dt2
+
+    @classmethod
+    def instance(cls, delta, dt1, dt2):
+        return cls(dt1, dt2, days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
+
+
+class DatetimeAwareAbsoluteInterval(AbsoluteIntervalMixin, DatetimeAwareInterval):
+    """
+    Interval class that is aware of the datetimes that generated the
+    time difference and expresses it in absolute values.
+    """
+
+
+class IntervalFactory(object):
+    """
+    Factory to get the poper interval class.
+    """
+
+    @classmethod
+    def get(cls, dt1, dt2, absolute=False):
+        """
+        Gets the proper interval class for two given datetimes.
+
+        :param dt1: The first datetime
+        :type dt1: Pendulum or datetime
+
+        :param dt2: The second datetime
+        :type dt2: Pendulum or datetime
+
+        :rtype: Interval
+        """
+        delta = dt1 - dt2
+
+        klass = DatetimeAwareInterval
+        if absolute:
+            klass = DatetimeAwareAbsoluteInterval
+
+        return klass.instance(delta, dt1, dt2)
