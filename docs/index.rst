@@ -726,7 +726,7 @@ Each method returns a new ``Pendulum`` instance.
 Difference
 ==========
 
-The ``diff()`` method returns a `Interval`_ instance that represents the total duration
+The ``diff()`` method returns a `Period`_ instance that represents the total duration
 between two ``Pendulum`` instances. This interval can be then expressed in various units.
 These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
@@ -1052,7 +1052,6 @@ level.
 Interval
 ========
 
-When you subtract a ``Pendulum`` instance to another, it will return a ``Interval`` instance.
 The ``Interval`` class is inherited from the native ``timedelta`` class.
 It has many improvements over the base class.
 
@@ -1189,3 +1188,64 @@ It also has a handy ``in_words()``, which determines the interval representation
 
     it.in_words(locale='de')
     '168 Wochen 1 Tag 2 Stunden 1 Minute 24 Sekunden'
+
+
+Period
+======
+
+When you subtract a ``Pendulum`` instance to another, or use the ``diff()`` method, it will return a ``Period`` instance.
+it inherits from the `Interval`_ class with the added benefit that it is aware of the
+instances that generated it, so that it can give access to more methods and properties:
+
+.. code-block:: python
+
+    from pendulum import Pendulum
+
+    start = Pendulum(2000, 1, 1)
+    end = Pendulum(2000, 1, 31)
+
+    period = end - start
+    period.in_weekdays()
+    21
+
+    period.in_weekend_days()
+    10
+
+
+Instantiation
+-------------
+
+You can create an instance in the following ways:
+
+.. code-block:: python
+
+    import pendulum
+
+    start = pendulum.Pendulum(2000, 1, 1)
+    end = pendulum.Pendulum(2000, 1, 31)
+
+    period = pendulum.Period(start, end)
+    period = pendulum.period(start, end)
+
+You can also make an inverted period:
+
+.. code-block:: python
+
+    period = pendulum.period(end, start)
+    period.in_weekdays()
+    -21
+
+    period.in_weekend_days()
+    -10
+
+If you have inverted dates but want to make sure that the period is positive,
+you set the ``absolute`` keyword argument to ``True``:
+
+.. code-block:: python
+
+    period = pendulum.period(end, start, absolute=True)
+    period.in_weekdays()
+    21
+
+    period.in_weekend_days()
+    10

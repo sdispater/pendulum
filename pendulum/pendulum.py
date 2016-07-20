@@ -16,7 +16,7 @@ from pytz.tzinfo import BaseTzInfo, tzinfo
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as dateparser
 
-from .interval import IntervalFactory
+from .period import Period
 from .exceptions import PendulumException
 from .mixins.default import TranslatableMixin
 from ._compat import PY33, basestring
@@ -1171,7 +1171,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self.max_(dt)
 
-    def is_week_day(self):
+    def is_weekday(self):
         """
         Determines if the instance is a weekday.
 
@@ -1457,12 +1457,12 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :param abs: Whether to return an absolute interval or not
         :type abs: bool
 
-        :rtype: Interval
+        :rtype: Period
         """
         if dt is None:
             dt = self.now(self._tz)
 
-        return IntervalFactory.get(self._get_datetime(dt), self._datetime, absolute=abs)
+        return Period(self, self._get_datetime(dt, pendulum=True), absolute=abs)
 
     def diff_for_humans(self, other=None, absolute=False, locale=None):
         """

@@ -79,6 +79,30 @@ class DiffTest(AbstractTestCase):
         dt = Pendulum.create_from_date(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(days=1).add(hours=13)).in_days())
 
+    def test_diff_in_weekdays_positive(self):
+        dt = Pendulum.create_from_date(2000, 1, 1)
+        self.assertEqual(21, dt.diff(dt.end_of('month')).in_weekdays())
+
+    def test_diff_in_weekdays_negative_no_sign(self):
+        dt = Pendulum.create_from_date(2000, 1, 31)
+        self.assertEqual(21, dt.diff(dt.start_of('month')).in_weekdays())
+
+    def test_diff_in_weekdays_negative_with_sign(self):
+        dt = Pendulum.create_from_date(2000, 1, 31)
+        self.assertEqual(-21, dt.diff(dt.start_of('month'), False).in_weekdays())
+
+    def test_diff_in_weekend_days_positive(self):
+        dt = Pendulum.create_from_date(2000, 1, 1)
+        self.assertEqual(10, dt.diff(dt.end_of('month')).in_weekend_days())
+
+    def test_diff_in_weekend_days_negative_no_sign(self):
+        dt = Pendulum.create_from_date(2000, 1, 31)
+        self.assertEqual(10, dt.diff(dt.start_of('month')).in_weekend_days())
+
+    def test_diff_in_weekend_days_negative_with_sign(self):
+        dt = Pendulum.create_from_date(2000, 1, 31)
+        self.assertEqual(-10, dt.diff(dt.start_of('month'), False).in_weekend_days())
+
     def test_diff_in_weeks_positive(self):
         dt = Pendulum.create_from_date(2000, 1, 1)
         self.assertEqual(52, dt.diff(dt.copy().add(years=1)).in_weeks())

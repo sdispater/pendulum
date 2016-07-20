@@ -2,6 +2,7 @@
 
 from .pendulum import Pendulum
 from .interval import Interval
+from .period import Period
 
 # Constants
 MONDAY = Pendulum.MONDAY
@@ -56,3 +57,6 @@ combine = Pendulum.combine
 
 # Interval
 interval = Interval
+
+# Period
+period = Period

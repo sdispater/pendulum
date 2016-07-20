@@ -151,11 +151,11 @@ class GettersTest(AbstractTestCase):
         d = Pendulum.create_from_date(2000, 1, 1, -5)
         self.assertEqual(None, d.timezone_name)
 
-    def test_is_week_day(self):
+    def test_is_weekday(self):
         d = Pendulum.now().next(Pendulum.MONDAY)
-        self.assertTrue(d.is_week_day())
+        self.assertTrue(d.is_weekday())
         d = d.next(Pendulum.SATURDAY)
-        self.assertFalse(d.is_week_day())
+        self.assertFalse(d.is_weekday())
 
     def test_is_weekend(self):
         d = Pendulum.now().next(Pendulum.MONDAY)
