@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import operator
 from .mixins.interval import WordableIntervalMixin
 from .interval import BaseInterval
 
@@ -86,4 +87,29 @@ class Period(WordableIntervalMixin, BaseInterval):
 
         return days * (-1 if not self._absolute and self.invert else 1)
 
+    def range(self, unit):
+        return list(self.xrange(unit))
 
+    def xrange(self, unit):
+        method = 'add'
+        op = operator.le
+        if not self._absolute and self.invert:
+            method = 'subtract'
+            op = operator.ge
+
+        start, end = self.start, self.end
+        while op(start, end):
+            yield start
+
+            start = getattr(start, method)(**{unit: 1})
+
+    def __iter__(self):
+        return self.xrange('days')
+
+    def __contains__(self, item):
+        from .pendulum import Pendulum
+
+        if not isinstance(item, Pendulum):
+            item = Pendulum.instance(item)
+
+        return item.between(self.start, self.end)

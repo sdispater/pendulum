@@ -1249,3 +1249,56 @@ you set the ``absolute`` keyword argument to ``True``:
 
     period.in_weekend_days()
     10
+
+Range
+-----
+
+If you want to iterate over a period, you can use the ``range()`` method:
+
+.. code-block:: python
+
+    import pendulum
+
+    start = pendulum.Pendulum(2000, 1, 1)
+    end = pendulum.Pendulum(2000, 1, 10)
+
+    period = pendulum.period(start, end)
+
+    for dt in period.range('days'):
+        print(dt)
+
+    '2000-01-01T00:00:00+00:00'
+    '2000-01-02T00:00:00+00:00'
+    '2000-01-03T00:00:00+00:00'
+    '2000-01-04T00:00:00+00:00'
+    '2000-01-05T00:00:00+00:00'
+    '2000-01-06T00:00:00+00:00'
+    '2000-01-07T00:00:00+00:00'
+    '2000-01-08T00:00:00+00:00'
+    '2000-01-09T00:00:00+00:00'
+    '2000-01-10T00:00:00+00:00'
+
+.. note::
+
+    Supported units for ``range()`` are: ``years``, ``months``, ``weeks``,
+    ``days``, ``hours``, ``minutes`` and ``seconds``
+
+.. note::
+
+    If you just want a generator you can use the ``xrange()`` method.
+
+You can also directly iterate over the ``Period`` instance, the unit will be ``days`` in this case:
+
+.. code-block:: python
+
+    for dt in period:
+        print(dt)
+
+You can check if a ``Pendulum`` instance is inside a period using the ``in`` keyword:
+
+.. code-block:: python
+
+    dt = Pendulum(2000, 1, 4)
+
+    dt in period
+    True
