@@ -10,6 +10,7 @@ import calendar
 import pytz
 import tzlocal
 import datetime
+import locale as _locale
 
 from contextlib import contextmanager
 from pytz.tzinfo import BaseTzInfo, tzinfo
@@ -842,7 +843,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         cls._to_string_format = fmt
 
-    def format(self, fmt):
+    def format(self, fmt, locale=None):
         """
         Formats the Pendulum instance using the given format.
 
@@ -851,6 +852,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
+        if not locale:
+            locale = self.get_locale()
+
         return self.strftime(fmt)
 
     def strftime(self, fmt):
@@ -867,12 +871,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         return self._datetime.strftime(fmt)
 
-    def _strftime(self, m):
+    def _strftime(self, m, locale=None):
         """
         Handles custom formatters in format string.
 
         :return: str
         """
+        if not locale:
+            locale = _locale.getlocale()
+
         fmt = m.group(1)
 
         if fmt == 'P':
@@ -1525,9 +1532,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         if count == 0:
             count = 1
-
-        if locale:
-            locale = self.format_locale(locale)
 
         time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
 

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 translations = {
-    'year': '1 aasta|{count} aastat',
-    'month': '1 kuu|{count} kuud',
-    'week': '1 nädal|{count} nädalat',
-    'day': '1 päev|{count} päeva',
-    'hour': '1 tund|{count} tundi',
-    'minute': '1 minut|{count} minutit',
-    'second': '1 sekund|{count} sekundit',
+    'year': ['1 aasta', '{count} aastat'],
+    'month': ['1 kuu', '{count} kuud'],
+    'week': ['1 nädal', '{count} nädalat'],
+    'day': ['1 päev', '{count} päeva'],
+    'hour': ['1 tund', '{count} tundi'],
+    'minute': ['1 minut', '{count} minutit'],
+    'second': ['1 sekund', '{count} sekundit'],
     'ago': '{time} tagasi',
     'from_now': '{time} pärast',
     'after': '{time} pärast',
