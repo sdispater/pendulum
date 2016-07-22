@@ -73,5 +73,5 @@ class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
         self.assertEqual('janvier', d.format('%B'))
         self.assertEqual('janv', d.format('%b'))
         self.assertEqual('', d.format('%p'))
-        self.assertEqual('er', d.format('%t'))
-        self.assertEqual('e', d.add(days=1).format('%t'))
+        self.assertEqual('er', d.format('%_t'))
+        self.assertEqual('e', d.add(days=1).format('%_t'))

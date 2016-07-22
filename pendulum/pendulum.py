@@ -56,19 +56,19 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     SECONDS_PER_MINUTE = 60
 
     # Formats
-    ATOM = '%Y-%m-%dT%H:%M:%S%P'
+    ATOM = '%Y-%m-%dT%H:%M:%S%_z'
     COOKIE = '%A, %d-%b-%Y %H:%M:%S %Z'
-    ISO8601 = '%Y-%m-%dT%H:%M:%S%P'
-    ISO8601_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%P'
+    ISO8601 = '%Y-%m-%dT%H:%M:%S%_z'
+    ISO8601_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
     RFC822 = '%a, %d %b %y %H:%M:%S %z'
     RFC850 = '%A, %d-%b-%y %H:%M:%S %Z'
     RFC1036 = '%a, %d %b %y %H:%M:%S %z'
     RFC1123 = '%a, %d %b %Y %H:%M:%S %z'
     RFC2822 = '%a, %d %b %Y %H:%M:%S %z'
-    RFC3339 = '%Y-%m-%dT%H:%M:%S%P'
-    RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%P'
+    RFC3339 = '%Y-%m-%dT%H:%M:%S%_z'
+    RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
     RSS = '%a, %d %b %Y %H:%M:%S %z'
-    W3C = '%Y-%m-%dT%H:%M:%S%P'
+    W3C = '%Y-%m-%dT%H:%M:%S%_z'
 
     # Default format to use for __str__ method when type juggling occurs.
     DEFAULT_TO_STRING_FORMAT = None
@@ -92,7 +92,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=pytz.UTC)
 
-    _CUSTOM_FORMATTERS = ['P', 't']
+    _CUSTOM_FORMATTERS = ['_z', '_t']
     _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
 
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
@@ -924,7 +924,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         fmt = m.group(1)
 
-        if fmt == 'P':
+        if fmt == '_z':
             offset = self._datetime.utcoffset() or datetime.timedelta()
             minutes = offset.total_seconds() / 60
 
@@ -936,7 +936,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             hour, minute = divmod(abs(int(minutes)), 60)
 
             return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
-        elif fmt == 't':
+        elif fmt == '_t':
             translation = self.translator().transchoice('ordinal', self.day, locale=locale)
             if translation == 'ordinal':
                 translation = ''

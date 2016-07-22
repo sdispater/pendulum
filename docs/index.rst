@@ -227,23 +227,38 @@ you can create a ``Pendulum`` instance via the ``instance()`` function.
 Localization
 ============
 
-Localization occurs naturally when using the ``format()`` method since it relies on the
-native ``strftime`` datetime function.
+Localization occurs when using the ``format()`` method which accepts a ``locale`` keyword.
 
 .. code-block:: python
 
-    import locale
     from pendulum import Pendulum
 
     dt = Pendulum(1975, 5, 21)
 
-    locale.setlocale(locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8'))
-    dt.format('%A %d %B %Y')
+    dt.format('%A %d %B %Y', locale='de')
     'Mittwoch 21 Mai 1975'
 
-    locale.setlocale(locale.LC_ALL, locale.getdefaultlocale())
     dt.format('%A %d %B %Y')
     'Wednesday 21 May 1975'
+
+.. note::
+
+    You can also use the ``strftime()`` method, which behaves exactly like the native one.
+
+    .. code-block:: python
+
+        import locale
+        from pendulum import Pendulum
+
+        dt = Pendulum(1975, 5, 21)
+
+        locale.setlocale(locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8'))
+        dt.format('%A %d %B %Y')
+        'Mittwoch 21 Mai 1975'
+
+        locale.setlocale(locale.LC_ALL, locale.getdefaultlocale())
+        dt.format('%A %d %B %Y')
+        'Wednesday 21 May 1975'
 
 ``diff_for_humans()`` is also localized, you can set the Pendulum locale
 by using the class method ``pendulum.set_locale()``.
@@ -448,13 +463,13 @@ Custom Directives
 -----------------
 
 Apart from the `default directives <For localization support see the Localization section.>`_,
-Pendulum comes with its own:
+Pendulum comes with its own (each custom directive is in the form ``%_{directive}``):
 
 ===========  ======================================================================== =================================
 Directive    Meaning                                                                  Example
 ===========  ======================================================================== =================================
-``%P``       Difference to Greenwich time (GMT) with colon between hours and minutes  ``+02:00``
-``%t``       English ordinal suffix for the day of the month, 2 characters            ``st``, ``nd``, ``rd`` or ``th``
+``%_z``      Difference to Greenwich time (GMT) with colon between hours and minutes  ``+02:00``
+``%_t``      Ordinal suffix for the day of the month, 2 characters                    ``st``, ``nd``, ``rd`` or ``th``
 ===========  ======================================================================== =================================
 
 Common Formats
