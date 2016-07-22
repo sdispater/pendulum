@@ -53,12 +53,12 @@ translations = {
 
     # Units of time
     'year': '{count} jaar',
-    'month': ['1 maand', '{count} maanden'],
-    'week': ['1 week', '{count} weken'],
-    'day': ['1 dag', '{count} dagen'],
+    'month': ['{count} maand', '{count} maanden'],
+    'week': ['{count} week', '{count} weken'],
+    'day': ['{count} dag', '{count} dagen'],
     'hour': '{count} uur',
-    'minute': ['1 minuut', '{count} minuten'],
-    'second': ['1 seconde', '{count} seconden'],
+    'minute': ['{count} minuut', '{count} minuten'],
+    'second': ['{count} seconde', '{count} seconden'],
 
     # Relative time
     'ago': '{time} geleden',

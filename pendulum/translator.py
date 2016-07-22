@@ -43,7 +43,8 @@ class Translator(object):
         if parameters is None:
             parameters = {}
 
-        parameters['count'] = number
+        if 'count' not in parameters:
+            parameters['count'] = number
 
         if not locale:
             locale = self._locale

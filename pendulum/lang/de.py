@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 Jahr', '{count} Jahre'],
-    'month': ['1 Monat', '{count} Monate'],
-    'week': ['1 Woche', '{count} Wochen'],
-    'day': ['1 Tag', '{count} Tage'],
-    'hour': ['1 Stunde', '{count} Stunden'],
-    'minute': ['1 Minute', '{count} Minuten'],
-    'second': ['1 Sekunde', '{count} Sekunden'],
+    'year': ['{count} Jahr', '{count} Jahre'],
+    'month': ['{count} Monat', '{count} Monate'],
+    'week': ['{count} Woche', '{count} Wochen'],
+    'day': ['{count} Tag', '{count} Tage'],
+    'hour': ['{count} Stunde', '{count} Stunden'],
+    'minute': ['{count} Minute', '{count} Minuten'],
+    'second': ['{count} Sekunde', '{count} Sekunden'],
 
     # Relative time
     'ago': 'vor {time}',
@@ -66,13 +66,13 @@ translations = {
     'after': '{time} später',
     'before': '{time} zuvor',
 
-    'year_from_now': ['1 Jahr', '{count} Jahren'],
-    'month_from_now': ['1 Monat', '{count} Monaten'],
-    'week_from_now': ['1 Woche', '{count} Wochen'],
-    'day_from_now': ['1 Tag', '{count} Tagen'],
-    'year_ago': ['1 Jahr', '{count} Jahren'],
-    'month_ago': ['1 Monat', '{count} Monaten'],
-    'week_ago': ['1 Woche', '{count} Wochen'],
-    'day_ago': ['1 Tag', '{count} Tagen'],
+    'year_from_now': ['{count} Jahr', '{count} Jahren'],
+    'month_from_now': ['{count} Monat', '{count} Monaten'],
+    'week_from_now': ['{count} Woche', '{count} Wochen'],
+    'day_from_now': ['{count} Tag', '{count} Tagen'],
+    'year_ago': ['{count} Jahr', '{count} Jahren'],
+    'month_ago': ['{count} Monat', '{count} Monaten'],
+    'week_ago': ['{count} Woche', '{count} Wochen'],
+    'day_ago': ['{count} Tag', '{count} Tagen'],
 }
 

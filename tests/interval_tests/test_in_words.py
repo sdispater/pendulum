@@ -43,3 +43,10 @@ class ForHumansTest(AbstractTestCase):
             '<Interval [168 weeks 1 day 2 hours 1 minute 25 seconds]>',
             repr(pi)
         )
+
+    def test_singluar_negative_values(self):
+        pi = Interval(days=-1)
+        self.assertEqual(
+            '-1 day',
+            pi.in_words()
+        )

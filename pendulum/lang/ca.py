@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 any', '{count} anys'],
-    'month': ['1 mes', '{count} mesos'],
-    'week': ['1 setmana', '{count} setmanes'],
-    'day': ['1 dia', '{count} díes'],
-    'hour': ['1 hora', '{count} hores'],
-    'minute': ['1 minut', '{count} minuts'],
-    'second': ['1 segon', '{count} segons'],
+    'year': ['{count} any', '{count} anys'],
+    'month': ['{count} mes', '{count} mesos'],
+    'week': ['{count} setmana', '{count} setmanes'],
+    'day': ['{count} dia', '{count} díes'],
+    'hour': ['{count} hora', '{count} hores'],
+    'minute': ['{count} minut', '{count} minuts'],
+    'second': ['{count} segon', '{count} segons'],
 
     # Relative time
     'ago': 'Fa {time}',

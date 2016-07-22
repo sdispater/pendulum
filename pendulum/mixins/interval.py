@@ -26,7 +26,7 @@ class WordableIntervalMixin(TranslatableMixin):
             unit, count = period
             if abs(count) > 0:
                 parts.append(
-                    self.translator().transchoice(unit, count, {'count': count}, locale=locale)
+                    self.translator().transchoice(unit, abs(count), {'count': count}, locale=locale)
                 )
 
         return ' '.join(parts)

@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 aasta', '{count} aastat'],
-    'month': ['1 kuu', '{count} kuud'],
-    'week': ['1 nädal', '{count} nädalat'],
-    'day': ['1 päev', '{count} päeva'],
-    'hour': ['1 tund', '{count} tundi'],
-    'minute': ['1 minut', '{count} minutit'],
-    'second': ['1 sekund', '{count} sekundit'],
+    'year': ['{count} aasta', '{count} aastat'],
+    'month': ['{count} kuu', '{count} kuud'],
+    'week': ['{count} nädal', '{count} nädalat'],
+    'day': ['{count} päev', '{count} päeva'],
+    'hour': ['{count} tund', '{count} tundi'],
+    'minute': ['{count} minut', '{count} minutit'],
+    'second': ['{count} sekund', '{count} sekundit'],
 
     # Relative time
     'ago': '{time} tagasi',

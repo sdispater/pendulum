@@ -46,4 +46,4 @@ class AddSubTestCase(AbstractTestCase):
 
     def test_neg(self):
         p = Interval(days=23, seconds=32)
-        self.assertInterval(-p, -4, -5, 0, 0, -28)
+        self.assertInterval(-p, -3, -2, 0, 0, -32)

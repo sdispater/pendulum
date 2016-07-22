@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 ár', '{count} ár'],
-    'month': ['1 mánaður', '{count} mánaðir'],
-    'week': ['1 vika', '{count} vikur'],
-    'day': ['1 dag', '{count} dagar'],
-    'hour': ['1 tími', '{count} tímar'],
-    'minute': ['1 minutt', '{count} minuttir'],
-    'second': ['1 sekund', '{count} sekundir'],
+    'year': ['{count} ár', '{count} ár'],
+    'month': ['{count} mánaður', '{count} mánaðir'],
+    'week': ['{count} vika', '{count} vikur'],
+    'day': ['{count} dag', '{count} dagar'],
+    'hour': ['{count} tími', '{count} tímar'],
+    'minute': ['{count} minutt', '{count} minuttir'],
+    'second': ['{count} sekund', '{count} sekundir'],
 
     # Relative time
     'ago': '{time} síðan',

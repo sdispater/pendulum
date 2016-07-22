@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 година', '{count} години'],
-    'month': ['1 месец', '{count} месеца'],
-    'week': ['1 седмица', '{count} седмици'],
-    'day': ['1 ден', '{count} дни'],
-    'hour': ['1 час', '{count} часа'],
-    'minute': ['1 минута', '{count} минути'],
-    'second': ['1 секунда', '{count} секунди'],
+    'year': ['{count} година', '{count} години'],
+    'month': ['{count} месец', '{count} месеца'],
+    'week': ['{count} седмица', '{count} седмици'],
+    'day': ['{count} ден', '{count} дни'],
+    'hour': ['{count} час', '{count} часа'],
+    'minute': ['{count} минута', '{count} минути'],
+    'second': ['{count} секунда', '{count} секунди'],
 
     # Relative time
     'ago': 'преди {time}',

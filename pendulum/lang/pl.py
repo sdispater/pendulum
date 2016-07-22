@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 rok', '{count} lata', '{count} lat'],
-    'month': ['1 miesiąc', '{count} miesiące', '{count} miesięcy'],
-    'week': ['1 tydzień', '{count} tygodnie', '{count} tygodni'],
-    'day': ['1 dzień', '{count} dni', '{count} dni'],
-    'hour': ['1 godzina', '{count} godziny', '{count} godzin'],
-    'minute': ['1 minuta', '{count} minuty', '{count} minut'],
-    'second': ['1 sekunda', '{count} sekundy', '{count} sekund'],
+    'year': ['{count} rok', '{count} lata', '{count} lat'],
+    'month': ['{count} miesiąc', '{count} miesiące', '{count} miesięcy'],
+    'week': ['{count} tydzień', '{count} tygodnie', '{count} tygodni'],
+    'day': ['{count} dzień', '{count} dni', '{count} dni'],
+    'hour': ['{count} godzina', '{count} godziny', '{count} godzin'],
+    'minute': ['{count} minuta', '{count} minuty', '{count} minut'],
+    'second': ['{count} sekunda', '{count} sekundy', '{count} sekund'],
 
     # Relative time
     'ago': '{time} temu',

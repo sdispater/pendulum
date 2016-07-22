@@ -66,7 +66,7 @@ class BaseInterval(timedelta):
 
     @property
     def weeks(self):
-        return self.days // 7
+        return abs(self.days) // 7 * self._sign(self._days)
 
     @property
     def days(self):
@@ -74,7 +74,7 @@ class BaseInterval(timedelta):
 
     @property
     def days_exclude_weeks(self):
-        return self._days % 7 * self._sign(self._days)
+        return abs(self._days) % 7 * self._sign(self._days)
 
     @property
     def hours(self):
@@ -100,7 +100,7 @@ class BaseInterval(timedelta):
     def seconds(self):
         if self._s is None:
             self._s = self._seconds
-            self._s = self._s % 60 * self._sign(self._s)
+            self._s = abs(self._s) % 60 * self._sign(self._s)
 
         return self._s
 

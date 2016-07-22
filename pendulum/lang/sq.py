@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 vit', '{count} vjet'],
-    'month': ['1 muaj', '{count} muaj'],
-    'week': ['1 javë', '{count} javë'],
-    'day': ['1 ditë', '{count} ditë'],
-    'hour': ['1 orë', '{count} orë'],
-    'minute': ['1 minutë', '{count} minuta'],
-    'second': ['1 sekondë', '{count} sekonda'],
+    'year': ['{count} vit', '{count} vjet'],
+    'month': ['{count} muaj', '{count} muaj'],
+    'week': ['{count} javë', '{count} javë'],
+    'day': ['{count} ditë', '{count} ditë'],
+    'hour': ['{count} orë', '{count} orë'],
+    'minute': ['{count} minutë', '{count} minuta'],
+    'second': ['{count} sekondë', '{count} sekonda'],
 
     # Relative time
     'ago': '{time} më parë',

@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 χρόνος', '{count} χρόνια'],
-    'month': ['1 μήνας', '{count} μήνες'],
-    'week': ['1 εβδομάδα', '{count} εβδομάδες'],
-    'day': ['1 μέρα', '{count} μέρες'],
-    'hour': ['1 ώρα', '{count} ώρες'],
-    'minute': ['1 λεπτό', '{count} λεπτά'],
-    'second': ['1 δευτερόλεπτο', '{count} δευτερόλεπτα'],
+    'year': ['{count} χρόνος', '{count} χρόνια'],
+    'month': ['{count} μήνας', '{count} μήνες'],
+    'week': ['{count} εβδομάδα', '{count} εβδομάδες'],
+    'day': ['{count} μέρα', '{count} μέρες'],
+    'hour': ['{count} ώρα', '{count} ώρες'],
+    'minute': ['{count} λεπτό', '{count} λεπτά'],
+    'second': ['{count} δευτερόλεπτο', '{count} δευτερόλεπτα'],
 
     # Relative time
     'ago': 'πρίν απο {time}',

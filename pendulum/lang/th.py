@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 ปี', '{count} ปี'],
-    'month': ['1 เดือน', '{count} เดือน'],
-    'week': ['1 สัปดาห์', '{count} สัปดาห์'],
-    'day': ['1 วัน', '{count} วัน'],
-    'hour': ['1 ชั่วโมง', '{count} ชั่วโมง'],
-    'minute': ['1 นาที', '{count} นาที'],
-    'second': ['1 วินาที', '{count} วินาที'],
+    'year': ['{count} ปี', '{count} ปี'],
+    'month': ['{count} เดือน', '{count} เดือน'],
+    'week': ['{count} สัปดาห์', '{count} สัปดาห์'],
+    'day': ['{count} วัน', '{count} วัน'],
+    'hour': ['{count} ชั่วโมง', '{count} ชั่วโมง'],
+    'minute': ['{count} นาที', '{count} นาที'],
+    'second': ['{count} วินาที', '{count} วินาที'],
 
     # Relative time
     'ago': '{time} ที่แล้ว',

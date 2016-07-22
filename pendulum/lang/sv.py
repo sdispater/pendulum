@@ -52,13 +52,13 @@ translations = {
     },
 
     # Units of time
-    'year': ['1 år', '{count} år'],
-    'month': ['1 månad', '{count} månader'],
-    'week': ['1 vecka', '{count} veckor'],
-    'day': ['1 dag', '{count} dagar'],
-    'hour': ['1 timme', '{count} timmar'],
-    'minute': ['1 minut', '{count} minuter'],
-    'second': ['1 sekund', '{count} sekunder'],
+    'year': ['{count} år', '{count} år'],
+    'month': ['{count} månad', '{count} månader'],
+    'week': ['{count} vecka', '{count} veckor'],
+    'day': ['{count} dag', '{count} dagar'],
+    'hour': ['{count} timme', '{count} timmar'],
+    'minute': ['{count} minut', '{count} minuter'],
+    'second': ['{count} sekund', '{count} sekunder'],
 
     # Relative time
     'ago': '{time} sedan',
