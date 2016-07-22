@@ -1,6 +1,57 @@
 # -*- coding: utf-8 -*-
 
 translations = {
+    # Days
+    'days': {
+        0: 'vasárnap',
+        1: 'hétfő',
+        2: 'kedd',
+        3: 'szerda',
+        4: 'csütörtök',
+        5: 'péntek',
+        6: 'szombat'
+    },
+    'days_abbrev': {
+        0: 'vas',
+        1: 'hét',
+        2: 'kedd',
+        3: 'szer',
+        4: 'csüt',
+        5: 'pént',
+        6: 'szom'
+    },
+
+    # Months
+    'months': {
+        1: 'január',
+        2: 'február',
+        3: 'március',
+        4: 'április',
+        5: 'május',
+        6: 'június',
+        7: 'július',
+        8: 'augusztus',
+        9: 'szeptember',
+        10: 'október',
+        11: 'november',
+        12: 'december',
+    },
+    'months_abbrev': {
+        1: 'jan',
+        2: 'febr',
+        3: 'márc',
+        4: 'ápr',
+        5: 'máj',
+        6: 'jún',
+        7: 'júl',
+        8: 'aug',
+        9: 'szept',
+        10: 'okt',
+        11: 'nov',
+        12: 'dec',
+    },
+
+    # Units of time
     'year': '{count} év',
     'month': '{count} hónap',
     'week': '{count} hét',
@@ -8,6 +59,8 @@ translations = {
     'hour': '{count} óra',
     'minute': '{count} perc',
     'second': '{count} másodperc',
+
+    # Relative time
     'ago': '{time}',
     'from_now': '{time} múlva',
     'after': '{time} később',
@@ -37,5 +90,7 @@ translations = {
     'minute_before': '{count} perccel',
     'second_before': '{count} másodperccel',
 
+    # Meridians
+    'meridian': lambda hour: 'DE' if 0 <= hour < 12 else 'DU'
 }
 

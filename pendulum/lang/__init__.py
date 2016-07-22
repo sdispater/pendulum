@@ -47,7 +47,6 @@ from .sv import translations as sv_translations
 from .th import translations as th_translations
 from .tr import translations as tr_translations
 from .uk import translations as uk_translations
-from .ur import translations as ur_translations
 from .uz import translations as uz_translations
 from .vi import translations as vi_translations
 from .zh import translations as zh_translations
@@ -102,7 +101,6 @@ TRANSLATIONS = {
     "th": th_translations,
     "tr": tr_translations,
     "uk": uk_translations,
-    "ur": ur_translations,
     "uz": uz_translations,
     "vi": vi_translations,
     "zh": zh_translations,

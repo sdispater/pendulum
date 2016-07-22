@@ -106,3 +106,8 @@ class StringsTest(AbstractTestCase):
     def test_repr(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual('<Pendulum [1975-12-25T14:15:16-05:00]>', repr(d))
+
+    def test_format_with_locale(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
+                         d.format('%A %-d%t jour de %B %Y %I:%M:%S %p %P', locale='fr'))

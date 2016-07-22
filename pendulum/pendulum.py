@@ -855,7 +855,13 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if not locale:
             locale = self.get_locale()
 
-        return self.strftime(fmt)
+        # Checking for custom formatters
+        fmt = self._FORMATTERS_REGEX.sub(lambda m: self._strftime(m, locale), fmt)
+
+        # Checking for localizable directives
+        fmt = re.sub('%(a|A|b|B|p)', lambda m: self._localize_directive(m.group(1), locale), fmt)
+
+        return self._datetime.strftime(fmt)
 
     def strftime(self, fmt):
         """
@@ -871,6 +877,42 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         return self._datetime.strftime(fmt)
 
+    def _localize_directive(self, directive, locale):
+        """
+        Localize a native strftime directive.
+
+        :param directive: The directive to localize
+        :type directive: str
+
+        :param locale: The locale to use for localization
+        :type locale: str
+
+        :rtype: str
+        """
+        if directive == 'a':
+            id = 'days_abbrev'
+            number = self.day_of_week
+        elif directive == 'A':
+            id = 'days'
+            number = self.day_of_week
+        elif directive == 'b':
+            id = 'months_abbrev'
+            number = self.month
+        elif directive == 'B':
+            id = 'months'
+            number = self.month
+        elif directive == 'p':
+            id = 'meridian'
+            number = self.hour
+        else:
+            raise ValueError('Unlocalizable directive [{}]'.format(directive))
+
+        translation = self.translator().transchoice(id, number, locale=locale)
+        if translation == id:
+            return ''
+
+        return translation
+
     def _strftime(self, m, locale=None):
         """
         Handles custom formatters in format string.
@@ -878,7 +920,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :return: str
         """
         if not locale:
-            locale = _locale.getlocale()
+            locale = _locale.getlocale()[0]
 
         fmt = m.group(1)
 
@@ -895,10 +937,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
             return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
         elif fmt == 't':
-            if 10 <= self.day % 100 < 20:
-                return 'th'
-            else:
-                return {1: 'st', 2: 'nd', 3: 'rd'}.get(self.day % 10, "th")
+            translation = self.translator().transchoice('ordinal', self.day, locale=locale)
+            if translation == 'ordinal':
+                translation = ''
+
+            return translation
 
         raise ValueError('Unknown formatter %%{}'.format(fmt))
 

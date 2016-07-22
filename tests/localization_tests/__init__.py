@@ -18,3 +18,9 @@ class AbstractLocalizationTestCase(object):
 
     def diff_for_humans(self):
         raise NotImplementedError()
+
+    def test_format(self):
+        self.format()
+
+    def format(self):
+        pass

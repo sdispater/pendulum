@@ -65,3 +65,13 @@ class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
 
             self.assertEqual('1 seconde', d.diff_for_humans(d2, True))
             self.assertEqual('2 secondes', d2.diff_for_humans(d.add(seconds=1), True))
+
+    def format(self):
+        d = Pendulum(2000, 1, 1, 12, 45, 31)
+        self.assertEqual('samedi', d.format('%A'))
+        self.assertEqual('sam', d.format('%a'))
+        self.assertEqual('janvier', d.format('%B'))
+        self.assertEqual('janv', d.format('%b'))
+        self.assertEqual('', d.format('%p'))
+        self.assertEqual('er', d.format('%t'))
+        self.assertEqual('e', d.add(days=1).format('%t'))
