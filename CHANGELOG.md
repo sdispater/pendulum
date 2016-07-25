@@ -1,3 +1,15 @@
+### 0.4
+
+(July 26th, 2016)
+
+This version mostly brings the new <code>Period</code> class and improves performances overall.
+
+- Adds the `Period` class, which basically is a datetime-aware interval.
+- Makes the `format()` method support a `locale` keyword argument.
+- Changes custom directives. `%P` becomes `%_z` and `%t` becomes `%_t`.
+Basically, all new custom directives will be in the form `%_{directive}`
+- Fixes singular for negative values of intervals.
+
 ### 0.3.1
 
 (July 13th, 2016)
