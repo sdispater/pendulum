@@ -41,6 +41,11 @@ Supports Python **2.7+** and **3.2+**.
 Why Pendulum?
 =============
 
+Native ``datetime`` instances are enough for basic cases but when you face more complex use-cases
+they often show limitations and are not so intuitive to work with.
+``Pendulum`` provides a cleaner and more easy to use API while still relying on the standard library.
+So it's still ``datetime`` but better.
+
 Unlike other datetime libraries for Python, Pendulum is a drop-in replacement
 for the standard ``datetime`` class (it inherits from it), so, basically, you can replace all your ``datetime``
 instances by ``Pendulum`` instances in you code (exceptions exist for libraries that check
@@ -106,3 +111,12 @@ Resources
 * `Official Website <http://pendulum.eustace.io>`_
 * `Documentation <http://pendulum.eustace.io/docs/>`_
 * `Issue Tracker <https://github.com/sdispater/pendulum/issues>`_
+
+
+Contributing
+============
+
+Contributions are welcome, especially with localization.
+Check the `languages <https://github.com/sdispater/pendulum/tree/master/pendulum/lang>`_ already supported,
+and if you want to add a new one, take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/lang/en.py>`_
+file as a starting point and add tests accordingly.
