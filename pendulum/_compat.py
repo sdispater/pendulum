@@ -8,37 +8,51 @@ PY33 = sys.version_info >= (3, 3)
 
 
 if PY2:
-    import imp
 
     long = long
     unicode = unicode
     basestring = basestring
 
-
-    def load_module(module, path):
-        with open(path, 'rb') as fh:
-            mod = imp.load_source(module, path, fh)
-
-            return mod
 else:
+
     long = int
     unicode = str
     basestring = str
 
-    if PY33:
-        from importlib import machinery
+
+def decode(string, encodings=None):
+    if not PY2 and not isinstance(string, bytes):
+        return string
+
+    if PY2 and isinstance(string, unicode):
+        return string
+
+    if encodings is None:
+        encodings = ['utf-8', 'latin1', 'ascii']
+
+    for encoding in encodings:
+        try:
+            return string.decode(encoding)
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            pass
+
+    return string.decode(encodings[0], errors='ignore')
 
 
-        def load_module(module, path):
-            return machinery.SourceFileLoader(
-                module, path
-            ).load_module(module)
-    else:
-        import imp
+def encode(string, encodings=None):
+    if not PY2 and isinstance(string, bytes):
+        return string
 
+    if PY2 and isinstance(string, str):
+        return string
 
-        def load_module(module, path):
-            with open(path, 'rb') as fh:
-                mod = imp.load_source(module, path, fh)
+    if encodings is None:
+        encodings = ['utf-8', 'latin1', 'ascii']
 
-                return mod
+    for encoding in encodings:
+        try:
+            return string.encode(encoding)
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            pass
+
+    return string.encode(encodings[0], errors='ignore')

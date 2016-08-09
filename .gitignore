@@ -7,6 +7,7 @@ dist
 build
 _build
 .cache
+*.so
 
 # Installer logs
 pip-log.txt

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pytz
-from pendulum import Pendulum
+from pendulum import Pendulum, timezone
 
 from .. import AbstractTestCase
 
@@ -10,7 +9,7 @@ class CreateFromTimeTest(AbstractTestCase):
 
     def test_create_from_time_with_defaults(self):
         d = Pendulum.create_from_time()
-        self.assertEqual(d.timestamp, Pendulum.now().timestamp)
+        self.assertEqual(d.timestamp, Pendulum.utcnow().timestamp)
         self.assertEqual('UTC', d.timezone_name)
 
     def test_create_from_time(self):
@@ -41,7 +40,7 @@ class CreateFromTimeTest(AbstractTestCase):
         self.assertEqual('Europe/London', d.timezone_name)
 
     def test_create_from_time_with_timezone(self):
-        d = Pendulum.create_from_time(23, 5, 11, tz=pytz.timezone('Europe/London'))
+        d = Pendulum.create_from_time(23, 5, 11, tz=timezone('Europe/London'))
         now = Pendulum.now('Europe/London')
         self.assertPendulum(d, now.year, now.month, now.day, 23, 5, 11)
         self.assertEqual('Europe/London', d.timezone_name)

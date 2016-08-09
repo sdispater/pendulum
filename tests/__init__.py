@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import tzlocal
-import pytz
 from unittest import TestCase
 from contextlib import contextmanager
 
 from pendulum import Pendulum, Interval
+from pendulum.tz import LocalTimezone, timezone
 
 
 class AbstractTestCase(TestCase):
 
     def setUp(self):
-        self._save_tz = tzlocal.get_localzone
+        self._save_tz = LocalTimezone.get
 
-        tzlocal.get_localzone = lambda: pytz.timezone('America/Toronto')
+        LocalTimezone.get = classmethod(lambda _: timezone('America/Toronto'))
 
         super(AbstractTestCase, self).setUp()
 
     def tearDown(self):
-        tzlocal.get_localzone = self._save_tz
+        LocalTimezone.get = self._save_tz
         Pendulum.reset_to_string_format()
 
     def assertPendulum(self, d, year, month, day, hour=None, minute=None, second=None):

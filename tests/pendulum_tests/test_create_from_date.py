@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import pytz
-from pendulum import Pendulum
+from pendulum import Pendulum, timezone
+from pendulum.tz.timezone_info import TimezoneInfo
 from .. import AbstractTestCase
 
 
@@ -9,7 +9,7 @@ class CreateFromDateTest(AbstractTestCase):
 
     def test_create_from_date_with_defaults(self):
         d = Pendulum.create_from_date()
-        self.assertEqual(d.timestamp, Pendulum.now().timestamp)
+        self.assertEqual(d.timestamp, Pendulum.utcnow().timestamp)
 
     def test_create_from_date(self):
         d = Pendulum.create_from_date(1975, 12, 25)
@@ -32,12 +32,18 @@ class CreateFromDateTest(AbstractTestCase):
         d = Pendulum.create_from_date(day=25)
         self.assertEqual(d.day, 25)
 
-    def test_create_from_date_with_timezone(self):
+    def test_create_from_date_with_timezone_string(self):
         d = Pendulum.create_from_date(1975, 12, 25, tz='Europe/London')
         self.assertPendulum(d, 1975, 12, 25)
         self.assertEqual('Europe/London', d.timezone_name)
 
+    def test_create_from_date_with_timezone(self):
+        d = Pendulum.create_from_date(1975, 12, 25, tz=timezone('Europe/London'))
+        self.assertPendulum(d, 1975, 12, 25)
+        self.assertEqual('Europe/London', d.timezone_name)
+
     def test_create_from_date_with_tzinfo(self):
-        d = Pendulum.create_from_date(1975, 12, 25, tz=pytz.timezone('Europe/London'))
+        tz = timezone('Europe/London')
+        d = Pendulum.create_from_date(1975, 12, 25, tz=TimezoneInfo(tz, 3600, True, ''))
         self.assertPendulum(d, 1975, 12, 25)
         self.assertEqual('Europe/London', d.timezone_name)
