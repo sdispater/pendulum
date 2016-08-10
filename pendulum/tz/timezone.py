@@ -93,7 +93,7 @@ class Timezone(object):
             )
 
         # Find the first transition after our target date/time
-        begin = self._transitions[0]
+        begin = pre_tr = self._transitions[0]
         end = self._transitions[-1]
         offset = None
 
@@ -111,6 +111,13 @@ class Timezone(object):
 
             idx = max(0, bisect_right(transitions, dt))
             tr = self._transitions[idx]
+
+            if idx > 0:
+                pre_tr = self._transitions[idx - 1]
+
+                # DST -> No DST
+                if dt <= pre_tr.pre_time:
+                    tr = pre_tr
 
         transition_type = tr.transition_type
         if tr == begin:
@@ -142,7 +149,14 @@ class Timezone(object):
             else:
                 # In between transitions
                 # The actual transition type is the previous transition one
-                unix_time = tr.unix_time + (dt - tr.pre_time).total_seconds()
+
+                # Fix for negative microseconds for negative timestamps
+                diff = (dt - tr.pre_time).total_seconds()
+                if -1 < diff < 0 and tr.unix_time < 0:
+                    diff -= 1
+
+                unix_time = tr.unix_time + diff
+
                 transition_type = tr.pre_transition_type
 
         return self._to_local_time(unix_time, transition_type, offset)
@@ -200,16 +214,18 @@ class Timezone(object):
         if hasattr(dt, 'float_timestamp'):
             return dt.float_timestamp
 
-        if PY33:
-            return dt.timestamp()
-
         if dt.tzinfo is None:
-            return _time.mktime((dt.year, dt.month, dt.day,
-                                 dt.hour, dt.minute, dt.second,
-                                 -1, -1, -1)) + dt.microsecond / 1e6
+            t = _time.mktime((dt.year, dt.month, dt.day,
+                              dt.hour, dt.minute, dt.second,
+                              -1, -1, -1)) + dt.microsecond / 1e6
 
         else:
-            return (dt - datetime(1970, 1, 1, tzinfo=UTC)).total_seconds()
+            t = (dt - datetime(1970, 1, 1, tzinfo=UTC)).total_seconds()
+
+        if dt.microsecond > 0 and t < 0:
+            t -= 1
+
+        return t
 
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)

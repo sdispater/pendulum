@@ -20,7 +20,8 @@ class AbstractTestCase(TestCase):
         LocalTimezone.get = self._save_tz
         Pendulum.reset_to_string_format()
 
-    def assertPendulum(self, d, year, month, day, hour=None, minute=None, second=None):
+    def assertPendulum(self, d, year, month, day,
+                       hour=None, minute=None, second=None, microsecond=None):
         self.assertEqual(year, d.year)
         self.assertEqual(month, d.month)
         self.assertEqual(day, d.day)
@@ -33,6 +34,9 @@ class AbstractTestCase(TestCase):
 
         if second is not None:
             self.assertEqual(second, d.second)
+
+        if microsecond is not None:
+            self.assertEqual(microsecond, d.microsecond)
 
     def assertInterval(self, pi, weeks, days=None,
                        hours=None, minutes=None, seconds=None):

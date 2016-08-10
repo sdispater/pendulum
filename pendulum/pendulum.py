@@ -1395,8 +1395,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     # ADDITIONS AND SUBSTRACTIONS
 
     def add(self, years=0, months=0, weeks=0, days=0,
-            hours=0, minutes=0, seconds=0, microseconds=0,
-            weekdays=None):
+            hours=0, minutes=0, seconds=0, microseconds=0):
         """
         Add duration to the instance.
 
@@ -1429,14 +1428,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         delta = relativedelta(
             years=years, months=months, weeks=weeks, days=days,
             hours=hours, minutes=minutes, seconds=seconds,
-            microseconds=microseconds, weekday=weekdays
+            microseconds=microseconds
         )
 
-        return self.instance(self._datetime + delta)
+        dt = self._datetime + delta
+        dt = self._tz.convert(dt)
+
+        return self.instance(dt)
 
     def subtract(self, years=0, months=0, weeks=0, days=0,
-            hours=0, minutes=0, seconds=0, microseconds=0,
-            weekdays=None):
+            hours=0, minutes=0, seconds=0, microseconds=0):
         """
         Remove duration from the instance.
 
@@ -1469,10 +1470,13 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         delta = relativedelta(
             years=years, months=months, weeks=weeks, days=days,
             hours=hours, minutes=minutes, seconds=seconds,
-            microseconds=microseconds, weekday=weekdays
+            microseconds=microseconds
         )
 
-        return self.instance(self._datetime - delta)
+        dt = self._datetime - delta
+        dt = self._tz.convert(dt)
+
+        return self.instance(dt)
 
     def add_timedelta(self, delta):
         """

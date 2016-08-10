@@ -91,7 +91,7 @@ class Breakdown(object):
         self.abbrev = abbrev
 
     @classmethod
-    def local_time(cls, timestamp, transition_type):
+    def local_time(cls, unix_time, transition_type):
         """
         Returns a translation as a broken down time
         for a particular transition type.
@@ -102,8 +102,8 @@ class Breakdown(object):
         :rtype: Breakdown
         """
         year = EPOCH_YEAR
-        microsecond = int(round(timestamp % 1, 6) * 1e6)
-        seconds = int(timestamp)
+        microsecond = int(round(unix_time % 1, 6) * 1e6)
+        seconds = int(unix_time)
 
         # Shift to a base year that is 400-year aligned.
         if seconds >= 0:
@@ -172,6 +172,63 @@ class Breakdown(object):
             int(hour), int(minute), int(second), int(microsecond),
             offset, is_dst, abbrev
         )
+
+    @classmethod
+    def shift(cls, dt, years=0, months=0, days=0,
+              hours=0, minutes=0, seconds=0, microseconds=0):
+        """
+        Shifts a datetime by given time values.
+
+        :rtype: Breakdown.
+        """
+        unix_time = dt.timestamp()
+
+        year = dt.year
+        if years > 0:
+            leap_year = int(cls.is_leap(year) and dt.month < 3)
+            while years > 0:
+                unix_time += SECS_PER_YEAR[leap_year]
+                year += 1
+                years -=1
+                leap_year = int(cls.is_leap(year))
+        elif years < 0:
+            leap_year = int(cls.is_leap(year) and dt.month > 2)
+            while years < 0:
+                unix_time -= SECS_PER_YEAR[leap_year]
+                year -= 1
+                years += 1
+                leap_year = int(cls.is_leap(year))
+
+        leap_year = cls.is_leap(year)
+        month = dt.month
+        if months > 0:
+            while months > 0:
+                unix_time += DAYS_PER_MONTHS[leap_year][month - 1]
+                month += 1
+                if month > 12:
+                    month = 1
+                    year += 1
+                    leap_year = int(cls.is_leap(year))
+
+                months -= 1
+        elif months < 0:
+            while months < 0:
+                unix_time -= DAYS_PER_MONTHS[leap_year][month - 1]
+                month -= 1
+                if month < 1:
+                    month = 12
+                    year -= 1
+                    leap_year = int(cls.is_leap(year))
+
+                months += 1
+
+
+        return dt.replace(year=year, month=month)
+
+
+    @classmethod
+    def is_leap(cls, year):
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
     def as_datetime(self):
         return datetime(
