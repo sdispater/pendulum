@@ -93,18 +93,18 @@ class Transition(object):
 
     def _get_comparables(self, other):
         if isinstance(other, Transition):
-            own = self.unix_time
-            other = other.unix_time
+            own = self._unix_time
+            other = other._unix_time
         elif isinstance(other, datetime):
-            own = self.time
+            own = self._time
         else:
-            own = self.unix_time
+            own = self._unix_time
 
         return own, other
 
     def __repr__(self):
         return '<Transition [{}, {} -> {}]>'.format(
-            self.unix_time,
-            self.pre_time,
-            self.time
+            self._unix_time,
+            self._pre_time,
+            self._time
         )

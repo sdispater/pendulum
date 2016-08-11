@@ -110,14 +110,7 @@ class Timezone(object):
         elif not dt < end.time:
             tr = end
         else:
-            # For some reason, Python 2.7 does not use
-            # the Transition comparison methods.
-            if PY2:
-                transitions = map(lambda t: t.time, self._transitions)
-            else:
-                transitions = self._transitions
-
-            idx = max(0, bisect_right(transitions, dt))
+            idx = self._find_transition_index(dt)
             tr = self._transitions[idx]
 
             if idx > 0:
@@ -188,7 +181,7 @@ class Timezone(object):
         if not self._transitions:
             transition_type = self._default_transition_type
         else:
-            idx = max(0, bisect_right(self._transitions, unix_time) - 1)
+            idx = max(0, self._find_transition_index(unix_time) - 1)
             tr = self._transitions[idx]
             transition_type = tr.transition_type
 
@@ -234,6 +227,22 @@ class Timezone(object):
             t -= 1
 
         return t
+
+    def _find_transition_index(self, dt):
+        lo, hi = 0, len(self._transitions)
+
+        prop = '_time'
+        if isinstance(dt, (int, float)):
+            prop = '_unix_time'
+
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if dt < getattr(self._transitions[mid], prop):
+                hi = mid
+            else:
+                lo = mid + 1
+
+        return lo
 
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)

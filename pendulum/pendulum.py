@@ -164,7 +164,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def __init__(self, year, month, day,
                  hour=0, minute=0, second=0, microsecond=0,
-                 tzinfo='UTC'):
+                 tzinfo=UTC):
+        self.__float_timestamp = None
+
         # If a TimezoneInfo is passed we do not convert:
         if isinstance(tzinfo, TimezoneInfo):
             self._tz = tzinfo.tz
@@ -183,7 +185,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             ))
 
     @classmethod
-    def instance(cls, dt, tz='UTC'):
+    def instance(cls, dt, tz=UTC):
         """
         Create a Carbon instance from a datetime one.
 
@@ -197,7 +199,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         tz = dt.tzinfo or tz
 
-        # Bypassing default constructor
         return cls(
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute, dt.second, dt.microsecond,
@@ -349,7 +350,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @classmethod
     def create(cls, year=None, month=None, day=None,
                hour=None, minute=None, second=None, microsecond=None,
-               tz='UTC'):
+               tz=UTC):
         """
         Create a new Carbon instance from a specific date and time.
 
@@ -432,7 +433,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return cls.instance(dt, tz)
 
     @classmethod
-    def create_from_timestamp(cls, timestamp, tz='UTC'):
+    def create_from_timestamp(cls, timestamp, tz=UTC):
         """
         Create a Pendulum instance from a timestamp.
 
@@ -440,15 +441,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :type timestamp: int or float
 
         :param tz: The timezone
-        :type tz: tzinfo or str or int or None
+        :type tz: TimezoneInfo or str or int or None
 
         :rtype: Pendulum
         """
         dt = datetime.datetime.utcfromtimestamp(timestamp).replace(tzinfo=UTC)
+        if tz is not UTC and tz != 'UTC':
+            tz = cls._safe_create_datetime_zone(tz)
 
-        tz = cls._safe_create_datetime_zone(tz)
-
-        dt = tz.convert(dt)
+            dt = tz.convert(dt)
 
         return cls.instance(dt)
 
@@ -552,18 +553,23 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def float_timestamp(self):
+        if self.__float_timestamp is not None:
+            return self.__float_timestamp
+
         # If Python > 3.3 we use the native function
         # else we emulate it
         if PY33:
-            return self._datetime.timestamp()
-
-        if self._datetime.tzinfo is None:
-            return _time.mktime((self.year, self.month, self.day,
-                                 self.hour, self.minute, self.second,
-                                 -1, -1, -1)) + self.microsecond / 1e6
+            self.__float_timestamp = self._datetime.timestamp()
+        elif self._datetime.tzinfo is None:
+            self.__float_timestamp = _time.mktime(
+                (self.year, self.month, self.day,
+                 self.hour, self.minute, self.second,
+                -1, -1, -1)) + self.microsecond / 1e6
 
         else:
-            return (self._datetime - self._EPOCH).total_seconds()
+            self.__float_timestamp = (self._datetime - self._EPOCH).total_seconds()
+
+        return self.__float_timestamp
 
     @property
     def week_of_month(self):
@@ -712,7 +718,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         tz = self._safe_create_datetime_zone(tz)
 
-        return self.instance(tz.convert(self._datetime))
+        return tz.convert(self)
 
     def in_tz(self, tz):
         """
