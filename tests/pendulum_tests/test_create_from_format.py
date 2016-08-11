@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytz
-from pendulum import Pendulum
+from pendulum import Pendulum, timezone
 from .. import AbstractTestCase
 
 
@@ -20,7 +20,7 @@ class CreateFromFormatTest(AbstractTestCase):
 
     def test_create_from_format_with_timezone(self):
         d = Pendulum.create_from_format(
-            '1975-05-21 22:32:11', '%Y-%m-%d %H:%M:%S', pytz.timezone('Europe/London')
+            '1975-05-21 22:32:11', '%Y-%m-%d %H:%M:%S', timezone('Europe/London')
         )
         self.assertPendulum(d, 1975, 5, 21, 22, 32, 11)
         self.assertEqual('Europe/London', d.timezone_name)

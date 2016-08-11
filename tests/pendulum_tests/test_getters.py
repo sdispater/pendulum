@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import pytz
 from pendulum import Pendulum
+from pendulum.tz import timezone
 
 from .. import AbstractTestCase
 
@@ -41,7 +41,7 @@ class GettersTest(AbstractTestCase):
 
     def test_tzinfo(self):
         d = Pendulum.now()
-        self.assertEqual(pytz.timezone('America/Toronto').zone, d.tzinfo.zone)
+        self.assertEqual(timezone('America/Toronto').name, d.tzinfo.name)
 
     def test_day_of_week(self):
         d = Pendulum(2012, 5, 7, 7, 8, 9)
@@ -132,24 +132,24 @@ class GettersTest(AbstractTestCase):
 
     def test_timezone(self):
         d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
-        self.assertEqual('America/Toronto', d.timezone.zone)
+        self.assertEqual('America/Toronto', d.timezone.name)
 
         d = Pendulum.create_from_date(2000, 1, 1, -5)
-        self.assertEqual(None, d.timezone.zone)
+        self.assertEqual('-05:00', d.timezone.name)
 
     def test_tz(self):
         d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
-        self.assertEqual('America/Toronto', d.tz.zone)
+        self.assertEqual('America/Toronto', d.tz.name)
 
         d = Pendulum.create_from_date(2000, 1, 1, -5)
-        self.assertEqual(None, d.tz.zone)
+        self.assertEqual('-05:00', d.tz.name)
 
     def test_timezone_name(self):
         d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
         self.assertEqual('America/Toronto', d.timezone_name)
 
         d = Pendulum.create_from_date(2000, 1, 1, -5)
-        self.assertEqual(None, d.timezone_name)
+        self.assertEqual('-05:00', d.timezone_name)
 
     def test_is_weekday(self):
         d = Pendulum.now().next(Pendulum.MONDAY)

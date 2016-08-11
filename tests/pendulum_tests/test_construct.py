@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pytz
 from datetime import datetime
 from pendulum import Pendulum
+from pendulum.tz import timezone
+from pendulum.tz.timezone_info import TimezoneInfo
 from .. import AbstractTestCase
 
 
@@ -38,63 +39,57 @@ class ConstructTest(AbstractTestCase):
     def test_parse_with_offset_in_string(self):
         p = Pendulum.parse('2016-04-15T18:21:08.7454873-05:00')
         self.assertPendulum(p, 2016, 4, 15, 18, 21, 8)
-        self.assertIsNone(p.timezone_name)
+        self.assertEqual('-05:00', p.timezone_name)
         self.assertEqual(-18000, p.offset)
 
     def test_parse_with_partial_offset_in_string(self):
         p = Pendulum.parse('2016-04-15T18:21:08.7454873-00:30')
         self.assertPendulum(p, 2016, 4, 15, 18, 21, 8)
-        self.assertIsNone(p.timezone_name)
+        self.assertEqual('-00:30', p.timezone_name)
         self.assertEqual(-1800, p.offset)
 
     def test_setting_timezone(self):
-        timezone = 'Europe/London'
-        dtz = pytz.timezone(timezone)
+        tz = 'Europe/London'
+        dtz = timezone(tz)
         dt = datetime.utcnow()
-        offset = dtz.utcoffset(dt).total_seconds() / 3600
+        offset = dtz.convert(dt).tzinfo.offset / 3600
 
         p = Pendulum(dt.year, dt.month, dt.day, tzinfo=dtz)
-        self.assertEqual(timezone, p.timezone_name)
+        self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
     def test_parse_setting_timezone(self):
-        timezone = 'Europe/London'
-        dtz = pytz.timezone(timezone)
+        tz = 'Europe/London'
+        dtz = timezone(tz)
         dt = datetime.utcnow()
-        offset = dtz.utcoffset(dt).total_seconds() / 3600
+        offset = dtz.convert(dt).tzinfo.offset / 3600
 
         p = Pendulum.parse(tz=dtz)
-        self.assertEqual(timezone, p.timezone_name)
+        self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
     def test_setting_timezone_with_string(self):
-        timezone = 'Europe/London'
-        dtz = pytz.timezone(timezone)
+        tz = 'Europe/London'
+        dtz = timezone(tz)
         dt = datetime.utcnow()
-        offset = dtz.utcoffset(dt).total_seconds() / 3600
+        offset = dtz.convert(dt).tzinfo.offset / 3600
 
-        p = Pendulum(dt.year, dt.month, dt.day, tzinfo=timezone)
-        self.assertEqual(timezone, p.timezone_name)
+        p = Pendulum(dt.year, dt.month, dt.day, tzinfo=tz)
+        self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
     def test_parse_setting_timezone_with_string(self):
-        timezone = 'Europe/London'
-        dtz = pytz.timezone(timezone)
+        tz = 'Europe/London'
+        dtz = timezone(tz)
         dt = datetime.utcnow()
-        offset = dtz.utcoffset(dt).total_seconds() / 3600
+        offset = dtz.convert(dt).tzinfo.offset / 3600
 
-        p = Pendulum.parse(tz=timezone)
-        self.assertEqual(timezone, p.timezone_name)
+        p = Pendulum.parse(tz=tz)
+        self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
     def test_parse_with_invalid_string(self):
         self.assertRaises(ValueError, Pendulum.parse, 'Invalid_string')
-
-    def test_honor_tz_env_variable(self):
-        os.environ['TZ'] = 'Europe/Paris'
-        with self.wrap_with_test_now():
-            now = Pendulum.now()
-            self.assertEqual(now.timezone_name, 'Europe/Paris')
 
     def test_today(self):
         today = Pendulum.today()
@@ -117,5 +112,5 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual('UTC', now.timezone_name)
 
     def test_instance_timezone_aware_datetime(self):
-        now = Pendulum.instance(datetime.now(pytz.timezone('Europe/Paris')))
+        now = Pendulum.instance(datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, 'EST')))
         self.assertEqual('Europe/Paris', now.timezone_name)
