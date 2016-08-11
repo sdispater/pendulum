@@ -406,8 +406,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        return cls.create(hour=hour, minute=minute, second=second,
-                          microsecond=microsecond, tz=tz)
+        return cls.now(tz).replace(
+            hour=hour, minute=minute, second=second,
+            microsecond=microsecond
+        )
 
     @classmethod
     def create_from_format(cls, time, fmt, tz=UTC):
@@ -2208,9 +2210,19 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def replace(self, year=None, month=None, day=None, hour=None,
                 minute=None, second=None, microsecond=None, tzinfo=True):
+        year = year if year is not None else self._datetime.year
+        month = month if month is not None else self._datetime.month
+        day = day if day is not None else self._datetime.day
+        hour = hour if hour is not None else self._datetime.hour
+        minute = minute if minute is not None else self._datetime.minute
+        second = second if second is not None else self._datetime.second
+        microsecond = microsecond if microsecond is not None else self._datetime.microsecond
+        tzinfo = tzinfo if tzinfo is not True else self._datetime.tzinfo
+
         return self.instance(
-            self._datetime.replace(year, month, day,
-                                   hour, minute, second, microsecond, tzinfo)
+            self._datetime.replace(year=year, month=month, day=day,
+                                   hour=hour, minute=minute, second=second,
+                                   microsecond=microsecond, tzinfo=tzinfo)
         )
 
     def astimezone(self, tz=None):

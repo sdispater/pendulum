@@ -19,11 +19,12 @@ class CreateFromTimeTest(AbstractTestCase):
         self.assertEqual('UTC', d.timezone_name)
 
     def test_create_from_time_with_hour(self):
-        d = Pendulum.create_from_time(23)
-        self.assertEqual(23, d.hour)
-        self.assertEqual(0, d.minute)
-        self.assertEqual(0, d.second)
-        self.assertEqual(0, d.microsecond)
+        with Pendulum.test(Pendulum(2016, 8, 11, 12, 34, 56, 123456)):
+            d = Pendulum.create_from_time(23)
+            self.assertEqual(23, d.hour)
+            self.assertEqual(34, d.minute)
+            self.assertEqual(56, d.second)
+            self.assertEqual(123456, d.microsecond)
 
     def test_create_from_time_with_minute(self):
         d = Pendulum.create_from_time(minute=5)
