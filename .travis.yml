@@ -13,6 +13,7 @@ before_install:
 
 install:
   - pip install -r tests-requirements.txt
+  - python setup.py develop
 
 script: py.test --cov=pendulum --cov-config=.coveragerc tests/
 
