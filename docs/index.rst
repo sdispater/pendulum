@@ -462,7 +462,7 @@ You can also set the default ``__str__`` format.
 Custom Directives
 -----------------
 
-Apart from the `default directives <For localization support see the Localization section.>`_,
+Apart from the `default directives <https://docs.python.org/3.5/library/time.html#time.strftime>`_,
 Pendulum comes with its own (each custom directive is in the form ``%_{directive}``):
 
 ===========  ======================================================================== =================================

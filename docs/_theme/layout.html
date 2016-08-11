@@ -1,0 +1,55 @@
+---
+layout: documentation
+title: {{ title|striptags|e }}
+---
+
+{# TEMPLATE VAR SETTINGS #}
+{%- set url_root = pathto('', 1) %}
+{%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+{%- if not embedded and docstitle %}
+  {%- set titlesuffix = " &mdash; "|safe + docstitle|e %}
+{%- else %}
+  {%- set titlesuffix = "" %}
+{%- endif %}
+
+    <!-- START CONTENT SECTION -->
+    <section class="sm-p-b-30 p-b-70 p-t-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3 text-center p-t-100">
+            <h1 class="m-t-5">Documentation</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END CONTENT SECTION -->
+
+    <section class="p-b-50 p-t-50 documentation-content">
+        <div class="container">
+            <div class="panel panel-transparent">
+                <div class="bg-white row p-l-20 p-r-20 p-b-20 p-t-5 xs-no-padding">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nav data-toggle="wy-nav-shift" class="wy-nav-side p-t-40">
+                              <div class="documentation-menu" role="navigation" aria-label="main navigation">
+                                {% block menu %}
+                                  {% set toctree = toctree(maxdepth=3, collapse=True, includehidden=True) %}
+                                  {% if toctree %}
+                                      {{ toctree }}
+                                  {% else %}
+                                      <!-- Local TOC -->
+                                      <div class="local-toc">{{ toc }}</div>
+                                  {% endif %}
+                                {% endblock %}
+                              </div>
+                              &nbsp;
+                            </nav>
+                        </div>
+                        <div class="col-md-8 documentation-body">
+                            {% block body %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
