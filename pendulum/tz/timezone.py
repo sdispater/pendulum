@@ -43,8 +43,8 @@ class Timezone(object):
         :rtype: Timezone
         """
         # Shortcut to UTC
-        #if name.upper() == 'UTC':
-        #    return UTC
+        if name.upper() == 'UTC':
+            return UTCTimezone
 
         if name not in cls._cache:
             (transitions,
@@ -69,11 +69,19 @@ class Timezone(object):
 
         Otherwise, it will convert the datetime to local time.
         """
+        from ..pendulum import Pendulum
+        
         if dt.tzinfo is None:
             # we assume local time
-            return self._normalize(dt)
+            converted = self._normalize(dt)
 
-        return self._convert(dt)
+        else:
+            converted = self._convert(dt)
+
+        if isinstance(dt, Pendulum):
+            return Pendulum.instance(converted)
+
+        return converted
 
     def _normalize(self, dt):
         # if tzinfo is set, something wrong happened
@@ -229,13 +237,13 @@ class Timezone(object):
 
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)
-    
-    
+
+
 class FixedTimezone(Timezone):
     """
     A timezone that has a fixed offset to UTC.
     """
-    
+
     def __init__(self, offset):
         """
         :param offset: offset to UTC in seconds.
@@ -249,7 +257,7 @@ class FixedTimezone(Timezone):
         name = '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
 
         transition_type = TransitionType(int(offset), False, '')
-        
+
         super(FixedTimezone, self).__init__(name, [], [], transition_type)
 
 

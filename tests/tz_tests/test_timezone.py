@@ -214,7 +214,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(7200, dt.offset)
         self.assertTrue(dt.is_dst)
 
-
         dt = pendulum.create(2013, 11, 3, 1, 0, 0, 0, 'America/New_York')
 
         self.assertPendulum(dt, 2013, 11, 3, 1, 0, 0, 0)
@@ -228,3 +227,11 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-4 * 3600, dt.offset)
         self.assertTrue(dt.is_dst)
+
+    def test_convert_accept_pendulum_instance(self):
+        dt = pendulum.create(2016, 8, 7, 12, 53, 54)
+        tz = timezone('Europe/Paris')
+        new = tz.convert(dt)
+
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, 2016, 8, 7, 14, 53, 54)
