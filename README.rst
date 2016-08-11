@@ -2,7 +2,7 @@ Pendulum
 ########
 
 .. image:: https://travis-ci.org/sdispater/pendulum.png
-   :alt: Orator Build status
+   :alt: Pendulum Build status
    :target: https://travis-ci.org/sdispater/pendulum
 
 Python datetimes made easy.
@@ -17,6 +17,8 @@ Supports Python **2.7+** and **3.2+**.
    >>> now_in_paris = pendulum.now('Europe/Paris')
    >>> now_in_paris
    '2016-07-04T00:49:58.502116+02:00'
+
+   # Seamless timezone switching
    >>> now_in_paris.in_timezone('UTC')
    '2016-07-03T22:49:58.502116+00:00'
 
@@ -36,6 +38,16 @@ Supports Python **2.7+** and **3.2+**.
    23
    >>> delta.in_words(locale='en')
    '6 days 23 hours 58 minutes'
+
+   # Proper handling of datetime normalization
+   >>> pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+   '2013-03-31T03:30:00+02:00' # 2:30 does not exist (Skipped time)
+
+   # Proper handling of dst transitions
+   >>> just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+   '2013-03-31T01:59:59.999999+01:00'
+   >>> just_before.add(microseconds=1)
+   '2013-03-31T03:00:00+02:00'
 
 
 Why Pendulum?
@@ -90,6 +102,8 @@ and it will try its best to return something while silently failing to handle so
     # Working with DST
     just_before = arrow.Arrow(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
     just_after = just_before.replace(microseconds=1)
+    '2013-03-31T02:00:00+02:00'
+    # Should be 2013-03-31T03:00:00+02:00
 
     (just_after.to('utc') - just_before.to('utc')).total_seconds()
     -3599.999999
@@ -97,6 +111,7 @@ and it will try its best to return something while silently failing to handle so
 
     just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
     just_after = just_before.add(microseconds=1)
+    '2013-03-31T03:00:00+02:00'
 
     (just_after.in_timezone('utc') - just_before.in_timezone('utc')).total_seconds()
     1e-06
