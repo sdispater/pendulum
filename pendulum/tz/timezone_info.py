@@ -16,6 +16,11 @@ class TimezoneInfo(tzinfo):
         self._tz = tz
         self._name = tz.name
         self._offset = offset
+
+        # Rounded to the nearest minute
+        # This is a fix so that it works
+        # with the datetime objects
+        self._adjusted_offset = round(offset / 60) * 60
         self._is_dst = is_dst
         self._abbrev = abbrev
 
@@ -48,9 +53,9 @@ class TimezoneInfo(tzinfo):
         elif dt.tzinfo is not self:
             dt = self.tz.convert(dt)
 
-            return dt.tzinfo.offset
+            return dt.tzinfo._adjusted_offset
         else:
-            return timedelta(seconds=self.offset)
+            return timedelta(seconds=self._adjusted_offset)
 
     def dst(self, dt):
         if not self.is_dst:
@@ -61,9 +66,9 @@ class TimezoneInfo(tzinfo):
         elif dt.tzinfo is not self:
             dt = self.tz.convert(dt)
 
-            offset = dt.tzinfo.offset
+            offset = dt.tzinfo._adjusted_offset
         else:
-            offset = self.offset
+            offset = self._adjusted_offset
 
         return timedelta(seconds=offset)
 
