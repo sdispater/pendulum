@@ -9,7 +9,7 @@ from .timezone_info import TimezoneInfo
 from .breakdown import Breakdown
 from .transition_type import TransitionType
 
-from .._compat import PY33, PY2
+from .._compat import PY2
 
 
 class Timezone(object):
