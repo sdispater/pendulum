@@ -2,14 +2,11 @@
 
 import time as _time
 from datetime import datetime
-from bisect import bisect_right
 
 from .loader import Loader
 from .timezone_info import TimezoneInfo
-from .breakdown import Breakdown
+from .breakdown import local_time as _local_time
 from .transition_type import TransitionType
-
-from .._compat import PY2
 
 
 class Timezone(object):
@@ -69,8 +66,6 @@ class Timezone(object):
 
         Otherwise, it will convert the datetime to local time.
         """
-        from ..pendulum import Pendulum
-        
         if dt.tzinfo is None:
             # we assume local time
             converted = self._normalize(dt)
@@ -78,10 +73,7 @@ class Timezone(object):
         else:
             converted = self._convert(dt)
 
-        if isinstance(dt, Pendulum):
-            return Pendulum.instance(converted)
-
-        return converted
+        return dt.__class__(*converted)
 
     def _normalize(self, dt):
         # if tzinfo is set, something wrong happened
@@ -91,7 +83,7 @@ class Timezone(object):
                 'Use _convert() instead.'
             )
 
-        if not self.transitions:
+        if not self._transitions:
             # Use the default offset
             offset = self._default_transition_type.utc_offset
             unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
@@ -101,7 +93,7 @@ class Timezone(object):
             )
 
         # Find the first transition after our target date/time
-        begin = pre_tr = self._transitions[0]
+        begin = self._transitions[0]
         end = self._transitions[-1]
         offset = None
 
@@ -120,8 +112,8 @@ class Timezone(object):
                 if dt <= pre_tr.pre_time:
                     tr = pre_tr
 
-        transition_type = tr.transition_type
-        if tr == begin:
+        transition_type = tr._transition_type
+        if tr is begin:
             if not tr.pre_time < dt:
                 # Before first transition, so use the default offset.
                 offset = self._default_transition_type.utc_offset
@@ -130,7 +122,7 @@ class Timezone(object):
                 # tr.pre_time < dt < tr.time
                 # Skipped time
                 unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
-        elif tr == end:
+        elif tr is end:
             if tr.pre_time < dt:
                 # After the last transition.
                 unix_time = tr.unix_time + (dt - tr.time).total_seconds()
@@ -188,7 +180,7 @@ class Timezone(object):
         return self._to_local_time(unix_time, transition_type)
 
     def _to_local_time(self, unix_time, transition_type, offset=None):
-        local_time = Breakdown.local_time(
+        local_time = _local_time(
             unix_time,
             transition_type
         )
@@ -200,16 +192,7 @@ class Timezone(object):
             transition_type.abbrev
         )
 
-        return datetime(
-            local_time.year,
-            local_time.month,
-            local_time.day,
-            local_time.hour,
-            local_time.minute,
-            local_time.second,
-            local_time.microsecond,
-            tzinfo=tzinfo
-        )
+        return local_time[:7] + (tzinfo,)
 
     def _get_timestamp(self, dt):
         if hasattr(dt, 'float_timestamp'):

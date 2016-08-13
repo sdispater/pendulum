@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from collections import namedtuple
+
 
 EPOCH_YEAR = 1970
 
@@ -74,119 +75,92 @@ TM_NOVEMBER = 10
 TM_DECEMBER = 11
 
 
-class Breakdown(object):
+Breakdown = namedtuple(
+    'Breakdown',
+    ['year', 'month', 'day',
+     'hour', 'minute', 'second', 'microsecond',
+     'offset', 'is_dst', 'abbrev']
+)
 
-    def __init__(self, year, month, day,
-                 hour, minute, second, microsecond,
-                 offset, is_dst, abbrev):
-        self.year = year
-        self.month = month
-        self.day = day
-        self.hour = hour
-        self.minute = minute
-        self.second = second
-        self.microsecond = microsecond
-        self.offset = offset
-        self.is_dst = is_dst
-        self.abbrev = abbrev
 
-    @classmethod
-    def local_time(cls, unix_time, transition_type):
-        """
-        Returns a translation as a broken down time
-        for a particular transition type.
+def local_time(unix_time, transition_type):
+    """
+    Returns a translation as a broken down time
+    for a particular transition type.
 
-        :type unix_time: int
-        :type transition_type: TransitionType
+    :type unix_time: int
+    :type transition_type: TransitionType
 
-        :rtype: Breakdown
-        """
-        year = EPOCH_YEAR
-        microsecond = int(round(unix_time % 1, 6) * 1e6)
-        seconds = int(unix_time)
+    :rtype: Breakdown
+    """
+    year = EPOCH_YEAR
+    microsecond = int(round(unix_time % 1, 6) * 1e6)
+    seconds = int(unix_time)
 
-        # Shift to a base year that is 400-year aligned.
-        if seconds >= 0:
-            seconds -= 10957 * SECS_PER_DAY
-            year += 30  # == 2000
-        else:
-            seconds += (146097 - 10957) * SECS_PER_DAY
-            year -= 370  # == 1600
+    # Shift to a base year that is 400-year aligned.
+    if seconds >= 0:
+        seconds -= 10957 * SECS_PER_DAY
+        year += 30  # == 2000
+    else:
+        seconds += (146097 - 10957) * SECS_PER_DAY
+        year -= 370  # == 1600
 
-        seconds += transition_type.utc_offset
+    seconds += transition_type.utc_offset
 
-        # Handle years in chunks of 400/100/4/1
-        year += 400 * (seconds // SECS_PER_400_YEARS)
-        seconds %= SECS_PER_400_YEARS
-        if seconds < 0:
-            seconds += SECS_PER_400_YEARS
-            year -= 400
+    # Handle years in chunks of 400/100/4/1
+    year += 400 * (seconds // SECS_PER_400_YEARS)
+    seconds %= SECS_PER_400_YEARS
+    if seconds < 0:
+        seconds += SECS_PER_400_YEARS
+        year -= 400
 
-        leap_year = 1  # 4-century aligned
+    leap_year = 1  # 4-century aligned
 
+    sec_per_100years = SECS_PER_100_YEARS[leap_year]
+    while seconds >= sec_per_100years:
+        seconds -= sec_per_100years
+        year += 100
+        leap_year = 0  # 1-century, non 4-century aligned
         sec_per_100years = SECS_PER_100_YEARS[leap_year]
-        while seconds >= sec_per_100years:
-            seconds -= sec_per_100years
-            year += 100
-            leap_year = 0  # 1-century, non 4-century aligned
-            sec_per_100years = SECS_PER_100_YEARS[leap_year]
 
+    sec_per_4years = SECS_PER_4_YEARS[leap_year]
+    while seconds >= sec_per_4years:
+        seconds -= sec_per_4years
+        year += 4
+        leap_year = 1  # 4-year, non century aligned
         sec_per_4years = SECS_PER_4_YEARS[leap_year]
-        while seconds >= sec_per_4years:
-            seconds -= sec_per_4years
-            year += 4
-            leap_year = 1  # 4-year, non century aligned
-            sec_per_4years = SECS_PER_4_YEARS[leap_year]
 
+    sec_per_year = SECS_PER_YEAR[leap_year]
+    while seconds >= sec_per_year:
+        seconds -= sec_per_year
+        year += 1
+        leap_year = 0  # non 4-year aligned
         sec_per_year = SECS_PER_YEAR[leap_year]
-        while seconds >= sec_per_year:
-            seconds -= sec_per_year
-            year += 1
-            leap_year = 0  # non 4-year aligned
-            sec_per_year = SECS_PER_YEAR[leap_year]
 
-        # Handle months and days
-        month = TM_DECEMBER + 1
-        day = seconds // SECS_PER_DAY + 1
-        seconds %= SECS_PER_DAY
-        while month != TM_JANUARY + 1:
-            month_offset = MONTHS_OFFSETS[leap_year][month]
-            if day > month_offset:
-                day -= month_offset
-                break
+    # Handle months and days
+    month = TM_DECEMBER + 1
+    day = seconds // SECS_PER_DAY + 1
+    seconds %= SECS_PER_DAY
+    while month != TM_JANUARY + 1:
+        month_offset = MONTHS_OFFSETS[leap_year][month]
+        if day > month_offset:
+            day -= month_offset
+            break
 
-            month -= 1
+        month -= 1
 
-        # Handle hours, minutes, seconds and microseconds
-        hour = seconds // SECS_PER_HOUR
-        seconds %= SECS_PER_HOUR
-        minute = seconds // SECS_PER_MIN
-        second = seconds % SECS_PER_MIN
+    # Handle hours, minutes, seconds and microseconds
+    hour = seconds // SECS_PER_HOUR
+    seconds %= SECS_PER_HOUR
+    minute = seconds // SECS_PER_MIN
+    second = seconds % SECS_PER_MIN
 
-        offset = transition_type.utc_offset
-        is_dst = transition_type.is_dst
-        abbrev = transition_type.abbrev
+    offset = transition_type.utc_offset
+    is_dst = transition_type.is_dst
+    abbrev = transition_type.abbrev
 
-        return cls(
-            int(year), int(month), int(day),
-            int(hour), int(minute), int(second), int(microsecond),
-            offset, is_dst, abbrev
-        )
-
-
-    @classmethod
-    def is_leap(cls, year):
-        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-
-    def as_datetime(self):
-        return datetime(
-            self.year, self.month, self.day,
-            self.hour, self.minute, self.second, self.microsecond
-        )
-
-    def __repr__(self):
-        return '<Breakdown [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]>'.format(
-            self.year, self.month, self.day,
-            self.hour, self.minute, self.second, self.microsecond,
-            self.offset, self.is_dst, self.abbrev
-        )
+    return (
+        year, month, day,
+        hour, minute, second, microsecond,
+        offset, is_dst, abbrev
+    )

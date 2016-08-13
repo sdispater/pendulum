@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from struct import unpack, calcsize
+from datetime import datetime
 
 from .transition import Transition
 from .transition_type import TransitionType
-from .breakdown import Breakdown
+from .breakdown import local_time
 
 
 def _byte_string(s):
@@ -45,14 +46,14 @@ class Parser(object):
 
         # make sure we unpacked the right number of values
         assert len(data) == 2 * timecnt + 3 * typecnt + 1
-        transition_times = [trans for trans in data[:timecnt]]
-        lindexes = list(data[timecnt:2 * timecnt])
+        transition_times = tuple(trans for trans in data[:timecnt])
+        lindexes = tuple(data[timecnt:2 * timecnt])
         ttinfo_raw = data[2 * timecnt:-1]
         tznames_raw = data[-1]
         del data
 
         # Process ttinfo into separate structs
-        transition_types = []
+        transition_types = tuple()
         tznames = {}
         i = 0
         while i < len(ttinfo_raw):
@@ -64,20 +65,20 @@ class Parser(object):
                     nul = len(tznames_raw)
                 tznames[tzname_offset] = _std_string(
                     tznames_raw[tzname_offset:nul])
-            transition_types.append(
+            transition_types += (
                 TransitionType(
                     ttinfo_raw[i], bool(ttinfo_raw[i + 1]),
                     tznames[tzname_offset]
-                )
+                ),
             )
             i += 3
 
         # Now build the timezone object
         if len(transition_times) == 0:
-            transitions = []
+            transitions = tuple()
         else:
             # calculate transition info
-            transitions = []
+            transitions = tuple()
             for i in range(len(transition_times)):
                 transition_type = transition_types[lindexes[i]]
 
@@ -86,19 +87,19 @@ class Parser(object):
                 else:
                     pre_transition_type = transition_types[lindexes[i - 1]]
 
-                pre_time = Breakdown.local_time(transition_times[i],
-                                                pre_transition_type)
-                time = Breakdown.local_time(transition_times[i],
-                                            transition_type)
+                pre_time = datetime(*local_time(transition_times[i],
+                                                pre_transition_type)[:7])
+                time = datetime(*local_time(transition_times[i],
+                                            transition_type)[:7])
                 tr = Transition(
                     transition_times[i],
                     transition_type,
-                    pre_time.as_datetime(),
-                    time.as_datetime(),
+                    pre_time,
+                    time,
                     pre_transition_type
                 )
 
-                transitions.append(tr)
+                transitions += (tr,)
 
         # Determine the before-first-transition type
         default_transition_type_index = 0

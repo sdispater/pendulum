@@ -14,7 +14,6 @@ class TimezoneInfo(tzinfo):
         :type is_dst: bool
         """
         self._tz = tz
-        self._name = tz.name
         self._offset = offset
 
         # Rounded to the nearest minute
@@ -30,7 +29,7 @@ class TimezoneInfo(tzinfo):
 
     @property
     def name(self):
-        return self._name
+        return self.tz._name
 
     @property
     def offset(self):
@@ -71,6 +70,13 @@ class TimezoneInfo(tzinfo):
             offset = self._adjusted_offset
 
         return timedelta(seconds=offset)
+
+    def fromutc(self, dt):
+        from .timezone import UTC
+
+        dt = dt.replace(tzinfo=UTC)
+
+        return self.tz.convert(dt)
 
     def __repr__(self):
         return '<TimezoneInfo [{}, {}, {}]>'.format(
