@@ -967,7 +967,9 @@ Timezones
 .. versionchanged:: 0.5
 
     ``Pendulum`` provides its own timezone handling and no longer
-    rely on ``pytz`` which was not always reliable.
+    rely on ``pytz`` which does not always perform very well, particularly
+    to localize and normalize a naive-datetime.
+
 
 Timezones are an important part of every datetime library and ``Pendulum``
 tries to provide an easy and accurate system to handle them properly.
