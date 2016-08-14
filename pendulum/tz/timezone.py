@@ -4,7 +4,7 @@ import time as _time
 from datetime import datetime
 
 from .loader import Loader
-from .timezone_info import TimezoneInfo
+from .timezone_info import TimezoneInfo, UTC
 from .breakdown import local_time as _local_time
 from .transition_type import TransitionType
 
@@ -73,6 +73,9 @@ class Timezone(object):
         else:
             converted = self._convert(dt)
 
+        if not isinstance(converted, tuple):
+            return converted
+
         return dt.__class__(*converted)
 
     def _normalize(self, dt):
@@ -95,7 +98,6 @@ class Timezone(object):
         # Find the first transition after our target date/time
         begin = self._transitions[0]
         end = self._transitions[-1]
-        offset = None
 
         if dt < begin.time:
             tr = begin
@@ -118,6 +120,10 @@ class Timezone(object):
                 # Before first transition, so use the default offset.
                 offset = self._default_transition_type.utc_offset
                 unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
+
+                return self._to_local_time(
+                    unix_time, self._default_transition_type
+                )
             else:
                 # tr.pre_time < dt < tr.time
                 # Skipped time
@@ -152,7 +158,7 @@ class Timezone(object):
 
                 transition_type = tr.pre_transition_type
 
-        return self._to_local_time(unix_time, transition_type, offset)
+        return self._to_local_time(unix_time, transition_type)
 
     def _convert(self, dt):
         """
@@ -173,13 +179,13 @@ class Timezone(object):
         if not self._transitions:
             transition_type = self._default_transition_type
         else:
-            idx = max(0, self._find_transition_index(unix_time) - 1)
+            idx = max(0, self._find_transition_index(unix_time, '_unix_time') - 1)
             tr = self._transitions[idx]
             transition_type = tr.transition_type
 
         return self._to_local_time(unix_time, transition_type)
 
-    def _to_local_time(self, unix_time, transition_type, offset=None):
+    def _to_local_time(self, unix_time, transition_type):
         local_time = _local_time(
             unix_time,
             transition_type
@@ -187,9 +193,7 @@ class Timezone(object):
 
         tzinfo = TimezoneInfo(
             self,
-            offset if offset is not None else transition_type.utc_offset,
-            transition_type.is_dst,
-            transition_type.abbrev
+            transition_type
         )
 
         return local_time[:7] + (tzinfo,)
@@ -211,12 +215,8 @@ class Timezone(object):
 
         return t
 
-    def _find_transition_index(self, dt):
+    def _find_transition_index(self, dt, prop='_time'):
         lo, hi = 0, len(self._transitions)
-
-        prop = '_time'
-        if isinstance(dt, (int, float)):
-            prop = '_unix_time'
 
         while lo < hi:
             mid = (lo + hi) // 2
@@ -258,11 +258,11 @@ class _UTC(Timezone):
     def __init__(self):
         super(_UTC, self).__init__('UTC', [], [], TransitionType(0, False, 'GMT'))
 
-        self._tzinfo = TimezoneInfo(self, 0, False, 'UTC')
+        UTC._tz = self
+        self._tzinfo = UTC
 
     @property
     def tzinfo(self):
         return self._tzinfo
 
 UTCTimezone = _UTC()
-UTC = UTCTimezone.tzinfo

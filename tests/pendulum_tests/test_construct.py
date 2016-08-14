@@ -112,5 +112,5 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual('UTC', now.timezone_name)
 
     def test_instance_timezone_aware_datetime(self):
-        now = Pendulum.instance(datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, 'EST')))
+        now = Pendulum.instance(datetime.now(TimezoneInfo.create(timezone('Europe/Paris'), 7200, True, 'EST')))
         self.assertEqual('Europe/Paris', now.timezone_name)

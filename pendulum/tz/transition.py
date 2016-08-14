@@ -106,5 +106,5 @@ class Transition(object):
         return '<Transition [{}, {} -> {}]>'.format(
             self._unix_time,
             self._pre_time,
-            self._time
+            self.time
         )
