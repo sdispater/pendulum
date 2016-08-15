@@ -93,6 +93,7 @@ kwargs = dict(
         'pytz',
         'python-dateutil',
     ],
+    include_package_data=True,
     tests_require=['pytest'],
     test_suite='nose.collector',
     classifiers=[
