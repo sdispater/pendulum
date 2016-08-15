@@ -1,5 +1,6 @@
 ### 0.5
 
+(August 15th, 2016)
 
 This version introduces a new timezone library which improves
 timezone switching and behavior around DST transition times.
