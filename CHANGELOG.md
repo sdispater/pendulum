@@ -1,8 +1,19 @@
+### 0.5
+
+
+This version introduces a new timezone library which improves
+timezone switching and behavior around DST transition times.
+
+- Adds a new timezone library to properly normalize and localize datetimes.
+``Pendulum`` no longer relies on ``pytz``.
+Check the [Documentation](/docs/#timezone) to see what has changed exactly.
+
+
 ### 0.4
 
 (July 26th, 2016)
 
-This version mostly brings the new <code>Period</code> class and improves performances overall.
+This version mostly brings the new ``Period`` class and improves performances overall.
 
 - Adds the `Period` class, which basically is a datetime-aware interval.
 - Makes the `format()` method support a `locale` keyword argument.
