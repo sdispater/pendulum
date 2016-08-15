@@ -85,7 +85,7 @@ Breakdown = namedtuple(
 
 def local_time(unix_time, transition_type):
     """
-    Returns a translation as a broken down time
+    Returns a UNIX time as a broken down time
     for a particular transition type.
 
     :type unix_time: int
