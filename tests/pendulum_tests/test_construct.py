@@ -118,6 +118,5 @@ class ConstructTest(AbstractTestCase):
     def test_now(self):
         now = Pendulum.now()
         in_paris = Pendulum.now('Europe/Paris')
-        print(now.tz)
 
         self.assertNotEqual(now.hour, in_paris.hour)
