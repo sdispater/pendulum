@@ -141,10 +141,10 @@ class LocalTimezone(object):
 
             if not os.path.exists(tzpath):
                 continue
-            with open(tzpath, 'rb') as tzfile:
-                return Timezone('', *Parser.parse(tzfile))
+            return Timezone('', *Parser.parse(tzpath))
 
         raise RuntimeError('Can not find any timezone configuration')
+
 
 def _tz_from_env(tzenv):
     if tzenv[0] == ':':
