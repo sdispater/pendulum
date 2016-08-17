@@ -5,8 +5,8 @@ python:
   - "3.5"
 
 env:
-  - PENDULUM_EXTENSIONS=true
-  - PENDULUM_EXTENSIONS=false
+  - PENDULUM_EXTENSIONS=1
+  - PENDULUM_EXTENSIONS=0
 
 before_install:
   - pip install codecov

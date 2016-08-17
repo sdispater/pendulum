@@ -24,16 +24,13 @@ def get_version():
 __version__ = get_version()
 
 # C Extensions
-with_extensions = os.environ.get('PENDULUM_EXTENSIONS', '')
+with_extensions = os.getenv('PENDULUM_EXTENSIONS', False)
 
-if with_extensions.lower() == 'false':
-    with_extensions = False
-else:
+if with_extensions == '1':
     with_extensions = True
 
 if hasattr(sys, 'pypy_version_info'):
     with_extensions = False
-
 
 extensions = []
 if with_extensions:
