@@ -98,9 +98,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
         """
-        Creates a timezone from a string, BaseTzInfo or integer offset.
+        Creates a timezone from a string, Timezone, TimezoneInfo or integer offset.
 
-        :param obj: str or tzinfo or int or None
+        :param obj: str or Timezone or TimezoneInfo or int or None
 
         :rtype: Timezone
         """
@@ -125,7 +125,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Returns the local timezone using tzlocal.get_localzone
         or the TZ environment variable.
 
-        :rtype: tzinfo
+        :rtype: Timezone
         """
         return local_timezone()
 
@@ -137,7 +137,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :param zone: The name of the timezone.
         :type zone: str
 
-        :rtype: BaseTzInfo
+        :rtype: Timezone
         """
         if isinstance(zone, Timezone):
             return zone
@@ -214,7 +214,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :type time: str
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -248,7 +248,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Get a Pendulum instance for the current date and time.
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -262,10 +262,14 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
             return test_instance.copy()
 
-        if tz is UTC or tz == 'UTC':
-            dt = datetime.datetime.utcnow()
-        else:
+        if tz is None or tz == 'local':
             dt = datetime.datetime.now()
+        elif tz is UTC or tz == 'UTC':
+            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
+        else:
+            tz = cls._safe_create_datetime_zone(tz)
+
+            return cls(*cls._create_datetime(tz))
 
         return cls.instance(dt, tz)
 
@@ -275,7 +279,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Get a Pendulum instance for the current date and time in UTC.
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -287,7 +291,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Create a Pendulum instance for today.
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -299,7 +303,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Create a Pendulum instance for tomorrow.
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -311,7 +315,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Create a Pendulum instance for yesterday.
 
         :param tz: The timezone
-        :type tz: BaseTzInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -320,6 +324,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @classmethod
     def _create_datetime(cls, tz, year=None, month=None, day=None,
                          hour=None, minute=None, second=None, microsecond=None):
+        tzinfo = tz
+
         if any([year is None, month is None, day is None,
                 hour is None, minute is None, second is None, microsecond is None]):
             now = datetime.datetime.utcnow().replace(tzinfo=UTC)
@@ -344,8 +350,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                 second = 0 if second is None else second
                 microsecond = 0 if microsecond is None else microsecond
 
+            tzinfo = now.tzinfo
+
         return (year, month, day,
-                hour, minute, second, microsecond)
+                hour, minute, second, microsecond, tzinfo)
 
     @classmethod
     def create(cls, year=None, month=None, day=None,
@@ -372,7 +380,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         dt = datetime.datetime(*cls._create_datetime(
             tz, year, month, day, hour, minute, second, microsecond
-        ))
+        )[:-1])
         dt = tz.convert(dt)
 
         return cls.instance(dt)
@@ -712,7 +720,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Set the instance's timezone from a string or object.
 
         :param value: The timezone
-        :type value: BaseTzInfo or str or None
+        :type value: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -725,7 +733,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Set the instance's timezone from a string or object.
 
         :param value: The timezone
-        :type value: BaseTzInfo or str or None
+        :type value: Timezone or TimezoneInfo or str or None
 
         :rtype: Pendulum
         """
@@ -2281,10 +2289,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
-        self._datetime = self._create_datetime(
+        self._datetime = datetime.datetime(self._create_datetime(
             tz, year, month, day,
             hour, minute, second, microsecond
-        )
+        )[:-1])
+        self._tz = tz
 
     def __reduce__(self):
         return self.__class__, self._getstate()
