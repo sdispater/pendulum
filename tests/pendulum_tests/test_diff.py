@@ -148,7 +148,7 @@ class DiffTest(AbstractTestCase):
         self.assertEqual(62, dt.diff(dt.copy().add(hours=1).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_positive_big(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum(2000, 1, 1)
         self.assertEqual(1502, dt.diff(dt.copy().add(hours=25).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_negative_with_sign(self):
