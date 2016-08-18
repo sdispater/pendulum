@@ -19,6 +19,7 @@ class Timezone(object):
         self._transitions = transitions
         self._transition_types = transition_types
         self._default_transition_type = default_transition_type
+        self._local_hint = {}
 
     @property
     def name(self):
@@ -202,13 +203,7 @@ class Timezone(object):
         if hasattr(dt, 'float_timestamp'):
             return dt.float_timestamp
 
-        if dt.tzinfo is None:
-            t = _time.mktime((dt.year, dt.month, dt.day,
-                              dt.hour, dt.minute, dt.second,
-                              -1, -1, -1)) + dt.microsecond / 1e6
-
-        else:
-            t = (dt - datetime(1970, 1, 1, tzinfo=UTC)).total_seconds()
+        t = (dt - datetime(1970, 1, 1, tzinfo=UTC)).total_seconds()
 
         if dt.microsecond > 0 and t < 0:
             t -= 1
@@ -217,6 +212,14 @@ class Timezone(object):
 
     def _find_transition_index(self, dt, prop='_time'):
         lo, hi = 0, len(self._transitions)
+        hint = self._local_hint.get(prop)
+        if hint:
+            if dt == hint[0]:
+                return hint[1]
+            elif dt < hint[0]:
+                hi = hint[1]
+            else:
+                lo = hint[1]
 
         while lo < hi:
             mid = (lo + hi) // 2
@@ -224,6 +227,8 @@ class Timezone(object):
                 hi = mid
             else:
                 lo = mid + 1
+
+        self._local_hint[prop] = (dt, lo)
 
         return lo
 
