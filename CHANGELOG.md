@@ -1,3 +1,10 @@
+### 0.5.1
+
+- [Fix] Fixes `now()` not behaving properly when given a timezone.
+- [Fix] Fixes double file opening when getting local timezone. (Thanks to [yggdr](https://github.com/yggdr))
+- [Fix] Fixes `pt_BR` locale. (Thanks to [YomoFuno](https://github.com/YomoFuno))
+- [Fix] Fixes `pl` locale. (Thanks to [MichalTHEDUDE](https://github.com/MichalTHEDUDE))
+
 ### 0.5
 
 (August 15th, 2016)
