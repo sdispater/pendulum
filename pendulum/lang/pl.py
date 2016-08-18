@@ -63,7 +63,6 @@ translations = {
     # Relative time
     'ago': '{time} temu',
     'from_now': '{time} od teraz',
-    'after': '{time} przed',
-    'before': '{time} po'
+    'after': '{time} po',
+    'before': '{time} przed'
 }
-
