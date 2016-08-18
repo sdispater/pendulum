@@ -51,7 +51,7 @@ class TimezoneInfo(tzinfo):
         elif dt.tzinfo is not self:
             dt = self.tz.convert(dt)
 
-            return dt.tzinfo._adjusted_offset
+            return dt.tzinfo._transition_type.adjusted_offset
         else:
             return self._transition_type.adjusted_offset
 
