@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import re
+from contextlib import contextmanager
 
 from .timezone import Timezone
 from .parser import Parser
@@ -13,8 +14,13 @@ class LocalTimezone(object):
 
     _cache = None
 
+    _local_timezone = None
+
     @classmethod
     def get(cls, force=False):
+        if cls._local_timezone is not None:
+            return cls._local_timezone
+
         if cls._cache is None or force:
             name = cls.get_local_tz_name()
             if isinstance(name, Timezone):
@@ -23,6 +29,24 @@ class LocalTimezone(object):
                 cls._cache = Timezone.load(cls.get_local_tz_name())
 
         return cls._cache
+
+    @classmethod
+    @contextmanager
+    def test(cls, mock):
+        """
+        Context manager to temporarily set the local_timezone value.
+
+        :type mock: Pendulum or None
+        """
+        cls.set_local_timezone(mock)
+
+        yield
+
+        cls.set_local_timezone()
+
+    @classmethod
+    def set_local_timezone(cls, local_timezone=None):
+        cls._local_timezone = local_timezone
 
     @classmethod
     def get_local_tz_name(cls):

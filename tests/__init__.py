@@ -10,14 +10,12 @@ from pendulum.tz import LocalTimezone, timezone
 class AbstractTestCase(TestCase):
 
     def setUp(self):
-        self._save_tz = LocalTimezone.get
-
-        LocalTimezone.get = classmethod(lambda _: timezone('America/Toronto'))
+        LocalTimezone.set_local_timezone(timezone('America/Toronto'))
 
         super(AbstractTestCase, self).setUp()
 
     def tearDown(self):
-        LocalTimezone.get = self._save_tz
+        LocalTimezone.set_local_timezone()
         Pendulum.reset_to_string_format()
 
     def assertPendulum(self, d, year, month, day,
@@ -39,7 +37,8 @@ class AbstractTestCase(TestCase):
             self.assertEqual(microsecond, d.microsecond)
 
     def assertInterval(self, pi, weeks, days=None,
-                       hours=None, minutes=None, seconds=None):
+                       hours=None, minutes=None, seconds=None,
+                       microseconds=None):
         expected = {'weeks': pi.weeks}
         actual = {'weeks': weeks}
 
@@ -58,6 +57,10 @@ class AbstractTestCase(TestCase):
         if seconds is not None:
             expected['seconds'] = pi.seconds
             actual['seconds'] = seconds
+
+        if microseconds is not None:
+            expected['microseconds'] = pi.microseconds
+            actual['microseconds'] = microseconds
 
         self.assertEqual(expected, actual)
 

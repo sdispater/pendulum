@@ -2,7 +2,7 @@
 
 import operator
 from .mixins.interval import WordableIntervalMixin
-from .interval import BaseInterval
+from .interval import BaseInterval, Interval
 
 
 class Period(WordableIntervalMixin, BaseInterval):
@@ -103,6 +103,14 @@ class Period(WordableIntervalMixin, BaseInterval):
 
             start = getattr(start, method)(**{unit: 1})
 
+    def as_interval(self):
+        """
+        Return the Period as an Interval.
+
+        :rtype: Interval
+        """
+        return Interval(seconds=self.total_seconds())
+
     def __iter__(self):
         return self.xrange('days')
 
@@ -113,3 +121,41 @@ class Period(WordableIntervalMixin, BaseInterval):
             item = Pendulum.instance(item)
 
         return item.between(self.start, self.end)
+
+    def __add__(self, other):
+        return self.as_interval().__add__(other)
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self.as_interval().__sub__(other)
+
+    def __neg__(self):
+        return self.__class__(self.end, self.start, self._absolute)
+
+    def __mul__(self, other):
+        return self.as_interval().__mul__(other)
+
+    __rmul__ = __mul__
+
+    def __floordiv__(self, other):
+        return self.as_interval().__floordiv__(other)
+
+    def __truediv__(self, other):
+        return self.as_interval().__truediv__(other)
+
+    __div__ = __floordiv__
+
+    def __mod__(self, other):
+        return self.as_interval().__mod__(other)
+
+    def __divmod__(self, other):
+        return self.as_interval().__divmod__(other)
+
+    def __abs__(self):
+        return self.__class__(self.start, self.end, True)
+
+    def __repr__(self):
+        return '<Period [{} -> {}]>'.format(
+            self._start, self._end
+        )

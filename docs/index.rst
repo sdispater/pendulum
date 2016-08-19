@@ -1316,6 +1316,20 @@ instances that generated it, so that it can give access to more methods and prop
     10
 
 
+.. warning::
+
+    Due to its nature (fixed duration between two datetimes), most arithmetic operations will
+    return an ``Interval`` instead of a ``Period``.
+
+    .. code-block:: python
+
+        dt1 = Pendulum(2016, 8, 7, 12, 34, 56)
+        dt2 = dt1.add(days=6, seconds=34)
+        period = Period(dt1, dt2)
+        period * 2
+        # <Interval [1 week 5 days 1 minute 8 seconds]>
+
+
 Instantiation
 -------------
 
