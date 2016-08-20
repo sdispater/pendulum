@@ -1,3 +1,11 @@
+### 0.5.2
+
+- [Fix] Fixes `TimezoneInfo.utcoffset() method`
+- [Fix] Fixes arithmetic operations on intervals not returning intervals.
+- [Feature] Adds a small speedup when changing timezones.
+- [Feature] Makes .offset_hours return a float. 
+
+
 ### 0.5.1
 
 (August 18th, 2016)
@@ -6,6 +14,7 @@
 - [Fix] Fixes double file opening when getting local timezone. (Thanks to [yggdr](https://github.com/yggdr))
 - [Fix] Fixes `pt_BR` locale. (Thanks to [YomoFuno](https://github.com/YomoFuno))
 - [Fix] Fixes `pl` locale. (Thanks to [MichalTHEDUDE](https://github.com/MichalTHEDUDE))
+
 
 ### 0.5
 
