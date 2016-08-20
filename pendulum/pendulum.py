@@ -449,17 +449,21 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :type timestamp: int or float
 
         :param tz: The timezone
-        :type tz: TimezoneInfo or str or int or None
+        :type tz: Timezone or TimezoneInfo or str or int or None
 
         :rtype: Pendulum
         """
         dt = datetime.datetime.utcfromtimestamp(timestamp).replace(tzinfo=UTC)
+        instance = cls(
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute, dt.second, dt.microsecond,
+            dt.tzinfo
+        )
+
         if tz is not UTC and tz != 'UTC':
-            tz = cls._safe_create_datetime_zone(tz)
+            instance = instance.in_tz(tz)
 
-            dt = tz.convert(dt)
-
-        return cls.instance(dt)
+        return instance
 
     @classmethod
     def strptime(cls, time, fmt):
@@ -733,7 +737,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Set the instance's timezone from a string or object.
 
         :param value: The timezone
-        :type value: Timezone or TimezoneInfo or str or None
+        :type value: Timezone or TimezoneInfo or str or int or None
 
         :rtype: Pendulum
         """
