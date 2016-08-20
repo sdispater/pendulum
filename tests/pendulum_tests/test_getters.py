@@ -164,23 +164,25 @@ class GettersTest(AbstractTestCase):
         self.assertTrue(d.is_weekend())
 
     def test_is_today(self):
-        d = Pendulum.now()
-        self.assertTrue(d.is_today())
-        d = d.subtract(days=1)
-        self.assertFalse(d.is_today())
+        with self.wrap_with_test_now():
+            d = Pendulum.now()
+            self.assertTrue(d.is_today())
+            d = d.subtract(days=1)
+            self.assertFalse(d.is_today())
 
     def test_is_yesterday(self):
-        d = Pendulum.now()
-        print(d, d.tomorrow(d.timezone))
-        self.assertFalse(d.is_yesterday())
-        d = d.subtract(days=1)
-        self.assertTrue(d.is_yesterday())
+        with self.wrap_with_test_now():
+            d = Pendulum.now()
+            self.assertFalse(d.is_yesterday())
+            d = d.subtract(days=1)
+            self.assertTrue(d.is_yesterday())
 
     def test_is_tomorrow(self):
-        d = Pendulum.now()
-        self.assertFalse(d.is_tomorrow())
-        d = d.add(days=1)
-        self.assertTrue(d.is_tomorrow())
+        with self.wrap_with_test_now():
+            d = Pendulum.now()
+            self.assertFalse(d.is_tomorrow())
+            d = d.add(days=1)
+            self.assertTrue(d.is_tomorrow())
 
     def test_is_future(self):
         with self.wrap_with_test_now():

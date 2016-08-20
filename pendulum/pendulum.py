@@ -1408,7 +1408,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: bool
         """
         if dt is None:
-            dt = Pendulum.now(self.timezone)
+            dt = Pendulum.now(self._tz)
 
         instance = self._get_datetime(dt, True)
 

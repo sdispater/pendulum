@@ -330,14 +330,14 @@ class ComparisonTest(AbstractTestCase):
         self.assertPendulum(d2, 2099, 12, 31, 23, 59, 59)
 
     def test_is_birthday(self):
-        d = Pendulum.now()
-        a_birthday = d.subtract(years=1)
-        print(d, a_birthday)
-        self.assertTrue(a_birthday.is_birthday())
-        not_a_birthday = d.subtract(days=1)
-        self.assertFalse(not_a_birthday.is_birthday())
-        also_not_a_birthday = d.add(days=2)
-        self.assertFalse(also_not_a_birthday.is_birthday())
+        with self.wrap_with_test_now():
+            d = Pendulum.now()
+            a_birthday = d.subtract(years=1)
+            self.assertTrue(a_birthday.is_birthday())
+            not_a_birthday = d.subtract(days=1)
+            self.assertFalse(not_a_birthday.is_birthday())
+            also_not_a_birthday = d.add(days=2)
+            self.assertFalse(also_not_a_birthday.is_birthday())
 
         d1 = Pendulum(1987, 4, 23)
         d2 = Pendulum(2014, 9, 26)
