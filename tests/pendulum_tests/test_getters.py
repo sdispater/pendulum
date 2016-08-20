@@ -107,6 +107,9 @@ class GettersTest(AbstractTestCase):
     def test_offset_hours_for_gmt(self):
         self.assertEqual(0, Pendulum.create_from_date(2012, 6, 1, 'GMT').offset_hours)
 
+    def test_offset_hours_float(self):
+        self.assertEqual(9.5, Pendulum.create_from_date(2012, 6, 1, 9.5).offset_hours)
+
     def test_is_leap_year(self):
         self.assertTrue(Pendulum.create_from_date(2012, 1, 1).is_leap_year())
         self.assertFalse(Pendulum.create_from_date(2011, 1, 1).is_leap_year())

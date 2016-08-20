@@ -335,9 +335,11 @@ Pendulum gives access to more attributes and properties than the default `dateti
     pendulum.from_timestamp(0, 'America/Toronto').offset
     -18000
 
-    # Returns an int of hours difference from UTC (+/- sign included)
+    # Returns a float of hours difference from UTC (+/- sign included)
     pendulum.from_timestamp(0, 'America/Toronto').offset_hours
-    -5
+    -5.0
+    pendulum.from_timestamp(0, 'Australia/Adelaide').offset_hours
+    9.5
 
     # Indicates if day light savings time is on
     pendulum.from_date(2012, 1, 1, 'America/Toronto').is_dst
