@@ -171,6 +171,7 @@ class GettersTest(AbstractTestCase):
 
     def test_is_yesterday(self):
         d = Pendulum.now()
+        print(d, d.tomorrow(d.timezone))
         self.assertFalse(d.is_yesterday())
         d = d.subtract(days=1)
         self.assertTrue(d.is_yesterday())

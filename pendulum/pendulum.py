@@ -601,7 +601,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def offset_hours(self):
-        return int(self.get_offset()
+        return (self.get_offset()
                    / self.SECONDS_PER_MINUTE
                    / self.MINUTES_PER_HOUR)
 
@@ -1281,7 +1281,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.yesterday(self.timezone).to_date_string()
+        return self.to_date_string() == self.yesterday(self._tz).to_date_string()
 
     def is_today(self):
         """
@@ -1289,7 +1289,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.now(self.timezone).to_date_string()
+        return self.to_date_string() == self.now(self._tz).to_date_string()
 
     def is_tomorrow(self):
         """
@@ -1297,7 +1297,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.tomorrow(self.timezone).to_date_string()
+        return self.to_date_string() == self.tomorrow(self._tz).to_date_string()
 
     def is_future(self):
         """
@@ -1410,7 +1410,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if dt is None:
             dt = Pendulum.now(self.timezone)
 
-        return self.format('%m%d') == self._get_datetime(dt, True).format('%m%d')
+        instance = self._get_datetime(dt, True)
+
+        return (self.month, self.day) == (instance.month, instance.day)
 
     # ADDITIONS AND SUBSTRACTIONS
 
