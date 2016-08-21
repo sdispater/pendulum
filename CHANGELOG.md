@@ -1,7 +1,8 @@
 ### 0.5.2
 
-- [Fix] Fixes `TimezoneInfo.utcoffset() method`
+- [Fix] Fixes `TimezoneInfo.utcoffset() method`.
 - [Fix] Fixes arithmetic operations on intervals not returning intervals.
+- [Fix] Allows Pendulum instances comparison to None . (Thanks to [jkeyes](https://github.com/jkeyes))
 - [Feature] Adds a small speedup when changing timezones.
 - [Feature] Makes .offset_hours return a float. 
 
