@@ -2139,6 +2139,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: datetime or Pendulum
         """
+        if value is None:
+            return None
+
         if isinstance(value, Pendulum):
             return value._datetime if not pendulum else value
 
