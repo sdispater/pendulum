@@ -65,6 +65,11 @@ class ComparisonTest(AbstractTestCase):
         self.assertNotEqual(d1, d2)
         self.assertEqual(d1, d3)
 
+    def test_not_equal_to_none(self):
+        d1 = Pendulum(2000, 1, 1, 1, 2, 3)
+
+        self.assertNotEqual(d1, None)
+
     def test_greater_than_true(self):
         d1 = Pendulum(2000, 1, 1)
         d2 = Pendulum(1999, 12, 31)
