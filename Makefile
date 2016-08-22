@@ -34,11 +34,13 @@ wheels_i686:
 clean-wheels:
 	rm -rf wheelhouse/
 
-upload-wheels:
+upload-wheels_x64:
 	@for f in wheelhouse/*manylinux1_x86_64.whl ; do \
 		echo "Upload $$f" ; \
 		python -m twine upload $$f ; \
 	done
+
+upload-wheels_i686:
 	@for f in wheelhouse/*manylinux1_i686.whl ; do \
 		echo "Upload $$f" ; \
 		python -m twine upload $$f ; \
