@@ -64,14 +64,3 @@ def pendulumify(obj):
     constructor = type(obj)
 
     return constructor(map(pendulumify, obj))
-
-
-def pendulumify_wrap(f):
-    '''
-    Pendulumify, as a decorator.
-    '''
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        return pendulumify(f(*args, **kwargs))
-
-    return wrap

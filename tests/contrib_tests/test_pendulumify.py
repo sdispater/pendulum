@@ -3,7 +3,7 @@
 import datetime
 
 from .. import AbstractTestCase
-from pendulum.contrib.pendulumify import pendulumify, pendulumify_wrap
+from pendulum.contrib.pendulumify import pendulumify
 
 
 class PendulumifyTest(AbstractTestCase):
@@ -17,7 +17,7 @@ class PendulumifyTest(AbstractTestCase):
         self.assertIsInstanceOfPendulum(d.get('example'))
         self.assertEqual(d.get('donottouch'), 'safe')
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return {
                 'example': datetime.datetime.now(),
@@ -38,7 +38,7 @@ class PendulumifyTest(AbstractTestCase):
         self.assertIsInstanceOfPendulum(d.get('inner').get('example'))
         self.assertEqual(d.get('inner').get('donottouch'), 'safe')
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return {
                 'inner': {
@@ -55,7 +55,7 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(d[0])
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return [datetime.datetime.now()]
 
@@ -66,7 +66,7 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(d[0][0])
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return [[datetime.datetime.now()]]
 
@@ -77,7 +77,7 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(d.pop())
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return set([datetime.datetime.now()])
 
@@ -88,7 +88,7 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(next(iter(d.pop())))
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             return set([frozenset([datetime.datetime.now()])])
 
@@ -99,7 +99,7 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(d())
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             def inner():
                 return datetime.datetime.now()
@@ -119,7 +119,7 @@ class PendulumifyTest(AbstractTestCase):
         for x in d:
             self.assertIsInstanceOfPendulum(x)
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             def my_gen():
                 for x in xrange(0, 10):
@@ -143,7 +143,7 @@ class PendulumifyTest(AbstractTestCase):
         for x in d:
             self.assertIsInstanceOfPendulum(x.get('val'))
 
-        @pendulumify_wrap
+        @pendulumify
         def wrapped():
             def my_gen():
                 for x in xrange(0, 10):
