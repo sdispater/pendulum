@@ -14,6 +14,12 @@ from .constants import (
     SECONDS_PER_HOUR, SECONDS_PER_DAY
 )
 
+from .tz.timezone import Timezone
+
+PRE_TRANSITION = Timezone.PRE_TRANSITION
+POST_TRANSITION = Timezone.POST_TRANSITION
+TRANSITION_ERROR = Timezone.TRANSITION_ERROR
+
 # Helpers
 instance = Pendulum.instance
 parse = Pendulum.parse
@@ -38,6 +44,8 @@ translator = Pendulum.translator
 set_transaltor = Pendulum.set_translator
 set_to_string_format = Pendulum.set_to_string_format
 reset_to_string_format = Pendulum.reset_to_string_format
+set_transition_rule = Pendulum.set_transition_rule
+get_transition_rule = Pendulum.get_transition_rule
 
 # Standard helpers
 min = Pendulum.min

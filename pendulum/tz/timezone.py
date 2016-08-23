@@ -7,11 +7,16 @@ from .loader import Loader
 from .timezone_info import TimezoneInfo, UTC
 from .breakdown import local_time as _local_time
 from .transition_type import TransitionType
+from .exceptions import NonExistingTime, AmbiguousTime
 
 
 class Timezone(object):
 
     _cache = {}
+
+    PRE_TRANSITION = 'pre'
+    POST_TRANSITION = 'post'
+    TRANSITION_ERROR = 'error'
 
     def __init__(self, name, transitions,
                  transition_types, default_transition_type):
@@ -58,7 +63,7 @@ class Timezone(object):
 
         return cls._cache[name]
 
-    def convert(self, dt):
+    def convert(self, dt, dst_rule=POST_TRANSITION):
         """
         Converts or normalizes a datetime.
 
@@ -69,7 +74,7 @@ class Timezone(object):
         """
         if dt.tzinfo is None:
             # we assume local time
-            converted = self._normalize(dt)
+            converted = self._normalize(dt, dst_rule=dst_rule)
 
         else:
             converted = self._convert(dt)
@@ -79,7 +84,7 @@ class Timezone(object):
 
         return dt.__class__(*converted)
 
-    def _normalize(self, dt):
+    def _normalize(self, dt, dst_rule=POST_TRANSITION):
         # if tzinfo is set, something wrong happened
         if dt.tzinfo is not None:
             raise ValueError(
@@ -128,7 +133,14 @@ class Timezone(object):
             else:
                 # tr.pre_time < dt < tr.time
                 # Skipped time
-                unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
+                if dst_rule == self.TRANSITION_ERROR:
+                    raise NonExistingTime(dt)
+                elif dst_rule == self.PRE_TRANSITION:
+                    # We do not apply the transition
+                    (unix_time,
+                     transition_type) = self._get_previous_transition_time(tr, dt)
+                else:
+                    unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
         elif tr is end:
             if tr.pre_time < dt:
                 # After the last transition.
@@ -136,28 +148,43 @@ class Timezone(object):
             else:
                 # tr.time <= dt <= tr.pre_time
                 # Repeated time
-                unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+                if dst_rule == self.TRANSITION_ERROR:
+                    raise AmbiguousTime(dt)
+                elif dst_rule == self.PRE_TRANSITION:
+                    # We do not apply the transition
+                    (unix_time,
+                     transition_type) = self._get_previous_transition_time(tr, dt)
+                else:
+                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
         else:
             if tr.pre_time <= dt < tr.time:
                 # tr.pre_time <= dt < tr.time
                 # Skipped time
-                unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
+                if dst_rule == self.TRANSITION_ERROR:
+                    raise NonExistingTime(dt)
+                elif dst_rule == self.PRE_TRANSITION:
+                    # We do not apply the transition
+                    (unix_time,
+                     transition_type) = self._get_previous_transition_time(tr, dt)
+                else:
+                    unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
             elif tr.time <= dt <= tr.pre_time:
                 # tr.time <= dt <= tr.pre_time
                 # Repeated time
-                unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+                if dst_rule == self.TRANSITION_ERROR:
+                    raise AmbiguousTime(dt)
+                elif dst_rule == self.PRE_TRANSITION:
+                    # We do not apply the transition
+                    (unix_time,
+                     transition_type) = self._get_previous_transition_time(tr, dt)
+                else:
+                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
             else:
                 # In between transitions
                 # The actual transition type is the previous transition one
 
-                # Fix for negative microseconds for negative timestamps
-                diff = (dt - tr.pre_time).total_seconds()
-                if -1 < diff < 0 and tr.unix_time < 0:
-                    diff -= 1
-
-                unix_time = tr.unix_time + diff
-
-                transition_type = tr.pre_transition_type
+                (unix_time,
+                 transition_type) = self._get_previous_transition_time(tr, dt)
 
         return self._to_local_time(unix_time, transition_type)
 
@@ -231,6 +258,17 @@ class Timezone(object):
         self._local_hint[prop] = (dt, lo)
 
         return lo
+
+    def _get_previous_transition_time(self, tr, dt):
+        diff = (dt - tr.pre_time).total_seconds()
+        if -1 < diff < 0 and tr.unix_time < 0:
+            diff -= 1
+
+        unix_time = tr.unix_time + diff
+
+        transition_type = tr.pre_transition_type
+
+        return unix_time, transition_type
 
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)

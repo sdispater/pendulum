@@ -1008,6 +1008,31 @@ given timezone to properly handle any transition that might have occurred.
     '2013-10-27T02:30:00+01:00'
 
 
+.. versionadded:: 0.6
+
+    You can now control the normalization behavior:
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
+
+        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        '2013-03-31T02:30:00+01:00'
+        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        '2013-10-27T02:30:00+02:00'
+
+        pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
+
+        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
+        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
+
+    Note that it only affects instances at creation time. Shifting time around
+    transition times still behaves the same.
+
 Shifting time to transition
 ---------------------------
 

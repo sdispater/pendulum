@@ -83,6 +83,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
 
+    _TRANSITION_RULE = Timezone.POST_TRANSITION
+
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
         """
@@ -170,7 +172,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             self._datetime = self._tz.convert(datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond
-            ))
+            ), dst_rule=self._TRANSITION_RULE)
 
     @classmethod
     def instance(cls, dt, tz=UTC):
@@ -369,7 +371,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         dt = datetime.datetime(*cls._create_datetime(
             tz, year, month, day, hour, minute, second, microsecond
         )[:-1])
-        dt = tz.convert(dt)
+        dt = tz.convert(dt, dst_rule=cls._TRANSITION_RULE)
 
         return cls.instance(dt)
 
@@ -798,6 +800,20 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :type value: list
         """
         cls._weekend_days = value
+
+    # Normalization Rule
+    @classmethod
+    def set_transition_rule(cls, rule):
+        if rule not in [Timezone.PRE_TRANSITION,
+                        Timezone.POST_TRANSITION,
+                        Timezone.TRANSITION_ERROR]:
+            raise ValueError('Invalid transition rule: {}'.format(rule))
+
+        cls._TRANSITION_RULE = rule
+
+    @classmethod
+    def get_transition_rule(cls):
+        return cls._TRANSITION_RULE
 
     # Testing aids
 
