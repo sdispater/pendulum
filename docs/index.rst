@@ -1089,6 +1089,25 @@ Like said in the introduction, you can use the timezone library
 directly with standard ``datetime`` objects but with limitations, especially
 when adding and subtracting time around transition times.
 
+.. versionadded:: 0.6
+
+    You can now control the normalization behavior:
+
+    .. code-block:: python
+
+        from datetime import datetime, timedelta
+        from pendulum import timezone
+
+        tz = timezone('Europe/Paris')
+
+        dt = datetime(2013, 3, 31, 2, 30)
+        dt = tz.convert(dt, dst_rule=tz.PRE_TRANSITION)
+        dt.isoformat()
+        '2013-03-31T02:30:00+01:00'
+        tz.convert(dt, dst_rule=tz.TRANSITION_ERROR)
+        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist.
+
+
 .. code-block:: python
 
     from datetime import datetime, timedelta
