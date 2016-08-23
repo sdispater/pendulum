@@ -6,6 +6,11 @@ from .mixins.interval import (
     WordableIntervalMixin
 )
 
+from .constants import (
+    SECONDS_PER_DAY, SECONDS_PER_HOUR,
+    SECONDS_PER_MINUTE
+)
+
 
 def _divide_and_round(a, b):
     """divide a by b and round result to the nearest integer
@@ -56,19 +61,19 @@ class BaseInterval(timedelta):
             m = -1
 
         self._microseconds = round(total % 1 * 1e6)
-        self._seconds = abs(int(total)) % 86400 * m
-        self._days = abs(int(total)) // 86400 * m
+        self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
+        self._days = abs(int(total)) // SECONDS_PER_DAY * m
 
         return self
 
     def total_minutes(self):
-        return self.total_seconds() / 60
+        return self.total_seconds() / SECONDS_PER_MINUTE
 
     def total_hours(self):
-        return self.total_seconds() / 3600
+        return self.total_seconds() / SECONDS_PER_HOUR
 
     def total_days(self):
-        return self.total_seconds() / 86400
+        return self.total_seconds() / SECONDS_PER_DAY
 
     def total_weeks(self):
         return self.total_days() / 7
@@ -296,7 +301,7 @@ class AbsoluteInterval(Interval):
         total = self.total_seconds()
 
         self._microseconds = abs(round(total % 1 * 1e6))
-        self._seconds = abs(int(total)) % 86400
-        self._days = abs(int(total)) // 86400
+        self._seconds = abs(int(total)) % SECONDS_PER_DAY
+        self._days = abs(int(total)) // SECONDS_PER_DAY
 
         return self

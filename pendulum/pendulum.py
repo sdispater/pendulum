@@ -19,18 +19,16 @@ from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from ._compat import PY33, basestring
+from .constants import (
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY,
+    YEARS_PER_CENTURY, YEARS_PER_DECADE,
+    MONTHS_PER_YEAR, DAYS_PER_WEEK,
+    MINUTES_PER_HOUR, SECONDS_PER_MINUTE
+)
 
 
 class Pendulum(datetime.datetime, TranslatableMixin):
-
-    # The day constants
-    SUNDAY = 0
-    MONDAY = 1
-    TUESDAY = 2
-    WEDNESDAY = 3
-    THURSDAY = 4
-    FRIDAY = 5
-    SATURDAY = 6
 
     # Names of days of the week
     _days = {
@@ -42,16 +40,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         FRIDAY: 'Friday',
         SATURDAY: 'Saturday'
     }
-
-    # Number of X in Y.
-    YEARS_PER_CENTURY = 100
-    YEARS_PER_DECADE = 10
-    MONTHS_PER_YEAR = 12
-    WEEKS_PER_YEAR = 52
-    DAYS_PER_WEEK = 7
-    HOURS_PER_DAY = 24
-    MINUTES_PER_HOUR = 60
-    SECONDS_PER_MINUTE = 60
 
     # Formats
     ATOM = '%Y-%m-%dT%H:%M:%S%_z'
@@ -585,7 +573,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def week_of_month(self):
-        return math.ceil(self.day / self.DAYS_PER_WEEK)
+        return math.ceil(self.day / DAYS_PER_WEEK)
 
     @property
     def age(self):
@@ -602,8 +590,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @property
     def offset_hours(self):
         return (self.get_offset()
-                   / self.SECONDS_PER_MINUTE
-                   / self.MINUTES_PER_HOUR)
+                   / SECONDS_PER_MINUTE
+                   / MINUTES_PER_HOUR)
 
     @property
     def local(self):
@@ -1351,7 +1339,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.SUNDAY
+        return self.day_of_week == SUNDAY
 
     def is_monday(self):
         """
@@ -1359,7 +1347,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.MONDAY
+        return self.day_of_week == MONDAY
 
     def is_tuesday(self):
         """
@@ -1367,7 +1355,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.TUESDAY
+        return self.day_of_week == TUESDAY
 
     def is_wednesday(self):
         """
@@ -1375,7 +1363,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.WEDNESDAY
+        return self.day_of_week == WEDNESDAY
 
     def is_thursday(self):
         """
@@ -1383,7 +1371,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.THURSDAY
+        return self.day_of_week == THURSDAY
 
     def is_friday(self):
         """
@@ -1391,7 +1379,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.FRIDAY
+        return self.day_of_week == FRIDAY
 
     def is_saturday(self):
         """
@@ -1399,7 +1387,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.SATURDAY
+        return self.day_of_week == SATURDAY
 
     def is_birthday(self, dt=None):
         """
@@ -1743,7 +1731,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - self.year % self.YEARS_PER_DECADE
+        year = self.year - self.year % YEARS_PER_DECADE
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
     def _end_of_decade(self):
@@ -1753,7 +1741,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - self.year % self.YEARS_PER_DECADE + self.YEARS_PER_DECADE - 1
+        year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
         return self.with_date_time(
             year, 12, 31, 23, 59, 59, 999999
@@ -1766,7 +1754,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + 1
+        year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
@@ -1777,7 +1765,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + self.YEARS_PER_CENTURY
+        year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
         return self.with_date_time(
             year, 12, 31, 23, 59, 59, 999999
@@ -2084,7 +2072,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        return self.month_(self.MONTHS_PER_YEAR).last_of('month', day_of_week)
+        return self.month_(MONTHS_PER_YEAR).last_of('month', day_of_week)
 
     def _nth_of_year(self, nth, day_of_week):
         """
