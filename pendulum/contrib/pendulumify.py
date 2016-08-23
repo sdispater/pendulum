@@ -36,16 +36,24 @@ def pendulumify(obj):
 
     '''
 
-    def is_sequence(arg):
+    def is_sequence_or_callable(arg):
         return (not hasattr(arg, 'strip') and
                 (hasattr(arg, '__getitem__') or
-                hasattr(arg, '__iter__')))
+                hasattr(arg, '__iter__') or
+                hasattr(arg, '__call__')))
 
-    if not is_sequence(obj):
+    if not is_sequence_or_callable(obj):
         try:
             return pendulum.instance(obj)
         except AttributeError:
             return obj
+
+    if hasattr(obj, '__call__'):
+        @wraps(obj)
+        def wrapped(*args, **kwargs):
+            return pendulumify(obj(*args, **kwargs))
+
+        return wrapped
 
     if inspect.isgenerator(obj):
         return WrappedGenerator(obj)

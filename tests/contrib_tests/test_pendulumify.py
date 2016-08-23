@@ -94,6 +94,20 @@ class PendulumifyTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(next(iter(wrapped().pop())))
 
+    def test_function(self):
+        d = pendulumify(lambda: datetime.datetime.now())
+
+        self.assertIsInstanceOfPendulum(d())
+
+        @pendulumify_wrap
+        def wrapped():
+            def inner():
+                return datetime.datetime.now()
+
+            return inner
+
+        self.assertIsInstanceOfPendulum(wrapped()())
+
     def test_generator(self):
         try:
             xrange
