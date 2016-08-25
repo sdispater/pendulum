@@ -8,6 +8,12 @@ from distutils.errors import (CCompilerError, DistutilsExecError,
 from distutils.command.build_ext import build_ext
 
 
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError  # py2k
+
+
 def get_version():
     basedir = os.path.dirname(__file__)
     with open(os.path.join(basedir, 'pendulum/version.py')) as f:

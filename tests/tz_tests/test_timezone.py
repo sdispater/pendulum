@@ -3,6 +3,7 @@
 import pendulum
 from datetime import datetime
 from pendulum import timezone
+from pendulum.tz.loader import Loader
 
 from .. import AbstractTestCase
 
@@ -235,3 +236,12 @@ class TimezoneTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(new)
         self.assertPendulum(new, 2016, 8, 7, 14, 53, 54)
+
+
+class TimezoneLoaderTest(AbstractTestCase):
+
+    def test_load_bad_timezone(self):
+        self.assertRaises(ValueError, Loader.load, '---NOT A TIMEZONE---')
+
+    def test_load_valid(self):
+        self.assertTrue(Loader.load('America/Toronto'))

@@ -12,9 +12,11 @@ if PY2:
     long = long
     unicode = unicode
     basestring = basestring
+    FileNotFoundError = IOError
 
 else:
 
+    FileNotFoundError = FileNotFoundError
     long = int
     unicode = str
     basestring = str
