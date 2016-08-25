@@ -3,7 +3,6 @@
 import pendulum
 from datetime import datetime
 from pendulum import timezone
-from pendulum.tz.loader import Loader
 
 from .. import AbstractTestCase
 
