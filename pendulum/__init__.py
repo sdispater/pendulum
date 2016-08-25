@@ -43,7 +43,7 @@ get_test_now = Pendulum.get_test_now
 set_locale = Pendulum.set_locale
 get_locale = Pendulum.get_locale
 translator = Pendulum.translator
-set_transaltor = Pendulum.set_translator
+set_translator = Pendulum.set_translator
 set_to_string_format = Pendulum.set_to_string_format
 reset_to_string_format = Pendulum.reset_to_string_format
 
