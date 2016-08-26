@@ -7,7 +7,7 @@ import re
 from contextlib import contextmanager
 
 from .timezone import Timezone
-from .parser import Parser
+from .loader import Loader
 
 
 class LocalTimezone(object):
@@ -165,7 +165,7 @@ class LocalTimezone(object):
 
             if not os.path.exists(tzpath):
                 continue
-            return Timezone('', *Parser.parse(tzpath))
+            return Timezone('', *Loader.load(tzpath))
 
         raise RuntimeError('Can not find any timezone configuration')
 
@@ -176,7 +176,7 @@ def _tz_from_env(tzenv):
 
     # TZ specifies a file
     if os.path.exists(tzenv):
-        return Timezone('', *Parser.parse(tzenv))
+        return Timezone('', *Loader.load(tzenv))
 
     # TZ specifies a zoneinfo zone.
     try:

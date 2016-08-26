@@ -114,13 +114,8 @@ This is again shown in the next example which also introduces the ``now()`` func
 
     # or to create a date with a timezone of +1 to GMT
     # during DST then just pass an integer
-    print(pendulum.now(1).timezone_name))
-    None
-
-.. note::
-
-    You'll notice that when using an integer offset, you don't have access
-    to the name of the timezone.
+    print(pendulum.now(1).timezone_name)
+    '+01:00'
 
 To accompany ``now()``, a few other static instantiation helpers exist to create widely known instances.
 The only thing to really notice here is that ``today()``, ``tomorrow()`` and ``yesterday()``,
@@ -1214,7 +1209,7 @@ It has many improvements over the base class.
 
     Even though, it inherits from the ``timedelta`` class, its behavior is slightly different.
     The more important to notice is that the native normalization does not happen, this is so that
-    it feels more intuituve.
+    it feels more intuitive.
 
     .. code-block:: python
 
