@@ -2,11 +2,11 @@
 
 from __future__ import division
 
-import re
 import time as _time
 import math
 import calendar
 import datetime
+import warnings
 import locale as _locale
 
 from contextlib import contextmanager
@@ -18,6 +18,7 @@ from .exceptions import PendulumException
 from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
+from .formatting import FORMATTERS
 from ._compat import PY33, basestring
 from .constants import (
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
@@ -77,9 +78,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     _test_now = None
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
-
-    _CUSTOM_FORMATTERS = ['_z', '_t']
-    _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
 
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
 
@@ -885,25 +883,28 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         cls._to_string_format = fmt
 
-    def format(self, fmt, locale=None):
+    def format(self, fmt, locale=None, formatter=None):
         """
         Formats the Pendulum instance using the given format.
 
         :param fmt: The format to use
         :type fmt: str
 
+        :param locale: The locale to use
+        :type locale: str or None
+
+        :param formatter: The formatter to use
+        :type formatter: str or None
+
         :rtype: str
         """
-        if not locale:
-            locale = self.get_locale()
+        if formatter is None:
+            formatter = 'classic'
 
-        # Checking for custom formatters
-        fmt = self._FORMATTERS_REGEX.sub(lambda m: self._strftime(m, locale), fmt)
+        if formatter not in FORMATTERS:
+            raise ValueError('Invalid formatter [{}]'.format(formatter))
 
-        # Checking for localizable directives
-        fmt = re.sub('%(a|A|b|B|p)', lambda m: self._localize_directive(m.group(1), locale), fmt)
-
-        return self._datetime.strftime(fmt)
+        return FORMATTERS[formatter].format(self, fmt, locale)
 
     def strftime(self, fmt):
         """
@@ -914,78 +915,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        # Checking for custom formatters
-        fmt = self._FORMATTERS_REGEX.sub(self._strftime, fmt)
-
-        return self._datetime.strftime(fmt)
-
-    def _localize_directive(self, directive, locale):
-        """
-        Localize a native strftime directive.
-
-        :param directive: The directive to localize
-        :type directive: str
-
-        :param locale: The locale to use for localization
-        :type locale: str
-
-        :rtype: str
-        """
-        if directive == 'a':
-            id = 'days_abbrev'
-            number = self.day_of_week
-        elif directive == 'A':
-            id = 'days'
-            number = self.day_of_week
-        elif directive == 'b':
-            id = 'months_abbrev'
-            number = self.month
-        elif directive == 'B':
-            id = 'months'
-            number = self.month
-        elif directive == 'p':
-            id = 'meridian'
-            number = self.hour
-        else:
-            raise ValueError('Unlocalizable directive [{}]'.format(directive))
-
-        translation = self.translator().transchoice(id, number, locale=locale)
-        if translation == id:
-            return ''
-
-        return translation
-
-    def _strftime(self, m, locale=None):
-        """
-        Handles custom formatters in format string.
-
-        :return: str
-        """
-        if not locale:
-            locale = _locale.getlocale()[0]
-
-        fmt = m.group(1)
-
-        if fmt == '_z':
-            offset = self._datetime.utcoffset() or datetime.timedelta()
-            minutes = offset.total_seconds() / 60
-
-            if minutes >= 0:
-                sign = '+'
-            else:
-                sign = '-'
-
-            hour, minute = divmod(abs(int(minutes)), 60)
-
-            return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
-        elif fmt == '_t':
-            translation = self.translator().transchoice('ordinal', self.day, locale=locale)
-            if translation == 'ordinal':
-                translation = ''
-
-            return translation
-
-        raise ValueError('Unknown formatter %%{}'.format(fmt))
+        return self.format(fmt, _locale.getlocale()[0], 'classic')
 
     def __str__(self):
         if self._to_string_format is None:
