@@ -899,6 +899,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: str
         """
         if formatter is None:
+            message = 'format() will default to the [alternative] formatter ' \
+                      'in the next major version. If you want to keep ' \
+                      'the current behavior in the future add the "formatter" ' \
+                      'keyword argument: format(formatter=\'classic\')'
+            warnings.warn(message, DeprecationWarning, 2)
             formatter = 'classic'
 
         if formatter not in FORMATTERS:
