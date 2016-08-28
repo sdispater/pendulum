@@ -145,3 +145,9 @@ class ClassicFormatterTest(AbstractTestCase):
         d = Pendulum(1970, 1, 1)
         self.assertEqual('0', f.format(d, 'X'))
         self.assertEqual('86400', f.format(d.add(days=1), 'X'))
+
+    def test_escape(self):
+        f = AlternativeFormatter()
+        d = Pendulum(2016, 8, 28)
+        self.assertEqual('YYYY 2016 [2016]', f.format(d, '[YYYY] YYYY \[YYYY\]'))
+        self.assertEqual('D 28 \\28', f.format(d, '\D D \\\D'))
