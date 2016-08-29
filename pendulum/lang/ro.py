@@ -64,6 +64,15 @@ translations = {
     'ago': 'acum {time}',
     'from_now': '{time} de acum',
     'after': 'peste {time}',
-    'before': 'acum {time}'
-}
+    'before': 'acum {time}',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'H:mm:ss',
+        'LT': 'H:mm',
+        'LLLL': 'dddd, D MMMM YYYY H:mm',
+        'LLL': 'D MMMM YYYY H:mm',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD.MM.YYYY',
+    },
+}

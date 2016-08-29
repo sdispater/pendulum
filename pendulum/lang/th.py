@@ -65,5 +65,14 @@ translations = {
     'from_now': '{time} จากนี้',
     'after': 'หลัง{time}',
     'before': 'ก่อน{time}',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'H นาฬิกา m นาที s วินาที',
+        'LT': 'H นาฬิกา m นาที',
+        'LLLL': 'วันddddที่ D MMMM YYYY เวลา H นาฬิกา m นาที',
+        'LLL': 'D MMMM YYYY เวลา H นาฬิกา m นาที',
+        'LL': 'D MMMM YYYY',
+        'L': 'YYYY/MM/DD',
+    },
+}

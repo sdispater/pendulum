@@ -64,6 +64,15 @@ translations = {
     'ago': 'Orain dela {time}',
     'from_now': '{time} barru',
     'after': '{time} geroago',
-    'before': '{time} lehenago'
-}
+    'before': '{time} lehenago',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, YYYY[ko] MMMM[ren] D[a] HH:mm',
+        'LLL': 'YYYY[ko] MMMM[ren] D[a] HH:mm',
+        'LL': 'YYYY[ko] MMMM[ren] D[a]',
+        'L': 'YYYY-MM-DD',
+    },
+}

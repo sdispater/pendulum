@@ -75,3 +75,19 @@ class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
         self.assertEqual('', d.format('%p'))
         self.assertEqual('er', d.format('%_t'))
         self.assertEqual('e', d.add(days=1).format('%_t'))
+
+    def format_alternative(self):
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123456)
+        self.assertEqual('dimanche', d.format('dddd', formatter='alternative'))
+        self.assertEqual('dim', d.format('ddd', formatter='alternative'))
+        self.assertEqual('août', d.format('MMMM', formatter='alternative'))
+        self.assertEqual('août', d.format('MMM', formatter='alternative'))
+        self.assertEqual('AM', d.format('A', formatter='alternative'))
+        self.assertEqual('28e', d.format('Do', formatter='alternative'))
+
+        self.assertEqual('07:03', d.format('LT', formatter='alternative'))
+        self.assertEqual('07:03:06', d.format('LTS', formatter='alternative'))
+        self.assertEqual('28/08/2016', d.format('L', formatter='alternative'))
+        self.assertEqual('28 août 2016', d.format('LL', formatter='alternative'))
+        self.assertEqual('28 août 2016 07:03', d.format('LLL', formatter='alternative'))
+        self.assertEqual('dimanche 28 août 2016 07:03', d.format('LLLL', formatter='alternative'))

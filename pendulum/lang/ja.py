@@ -65,5 +65,17 @@ translations = {
     'from_now': '今から {time}',
     'after': '{time} 後',
     'before': '{time} 前',
-}
 
+    # Meridians
+    'meridian': lambda time: '午前' if 0 <= time[0] < 12 else '午後',
+
+    # Date formats
+    'date_formats': {
+        'LTS': 'Ah時m分s秒',
+        'LT': 'Ah時m分',
+        'LLLL': 'YYYY年M月D日Ah時m分 dddd',
+        'LLL': 'YYYY年M月D日Ah時m分',
+        'LL': 'YYYY年M月D日',
+        'L': 'YYYY/MM/DD',
+    },
+}

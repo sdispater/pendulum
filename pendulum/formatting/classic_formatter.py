@@ -66,7 +66,7 @@ class ClassicFormatter(Formatter):
             number = dt.month
         elif directive == 'p':
             id = 'meridian'
-            number = dt.hour
+            number = (dt.hour, dt.minute)
         else:
             raise ValueError('Unlocalizable directive [{}]'.format(directive))
 

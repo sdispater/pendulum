@@ -74,5 +74,14 @@ translations = {
     'month_ago': ['{count} Monat', '{count} Monaten'],
     'week_ago': ['{count} Woche', '{count} Wochen'],
     'day_ago': ['{count} Tag', '{count} Tagen'],
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D. MMMM YYYY HH:mm',
+        'LLL': 'D. MMMM YYYY HH:mm',
+        'LL': 'D. MMMM YYYY',
+        'L': 'DD.MM.YYYY',
+    },
+}

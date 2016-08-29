@@ -64,6 +64,15 @@ translations = {
     'ago': '{time} siden',
     'from_now': 'om {time}',
     'after': '{time} etter',
-    'before': '{time} før'
-}
+    'before': '{time} før',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd D. MMMM YYYY [kl.] HH:mm',
+        'LLL': 'D. MMMM YYYY [kl.] H:mm',
+        'LL': 'D. MMMM YYYY',
+        'L': 'DD.MM.YYYY',
+    },
+}
