@@ -67,7 +67,7 @@ translations = {
     'before': '{time} 앞',
 
     # Meridians
-    'meridian': lambda hour: '오전' if 0 <= hour < 12 else '오후',
+    'meridian': lambda time: '오전' if 0 <= time[0] < 12 else '오후',
 
     # Date formats
     'date_formats': {

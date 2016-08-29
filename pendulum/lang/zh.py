@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
 
+
+def meridian(hour, minute):
+    hm = hour * 100 + minute
+
+    if hm < 600:
+        return '凌晨'
+    elif hm < 900:
+        return '早上'
+    elif hm < 1130:
+        return '上午'
+    elif hm < 1230:
+        return '中午'
+    elif hm < 1800:
+        return '下午'
+
+    return '晚上'
+
+
 translations = {
     # Days
     'days': {
@@ -65,6 +83,9 @@ translations = {
     'from_now': '距现在{time}',
     'after': '{time}后',
     'before': '{time}前',
+
+    # Meridians
+    'meridian': lambda time: meridian(*time),
 
     # Date formats
     'date_formats': {

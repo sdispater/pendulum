@@ -217,7 +217,7 @@ class AlternativeFormatter(Formatter):
             count = dt.day_of_year
             trans_id = 'ordinal'
         elif token == 'A':
-            count = dt.hour
+            count = (dt.hour, dt.minute)
             trans_id = 'meridian'
         else:
             return token

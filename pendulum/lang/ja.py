@@ -67,7 +67,7 @@ translations = {
     'before': '{time} 前',
 
     # Meridians
-    'meridian': lambda hour: '午前' if 0 <= hour < 12 else '午後',
+    'meridian': lambda time: '午前' if 0 <= time[0] < 12 else '午後',
 
     # Date formats
     'date_formats': {

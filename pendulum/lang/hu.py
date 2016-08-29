@@ -91,7 +91,7 @@ translations = {
     'second_before': '{count} másodperccel',
 
     # Meridians
-    'meridian': lambda hour: 'DE' if 0 <= hour < 12 else 'DU',
+    'meridian': lambda time: 'DE' if 0 <= time[0] < 12 else 'DU',
 
     # Date formats
     'date_formats': {

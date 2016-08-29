@@ -65,7 +65,7 @@ translations = {
     'before': '{time} আগে',
 
     # Meridians
-    'meridian': lambda hour: 'সকাল' if 0 <= hour < 12 else 'বিকাল',
+    'meridian': lambda time: 'সকাল' if 0 <= time[0] < 12 else 'বিকাল',
 
     # Date formats
     'date_formats': {

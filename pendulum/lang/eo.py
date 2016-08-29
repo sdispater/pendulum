@@ -67,7 +67,7 @@ translations = {
     'before': '{time} antaŭe',
 
     # Meridians
-    'meridian': lambda hour: 'ATM' if 0 <= hour < 12 else 'PTM',
+    'meridian': lambda time: 'ATM' if 0 <= time[0] < 12 else 'PTM',
 
     # Date formats
     'date_formats': {
