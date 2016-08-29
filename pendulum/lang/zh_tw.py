@@ -64,6 +64,15 @@ translations = {
     'ago': '{time}前',
     'from_now': '距現在 {time}',
     'after': '{time}後',
-    'before': '{time}前'
-}
+    'before': '{time}前',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'Ah點m分s秒',
+        'LT': 'Ah點mm分',
+        'LLLL': 'YYYY年MMMD日ddddAh點mm分',
+        'LLL': 'YYYY年MMMD日Ah點mm分',
+        'LL': 'YYYY年MMMD日',
+        'L': 'YYYY年MMMD日',
+    },
+}

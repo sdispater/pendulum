@@ -64,6 +64,15 @@ translations = {
     'ago': '{time} назад',
     'from_now': 'через {time}',
     'after': '{time} після',
-    'before': '{time} до'
-}
+    'before': '{time} до',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D MMMM YYYY р., HH:mm',
+        'LLL': 'D MMMM YYYY р., HH:mm',
+        'LL': 'D MMMM YYYY р.',
+        'L': 'DD.MM.YYYY',
+    },
+}

@@ -34,7 +34,7 @@ from .lv import translations as lv_translations
 from .mk import translations as mk_translations
 from .ms import translations as ms_translations
 from .nl import translations as nl_translations
-from .no import translations as no_translations
+from .nn import translations as nn_translations
 from .pl import translations as pl_translations
 from .pt_br import translations as pt_br_translations
 from .ro import translations as ro_translations
@@ -88,7 +88,7 @@ TRANSLATIONS = {
     "mk": mk_translations,
     "ms": ms_translations,
     "nl": nl_translations,
-    "no": no_translations,
+    "nn": nn_translations,
     "pl": pl_translations,
     "pt_br": pt_br_translations,
     "ro": ro_translations,

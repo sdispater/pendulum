@@ -65,5 +65,14 @@ translations = {
     'from_now': '{time} từ bây giờ',
     'after': '{time} sau',
     'before': '{time} trước',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D MMMM [năm] YYYY HH:mm',
+        'LLL': 'D MMMM [năm] YYYY HH:mm',
+        'LL': 'D MMMM [năm] YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

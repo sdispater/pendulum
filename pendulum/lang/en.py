@@ -70,5 +70,18 @@ translations = {
     'ordinal': lambda x: 'th' if 10 <= x % 100 < 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(x % 10, "th"),
 
     # Meridians
-    'meridian': lambda hour: 'AM' if 0 <= hour < 12 else 'PM'
+    'meridian': lambda hour: 'AM' if 0 <= hour < 12 else 'PM',
+
+    # Date formats
+    'date_formats': {
+        'LTS': 'h:mm:ss A',
+        'LT': 'h:mm A',
+        'L': 'MM/DD/YYYY',
+        'LL': 'MMMM D, YYYY',
+        'LLL': 'MMMM D, YYYY h:mm A',
+        'LLLL': 'dddd, MMMM D, YYYY h:mm A',
+    },
+
+    # First day of week
+    'dow': 0,
 }

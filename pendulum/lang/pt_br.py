@@ -65,5 +65,14 @@ translations = {
     'from_now': 'dentro de {time}',
     'after': 'após {time}',
     'before': '{time} atrás',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D [de] MMMM [de] YYYY [às] HH:mm',
+        'LLL': 'D [de] MMMM [de] YYYY [às] HH:mm',
+        'LL': 'D [de] MMMM [de] YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

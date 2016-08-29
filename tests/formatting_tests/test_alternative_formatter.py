@@ -146,6 +146,23 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('0', f.format(d, 'X'))
         self.assertEqual('86400', f.format(d.add(days=1), 'X'))
 
+    def test_date_formats(self):
+        f = AlternativeFormatter()
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123456)
+        self.assertEqual('7:03 AM', f.format(d, 'LT'))
+        self.assertEqual('7:03:06 AM', f.format(d, 'LTS'))
+        self.assertEqual('08/28/2016', f.format(d, 'L'))
+        self.assertEqual('August 28, 2016', f.format(d, 'LL'))
+        self.assertEqual('August 28, 2016 7:03 AM', f.format(d, 'LLL'))
+        self.assertEqual('Sunday, August 28, 2016 7:03 AM', f.format(d, 'LLLL'))
+
+        self.assertEqual('07:03', f.format(d, 'LT', locale='fr'))
+        self.assertEqual('07:03:06', f.format(d, 'LTS', locale='fr'))
+        self.assertEqual('28/08/2016', f.format(d, 'L', locale='fr'))
+        self.assertEqual('28 août 2016', f.format(d, 'LL', locale='fr'))
+        self.assertEqual('28 août 2016 07:03', f.format(d, 'LLL', locale='fr'))
+        self.assertEqual('dimanche 28 août 2016 07:03', f.format(d, 'LLLL', locale='fr'))
+
     def test_escape(self):
         f = AlternativeFormatter()
         d = Pendulum(2016, 8, 28)

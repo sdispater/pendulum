@@ -21,6 +21,10 @@ class AbstractLocalizationTestCase(object):
 
     def test_format(self):
         self.format()
+        self.format_alternative()
 
     def format(self):
+        pass
+
+    def format_alternative(self):
         pass

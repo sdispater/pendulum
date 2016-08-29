@@ -9,6 +9,7 @@ class Translator(object):
     def __init__(self, locale):
         self._locale = self._format_locale(locale)
         self._translations = TRANSLATIONS
+        self._fallback_locale = 'en'
 
     @property
     def locale(self):
@@ -54,6 +55,10 @@ class Translator(object):
         while not self.has_translations(locale):
             fallback = locale.split('_')[0]
             if locale == fallback:
+                if self._fallback_locale and locale != self._fallback_locale:
+                    locale = self._fallback_locale
+                    continue
+
                 raise ValueError('Locale [{}] could not be found.'.format(locale))
 
             locale = fallback

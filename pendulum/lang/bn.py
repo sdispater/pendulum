@@ -66,5 +66,14 @@ translations = {
 
     # Meridians
     'meridian': lambda hour: 'সকাল' if 0 <= hour < 12 else 'বিকাল',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'A h:mm:ss সময়',
+        'LT': 'A h:mm সময়',
+        'LLLL': 'dddd, D MMMM YYYY, A h:mm সময়',
+        'LLL': 'D MMMM YYYY, A h:mm সময়',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

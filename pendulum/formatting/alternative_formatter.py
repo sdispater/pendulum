@@ -20,6 +20,7 @@ class AlternativeFormatter(Formatter):
               '|mm?|ss?|S{1,9}' \
               '|x|X' \
               '|zz?|ZZ?' \
+              '|LTS|LT|LL?L?L?' \
               ')'
 
     _FORMAT_RE = re.compile(_TOKENS)
@@ -89,6 +90,15 @@ class AlternativeFormatter(Formatter):
         'zz': lambda dt: '{}'.format(dt.timezone_name),
     }
 
+    _DEFAULT_DATE_FORMATS = {
+        'LTS': 'h:mm:ss A',
+        'LT': 'h:mm A',
+        'L': 'MM/DD/YYYY',
+        'LL': 'MMMM D, YYYY',
+        'LLL': 'MMMM D, YYYY h:mm A',
+        'LLLL': 'dddd, MMMM D, YYYY h:mm A',
+    }
+
     def format(self, dt, fmt, locale=None):
         """
         Formats a Pendulum instance with a given format and locale.
@@ -131,6 +141,12 @@ class AlternativeFormatter(Formatter):
 
         :rtype: str
         """
+        if token in self._DEFAULT_DATE_FORMATS:
+            fmt = dt.translator().transchoice('date_formats', token, locale=locale)
+            if fmt == 'date_formats':
+                fmt = self._DEFAULT_DATE_FORMATS[token]
+
+            return self.format(dt, fmt, locale)
         if token in self._LOCALIZABLE_TOKENS:
             return self._format_localizable_token(dt, token, locale)
 
@@ -209,6 +225,11 @@ class AlternativeFormatter(Formatter):
         trans = dt.translator().transchoice(trans_id, count, locale=locale)
 
         if trans_id == 'ordinal':
-            return '{:d}{}'.format(count, trans)
+            trans = '{:d}{}'.format(count, trans)
+
+        if trans_id == trans:
+            # Unable to find the corresponding translation
+            # Defaulting to english
+            return self._format_localizable_token(dt, token, 'en')
 
         return trans

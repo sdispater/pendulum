@@ -68,5 +68,15 @@ translations = {
 
     # Meridians
     'meridian': lambda hour: 'VM' if 0 <= hour < 12 else 'NM',
+
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D MMMM YYYY HH:mm',
+        'LLL': 'D MMMM YYYY HH:mm',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
 }
 

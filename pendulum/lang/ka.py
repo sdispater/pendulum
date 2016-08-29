@@ -65,5 +65,14 @@ translations = {
     'from_now': '{time} შემდეგ',
     'after': '{time} შემდეგ',
     'before': '{time} უკან',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'h:mm:ss A',
+        'LT': 'h:mm A',
+        'LLLL': 'dddd, D MMMM YYYY h:mm A',
+        'LLL': 'D MMMM YYYY h:mm A',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

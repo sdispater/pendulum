@@ -72,5 +72,13 @@ translations = {
     'hour_from_now': '{count} tunni',
     'minute_from_now': '{count} minuti',
     'second_from_now': '{count} sekundi',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'H:mm:ss',
+        'LLLL': 'dddd, D. MMMM YYYY H:mm',
+        'LLL': 'dddd, D. MMMM YYYY H:mm',
+        'LL': 'dddd, D. MMMM YYYY H:mm',
+        'L': 'dddd, D. MMMM YYYY H:mm',
+    },
+}

@@ -64,6 +64,15 @@ translations = {
     'ago': 'πρίν απο {time}',
     'from_now': 'σε {time} απο τώρα',
     'after': '{time} μετά',
-    'before': '{time} πρίν'
-}
+    'before': '{time} πρίν',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'h:mm:ss A',
+        'LT': 'h:mm A',
+        'LLLL': 'dddd, D MMMM YYYY h:mm A',
+        'LLL': 'D MMMM YYYY h:mm A',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}
