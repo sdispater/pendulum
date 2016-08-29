@@ -21,26 +21,28 @@ setup: setup-python
 test:
 	@py.test --cov=pendulum --cov-config .coveragerc tests/ -sq
 
-wheels: clean-wheels wheels_x64 wheels_i686
+wheels_x64: clean_wheels build_wheels_x64
 
-wheels_x64:
+wheels_i686: clean_wheels build_wheels_i686
+
+build_wheels_x64:
 	docker pull quay.io/pypa/manylinux1_x86_64
 	docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_x86_64 /io/build-wheels.sh
 
-wheels_i686:
+build_wheels_i686:
 	docker pull quay.io/pypa/manylinux1_i686
 	docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_i686 /io/build-wheels.sh
 
-clean-wheels:
+clean_wheels:
 	rm -rf wheelhouse/
 
-upload-wheels_x64:
+upload_wheels_x64:
 	@for f in wheelhouse/*manylinux1_x86_64.whl ; do \
 		echo "Upload $$f" ; \
 		python -m twine upload $$f ; \
 	done
 
-upload-wheels_i686:
+upload_wheels_i686:
 	@for f in wheelhouse/*manylinux1_i686.whl ; do \
 		echo "Upload $$f" ; \
 		python -m twine upload $$f ; \
