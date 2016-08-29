@@ -1,3 +1,9 @@
+### 0.5.3
+
+- [Fix] Fixes setters and modifiers (start_of/end_of) to properly apply DST transitions.
+- [Fix] Fixes timezone file loading on some installs (See [#34](https://github.com/sdispater/pendulum/issues/34))
+(Thanks to [mayfield](https://github.com/mayfield))
+
 ### 0.5.2
 
 (August 22nd, 2016)
