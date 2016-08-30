@@ -83,6 +83,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     _TRANSITION_RULE = Timezone.POST_TRANSITION
 
+    _DEFAULT_FORMATTER = 'classic'
+    _FORMATTER = _DEFAULT_FORMATTER
+
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
         """
@@ -533,11 +536,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def day_of_week(self):
-        return int(self.format('%w'))
+        return int(self.format('%w', formatter='classic'))
 
     @property
     def day_of_year(self):
-        return int(self.format('%-j'))
+        return int(self.format('%-j', formatter='classic'))
 
     @property
     def week_of_year(self):
@@ -899,7 +902,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: str
         """
         if formatter is None:
-            formatter = 'classic'
+            formatter = self._FORMATTER
 
         if formatter not in FORMATTERS:
             raise ValueError('Invalid formatter [{}]'.format(formatter))
@@ -917,11 +920,33 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self.format(fmt, _locale.getlocale()[0], 'classic')
 
+    @classmethod
+    def set_formatter(cls, formatter=None):
+        """
+        Sets the default string formatter.
+
+        :param formatter: The parameter to set as default.
+        :type formatter: str or None
+        """
+        if formatter is None:
+            formatter = cls._DEFAULT_FORMATTER
+
+        cls._FORMATTER = formatter
+
+    @classmethod
+    def get_formatter(cls):
+        """
+        Gets the currently used string formatter.
+
+        :rtype: str
+        """
+        return cls._FORMATTER
+
     def __str__(self):
         if self._to_string_format is None:
             return self._datetime.isoformat()
 
-        return self.format(self._to_string_format)
+        return self.format(self._to_string_format, formatter='classic')
 
     def __repr__(self):
         return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
@@ -932,7 +957,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%Y-%m-%d')
+        return self.format('%Y-%m-%d', formatter='classic')
 
     def to_formatted_date_string(self):
         """
@@ -940,7 +965,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%b %d, %Y')
+        return self.format('%b %d, %Y', formatter='classic')
 
     def to_time_string(self):
         """
@@ -948,7 +973,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%H:%M:%S')
+        return self.format('%H:%M:%S', formatter='classic')
 
     def to_datetime_string(self):
         """
@@ -956,7 +981,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%Y-%m-%d %H:%M:%S')
+        return self.format('%Y-%m-%d %H:%M:%S', formatter='classic')
 
     def to_day_datetime_string(self):
         """
@@ -964,7 +989,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%a, %b %d, %Y %-I:%M %p')
+        return self.format('%a, %b %d, %Y %-I:%M %p', formatter='classic')
 
     def to_atom_string(self):
         """
@@ -972,7 +997,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.ATOM)
+        return self.format(self.ATOM, formatter='classic')
 
     def to_cookie_string(self):
         """
@@ -980,7 +1005,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.COOKIE)
+        return self.format(self.COOKIE, formatter='classic')
 
     def to_iso8601_string(self, extended=False):
         """
@@ -992,7 +1017,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if extended:
             fmt = self.ISO8601_EXTENDED
 
-        return self.format(fmt)
+        return self.format(fmt, formatter='classic')
 
     def to_rfc822_string(self):
         """
@@ -1000,7 +1025,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC822)
+        return self.format(self.RFC822, formatter='classic')
 
     def to_rfc850_string(self):
         """
@@ -1008,7 +1033,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC850)
+        return self.format(self.RFC850, formatter='classic')
 
     def to_rfc1036_string(self):
         """
@@ -1016,7 +1041,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC1036)
+        return self.format(self.RFC1036, formatter='classic')
 
     def to_rfc1123_string(self):
         """
@@ -1024,7 +1049,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC1123)
+        return self.format(self.RFC1123, formatter='classic')
 
     def to_rfc2822_string(self):
         """
@@ -1032,7 +1057,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC2822)
+        return self.format(self.RFC2822, formatter='classic')
 
     def to_rfc3339_string(self, extended=False):
         """
@@ -1044,7 +1069,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if extended:
             fmt = self.RFC3339_EXTENDED
 
-        return self.format(fmt)
+        return self.format(fmt, formatter='classic')
 
     def to_rss_string(self):
         """
@@ -1052,7 +1077,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RSS)
+        return self.format(self.RSS, formatter='classic')
 
     def to_w3c_string(self):
         """
@@ -1060,7 +1085,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.W3C)
+        return self.format(self.W3C, formatter='classic')
 
     # Comparisons
     def __eq__(self, other):

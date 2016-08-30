@@ -46,6 +46,8 @@ set_to_string_format = Pendulum.set_to_string_format
 reset_to_string_format = Pendulum.reset_to_string_format
 set_transition_rule = Pendulum.set_transition_rule
 get_transition_rule = Pendulum.get_transition_rule
+set_formatter = Pendulum.set_formatter
+get_formatter = Pendulum.get_formatter
 
 # Standard helpers
 min = Pendulum.min
