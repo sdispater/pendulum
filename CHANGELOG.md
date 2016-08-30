@@ -1,4 +1,8 @@
-### 0.5.3
+### 0.5.4
+
+(August 30th, 2016)
+
+- [Fix] Fixes broken previous release.
 
 (August 29th, 2016)
 
