@@ -178,7 +178,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @classmethod
     def instance(cls, dt, tz=UTC):
         """
-        Create a Carbon instance from a datetime one.
+        Create a Pendulum instance from a datetime one.
 
         :param dt: A datetime instance
         :type dt: datetime.datetime
@@ -189,6 +189,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         tz = dt.tzinfo or tz
+
+        # Checking for pytz/tzinfo
+        if isinstance(tz, datetime.tzinfo) and not isinstance(tz, TimezoneInfo):
+            # pytz
+            if hasattr(tz, 'localize'):
+                tz = tz.zone
+            else:
+                # We have no sure way to figure out
+                # the timezone name, we raise an error
+                raise ValueError('Unsupported tzinfo [{}]'.format(tz))
 
         return cls(
             dt.year, dt.month, dt.day,
