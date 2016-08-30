@@ -14,7 +14,8 @@ class AbstractLocalizationTestCase(object):
         Pendulum.set_locale('en')
 
     def test_diff_for_humans_localized(self):
-        self.diff_for_humans()
+        with Pendulum.test(Pendulum(2016, 8, 29)):
+            self.diff_for_humans()
 
     def diff_for_humans(self):
         raise NotImplementedError()

@@ -79,6 +79,19 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(7, d.month)
         self.assertEqual(2, d.day)
 
+    def test_fluid_with_date_with_transition(self):
+        d = Pendulum.create(2013, 3, 31, 0, 0, 0, 0, 'Europe/Paris')
+        new = d.with_date(2013, 4, 1)
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual(2013, new.year)
+        self.assertEqual(4, new.month)
+        self.assertEqual(1, new.day)
+        self.assertEqual(7200, new.offset)
+        self.assertEqual(2013, d.year)
+        self.assertEqual(3, d.month)
+        self.assertEqual(31, d.day)
+        self.assertEqual(3600, d.offset)
+
     def test_fluid_set_time(self):
         d = Pendulum.create(2016, 7, 2, 0, 41, 20)
         new = d.with_time(5, 32, 49)
@@ -89,6 +102,14 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(0, d.hour)
         self.assertEqual(41, d.minute)
         self.assertEqual(20, d.second)
+
+    def test_fluid_set_time_with_transition(self):
+        d = Pendulum.create(2013, 3, 31, 0, 0, 0, 0, 'Europe/Paris')
+        new = d.with_time(2, 30, 0)
+        self.assertIsInstanceOfPendulum(new)
+        self.assertEqual(3, new.hour)
+        self.assertEqual(30, new.minute)
+        self.assertEqual(0, new.second)
 
     def test_fluid_set_timestamp(self):
         d = Pendulum.create(2016, 7, 2, 0, 41, 20)

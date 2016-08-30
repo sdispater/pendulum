@@ -191,3 +191,17 @@ class StartEndOfTest(AbstractTestCase):
 
     def end_of_with_invalid_unit(self):
         self.assertRaises(ValueError, Pendulum.now().end_of('invalid'))
+
+    def test_start_of_with_transition(self):
+        d = Pendulum(2013, 10, 27, 23, 59, 59, tzinfo='Europe/Paris')
+        self.assertEqual(3600, d.offset)
+        self.assertEqual(7200, d.start_of('month').offset)
+        self.assertEqual(7200, d.start_of('day').offset)
+        self.assertEqual(3600, d.start_of('year').offset)
+
+    def test_end_of_with_transition(self):
+        d = Pendulum(2013, 3, 31, tzinfo='Europe/Paris')
+        self.assertEqual(3600, d.offset)
+        self.assertEqual(7200, d.end_of('month').offset)
+        self.assertEqual(7200, d.end_of('day').offset)
+        self.assertEqual(3600, d.end_of('year').offset)

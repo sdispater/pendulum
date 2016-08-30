@@ -471,25 +471,30 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     ### Getters/Setters
 
     def year_(self, year):
-        return self.instance(self._datetime.replace(year=year))
+        return self._setter(year=year)
 
     def month_(self, month):
-        return self.instance(self._datetime.replace(month=month))
+        return self._setter(month=month)
 
     def day_(self, day):
-        return self.instance(self._datetime.replace(day=day))
+        return self._setter(day=day)
 
     def hour_(self, hour):
-        return self.instance(self._datetime.replace(hour=hour))
+        return self._setter(hour=hour)
 
     def minute_(self, minute):
-        return self.instance(self._datetime.replace(minute=minute))
+        return self._setter(minute=minute)
 
     def second_(self, second):
-        return self.instance(self._datetime.replace(second=second))
+        return self._setter(second=second)
 
     def microsecond_(self, microsecond):
-        return self.instance(self._datetime.replace(microsecond=microsecond))
+        return self._setter(microsecond=microsecond)
+
+    def _setter(self, **kwargs):
+        kwargs['tzinfo'] = None
+
+        return self.instance(self._datetime.replace(**kwargs), self._tz)
 
     def timezone_(self, tz):
         tz = self._safe_create_datetime_zone(tz)
@@ -642,10 +647,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         dt = self._datetime.replace(
-            year=int(year), month=int(month), day=int(day)
+            year=int(year), month=int(month), day=int(day),
+            tzinfo=None
         )
 
-        return self.instance(dt)
+        return self.instance(dt, self._tz)
 
     def with_time(self, hour, minute, second, microsecond=0):
         """
@@ -667,10 +673,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         dt = self._datetime.replace(
             hour=int(hour), minute=int(minute), second=int(second),
-            microsecond=microsecond
+            microsecond=microsecond,
+            tzinfo=None
         )
 
-        return self.instance(dt)
+        return self.instance(dt, self._tz)
 
     def with_date_time(self, year, month, day, hour, minute, second, microsecond=0):
         """
@@ -688,10 +695,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         dt = self._datetime.replace(
             year=year, month=month, day=day,
             hour=int(hour), minute=int(minute), second=int(second),
-            microsecond=microsecond
+            microsecond=microsecond,
+            tzinfo=None
         )
 
-        return self.instance(dt)
+        return self.instance(dt, self._tz)
 
     def with_time_from_string(self, time):
         """
