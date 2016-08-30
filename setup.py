@@ -90,7 +90,7 @@ kwargs = dict(
     author_email='sebastien@eustace.io',
     url='https://github.com/sdispater/pendulum',
     download_url='https://github.com/sdispater/pendulum/archive/%s.tar.gz' % __version__,
-    packages=['pendulum'],
+    packages=find_packages(exclude=['tests']),
     install_requires=[
         'tzlocal',
         'pytz',
