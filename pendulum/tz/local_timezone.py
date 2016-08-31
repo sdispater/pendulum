@@ -86,15 +86,13 @@ class LocalTimezone(object):
         return get_localzone_name()
 
     @classmethod
-    def get_tz_name_for_unix(cls):
+    def get_tz_name_for_unix(cls, _root='/'):
         tzenv = os.environ.get('TZ')
         if tzenv:
             try:
                 return _tz_from_env(tzenv)
             except ValueError:
                 pass
-
-        _root = '/'
 
         # Now look for distribution specific configuration files
         # that contain the timezone name.
@@ -150,14 +148,15 @@ class LocalTimezone(object):
         tzpath = os.path.join(_root, 'etc/localtime')
         if os.path.exists(tzpath) and os.path.islink(tzpath):
             tzpath = os.path.realpath(tzpath)
-            start = tzpath.find("/") + 1
-            while start is not 0:
-                tzpath = tzpath[start:]
+            parts = tzpath.split('/')[-2:]
+            while parts:
+                tzpath = '/'.join(parts)
                 try:
                     return Timezone.load(tzpath)
-                except ValueError:
+                except (ValueError, IOError, OSError):
                     pass
-                start = tzpath.find("/") + 1
+
+                parts.pop(0)
 
         # No explicit setting existed. Use localtime
         for filename in ('etc/localtime', 'usr/local/etc/localtime'):
@@ -165,7 +164,7 @@ class LocalTimezone(object):
 
             if not os.path.exists(tzpath):
                 continue
-            return Timezone('', *Loader.load(tzpath))
+            return Timezone('', *Loader.load_from_file(tzpath))
 
         raise RuntimeError('Can not find any timezone configuration')
 
