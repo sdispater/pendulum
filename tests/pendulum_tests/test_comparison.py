@@ -2,6 +2,7 @@
 
 import pytz
 from datetime import datetime
+from time import sleep
 from pendulum import Pendulum
 
 from .. import AbstractTestCase
@@ -293,6 +294,15 @@ class ComparisonTest(AbstractTestCase):
 
         self.assertFalse(d1.between(d3, d2, False))
         self.assertFalse(d1.between(d5, d4, False))
+
+    def test_between_issue_39(self):
+        old = Pendulum.instance(datetime.utcnow())
+        sleep(0.2)
+        mid = Pendulum.now('UTC')
+        sleep(0.2)
+        new = Pendulum.instance(datetime.utcnow())
+
+        self.assertTrue(mid.between(old, new))
 
     def test_min_is_fluid(self):
         d = Pendulum.now()
