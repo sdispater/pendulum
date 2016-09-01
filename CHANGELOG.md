@@ -1,3 +1,13 @@
+### 0.6
+
+- [Feature] Adds an option to control transition normalization behavior.
+- [Feature] Adds a separator keyword argument to `Interval.in_words()` method.
+- [Feature] Adds an alternative formatter.
+- [Feature] Improves meridians formatting by supporting minutes.
+- [Feature] Adds support for pytz tzinfo in `instance()` method
+- [Feature] Changes behavior of `create*()` methods (time now defaults to `00:00:00`)
+- [Fix] Fixes setters and modifiers (start_of/end_of) to properly apply transitions.
+
 ### 0.5.5
 
 (September 1st, 2016)
