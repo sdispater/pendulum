@@ -1,3 +1,10 @@
+### 0.5.5
+
+(September 1st, 2016)
+
+- [Fix] Fixes local timezone loading for unix systems.
+- [Fix] Fixes potential `AttributeError` in `between` method. (Thanks to [iv597](https://github.com/iv597))
+
 ### 0.5.4
 
 (August 30th, 2016)

@@ -39,6 +39,14 @@ class Loader(object):
             raise ValueError('Unknown timezone [{}]'.format(name))
 
     @classmethod
+    def load_from_file(cls, filepath):
+        try:
+            with open(filepath, 'rb') as f:
+                return cls._load(f)
+        except _compat.FileNotFoundError:
+            raise ValueError('Unable to load file [{}]'.format(filepath))
+
+    @classmethod
     def _load(cls, fp):
         head_fmt = '>4s c 15x 6l'
         head_size = calcsize(head_fmt)

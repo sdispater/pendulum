@@ -1113,9 +1113,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        dt1 = self._get_datetime(dt1)
-        dt2 = self._get_datetime(dt2)
-
         if dt1 > dt2:
             dt1, dt2 = dt2, dt1
 
