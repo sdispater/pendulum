@@ -127,3 +127,30 @@ class ConstructTest(AbstractTestCase):
         in_paris = Pendulum.now('Europe/Paris')
 
         self.assertNotEqual(now.hour, in_paris.hour)
+
+    def test_create(self):
+        with self.wrap_with_test_now():
+            now = Pendulum.now()
+            d = Pendulum.create()
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(year=1975)
+            self.assertPendulum(d, 1975, now.month, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(month=11)
+            self.assertPendulum(d, now.year, 11, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(day=27)
+            self.assertPendulum(d, now.year, now.month, 27, 0, 0, 0, 0)
+
+            d = Pendulum.create(hour=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 12, 0, 0, 0)
+
+            d = Pendulum.create(minute=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 12, 0, 0)
+
+            d = Pendulum.create(second=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 12, 0)
+
+            d = Pendulum.create(microsecond=123456)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 123456)

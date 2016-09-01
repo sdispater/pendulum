@@ -142,7 +142,7 @@ besides behaving as expected, all accept a timezone parameter and each has their
 The next group of static helpers are the ``from_xxx()`` and ``create()`` helpers.
 Most of the static ``create`` functions allow you to provide
 as many or as few arguments as you want and will provide default values for all others.
-Generally default values are the current date, time or timezone.
+Generally default values are the current date, time set to ``00:00:00`` and ``UTC`` timezone.
 
 .. code-block:: python
 
@@ -150,11 +150,10 @@ Generally default values are the current date, time or timezone.
     pendulum.from_time(hour, minute, second, microsecond, tz)
     pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
-``from_date()`` will default the time to now. ``from_time()`` will default the date to today.
-``create()`` will default any null parameter to the current respective value.
-As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``tzinfo`` instance
-or simply a string timezone value. The only special case for default values occurs when an hour value
-is specified but no minutes or seconds, they will get defaulted to ``0``.
+``from_date()`` will default the time to ``00:00:00``. ``from_time()`` will default the date to today.
+``create()`` will default any null parameter to the current date for the date part and to ``00:00:00`` for time.
+As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``TimezoneInfo`` instance
+or simply a string timezone value.
 
 .. code-block:: python
 

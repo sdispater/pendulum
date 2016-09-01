@@ -268,9 +268,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         elif tz is UTC or tz == 'UTC':
             dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
         else:
+            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
             tz = cls._safe_create_datetime_zone(tz)
-
-            return cls(*cls._create_datetime(tz))
+            dt = tz.convert(dt)
 
         return cls.instance(dt, tz)
 
@@ -323,42 +323,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return cls.today(tz).subtract(days=1)
 
     @classmethod
-    def _create_datetime(cls, tz, year=None, month=None, day=None,
-                         hour=None, minute=None, second=None, microsecond=None):
-        tzinfo = tz
-
-        if any([year is None, month is None, day is None,
-                hour is None, minute is None, second is None, microsecond is None]):
-            now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-            now = tz.convert(now)
-
-            if year is None:
-                year = now.year
-
-            if month is None:
-                month = now.month
-
-            if day is None:
-                day = now.day
-
-            if hour is None:
-                hour = now.hour
-                minute = now.minute if minute is None else minute
-                second = now.second if second is None else second
-                microsecond = now.microsecond if microsecond is None else microsecond
-            else:
-                minute = 0 if minute is None else minute
-                second = 0 if second is None else second
-                microsecond = 0 if microsecond is None else microsecond
-
-            tzinfo = now.tzinfo
-
-        return (year, month, day,
-                hour, minute, second, microsecond, tzinfo)
-
-    @classmethod
     def create(cls, year=None, month=None, day=None,
-               hour=None, minute=None, second=None, microsecond=None,
+               hour=0, minute=0, second=0, microsecond=0,
                tz=UTC):
         """
         Create a new Carbon instance from a specific date and time.
@@ -379,18 +345,30 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         tz = cls._safe_create_datetime_zone(tz)
 
-        dt = datetime.datetime(*cls._create_datetime(
-            tz, year, month, day, hour, minute, second, microsecond
-        )[:-1])
-        dt = tz.convert(dt, dst_rule=cls._TRANSITION_RULE)
+        if any([year is None, month is None, day is None]):
+            now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+            now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
 
-        return cls.instance(dt)
+            if year is None:
+                year = now.year
+
+            if month is None:
+                month = now.month
+
+            if day is None:
+                day = now.day
+
+        dt = datetime.datetime(
+            year, month, day, hour, minute, second, microsecond
+        )
+
+        return cls.instance(dt, tz)
 
     @classmethod
     def create_from_date(cls, year=None, month=None, day=None, tz='UTC'):
         """
         Create a Pendulum instance from just a date.
-        The time portion is set to now.
+        The time portion is set to 00:00:00.
 
         :type year: int
         :type month: int
@@ -402,8 +380,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return cls.create(year, month, day, tz=tz)
 
     @classmethod
-    def create_from_time(cls, hour=None, minute=None, second=None,
-                         microsecond=None, tz='UTC'):
+    def create_from_time(cls, hour=0, minute=0, second=0,
+                         microsecond=0, tz='UTC'):
         """
         Create a Pendulum instance from just a time.
         The date portion is set to today.
@@ -2275,10 +2253,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
-        self._datetime = datetime.datetime(self._create_datetime(
-            tz, year, month, day,
+        self._datetime = tz.convert(datetime.datetime(
+            year, month, day,
             hour, minute, second, microsecond
-        )[:-1])
+        ))
         self._tz = tz
 
     def __reduce__(self):
