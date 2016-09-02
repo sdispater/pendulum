@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from cpython cimport bool
-from datetime import datetime
 
 
 cdef long EPOCH_YEAR = 1970
