@@ -364,8 +364,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         tz = cls._safe_create_datetime_zone(tz)
 
         if any([year is None, month is None, day is None]):
-            now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-            now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
+            if cls.has_test_now():
+                now = cls._test_now.in_tz(tz)
+            else:
+                now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+                now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
 
             if year is None:
                 year = now.year

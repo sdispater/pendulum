@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import time as _time
 from datetime import datetime
 
 from .loader import Loader
 from .timezone_info import TimezoneInfo, UTC
-from .breakdown import local_time as _local_time
+from .local_time import local_time as _local_time
 from .transition_type import TransitionType
 from .exceptions import NonExistingTime, AmbiguousTime
 
@@ -216,7 +215,7 @@ class Timezone(object):
     def _to_local_time(self, unix_time, transition_type):
         local_time = _local_time(
             unix_time,
-            transition_type
+            transition_type.utc_offset
         )
 
         tzinfo = TimezoneInfo(
@@ -224,7 +223,7 @@ class Timezone(object):
             transition_type
         )
 
-        return local_time[:7] + (tzinfo,)
+        return local_time + (tzinfo,)
 
     def _get_timestamp(self, dt):
         if hasattr(dt, 'float_timestamp'):
