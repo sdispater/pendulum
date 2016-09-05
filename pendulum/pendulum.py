@@ -2,11 +2,9 @@
 
 from __future__ import division
 
-import time as _time
 import math
 import calendar
 import datetime
-import warnings
 import locale as _locale
 
 from contextlib import contextmanager
@@ -19,7 +17,8 @@ from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .formatting import FORMATTERS
-from ._compat import PY33, basestring
+from .helpers import timestamp
+from ._compat import basestring
 from .constants import (
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
     THURSDAY, FRIDAY, SATURDAY,
@@ -156,24 +155,43 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def __init__(self, year, month, day,
                  hour=0, minute=0, second=0, microsecond=0,
                  tzinfo=UTC):
-        self.__float_timestamp = None
-
-        # If a TimezoneInfo is passed we do not convert:
+        # If a TimezoneInfo is passed we do not convert
         if isinstance(tzinfo, TimezoneInfo):
             self._tz = tzinfo.tz
 
-            self._datetime = datetime.datetime(
+            self._year = year
+            self._month = month
+            self._day = day
+            self._hour = hour
+            self._minute = minute
+            self._second = second
+            self._microsecond = microsecond
+            self._tzinfo = tzinfo
+
+            dt = datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond,
-                tzinfo=tzinfo
+                tzinfo
             )
         else:
             self._tz = self._safe_create_datetime_zone(tzinfo)
 
-            self._datetime = self._tz.convert(datetime.datetime(
+            dt = self._tz.convert(datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond
             ), dst_rule=self._TRANSITION_RULE)
+
+            self._year = dt.year
+            self._month = dt.month
+            self._day = dt.day
+            self._hour = dt.hour
+            self._minute = dt.minute
+            self._second = dt.second
+            self._microsecond = dt.microsecond
+            self._tzinfo = dt.tzinfo
+
+        self._timestamp = None
+        self._datetime = dt
 
     @classmethod
     def instance(cls, dt, tz=UTC):
@@ -346,8 +364,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         tz = cls._safe_create_datetime_zone(tz)
 
         if any([year is None, month is None, day is None]):
-            now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-            now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
+            if cls.has_test_now():
+                now = cls._test_now.in_tz(tz)
+            else:
+                now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+                now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
 
             if year is None:
                 year = now.year
@@ -482,12 +503,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def _setter(self, **kwargs):
         kwargs['tzinfo'] = None
 
-        return self.instance(self._datetime.replace(**kwargs), self._tz)
+        return self._tz.convert(self.replace(**kwargs))
 
     def timezone_(self, tz):
         tz = self._safe_create_datetime_zone(tz)
 
-        return self.instance(self._datetime.replace(tzinfo=None), tz)
+        dt = self.copy()
+        dt._tz = tz
+
+        return dt
 
     def tz_(self, tz):
         return self.timezone_(tz)
@@ -497,35 +521,35 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def year(self):
-        return self._datetime.year
+        return self._year
 
     @property
     def month(self):
-        return self._datetime.month
+        return self._month
 
     @property
     def day(self):
-        return self._datetime.day
+        return self._day
 
     @property
     def hour(self):
-        return self._datetime.hour
+        return self._hour
 
     @property
     def minute(self):
-        return self._datetime.minute
+        return self._minute
 
     @property
     def second(self):
-        return self._datetime.second
+        return self._second
 
     @property
     def microsecond(self):
-        return self._datetime.microsecond
+        return self._microsecond
 
     @property
     def tzinfo(self):
-        return self._datetime.tzinfo
+        return self._tzinfo
 
     @property
     def day_of_week(self):
@@ -545,31 +569,22 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def timestamp(self):
-        return int(self.float_timestamp - self._datetime.microsecond / 1e6)
+        return int(self.float_timestamp // 1)
 
     @property
     def float_timestamp(self):
-        if self.__float_timestamp is not None:
-            return self.__float_timestamp
+        if self._timestamp is None:
+            self._timestamp = timestamp(
+                self._year, self._month, self._day,
+                self._hour, self._minute, self._second, self._microsecond,
+                self._tzinfo
+            )
 
-        # If Python > 3.3 we use the native function
-        # else we emulate it
-        if PY33:
-            self.__float_timestamp = self._datetime.timestamp()
-        elif self._datetime.tzinfo is None:
-            self.__float_timestamp = _time.mktime(
-                (self.year, self.month, self.day,
-                 self.hour, self.minute, self.second,
-                -1, -1, -1)) + self.microsecond / 1e6
-
-        else:
-            self.__float_timestamp = (self._datetime - self._EPOCH).total_seconds()
-
-        return self.__float_timestamp
+        return self._timestamp
 
     @property
     def week_of_month(self):
-        return math.ceil(self.day / DAYS_PER_WEEK)
+        return math.ceil(self._day / DAYS_PER_WEEK)
 
     @property
     def age(self):
@@ -577,7 +592,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def quarter(self):
-        return int(math.ceil(self.month / 3))
+        return int(math.ceil(self._month / 3))
 
     @property
     def offset(self):
@@ -599,7 +614,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def is_dst(self):
-        return self._datetime.tzinfo.is_dst
+        return self.tzinfo.is_dst
 
     @property
     def timezone(self):
@@ -617,7 +632,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._tz
 
     def get_offset(self):
-        return int(self._datetime.utcoffset().total_seconds())
+        return int(self._tzinfo.offset)
 
     def with_date(self, year, month, day):
         """
@@ -634,12 +649,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        dt = self._datetime.replace(
-            year=int(year), month=int(month), day=int(day),
-            tzinfo=None
+        dt = self.replace(
+            year=int(year), month=int(month), day=int(day)
         )
 
-        return self.instance(dt, self._tz)
+        return self._tz.convert(dt)
 
     def with_time(self, hour, minute, second, microsecond=0):
         """
@@ -940,7 +954,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def __str__(self):
         if self._to_string_format is None:
-            return self._datetime.isoformat()
+            return self.isoformat()
 
         return self.format(self._to_string_format, formatter='classic')
 
@@ -2174,25 +2188,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def utctimetuple(self):
         return self._datetime.utctimetuple()
 
-    def date(self):
-        return self._datetime.date()
-
-    def time(self):
-        return self._datetime.time()
-
-    def timetz(self):
-        return self._datetime.timetz()
-
     def replace(self, year=None, month=None, day=None, hour=None,
                 minute=None, second=None, microsecond=None, tzinfo=True):
-        year = year if year is not None else self._datetime.year
-        month = month if month is not None else self._datetime.month
-        day = day if day is not None else self._datetime.day
-        hour = hour if hour is not None else self._datetime.hour
-        minute = minute if minute is not None else self._datetime.minute
-        second = second if second is not None else self._datetime.second
-        microsecond = microsecond if microsecond is not None else self._datetime.microsecond
-        tzinfo = tzinfo if tzinfo is not True else self._datetime.tzinfo
+        year = year if year is not None else self._year
+        month = month if month is not None else self._month
+        day = day if day is not None else self._day
+        hour = hour if hour is not None else self._hour
+        minute = minute if minute is not None else self._minute
+        second = second if second is not None else self._second
+        microsecond = microsecond if microsecond is not None else self._microsecond
+        tzinfo = tzinfo if tzinfo is not True else self._tzinfo
 
         return self.instance(
             self._datetime.replace(year=year, month=month, day=day,
@@ -2203,32 +2208,17 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def astimezone(self, tz=None):
         return self.instance(self._datetime.astimezone(tz))
 
-    def ctime(self):
-        return self._datetime.ctime()
-
     def isoformat(self, sep='T'):
         return self._datetime.isoformat(sep)
 
     def utcoffset(self):
-        return self._datetime.utcoffset()
+        return self._tzinfo.utcoffset(self)
 
     def tzname(self):
         return self._datetime.tzname()
 
     def dst(self):
         return self._datetime.dst()
-
-    def toordinal(self):
-        return self._datetime.toordinal()
-
-    def weekday(self):
-        return self._datetime.weekday()
-
-    def isoweekday(self):
-        return self._datetime.isoweekday()
-
-    def isocalendar(self):
-        return self._datetime.isocalendar()
 
     def __format__(self, format_spec):
         if len(format_spec) > 0:
@@ -2250,11 +2240,18 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
+        self._year = year
+        self._month = year
+        self._day = year
+        self._hour = year
+        self._minute = year
+        self._second = year
         self._datetime = tz.convert(datetime.datetime(
             year, month, day,
             hour, minute, second, microsecond
         ))
         self._tz = tz
+        self._tzinfo = self._datetime.tzinfo
 
     def __reduce__(self):
         return self.__class__, self._getstate()

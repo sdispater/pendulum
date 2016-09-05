@@ -40,22 +40,11 @@ if hasattr(sys, 'pypy_version_info'):
 
 extensions = []
 if with_extensions:
-    try:
-        from Cython.Build import cythonize
-        USE_CYTHON = True
-    except ImportError:
-        USE_CYTHON = False
-
-    ext = '.pyx' if USE_CYTHON else '.c'
-
     extensions = [
-        Extension('pendulum._extensions.tz.cbreakdown',
-                  ['pendulum/_extensions/tz/cbreakdown' + ext],
+        Extension('pendulum._extensions.tz._local_time',
+                  ['pendulum/_extensions/tz/_local_time.c'],
                   extra_compile_args=['-Wno-unused-function']),
     ]
-
-    if USE_CYTHON:
-        extensions = cythonize(extensions)
 
 
 class BuildFailed(Exception):

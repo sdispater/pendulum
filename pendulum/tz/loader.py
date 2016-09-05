@@ -8,7 +8,7 @@ from datetime import datetime
 from struct import unpack, calcsize
 
 from .. import _compat
-from .breakdown import local_time
+from .local_time import local_time
 from .transition import Transition
 from .transition_type import TransitionType
 
@@ -107,9 +107,9 @@ class Loader(object):
                     pre_transition_type = transition_types[lindexes[i - 1]]
 
                 pre_time = datetime(*local_time(transition_times[i],
-                                                pre_transition_type)[:7])
+                                                pre_transition_type.utc_offset))
                 time = datetime(*local_time(transition_times[i],
-                                            transition_type)[:7])
+                                            transition_type.utc_offset))
                 tr = Transition(
                     transition_times[i],
                     transition_type,

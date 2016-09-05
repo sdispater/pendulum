@@ -129,7 +129,7 @@ class ConstructTest(AbstractTestCase):
         self.assertNotEqual(now.hour, in_paris.hour)
 
     def test_create(self):
-        with self.wrap_with_test_now():
+        with self.wrap_with_test_now(Pendulum(2016, 8, 7, 12, 34, 56)):
             now = Pendulum.now()
             d = Pendulum.create()
             self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 0)
