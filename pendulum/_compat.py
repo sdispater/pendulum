@@ -8,19 +8,18 @@ PY33 = sys.version_info >= (3, 3)
 
 
 if PY2:
-
     long = long
     unicode = unicode
     basestring = basestring
-    FileNotFoundError = IOError
-
 else:
-
-    FileNotFoundError = FileNotFoundError
     long = int
     unicode = str
     basestring = str
 
+if PY33:
+    FileNotFoundError = FileNotFoundError
+else:
+    FileNotFoundError = IOError # cf PEP-3151 
 
 def decode(string, encodings=None):
     if not PY2 and not isinstance(string, bytes):
