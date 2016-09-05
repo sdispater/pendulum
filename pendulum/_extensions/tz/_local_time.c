@@ -12,20 +12,20 @@
 
 /* ------------------------------------------------------------------------- */
 
-const int EPOCH_YEAR = 1970;
+#define EPOCH_YEAR 1970
 
-const int DAYS_PER_N_YEAR = 365;
-const int DAYS_PER_L_YEAR = 366;
+#define DAYS_PER_N_YEAR 365
+#define DAYS_PER_L_YEAR 366
 
-const int USECS_PER_SEC = 1000000;
+#define USECS_PER_SEC 1000000
 
-const int SECS_PER_MIN = 60;
-const int SECS_PER_HOUR = 60 * SECS_PER_MIN;
-const int SECS_PER_DAY = SECS_PER_HOUR * 24;
+#define SECS_PER_MIN 60
+#define SECS_PER_HOUR (60 * SECS_PER_MIN)
+#define SECS_PER_DAY (SECS_PER_HOUR * 24)
 
 // 400-year chunks always have 146097 days (20871 weeks).
-const long DAYS_PER_400_YEARS = 146097L;
-const long SECS_PER_400_YEARS = DAYS_PER_400_YEARS * SECS_PER_DAY;
+#define DAYS_PER_400_YEARS 146097L
+#define SECS_PER_400_YEARS (DAYS_PER_400_YEARS * SECS_PER_DAY)
 
 // The number of seconds in an aligned 100-year chunk, for those that
 // do not begin with a leap year and those that do respectively.
@@ -36,7 +36,7 @@ const long SECS_PER_100_YEARS[2] = {
 
 // The number of seconds in an aligned 4-year chunk, for those that
 // do not begin with a leap year and those that do respectively.
-const long SECS_PER_4_YEARS[2] = {
+const int SECS_PER_4_YEARS[2] = {
     (4 * DAYS_PER_N_YEAR + 0 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
     (3 * DAYS_PER_N_YEAR + 1 * DAYS_PER_L_YEAR) * SECS_PER_DAY
 };
@@ -47,7 +47,7 @@ const int SECS_PER_YEAR[2] = {
     DAYS_PER_L_YEAR * SECS_PER_DAY
 };
 
-const int MONTHS_PER_YEAR = 12;
+#define MONTHS_PER_YEAR 12
 
 // The month lengths in non-leap and leap years respectively.
 const int DAYS_PER_MONTHS[2][13] = {
@@ -63,26 +63,26 @@ const int MONTHS_OFFSETS[2][14] = {
     {-1, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366}
 };
 
-const int TM_SUNDAY = 0;
-const int TM_MONDAY = 1;
-const int TM_TUESDAY = 2;
-const int TM_WEDNESDAY = 3;
-const int TM_THURSDAY = 4;
-const int TM_FRIDAY = 5;
-const int TM_SATURDAY = 6;
+#define TM_SUNDAY 0
+#define TM_MONDAY 1
+#define TM_TUESDAY 2
+#define TM_WEDNESDAY 3
+#define TM_THURSDAY 4
+#define TM_FRIDAY 5
+#define TM_SATURDAY 6
 
-const int TM_JANUARY = 0;
-const int TM_FEBRUARY = 1;
-const int TM_MARCH = 2;
-const int TM_APRIL = 3;
-const int TM_MAY = 4;
-const int TM_JUNE = 5;
-const int TM_JULY = 6;
-const int TM_AUGUST = 7;
-const int TM_SEPTEMBER = 8;
-const int TM_OCTOBER = 9;
-const int TM_NOVEMBER = 10;
-const int TM_DECEMBER = 11;
+#define TM_JANUARY 0
+#define TM_FEBRUARY 1
+#define TM_MARCH 2
+#define TM_APRIL 3
+#define TM_MAY 4
+#define TM_JUNE 5
+#define TM_JULY 6
+#define TM_AUGUST 7
+#define TM_SEPTEMBER 8
+#define TM_OCTOBER 9
+#define TM_NOVEMBER 10
+#define TM_DECEMBER 11
 
 /* ------------------------------------------------------------------------- */
 
