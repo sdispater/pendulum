@@ -7,6 +7,8 @@
 - [Feature] Adds support for pytz tzinfo in `instance()` method
 - [Feature] Changes behavior of `create*()` methods (time now defaults to `00:00:00`)
 - [Fix] Fixes setters and modifiers (start_of/end_of) to properly apply transitions.
+- [Fix] Fixes issue when compiling on 32 bit systems. (Thanks to [guyzmo](https://github.com/guyzmo))
+- [Fix] Fixes NameError Exception on Python 3.2. (Thanks to [guyzmo](https://github.com/guyzmo))
 
 ### 0.5.5
 
