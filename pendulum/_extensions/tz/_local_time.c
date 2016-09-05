@@ -1,6 +1,7 @@
 /* ------------------------------------------------------------------------- */
 
 #include <Python.h>
+#include <stdint.h>
 
 #ifndef PyVarObject_HEAD_INIT
 #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
@@ -25,24 +26,24 @@
 
 // 400-year chunks always have 146097 days (20871 weeks).
 #define DAYS_PER_400_YEARS 146097L
-#define SECS_PER_400_YEARS (DAYS_PER_400_YEARS * SECS_PER_DAY)
+#define SECS_PER_400_YEARS ((int64_t)DAYS_PER_400_YEARS * (int64_t)SECS_PER_DAY)
 
 // The number of seconds in an aligned 100-year chunk, for those that
 // do not begin with a leap year and those that do respectively.
-const long SECS_PER_100_YEARS[2] = {
-    (76L * DAYS_PER_N_YEAR + 24L * DAYS_PER_L_YEAR) * SECS_PER_DAY,
-    (75L * DAYS_PER_N_YEAR + 25L * DAYS_PER_L_YEAR) * SECS_PER_DAY
+const int64_t SECS_PER_100_YEARS[2] = {
+    (uint64_t)(76L * DAYS_PER_N_YEAR + 24L * DAYS_PER_L_YEAR) * SECS_PER_DAY,
+    (uint64_t)(75L * DAYS_PER_N_YEAR + 25L * DAYS_PER_L_YEAR) * SECS_PER_DAY
 };
 
 // The number of seconds in an aligned 4-year chunk, for those that
 // do not begin with a leap year and those that do respectively.
-const int SECS_PER_4_YEARS[2] = {
+const int32_t SECS_PER_4_YEARS[2] = {
     (4 * DAYS_PER_N_YEAR + 0 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
     (3 * DAYS_PER_N_YEAR + 1 * DAYS_PER_L_YEAR) * SECS_PER_DAY
 };
 
 // The number of seconds in non-leap and leap years respectively.
-const int SECS_PER_YEAR[2] = {
+const int32_t SECS_PER_YEAR[2] = {
     DAYS_PER_N_YEAR * SECS_PER_DAY,
     DAYS_PER_L_YEAR * SECS_PER_DAY
 };
@@ -50,7 +51,7 @@ const int SECS_PER_YEAR[2] = {
 #define MONTHS_PER_YEAR 12
 
 // The month lengths in non-leap and leap years respectively.
-const int DAYS_PER_MONTHS[2][13] = {
+const int32_t DAYS_PER_MONTHS[2][13] = {
     {-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
     {-1, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
@@ -58,7 +59,7 @@ const int DAYS_PER_MONTHS[2][13] = {
 // The day offsets of the beginning of each (1-based) month in non-leap
 // and leap years respectively.
 // For example, in a leap year there are 335 days before December.
-const int MONTHS_OFFSETS[2][14] = {
+const int32_t MONTHS_OFFSETS[2][14] = {
     {-1, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
     {-1, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366}
 };
@@ -88,20 +89,20 @@ const int MONTHS_OFFSETS[2][14] = {
 
 PyObject* local_time(PyObject *self, PyObject *args) {
     double unix_time;
-    int utc_offset;
-    int year;
-    long microsecond;
-    long seconds;
-    int leap_year;
-    long sec_per_100years;
-    long sec_per_4years;
-    int sec_per_year;
-    int month;
-    int day;
-    int month_offset;
-    int hour;
-    int minute;
-    int second;
+    int32_t utc_offset;
+    int32_t year;
+    int64_t microsecond;
+    int64_t seconds;
+    int32_t leap_year;
+    int64_t sec_per_100years;
+    int64_t sec_per_4years;
+    int32_t sec_per_year;
+    int32_t month;
+    int32_t day;
+    int32_t month_offset;
+    int32_t hour;
+    int32_t minute;
+    int32_t second;
 
     if (!PyArg_ParseTuple(args, "di", &unix_time, &utc_offset)) {
         PyErr_SetString(
@@ -111,18 +112,18 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     }
 
     year = EPOCH_YEAR;
-    microsecond = (long) (unix_time * 1000000) % 1000000;
+    microsecond = (int64_t) (unix_time * 1000000) % 1000000;
     if (microsecond < 0) {
         microsecond += 1000000;
     }
-    seconds = (long) unix_time;
+    seconds = (int64_t) unix_time;
 
     // Shift to a base year that is 400-year aligned.
     if (seconds >= 0) {
         seconds -= 10957L * SECS_PER_DAY;
         year += 30;  // == 2000;
     } else {
-        seconds += (146097L - 10957L) * SECS_PER_DAY;
+        seconds += (int64_t)(146097L - 10957L) * SECS_PER_DAY;
         year -= 370;  // == 1600;
     }
 
