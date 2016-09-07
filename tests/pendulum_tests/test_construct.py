@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pytz
 from datetime import datetime
 from pendulum import Pendulum
 from pendulum.tz import timezone
@@ -114,6 +115,21 @@ class ConstructTest(AbstractTestCase):
     def test_instance_timezone_aware_datetime(self):
         now = Pendulum.instance(datetime.now(TimezoneInfo.create(timezone('Europe/Paris'), 7200, True, 'EST')))
         self.assertEqual('Europe/Paris', now.timezone_name)
+
+    def test_instance_foreign_tz_aware_datetime(self):
+        for tz in ('America/Chicago', 'UTC', 'Australia/Melbourne'):
+            from_naive = Pendulum.instance(
+                datetime(year=2016, month=1, day=1, hour=0, minute=0, second=0),
+                tz
+            )
+
+            aware_pytz = pytz.timezone(tz).localize(
+                datetime(year=2016, month=1, day=1, hour=0, minute=0, second=0)
+            )
+
+            from_aware_pytz = Pendulum.instance(aware_pytz)
+
+            self.assertEqual(from_aware_pytz.isoformat(), from_naive.isoformat())
 
     def test_now(self):
         now = Pendulum.now()
