@@ -199,6 +199,23 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         tz = dt.tzinfo or tz
 
+        if dt.tzinfo:
+            offset = None
+
+            if hasattr(dt.tzinfo, '_utcoffset'):
+                offset = dt.tzinfo._utcoffset
+            elif hasattr(dt.tzinfo, '_offset'):
+                offset = dt.tzinfo._offset
+
+            if offset is not None:
+                try:
+                    offset_seconds = offset.total_seconds()
+                except AttributeError:
+                    offset_seconds = float((offset.microseconds +
+                        (offset.seconds + offset.days * 24 * 3600) * 10**6)) / 10**6
+
+                tz = FixedTimezone(offset_seconds)
+
         return cls(
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute, dt.second, dt.microsecond,
