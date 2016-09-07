@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <stdint.h>
+#include <datetime.h>
 
 #ifndef PyVarObject_HEAD_INIT
 #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
@@ -213,7 +214,7 @@ static PyMethodDef localtime_methods[] = {
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "_local_time",
+    "_helpers",
     NULL,
     -1,
     localtime_methods,
@@ -232,7 +233,7 @@ moduleinit(void)
 #if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
 #else
-    module = Py_InitModule3("_local_time", localtime_methods, NULL);
+    module = Py_InitModule3("_helpers", localtime_methods, NULL);
 #endif
 
     if (module == NULL)
@@ -242,12 +243,12 @@ moduleinit(void)
 }
 
 #if PY_MAJOR_VERSION < 3
-PyMODINIT_FUNC init_local_time(void)
+PyMODINIT_FUNC init_helpers(void)
 {
     moduleinit();
 }
 #else
-PyMODINIT_FUNC PyInit__local_time(void)
+PyMODINIT_FUNC PyInit__helpers(void)
 {
     return moduleinit();
 }

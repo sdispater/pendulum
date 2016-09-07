@@ -18,10 +18,12 @@ class TimezoneLoaderTest(AbstractTestCase):
         tz_file = os.path.join(local_path, 'fixtures', 'tz', 'Paris')
         (transitions,
          transition_types,
-         default_transition_type) = Loader.load_from_file(tz_file)
+         default_transition_type,
+         utc_transition_times) = Loader.load_from_file(tz_file)
 
         self.assertGreater(len(transitions), 0)
         self.assertGreater(len(transition_types), 0)
+        self.assertGreater(len(utc_transition_times), 0)
         self.assertIsNotNone(default_transition_type)
 
     def test_load_from_file_invalid(self):

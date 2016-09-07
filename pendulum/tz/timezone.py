@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, tzinfo
+from bisect import bisect_right
 
 from .loader import Loader
 from .timezone_info import TimezoneInfo, UTC
-from .local_time import local_time as _local_time
+from ..helpers import local_time as _local_time
 from .transition_type import TransitionType
 from .exceptions import NonExistingTime, AmbiguousTime
 
 
-class Timezone(object):
+class Timezone(tzinfo):
+    """
+    Represents a named timezone.
+
+    It inherits from tzinfo in order to be passed to astimezone().
+    """
 
     _cache = {}
 
@@ -18,11 +24,17 @@ class Timezone(object):
     TRANSITION_ERROR = 'error'
 
     def __init__(self, name, transitions,
-                 transition_types, default_transition_type):
+                 transition_types,
+                 default_transition_type_index,
+                 utc_transition_times):
         self._name = name
         self._transitions = transitions
         self._transition_types = transition_types
-        self._default_transition_type = default_transition_type
+        self._tzinfos = tuple(
+            map(lambda tt: TimezoneInfo(self, tt), transition_types)
+        )
+        self._default_transition_type_index = default_transition_type_index
+        self._utc_transition_times = utc_transition_times
         self._local_hint = {}
 
     @property
@@ -51,12 +63,14 @@ class Timezone(object):
         if name not in cls._cache:
             (transitions,
              transition_types,
-             default_transition_type) = Loader.load(name)
+             default_transition_type_index,
+             utc_transition_times) = Loader.load(name)
 
             zone = cls(name,
                        transitions,
                        transition_types,
-                       default_transition_type)
+                       default_transition_type_index,
+                       utc_transition_times)
 
             cls._cache[name] = zone
 
@@ -93,11 +107,11 @@ class Timezone(object):
 
         if not self._transitions:
             # Use the default offset
-            offset = self._default_transition_type.utc_offset
+            offset = self._tzinfos[self._default_transition_type_index].offset
             unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
 
             return self._to_local_time(
-                unix_time, self._default_transition_type
+                unix_time, self._default_transition_type_index
             )
 
         # Find the first transition after our target date/time
@@ -119,15 +133,15 @@ class Timezone(object):
                 if dt <= pre_tr.pre_time:
                     tr = pre_tr
 
-        transition_type = tr._transition_type
+        transition_type_index = tr._transition_type_index
         if tr is begin:
             if not tr.pre_time < dt:
                 # Before first transition, so use the default offset.
-                offset = self._default_transition_type.utc_offset
+                offset = self._tzinfos[self._default_transition_type_index].offset
                 unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
 
                 return self._to_local_time(
-                    unix_time, self._default_transition_type
+                    unix_time, self._default_transition_type_index
                 )
             else:
                 # tr.pre_time < dt < tr.time
@@ -137,7 +151,7 @@ class Timezone(object):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     transition_type) = self._get_previous_transition_time(tr, dt)
+                     transition_type_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
         elif tr is end:
@@ -152,7 +166,7 @@ class Timezone(object):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     transition_type) = self._get_previous_transition_time(tr, dt)
+                     transition_type_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time + (dt - tr.time).total_seconds()
         else:
@@ -164,7 +178,7 @@ class Timezone(object):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     transition_type) = self._get_previous_transition_time(tr, dt)
+                     transition_type_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
             elif tr.time <= dt <= tr.pre_time:
@@ -175,7 +189,7 @@ class Timezone(object):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     transition_type) = self._get_previous_transition_time(tr, dt)
+                     transition_type_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time + (dt - tr.time).total_seconds()
             else:
@@ -183,9 +197,9 @@ class Timezone(object):
                 # The actual transition type is the previous transition one
 
                 (unix_time,
-                 transition_type) = self._get_previous_transition_time(tr, dt)
+                 transition_type_index) = self._get_previous_transition_time(tr, dt)
 
-        return self._to_local_time(unix_time, transition_type)
+        return self._to_local_time(unix_time, transition_type_index)
 
     def _convert(self, dt):
         """
@@ -201,26 +215,14 @@ class Timezone(object):
                 'Use _normalize() instead.'
             )
 
-        unix_time = self._get_timestamp(dt)
+        return dt.astimezone(self)
 
-        if not self._transitions:
-            transition_type = self._default_transition_type
-        else:
-            idx = max(0, self._find_transition_index(unix_time, '_unix_time') - 1)
-            tr = self._transitions[idx]
-            transition_type = tr.transition_type
+    def _to_local_time(self, unix_time, transition_type_index):
+        tzinfo = self._tzinfos[transition_type_index]
 
-        return self._to_local_time(unix_time, transition_type)
-
-    def _to_local_time(self, unix_time, transition_type):
         local_time = _local_time(
             unix_time,
-            transition_type.utc_offset
-        )
-
-        tzinfo = TimezoneInfo(
-            self,
-            transition_type
+            tzinfo.offset
         )
 
         return local_time + (tzinfo,)
@@ -265,9 +267,58 @@ class Timezone(object):
 
         unix_time = tr.unix_time + diff
 
-        transition_type = tr.pre_transition_type
+        transition_type_index = tr.pre_transition_type_index
 
-        return unix_time, transition_type
+        return unix_time, transition_type_index
+
+    def tzname(self, dt):
+        return self.abbrev
+
+    def utcoffset(self, dt):
+        if dt is None:
+            return None
+        elif dt.tzinfo.tz is not self:
+            dt = self.convert(dt)
+
+            return dt.adjusted_offset
+
+        return dt.utcoffset(dt)
+
+    def dst(self, dt):
+        if dt is None:
+            return None
+        elif dt.tzinfo.tz is not self:
+            dt = self.convert(dt)
+
+            return dt.tzinfo.adjusted_offset
+
+        return dt.tzinfo.dst(dt)
+
+    def fromutc(self, dt):
+        dt = dt.replace(tzinfo=None)
+
+        idx = self._find_utc_index(dt)
+        tr = self._transitions[idx]
+        tzinfo = self._tzinfos[tr._transition_type_index]
+
+        return (dt + tzinfo.adjusted_offset).replace(tzinfo=tzinfo)
+
+    def _find_utc_index(self, dt):
+        lo, hi = 0, len(self._utc_transition_times)
+        hint = self._local_hint.get('_utc')
+        if hint:
+            if dt == hint[0]:
+                return hint[1]
+            elif dt < hint[0]:
+                hi = hint[1] + 1
+            else:
+                lo = hint[1]
+
+        idx = max(0, bisect_right(self._utc_transition_times, dt, lo, hi) - 1)
+
+        self._local_hint['_utc'] = (dt, idx)
+
+        return idx
 
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)
@@ -292,19 +343,20 @@ class FixedTimezone(Timezone):
 
         transition_type = TransitionType(int(offset), False, '')
 
-        super(FixedTimezone, self).__init__(name, [], [], transition_type)
+        super(FixedTimezone, self).__init__(name, [], [], 0, (0,))
+
+        self._tzinfos = (TimezoneInfo(self, transition_type),)
 
 
 class _UTC(Timezone):
 
     def __init__(self):
-        super(_UTC, self).__init__('UTC', [], [], TransitionType(0, False, 'GMT'))
+        super(_UTC, self).__init__('UTC', [], [], 0, (0,))
 
+        self._tzinfos = (TimezoneInfo(self, TransitionType(0, False, 'GMT')),)
         UTC._tz = self
-        self._tzinfo = UTC
 
-    @property
-    def tzinfo(self):
-        return self._tzinfo
+    def fromutc(self, dt):
+        return dt.replace(tzinfo=UTC)
 
 UTCTimezone = _UTC()

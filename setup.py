@@ -41,8 +41,8 @@ if hasattr(sys, 'pypy_version_info'):
 extensions = []
 if with_extensions:
     extensions = [
-        Extension('pendulum._extensions.tz._local_time',
-                  ['pendulum/_extensions/tz/_local_time.c'],
+        Extension('pendulum._extensions._helpers',
+                  ['pendulum/_extensions/_helpers.c'],
                   extra_compile_args=['-Wno-unused-function']),
     ]
 

@@ -42,6 +42,10 @@ class TimezoneInfo(tzinfo):
     def abbrev(self):
         return self._transition_type.abbrev
 
+    @property
+    def adjusted_offset(self):
+        return self._transition_type.adjusted_offset
+
     def tzname(self, dt):
         return self.abbrev
 
@@ -51,7 +55,7 @@ class TimezoneInfo(tzinfo):
         elif dt.tzinfo is not self:
             dt = self.tz.convert(dt)
 
-            return dt.tzinfo._transition_type.adjusted_offset
+            return dt.tzinfo.adjusted_offset
         else:
             return self._transition_type.adjusted_offset
 
@@ -71,9 +75,12 @@ class TimezoneInfo(tzinfo):
         return offset
 
     def fromutc(self, dt):
-        dt = dt.replace(tzinfo=UTC)
+        dt = dt.replace(tzinfo=None)
 
-        return self.tz.convert(dt)
+        idx = max(0, self._tz._find_transition_index(dt, '_utc_time') - 1)
+        tzinfo = self._tz._tzinfos[self._tz._transitions[idx]._transition_type_index]
+
+        return (dt + tzinfo.adjusted_offset).replace(tzinfo=tzinfo)
 
     def __repr__(self):
         return '<TimezoneInfo [{}, {}, {}]>'.format(

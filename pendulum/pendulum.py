@@ -17,7 +17,6 @@ from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .formatting import FORMATTERS
-from .helpers import timestamp
 from ._compat import basestring
 from .constants import (
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
@@ -209,7 +208,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         tz = dt.tzinfo or tz
 
         # Checking for pytz/tzinfo
-        if isinstance(tz, datetime.tzinfo) and not isinstance(tz, TimezoneInfo):
+        if isinstance(tz, datetime.tzinfo) and not isinstance(tz, (Timezone, TimezoneInfo)):
             # pytz
             if hasattr(tz, 'localize'):
                 tz = tz.zone
@@ -279,7 +278,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             if tz is not None and tz != cls._test_now.timezone:
                 test_instance = test_instance.in_timezone(tz)
 
-            return test_instance.copy()
+            return test_instance
 
         if tz is None or tz == 'local':
             dt = datetime.datetime.now()
@@ -574,11 +573,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @property
     def float_timestamp(self):
         if self._timestamp is None:
-            self._timestamp = timestamp(
-                self._year, self._month, self._day,
-                self._hour, self._minute, self._second, self._microsecond,
-                self._tzinfo
-            )
+            self._timestamp = (self._datetime - self._EPOCH).total_seconds()
 
         return self._timestamp
 
