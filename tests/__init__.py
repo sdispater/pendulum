@@ -1,10 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
 from contextlib import contextmanager
+from unittest import TestCase
 
-from pendulum import Pendulum, Interval
-from pendulum.tz import LocalTimezone, timezone, Timezone
+from pendulum import Interval, Pendulum
+from pendulum.tz import LocalTimezone, Timezone, timezone
+
+first = Pendulum(2016, 8, 1, 12, 34, 56)
+second = first.add(days=1)
+third = second.add(days=1)
+fourth = third.add(days=1)
+fifth = fourth.add(days=1)
+sixth = fifth.add(days=1)
+seventh = sixth.add(days=1)
+eighth = seventh.add(days=1)
+ninth = eighth.add(days=1)
+tenth = ninth.add(days=1)
+eleventh = tenth.add(days=1)
+twelfth = eleventh.add(days=1)
+thirteenth = twelfth.add(days=1)
+fourteenth = thirteenth.add(days=1)
 
 
 class AbstractTestCase(TestCase):

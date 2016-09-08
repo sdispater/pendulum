@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import operator
-from .mixins.interval import WordableIntervalMixin
+
 from .interval import BaseInterval, Interval
+from .mixins.interval import WordableIntervalMixin
 
 
 class Period(WordableIntervalMixin, BaseInterval):
@@ -111,6 +112,82 @@ class Period(WordableIntervalMixin, BaseInterval):
         """
         return Interval(seconds=self.total_seconds())
 
+    def exclude_from(self, *periods):
+        """Exclude a period from the list of periods and return the list."""
+
+        excluded_periods = []
+        periods = list(periods)
+
+        for period in periods:
+            excluded_period = self._exclude(other=period)
+            if excluded_period is not None:
+                excluded_periods += excluded_period
+
+        return excluded_periods
+
+    def _exclude(self, other):
+        excluded_periods = []
+        if self.end > other.start:
+            if self.start <= other.start:
+                if self.end < other.end:
+                    other = Period(
+                        start=self.end,
+                        end=other.end
+                    )
+                else:
+                    # Do not add it (remove it)
+                    return None
+            elif self.start < other.end:
+                if self.end < other.end:
+                    # Insert a period before new one, the self splits
+                    # a period in two periods.
+                    excluded_periods.append(
+                        Period(
+                            start=self.end,
+                            end=other.end
+                        )
+                    )
+                    other = Period(
+                        start=other.start,
+                        end=self.start
+                    )
+                else:
+                    other = Period(
+                        start=other.start,
+                        end=self.start
+                    )
+        excluded_periods.append(other)
+        return excluded_periods
+
+    def merge(self, *periods):
+        periods = list(periods)
+        periods.append(self)
+        periods.sort()
+
+        period = periods[0]
+        merged_periods = []
+
+        for i in range(1, len(periods)):
+            next_period = periods[i]
+
+            if next_period.start <= period.end:
+                if next_period.end > period.end:
+                    period = Period(
+                        start=period.start,
+                        end=next_period.end
+                    )
+                continue
+            else:
+                merged_periods.append(
+                    period
+                )
+                period = next_period
+
+        merged_periods.append(
+            period
+        )
+        return merged_periods
+
     def __iter__(self):
         return self.xrange('days')
 
@@ -159,3 +236,8 @@ class Period(WordableIntervalMixin, BaseInterval):
         return '<Period [{} -> {}]>'.format(
             self._start, self._end
         )
+
+    def __lt__(self, other):
+        if self.start == other.start:
+            return self.end < other.end
+        return self.start < other.start
