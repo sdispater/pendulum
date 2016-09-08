@@ -60,7 +60,7 @@ class BaseInterval(timedelta):
         if total < 0:
             m = -1
 
-        self._microseconds = round(total % 1 * 1e6)
+        self._microseconds = abs(round(total % 1 * 1e6)) * m
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
         self._days = abs(int(total)) // SECONDS_PER_DAY * m
 
@@ -292,16 +292,16 @@ class AbsoluteInterval(Interval):
 
     def __new__(cls, days=0, seconds=0, microseconds=0,
                 milliseconds=0, minutes=0, hours=0, weeks=0):
-        self = super(AbsoluteInterval, cls).__new__(
+        self = timedelta.__new__(
             cls, days, seconds, microseconds,
             milliseconds, minutes, hours, weeks
         )
 
         # Intuitive normalization
-        total = self.total_seconds()
+        total = abs(self.total_seconds())
 
-        self._microseconds = abs(round(total % 1 * 1e6))
-        self._seconds = abs(int(total)) % SECONDS_PER_DAY
-        self._days = abs(int(total)) // SECONDS_PER_DAY
+        self._microseconds = round(total % 1 * 1e6)
+        self._seconds = int(total) % SECONDS_PER_DAY
+        self._days = int(total) // SECONDS_PER_DAY
 
         return self

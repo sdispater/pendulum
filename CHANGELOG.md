@@ -9,6 +9,7 @@
 - [Fix] Fixes setters and modifiers (start_of/end_of) to properly apply transitions.
 - [Fix] Fixes issue when compiling on 32 bit systems. (Thanks to [guyzmo](https://github.com/guyzmo))
 - [Fix] Fixes NameError Exception on Python 3.2. (Thanks to [guyzmo](https://github.com/guyzmo))
+- [Fix] Fixes absolute intervals.
 
 ### 0.5.5
 
