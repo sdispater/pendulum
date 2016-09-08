@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.6] - Unreleased
+## [Unreleased]
 
 ### Added
 
@@ -52,11 +52,11 @@
 
 - Adds a small speedup when changing timezones.
 
-## Changed
+### Changed
 
 - Makes `.offset_hours` return a float. 
 
-## Fixed
+### Fixed
 
 - Fixes `TimezoneInfo.utcoffset()` method.
 - Fixes arithmetic operations on intervals not returning intervals.
@@ -167,3 +167,18 @@ This version causes major breaking API changes to simplify it and making it more
 ## [0.1] - 2016-07-04
 
 Initial release
+
+
+[Unreleased]: https://github.com/sdispater/pendulum/compare/0.5.5...HEAD
+[0.5.5]: https://github.com/sdispater/pendulum/releases/tag/0.5.5
+[0.5.4]: https://github.com/sdispater/pendulum/releases/tag/0.5.4
+[0.5.3]: https://github.com/sdispater/pendulum/releases/tag/0.5.3
+[0.5.2]: https://github.com/sdispater/pendulum/releases/tag/0.5.2
+[0.5.1]: https://github.com/sdispater/pendulum/releases/tag/0.5.1
+[0.5]: https://github.com/sdispater/pendulum/releases/tag/0.5
+[0.4]: https://github.com/sdispater/pendulum/releases/tag/0.4
+[0.3.1]: https://github.com/sdispater/pendulum/releases/tag/0.3.1
+[0.3]: https://github.com/sdispater/pendulum/releases/tag/0.3
+[0.2]: https://github.com/sdispater/pendulum/releases/tag/0.2
+[0.1.1]: https://github.com/sdispater/pendulum/releases/tag/0.1.1
+[0.1]: https://github.com/sdispater/pendulum/releases/tag/0.1
