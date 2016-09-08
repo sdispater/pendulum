@@ -214,8 +214,13 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                 tz = tz.zone
             else:
                 # We have no sure way to figure out
-                # the timezone name, we raise an error
-                raise ValueError('Unsupported tzinfo [{}]'.format(tz))
+                # the timezone name, we fallback
+                # on a fixed offset
+                offset = dt.utcoffset()
+                if not offset:
+                    raise ValueError('Unsupported tzinfo [{}]'.format(tz))
+
+                tz = dt.utcoffset().total_seconds() / 3600
 
         return cls(
             dt.year, dt.month, dt.day,
