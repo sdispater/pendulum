@@ -120,6 +120,22 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('12345', f.format(d, 'SSSSS'))
         self.assertEqual('123456', f.format(d, 'SSSSSS'))
 
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 0)
+        self.assertEqual('0', f.format(d, 'S'))
+        self.assertEqual('00', f.format(d, 'SS'))
+        self.assertEqual('000', f.format(d, 'SSS'))
+        self.assertEqual('0000', f.format(d, 'SSSS'))
+        self.assertEqual('00000', f.format(d, 'SSSSS'))
+        self.assertEqual('000000', f.format(d, 'SSSSSS'))
+
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123)
+        self.assertEqual('0', f.format(d, 'S'))
+        self.assertEqual('00', f.format(d, 'SS'))
+        self.assertEqual('000', f.format(d, 'SSS'))
+        self.assertEqual('0001', f.format(d, 'SSSS'))
+        self.assertEqual('00012', f.format(d, 'SSSSS'))
+        self.assertEqual('000123', f.format(d, 'SSSSSS'))
+
     def test_timezone(self):
         f = AlternativeFormatter()
         d = Pendulum(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
