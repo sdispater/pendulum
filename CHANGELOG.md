@@ -7,7 +7,8 @@
 - Adds an option to control transition normalization behavior.
 - Adds a separator keyword argument to `Interval.in_words()` method.
 - Adds an alternative formatter.
-- Adds support for pytz tzinfo in `instance()` method
+- Adds support for pretty much any `tzinfo` instance in the `instance()` method.
+- Adds an `intersect()` method to the `Period` class.
 
 ### Changed
 

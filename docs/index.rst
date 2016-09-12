@@ -1631,3 +1631,59 @@ You can check if a ``Pendulum`` instance is inside a period using the ``in`` key
 
     dt in period
     True
+
+Intersection
+------------
+
+.. versionadded:: 0.6.0
+
+    The ``intersect()`` method has been added.
+
+You can get the intersection of the current ``Period`` instance with others by
+using the ``intersect()`` method.
+
+.. code-block:: python
+
+    import pendulum
+
+
+    monday = pendulum.create(2016, 9, 12)
+    wednesday = monday.next(pendulum.WEDNESDAY)
+    friday = monday.next(pendulum.FRIDAY)
+    saturday = monday.next(pendulum.SATURDAY)
+
+    period = pendulum.period(monday, friday)
+
+    period.intersect(pendulum.period(wednesday, saturday))
+    # <Period [2016-09-14T00:00:00+00:00 -> 2016-09-16T00:00:00+00:00]>
+
+You can also pass multiple period to ``intersect()``.
+
+.. code-block:: python
+
+    import pendulum
+
+
+    monday = pendulum.create(2016, 9, 12)
+    wednesday = monday.next(pendulum.WEDNESDAY)
+    thursday = monday.next(pendulum.THURSDAY)
+    friday = monday.next(pendulum.FRIDAY)
+    saturday = monday.next(pendulum.SATURDAY)
+    sunday = monday.next(pendulum.SUNDAY)
+
+    period = pendulum.period(monday, friday)
+    wednesday_to_saturday = pendulum.period(wednesday, saturday)
+    thursday_to_sunday = pendulum.period(thursday, sunday)
+
+    period.intersect(
+        wednesday_to_saturday,
+        thursday_to_sunday
+    )
+    # <Period [2016-09-15T00:00:00+00:00 -> 2016-09-16T00:00:00+00:00]>
+
+If no intersection exists, ``intersect()`` will return ``None``:
+
+.. code-block:: python
+
+    period.intersect(pendulum.period(saturday, sunday))
+    None
