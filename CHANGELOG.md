@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.6.0] - 2016-09-12
 
 ### Added
 
@@ -170,7 +170,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/0.5.5...HEAD
+[0.6.0]: https://github.com/sdispater/pendulum/releases/tag/0.6.0
 [0.5.5]: https://github.com/sdispater/pendulum/releases/tag/0.5.5
 [0.5.4]: https://github.com/sdispater/pendulum/releases/tag/0.5.4
 [0.5.3]: https://github.com/sdispater/pendulum/releases/tag/0.5.3
