@@ -89,4 +89,14 @@ translations = {
     'from_now': 'בעוד {time}',
     'after': 'אחרי {time}',
     'before': 'לפני {time}',
+
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D [ב]MMMM YYYY HH:mm',
+        'LLL': 'D [ב]MMMM YYYY HH:mm',
+        'LL': 'D [ב]MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
 }

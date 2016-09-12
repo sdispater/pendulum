@@ -5,22 +5,20 @@ from .interval import Interval
 from .period import Period
 
 # Constants
-MONDAY = Pendulum.MONDAY
-TUESDAY = Pendulum.TUESDAY
-WEDNESDAY = Pendulum.WEDNESDAY
-THURSDAY = Pendulum.THURSDAY
-FRIDAY = Pendulum.FRIDAY
-SATURDAY = Pendulum.SATURDAY
-SUNDAY = Pendulum.SUNDAY
+from .constants import (
+    MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY, SUNDAY,
+    YEARS_PER_CENTURY, YEARS_PER_DECADE,
+    MONTHS_PER_YEAR, WEEKS_PER_YEAR, DAYS_PER_WEEK,
+    HOURS_PER_DAY, MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
+    SECONDS_PER_HOUR, SECONDS_PER_DAY
+)
 
-YEARS_PER_CENTURY = Pendulum.YEARS_PER_CENTURY
-YEARS_PER_DECADE = Pendulum.YEARS_PER_DECADE
-MONTHS_PER_YEAR = Pendulum.MONTHS_PER_YEAR
-WEEKS_PER_YEAR = Pendulum.WEEKS_PER_YEAR
-DAYS_PER_WEEK = Pendulum.DAYS_PER_WEEK
-HOURS_PER_DAY = Pendulum.HOURS_PER_DAY
-MINUTES_PER_HOUR = Pendulum.MINUTES_PER_HOUR
-SECONDS_PER_MINUTE = Pendulum.SECONDS_PER_MINUTE
+from .tz.timezone import Timezone
+
+PRE_TRANSITION = Timezone.PRE_TRANSITION
+POST_TRANSITION = Timezone.POST_TRANSITION
+TRANSITION_ERROR = Timezone.TRANSITION_ERROR
 
 # Helpers
 instance = Pendulum.instance
@@ -46,6 +44,10 @@ translator = Pendulum.translator
 set_translator = Pendulum.set_translator
 set_to_string_format = Pendulum.set_to_string_format
 reset_to_string_format = Pendulum.reset_to_string_format
+set_transition_rule = Pendulum.set_transition_rule
+get_transition_rule = Pendulum.get_transition_rule
+set_formatter = Pendulum.set_formatter
+get_formatter = Pendulum.get_formatter
 
 # Standard helpers
 min = Pendulum.min

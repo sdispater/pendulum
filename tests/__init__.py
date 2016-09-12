@@ -4,7 +4,7 @@ from unittest import TestCase
 from contextlib import contextmanager
 
 from pendulum import Pendulum, Interval
-from pendulum.tz import LocalTimezone, timezone
+from pendulum.tz import LocalTimezone, timezone, Timezone
 
 
 class AbstractTestCase(TestCase):
@@ -17,6 +17,8 @@ class AbstractTestCase(TestCase):
     def tearDown(self):
         LocalTimezone.set_local_timezone()
         Pendulum.reset_to_string_format()
+        Pendulum.set_transition_rule(Timezone.POST_TRANSITION)
+        Pendulum.set_formatter()
 
     def assertPendulum(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):

@@ -81,5 +81,14 @@ translations = {
     'hour_before': ['0 stundas', '{count} stundu', '{count} stundas'],
     'minute_before': ['0 minūtes', '{count} minūti', '{count} minūtes'],
     'second_before': ['0 sekundes', '{count} sekundi', '{count} sekundes'],
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'YYYY. [gada] D. MMMM, dddd, HH:mm',
+        'LLL': 'YYYY. [gada] D. MMMM, HH:mm',
+        'LL': 'YYYY. [gada] D. MMMM',
+        'L': 'DD.MM.YYYY.',
+    },
+}

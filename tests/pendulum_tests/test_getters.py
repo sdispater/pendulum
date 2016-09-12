@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
 from pendulum import Pendulum
 from pendulum.tz import timezone
 
@@ -45,7 +46,7 @@ class GettersTest(AbstractTestCase):
 
     def test_day_of_week(self):
         d = Pendulum(2012, 5, 7, 7, 8, 9)
-        self.assertEqual(Pendulum.MONDAY, d.day_of_week)
+        self.assertEqual(pendulum.MONDAY, d.day_of_week)
 
     def test_day_of_year(self):
         d = Pendulum(2012, 5, 7)
@@ -155,15 +156,15 @@ class GettersTest(AbstractTestCase):
         self.assertEqual('-05:00', d.timezone_name)
 
     def test_is_weekday(self):
-        d = Pendulum.now().next(Pendulum.MONDAY)
+        d = Pendulum.now().next(pendulum.MONDAY)
         self.assertTrue(d.is_weekday())
-        d = d.next(Pendulum.SATURDAY)
+        d = d.next(pendulum.SATURDAY)
         self.assertFalse(d.is_weekday())
 
     def test_is_weekend(self):
-        d = Pendulum.now().next(Pendulum.MONDAY)
+        d = Pendulum.now().next(pendulum.MONDAY)
         self.assertFalse(d.is_weekend())
-        d = d.next(Pendulum.SATURDAY)
+        d = d.next(pendulum.SATURDAY)
         self.assertTrue(d.is_weekend())
 
     def test_is_today(self):

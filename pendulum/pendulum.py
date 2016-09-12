@@ -2,8 +2,6 @@
 
 from __future__ import division
 
-import re
-import time as _time
 import math
 import calendar
 import datetime
@@ -18,19 +16,18 @@ from .exceptions import PendulumException
 from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
-from ._compat import PY33, basestring
+from .formatting import FORMATTERS
+from ._compat import basestring
+from .constants import (
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY,
+    YEARS_PER_CENTURY, YEARS_PER_DECADE,
+    MONTHS_PER_YEAR, DAYS_PER_WEEK,
+    MINUTES_PER_HOUR, SECONDS_PER_MINUTE
+)
 
 
 class Pendulum(datetime.datetime, TranslatableMixin):
-
-    # The day constants
-    SUNDAY = 0
-    MONDAY = 1
-    TUESDAY = 2
-    WEDNESDAY = 3
-    THURSDAY = 4
-    FRIDAY = 5
-    SATURDAY = 6
 
     # Names of days of the week
     _days = {
@@ -42,16 +39,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         FRIDAY: 'Friday',
         SATURDAY: 'Saturday'
     }
-
-    # Number of X in Y.
-    YEARS_PER_CENTURY = 100
-    YEARS_PER_DECADE = 10
-    MONTHS_PER_YEAR = 12
-    WEEKS_PER_YEAR = 52
-    DAYS_PER_WEEK = 7
-    HOURS_PER_DAY = 24
-    MINUTES_PER_HOUR = 60
-    SECONDS_PER_MINUTE = 60
 
     # Formats
     ATOM = '%Y-%m-%dT%H:%M:%S%_z'
@@ -90,10 +77,12 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
-    _CUSTOM_FORMATTERS = ['_z', '_t']
-    _FORMATTERS_REGEX = re.compile('%%(%s)' % '|'.join(_CUSTOM_FORMATTERS))
-
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
+
+    _TRANSITION_RULE = Timezone.POST_TRANSITION
+
+    _DEFAULT_FORMATTER = 'classic'
+    _FORMATTER = _DEFAULT_FORMATTER
 
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
@@ -165,29 +154,48 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def __init__(self, year, month, day,
                  hour=0, minute=0, second=0, microsecond=0,
                  tzinfo=UTC):
-        self.__float_timestamp = None
-
-        # If a TimezoneInfo is passed we do not convert:
+        # If a TimezoneInfo is passed we do not convert
         if isinstance(tzinfo, TimezoneInfo):
             self._tz = tzinfo.tz
 
-            self._datetime = datetime.datetime(
+            self._year = year
+            self._month = month
+            self._day = day
+            self._hour = hour
+            self._minute = minute
+            self._second = second
+            self._microsecond = microsecond
+            self._tzinfo = tzinfo
+
+            dt = datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond,
-                tzinfo=tzinfo
+                tzinfo
             )
         else:
             self._tz = self._safe_create_datetime_zone(tzinfo)
 
-            self._datetime = self._tz.convert(datetime.datetime(
+            dt = self._tz.convert(datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond
-            ))
+            ), dst_rule=self._TRANSITION_RULE)
+
+            self._year = dt.year
+            self._month = dt.month
+            self._day = dt.day
+            self._hour = dt.hour
+            self._minute = dt.minute
+            self._second = dt.second
+            self._microsecond = dt.microsecond
+            self._tzinfo = dt.tzinfo
+
+        self._timestamp = None
+        self._datetime = dt
 
     @classmethod
     def instance(cls, dt, tz=UTC):
         """
-        Create a Carbon instance from a datetime one.
+        Create a Pendulum instance from a datetime one.
 
         :param dt: A datetime instance
         :type dt: datetime.datetime
@@ -198,6 +206,21 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         tz = dt.tzinfo or tz
+
+        # Checking for pytz/tzinfo
+        if isinstance(tz, datetime.tzinfo) and not isinstance(tz, (Timezone, TimezoneInfo)):
+            # pytz
+            if hasattr(tz, 'localize'):
+                tz = tz.zone
+            else:
+                # We have no sure way to figure out
+                # the timezone name, we fallback
+                # on a fixed offset
+                offset = dt.utcoffset()
+                if not offset:
+                    raise ValueError('Unsupported tzinfo [{}]'.format(tz))
+
+                tz = dt.utcoffset().total_seconds() / 3600
 
         return cls(
             dt.year, dt.month, dt.day,
@@ -260,16 +283,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             if tz is not None and tz != cls._test_now.timezone:
                 test_instance = test_instance.in_timezone(tz)
 
-            return test_instance.copy()
+            return test_instance
 
         if tz is None or tz == 'local':
             dt = datetime.datetime.now()
         elif tz is UTC or tz == 'UTC':
             dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
         else:
+            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
             tz = cls._safe_create_datetime_zone(tz)
-
-            return cls(*cls._create_datetime(tz))
+            dt = tz.convert(dt)
 
         return cls.instance(dt, tz)
 
@@ -322,42 +345,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return cls.today(tz).subtract(days=1)
 
     @classmethod
-    def _create_datetime(cls, tz, year=None, month=None, day=None,
-                         hour=None, minute=None, second=None, microsecond=None):
-        tzinfo = tz
-
-        if any([year is None, month is None, day is None,
-                hour is None, minute is None, second is None, microsecond is None]):
-            now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-            now = tz.convert(now)
-
-            if year is None:
-                year = now.year
-
-            if month is None:
-                month = now.month
-
-            if day is None:
-                day = now.day
-
-            if hour is None:
-                hour = now.hour
-                minute = now.minute if minute is None else minute
-                second = now.second if second is None else second
-                microsecond = now.microsecond if microsecond is None else microsecond
-            else:
-                minute = 0 if minute is None else minute
-                second = 0 if second is None else second
-                microsecond = 0 if microsecond is None else microsecond
-
-            tzinfo = now.tzinfo
-
-        return (year, month, day,
-                hour, minute, second, microsecond, tzinfo)
-
-    @classmethod
     def create(cls, year=None, month=None, day=None,
-               hour=None, minute=None, second=None, microsecond=None,
+               hour=0, minute=0, second=0, microsecond=0,
                tz=UTC):
         """
         Create a new Carbon instance from a specific date and time.
@@ -378,18 +367,33 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         tz = cls._safe_create_datetime_zone(tz)
 
-        dt = datetime.datetime(*cls._create_datetime(
-            tz, year, month, day, hour, minute, second, microsecond
-        )[:-1])
-        dt = tz.convert(dt)
+        if any([year is None, month is None, day is None]):
+            if cls.has_test_now():
+                now = cls._test_now.in_tz(tz)
+            else:
+                now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+                now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
 
-        return cls.instance(dt)
+            if year is None:
+                year = now.year
+
+            if month is None:
+                month = now.month
+
+            if day is None:
+                day = now.day
+
+        dt = datetime.datetime(
+            year, month, day, hour, minute, second, microsecond
+        )
+
+        return cls.instance(dt, tz)
 
     @classmethod
     def create_from_date(cls, year=None, month=None, day=None, tz='UTC'):
         """
         Create a Pendulum instance from just a date.
-        The time portion is set to now.
+        The time portion is set to 00:00:00.
 
         :type year: int
         :type month: int
@@ -401,8 +405,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return cls.create(year, month, day, tz=tz)
 
     @classmethod
-    def create_from_time(cls, hour=None, minute=None, second=None,
-                         microsecond=None, tz='UTC'):
+    def create_from_time(cls, hour=0, minute=0, second=0,
+                         microsecond=0, tz='UTC'):
         """
         Create a Pendulum instance from just a time.
         The date portion is set to today.
@@ -503,12 +507,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def _setter(self, **kwargs):
         kwargs['tzinfo'] = None
 
-        return self.instance(self._datetime.replace(**kwargs), self._tz)
+        return self._tz.convert(self.replace(**kwargs))
 
     def timezone_(self, tz):
         tz = self._safe_create_datetime_zone(tz)
 
-        return self.instance(self._datetime.replace(tzinfo=None), tz)
+        dt = self.copy()
+        dt._tz = tz
+
+        return dt
 
     def tz_(self, tz):
         return self.timezone_(tz)
@@ -518,43 +525,43 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def year(self):
-        return self._datetime.year
+        return self._year
 
     @property
     def month(self):
-        return self._datetime.month
+        return self._month
 
     @property
     def day(self):
-        return self._datetime.day
+        return self._day
 
     @property
     def hour(self):
-        return self._datetime.hour
+        return self._hour
 
     @property
     def minute(self):
-        return self._datetime.minute
+        return self._minute
 
     @property
     def second(self):
-        return self._datetime.second
+        return self._second
 
     @property
     def microsecond(self):
-        return self._datetime.microsecond
+        return self._microsecond
 
     @property
     def tzinfo(self):
-        return self._datetime.tzinfo
+        return self._tzinfo
 
     @property
     def day_of_week(self):
-        return int(self.format('%w'))
+        return int(self.format('%w', formatter='classic'))
 
     @property
     def day_of_year(self):
-        return int(self.format('%-j'))
+        return int(self.format('%-j', formatter='classic'))
 
     @property
     def week_of_year(self):
@@ -566,31 +573,18 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def timestamp(self):
-        return int(self.float_timestamp - self._datetime.microsecond / 1e6)
+        return int(self.float_timestamp // 1)
 
     @property
     def float_timestamp(self):
-        if self.__float_timestamp is not None:
-            return self.__float_timestamp
+        if self._timestamp is None:
+            self._timestamp = (self._datetime - self._EPOCH).total_seconds()
 
-        # If Python > 3.3 we use the native function
-        # else we emulate it
-        if PY33:
-            self.__float_timestamp = self._datetime.timestamp()
-        elif self._datetime.tzinfo is None:
-            self.__float_timestamp = _time.mktime(
-                (self.year, self.month, self.day,
-                 self.hour, self.minute, self.second,
-                -1, -1, -1)) + self.microsecond / 1e6
-
-        else:
-            self.__float_timestamp = (self._datetime - self._EPOCH).total_seconds()
-
-        return self.__float_timestamp
+        return self._timestamp
 
     @property
     def week_of_month(self):
-        return math.ceil(self.day / self.DAYS_PER_WEEK)
+        return math.ceil(self._day / DAYS_PER_WEEK)
 
     @property
     def age(self):
@@ -598,7 +592,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def quarter(self):
-        return int(math.ceil(self.month / 3))
+        return int(math.ceil(self._month / 3))
 
     @property
     def offset(self):
@@ -607,8 +601,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @property
     def offset_hours(self):
         return (self.get_offset()
-                   / self.SECONDS_PER_MINUTE
-                   / self.MINUTES_PER_HOUR)
+                   / SECONDS_PER_MINUTE
+                   / MINUTES_PER_HOUR)
 
     @property
     def local(self):
@@ -620,7 +614,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     @property
     def is_dst(self):
-        return self._datetime.tzinfo.is_dst
+        return self.tzinfo.is_dst
 
     @property
     def timezone(self):
@@ -638,7 +632,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._tz
 
     def get_offset(self):
-        return int(self._datetime.utcoffset().total_seconds())
+        return int(self._tzinfo.offset)
 
     def with_date(self, year, month, day):
         """
@@ -655,12 +649,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        dt = self._datetime.replace(
-            year=int(year), month=int(month), day=int(day),
-            tzinfo=None
+        dt = self.replace(
+            year=int(year), month=int(month), day=int(day)
         )
 
-        return self.instance(dt, self._tz)
+        return self._tz.convert(dt)
 
     def with_time(self, hour, minute, second, microsecond=0):
         """
@@ -819,6 +812,20 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         cls._weekend_days = value
 
+    # Normalization Rule
+    @classmethod
+    def set_transition_rule(cls, rule):
+        if rule not in [Timezone.PRE_TRANSITION,
+                        Timezone.POST_TRANSITION,
+                        Timezone.TRANSITION_ERROR]:
+            raise ValueError('Invalid transition rule: {}'.format(rule))
+
+        cls._TRANSITION_RULE = rule
+
+    @classmethod
+    def get_transition_rule(cls):
+        return cls._TRANSITION_RULE
+
     # Testing aids
 
     @classmethod
@@ -889,25 +896,28 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         cls._to_string_format = fmt
 
-    def format(self, fmt, locale=None):
+    def format(self, fmt, locale=None, formatter=None):
         """
         Formats the Pendulum instance using the given format.
 
         :param fmt: The format to use
         :type fmt: str
 
+        :param locale: The locale to use
+        :type locale: str or None
+
+        :param formatter: The formatter to use
+        :type formatter: str or None
+
         :rtype: str
         """
-        if not locale:
-            locale = self.get_locale()
+        if formatter is None:
+            formatter = self._FORMATTER
 
-        # Checking for custom formatters
-        fmt = self._FORMATTERS_REGEX.sub(lambda m: self._strftime(m, locale), fmt)
+        if formatter not in FORMATTERS:
+            raise ValueError('Invalid formatter [{}]'.format(formatter))
 
-        # Checking for localizable directives
-        fmt = re.sub('%(a|A|b|B|p)', lambda m: self._localize_directive(m.group(1), locale), fmt)
-
-        return self._datetime.strftime(fmt)
+        return FORMATTERS[formatter].format(self, fmt, locale)
 
     def strftime(self, fmt):
         """
@@ -918,84 +928,35 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        # Checking for custom formatters
-        fmt = self._FORMATTERS_REGEX.sub(self._strftime, fmt)
+        return self.format(fmt, _locale.getlocale()[0], 'classic')
 
-        return self._datetime.strftime(fmt)
-
-    def _localize_directive(self, directive, locale):
+    @classmethod
+    def set_formatter(cls, formatter=None):
         """
-        Localize a native strftime directive.
+        Sets the default string formatter.
 
-        :param directive: The directive to localize
-        :type directive: str
+        :param formatter: The parameter to set as default.
+        :type formatter: str or None
+        """
+        if formatter is None:
+            formatter = cls._DEFAULT_FORMATTER
 
-        :param locale: The locale to use for localization
-        :type locale: str
+        cls._FORMATTER = formatter
+
+    @classmethod
+    def get_formatter(cls):
+        """
+        Gets the currently used string formatter.
 
         :rtype: str
         """
-        if directive == 'a':
-            id = 'days_abbrev'
-            number = self.day_of_week
-        elif directive == 'A':
-            id = 'days'
-            number = self.day_of_week
-        elif directive == 'b':
-            id = 'months_abbrev'
-            number = self.month
-        elif directive == 'B':
-            id = 'months'
-            number = self.month
-        elif directive == 'p':
-            id = 'meridian'
-            number = self.hour
-        else:
-            raise ValueError('Unlocalizable directive [{}]'.format(directive))
-
-        translation = self.translator().transchoice(id, number, locale=locale)
-        if translation == id:
-            return ''
-
-        return translation
-
-    def _strftime(self, m, locale=None):
-        """
-        Handles custom formatters in format string.
-
-        :return: str
-        """
-        if not locale:
-            locale = _locale.getlocale()[0]
-
-        fmt = m.group(1)
-
-        if fmt == '_z':
-            offset = self._datetime.utcoffset() or datetime.timedelta()
-            minutes = offset.total_seconds() / 60
-
-            if minutes >= 0:
-                sign = '+'
-            else:
-                sign = '-'
-
-            hour, minute = divmod(abs(int(minutes)), 60)
-
-            return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
-        elif fmt == '_t':
-            translation = self.translator().transchoice('ordinal', self.day, locale=locale)
-            if translation == 'ordinal':
-                translation = ''
-
-            return translation
-
-        raise ValueError('Unknown formatter %%{}'.format(fmt))
+        return cls._FORMATTER
 
     def __str__(self):
         if self._to_string_format is None:
-            return self._datetime.isoformat()
+            return self.isoformat()
 
-        return self.format(self._to_string_format)
+        return self.format(self._to_string_format, formatter='classic')
 
     def __repr__(self):
         return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
@@ -1006,7 +967,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%Y-%m-%d')
+        return self.format('%Y-%m-%d', formatter='classic')
 
     def to_formatted_date_string(self):
         """
@@ -1014,7 +975,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%b %d, %Y')
+        return self.format('%b %d, %Y', formatter='classic')
 
     def to_time_string(self):
         """
@@ -1022,7 +983,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%H:%M:%S')
+        return self.format('%H:%M:%S', formatter='classic')
 
     def to_datetime_string(self):
         """
@@ -1030,7 +991,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%Y-%m-%d %H:%M:%S')
+        return self.format('%Y-%m-%d %H:%M:%S', formatter='classic')
 
     def to_day_datetime_string(self):
         """
@@ -1038,7 +999,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%a, %b %d, %Y %-I:%M %p')
+        return self.format('%a, %b %d, %Y %-I:%M %p', formatter='classic')
 
     def to_atom_string(self):
         """
@@ -1046,7 +1007,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.ATOM)
+        return self.format(self.ATOM, formatter='classic')
 
     def to_cookie_string(self):
         """
@@ -1054,7 +1015,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.COOKIE)
+        return self.format(self.COOKIE, formatter='classic')
 
     def to_iso8601_string(self, extended=False):
         """
@@ -1066,7 +1027,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if extended:
             fmt = self.ISO8601_EXTENDED
 
-        return self.format(fmt)
+        return self.format(fmt, formatter='classic')
 
     def to_rfc822_string(self):
         """
@@ -1074,7 +1035,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC822)
+        return self.format(self.RFC822, formatter='classic')
 
     def to_rfc850_string(self):
         """
@@ -1082,7 +1043,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC850)
+        return self.format(self.RFC850, formatter='classic')
 
     def to_rfc1036_string(self):
         """
@@ -1090,7 +1051,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC1036)
+        return self.format(self.RFC1036, formatter='classic')
 
     def to_rfc1123_string(self):
         """
@@ -1098,7 +1059,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC1123)
+        return self.format(self.RFC1123, formatter='classic')
 
     def to_rfc2822_string(self):
         """
@@ -1106,7 +1067,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RFC2822)
+        return self.format(self.RFC2822, formatter='classic')
 
     def to_rfc3339_string(self, extended=False):
         """
@@ -1118,7 +1079,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if extended:
             fmt = self.RFC3339_EXTENDED
 
-        return self.format(fmt)
+        return self.format(fmt, formatter='classic')
 
     def to_rss_string(self):
         """
@@ -1126,7 +1087,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.RSS)
+        return self.format(self.RSS, formatter='classic')
 
     def to_w3c_string(self):
         """
@@ -1134,7 +1095,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format(self.W3C)
+        return self.format(self.W3C, formatter='classic')
 
     # Comparisons
     def __eq__(self, other):
@@ -1356,7 +1317,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.SUNDAY
+        return self.day_of_week == SUNDAY
 
     def is_monday(self):
         """
@@ -1364,7 +1325,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.MONDAY
+        return self.day_of_week == MONDAY
 
     def is_tuesday(self):
         """
@@ -1372,7 +1333,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.TUESDAY
+        return self.day_of_week == TUESDAY
 
     def is_wednesday(self):
         """
@@ -1380,7 +1341,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.WEDNESDAY
+        return self.day_of_week == WEDNESDAY
 
     def is_thursday(self):
         """
@@ -1388,7 +1349,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.THURSDAY
+        return self.day_of_week == THURSDAY
 
     def is_friday(self):
         """
@@ -1396,7 +1357,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.FRIDAY
+        return self.day_of_week == FRIDAY
 
     def is_saturday(self):
         """
@@ -1404,7 +1365,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: bool
         """
-        return self.day_of_week == self.SATURDAY
+        return self.day_of_week == SATURDAY
 
     def is_birthday(self, dt=None):
         """
@@ -1748,7 +1709,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - self.year % self.YEARS_PER_DECADE
+        year = self.year - self.year % YEARS_PER_DECADE
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
     def _end_of_decade(self):
@@ -1758,7 +1719,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - self.year % self.YEARS_PER_DECADE + self.YEARS_PER_DECADE - 1
+        year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
         return self.with_date_time(
             year, 12, 31, 23, 59, 59, 999999
@@ -1771,7 +1732,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + 1
+        year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
         return self.with_date_time(year, 1, 1, 0, 0, 0)
 
@@ -1782,7 +1743,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        year = self.year - 1 - (self.year - 1) % self.YEARS_PER_CENTURY + self.YEARS_PER_CENTURY
+        year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
         return self.with_date_time(
             year, 12, 31, 23, 59, 59, 999999
@@ -2089,7 +2050,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        return self.month_(self.MONTHS_PER_YEAR).last_of('month', day_of_week)
+        return self.month_(MONTHS_PER_YEAR).last_of('month', day_of_week)
 
     def _nth_of_year(self, nth, day_of_week):
         """
@@ -2227,25 +2188,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def utctimetuple(self):
         return self._datetime.utctimetuple()
 
-    def date(self):
-        return self._datetime.date()
-
-    def time(self):
-        return self._datetime.time()
-
-    def timetz(self):
-        return self._datetime.timetz()
-
     def replace(self, year=None, month=None, day=None, hour=None,
                 minute=None, second=None, microsecond=None, tzinfo=True):
-        year = year if year is not None else self._datetime.year
-        month = month if month is not None else self._datetime.month
-        day = day if day is not None else self._datetime.day
-        hour = hour if hour is not None else self._datetime.hour
-        minute = minute if minute is not None else self._datetime.minute
-        second = second if second is not None else self._datetime.second
-        microsecond = microsecond if microsecond is not None else self._datetime.microsecond
-        tzinfo = tzinfo if tzinfo is not True else self._datetime.tzinfo
+        year = year if year is not None else self._year
+        month = month if month is not None else self._month
+        day = day if day is not None else self._day
+        hour = hour if hour is not None else self._hour
+        minute = minute if minute is not None else self._minute
+        second = second if second is not None else self._second
+        microsecond = microsecond if microsecond is not None else self._microsecond
+        tzinfo = tzinfo if tzinfo is not True else self._tzinfo
 
         return self.instance(
             self._datetime.replace(year=year, month=month, day=day,
@@ -2256,32 +2208,17 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def astimezone(self, tz=None):
         return self.instance(self._datetime.astimezone(tz))
 
-    def ctime(self):
-        return self._datetime.ctime()
-
     def isoformat(self, sep='T'):
         return self._datetime.isoformat(sep)
 
     def utcoffset(self):
-        return self._datetime.utcoffset()
+        return self._tzinfo.utcoffset(self)
 
     def tzname(self):
         return self._datetime.tzname()
 
     def dst(self):
         return self._datetime.dst()
-
-    def toordinal(self):
-        return self._datetime.toordinal()
-
-    def weekday(self):
-        return self._datetime.weekday()
-
-    def isoweekday(self):
-        return self._datetime.isoweekday()
-
-    def isocalendar(self):
-        return self._datetime.isocalendar()
 
     def __format__(self, format_spec):
         if len(format_spec) > 0:
@@ -2303,11 +2240,18 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
-        self._datetime = datetime.datetime(self._create_datetime(
-            tz, year, month, day,
+        self._year = year
+        self._month = year
+        self._day = year
+        self._hour = year
+        self._minute = year
+        self._second = year
+        self._datetime = tz.convert(datetime.datetime(
+            year, month, day,
             hour, minute, second, microsecond
-        )[:-1])
+        ))
         self._tz = tz
+        self._tzinfo = self._datetime.tzinfo
 
     def __reduce__(self):
         return self.__class__, self._getstate()

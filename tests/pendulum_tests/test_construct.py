@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pytz
 from datetime import datetime
+from dateutil import tz
 from pendulum import Pendulum
 from pendulum.tz import timezone
 from pendulum.tz.timezone_info import TimezoneInfo
@@ -115,8 +117,46 @@ class ConstructTest(AbstractTestCase):
         now = Pendulum.instance(datetime.now(TimezoneInfo.create(timezone('Europe/Paris'), 7200, True, 'EST')))
         self.assertEqual('Europe/Paris', now.timezone_name)
 
+    def test_instance_timezone_aware_datetime_pytz(self):
+        now = Pendulum.instance(
+            datetime.now(pytz.timezone('Europe/Paris'))
+        )
+        self.assertEqual('Europe/Paris', now.timezone_name)
+
+    def test_instance_timezone_aware_datetime_any_tzinfo(self):
+        dt = datetime(2016, 8, 7, 12, 34, 56, tzinfo=tz.gettz('Europe/Paris'))
+        now = Pendulum.instance(dt)
+        self.assertEqual('+02:00', now.timezone_name)
+
     def test_now(self):
         now = Pendulum.now()
         in_paris = Pendulum.now('Europe/Paris')
 
         self.assertNotEqual(now.hour, in_paris.hour)
+
+    def test_create(self):
+        with self.wrap_with_test_now(Pendulum(2016, 8, 7, 12, 34, 56)):
+            now = Pendulum.now()
+            d = Pendulum.create()
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(year=1975)
+            self.assertPendulum(d, 1975, now.month, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(month=11)
+            self.assertPendulum(d, now.year, 11, now.day, 0, 0, 0, 0)
+
+            d = Pendulum.create(day=27)
+            self.assertPendulum(d, now.year, now.month, 27, 0, 0, 0, 0)
+
+            d = Pendulum.create(hour=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 12, 0, 0, 0)
+
+            d = Pendulum.create(minute=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 12, 0, 0)
+
+            d = Pendulum.create(second=12)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 12, 0)
+
+            d = Pendulum.create(microsecond=123456)
+            self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 123456)

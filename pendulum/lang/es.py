@@ -67,6 +67,15 @@ translations = {
     'before': '{time} antes',
 
     # Ordinals
-    'ordinal': 'º'
-}
+    'ordinal': 'º',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'H:mm:ss',
+        'LT': 'H:mm',
+        'LLLL': 'dddd, D [de] MMMM [de] YYYY H:mm',
+        'LLL': 'D [de] MMMM [de] YYYY H:mm',
+        'LL': 'D [de] MMMM [de] YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

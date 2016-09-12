@@ -64,6 +64,15 @@ translations = {
     'ago': '{time} avval',
     'from_now': 'keyin {time}',
     'after': '{time} keyin',
-    'before': '{time} gacha'
-}
+    'before': '{time} gacha',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'D MMMM YYYY, dddd HH:mm',
+        'LLL': 'D MMMM YYYY HH:mm',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

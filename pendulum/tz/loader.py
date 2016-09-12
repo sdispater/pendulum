@@ -8,7 +8,7 @@ from datetime import datetime
 from struct import unpack, calcsize
 
 from .. import _compat
-from .breakdown import local_time
+from ..helpers import local_time
 from .transition import Transition
 from .transition_type import TransitionType
 
@@ -99,23 +99,27 @@ class Loader(object):
             # calculate transition info
             transitions = tuple()
             for i in range(len(transition_times)):
-                transition_type = transition_types[lindexes[i]]
+                transition_type_index = lindexes[i]
 
                 if i == 0:
-                    pre_transition_type = transition_types[lindexes[i]]
+                    pre_transition_type_index = lindexes[i]
                 else:
-                    pre_transition_type = transition_types[lindexes[i - 1]]
+                    pre_transition_type_index = lindexes[i - 1]
 
-                pre_time = datetime(*local_time(transition_times[i],
-                                                pre_transition_type)[:7])
-                time = datetime(*local_time(transition_times[i],
-                                            transition_type)[:7])
+                pre_time = datetime(
+                    *local_time(transition_times[i],
+                                transition_types[pre_transition_type_index].utc_offset)
+                )
+                time = datetime(
+                    *local_time(transition_times[i],
+                                transition_types[transition_type_index].utc_offset)
+                )
                 tr = Transition(
                     transition_times[i],
-                    transition_type,
+                    transition_type_index,
                     pre_time,
                     time,
-                    pre_transition_type
+                    pre_transition_type_index
                 )
 
                 transitions += (tr,)
@@ -129,7 +133,7 @@ class Loader(object):
                 while index != 0 and transition_types[index].is_dst:
                     index -= 1
 
-            while index != len(transitions) and transition_types[index].is_dst:
+            while index != len(transition_types) and transition_types[index].is_dst:
                 index += 1
 
             if index != len(transitions):
@@ -138,5 +142,6 @@ class Loader(object):
         return (
             transitions,
             transition_types,
-            transition_types[default_transition_type_index]
+            default_transition_type_index,
+            tuple(map(lambda tr: datetime.utcfromtimestamp(tr.unix_time), transitions))
         )

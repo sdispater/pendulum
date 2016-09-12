@@ -50,3 +50,10 @@ class ForHumansTest(AbstractTestCase):
             '-1 day',
             pi.in_words()
         )
+
+    def test_separator(self):
+        pi = Interval(days=1177, seconds=7284, microseconds=1000000)
+        self.assertEqual(
+            '168 weeks, 1 day, 2 hours, 1 minute, 25 seconds',
+            pi.in_words(separator=', ')
+        )

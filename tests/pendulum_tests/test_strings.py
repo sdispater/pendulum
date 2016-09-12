@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
 from pendulum import Pendulum
 from .. import AbstractTestCase
 
@@ -111,3 +112,16 @@ class StringsTest(AbstractTestCase):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
                          d.format('%A %-d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr'))
+
+    def test_set_formatter_globally(self):
+        pendulum.set_formatter('alternative')
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual(
+            'Thursday 25th of December 1975 02:15:16 PM -05:00',
+            d.format('dddd Do [of] MMMM YYYY hh:mm:ss A ZZ')
+        )
+        pendulum.set_formatter()
+        self.assertEqual(
+            'dddd Do [of] MMMM YYYY hh:mm:ss A ZZ',
+            d.format('dddd Do [of] MMMM YYYY hh:mm:ss A ZZ')
+        )

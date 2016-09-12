@@ -65,5 +65,17 @@ translations = {
     'from_now': '{time} 후',
     'after': '{time} 뒤',
     'before': '{time} 앞',
-}
 
+    # Meridians
+    'meridian': lambda time: '오전' if 0 <= time[0] < 12 else '오후',
+
+    # Date formats
+    'date_formats': {
+        'LTS': 'A h시 m분 s초',
+        'LT': 'A h시 m분',
+        'LLLL': 'YYYY년 MMMM D일 dddd A h시 m분',
+        'LLL': 'YYYY년 MMMM D일 A h시 m분',
+        'LL': 'YYYY년 MMMM D일',
+        'L': 'YYYY.MM.DD',
+    },
+}

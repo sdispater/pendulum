@@ -64,6 +64,15 @@ translations = {
     'ago': '{time} առաջ',
     'from_now': '{time} հետո',
     'after': '{time} հետո',
-    'before': '{time} առաջ'
-}
+    'before': '{time} առաջ',
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'dddd, D MMMM YYYY թ., HH:mm',
+        'LLL': 'D MMMM YYYY թ., HH:mm',
+        'LL': 'D MMMM YYYY թ.',
+        'L': 'DD.MM.YYYY',
+    },
+}

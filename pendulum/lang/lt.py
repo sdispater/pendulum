@@ -72,5 +72,14 @@ translations = {
     'from_now': 'už {time}',
     'after': 'po {time}',
     'before': '{time} nuo dabar',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH:mm:ss',
+        'LT': 'HH:mm',
+        'LLLL': 'YYYY [m.] MMMM D [d.], dddd, HH:mm [val.]',
+        'LLL': 'YYYY [m.] MMMM D [d.], HH:mm [val.]',
+        'LL': 'YYYY [m.] MMMM D [d.]',
+        'L': 'YYYY-MM-DD',
+    },
+}

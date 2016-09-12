@@ -142,7 +142,7 @@ besides behaving as expected, all accept a timezone parameter and each has their
 The next group of static helpers are the ``from_xxx()`` and ``create()`` helpers.
 Most of the static ``create`` functions allow you to provide
 as many or as few arguments as you want and will provide default values for all others.
-Generally default values are the current date, time or timezone.
+Generally default values are the current date, time set to ``00:00:00`` and ``UTC`` timezone.
 
 .. code-block:: python
 
@@ -150,11 +150,10 @@ Generally default values are the current date, time or timezone.
     pendulum.from_time(hour, minute, second, microsecond, tz)
     pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
-``from_date()`` will default the time to now. ``from_time()`` will default the date to today.
-``create()`` will default any null parameter to the current respective value.
-As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``tzinfo`` instance
-or simply a string timezone value. The only special case for default values occurs when an hour value
-is specified but no minutes or seconds, they will get defaulted to ``0``.
+``from_date()`` will default the time to ``00:00:00``. ``from_time()`` will default the date to today.
+``create()`` will default any null parameter to the current date for the date part and to ``00:00:00`` for time.
+As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``TimezoneInfo`` instance
+or simply a string timezone value.
 
 .. code-block:: python
 
@@ -399,6 +398,28 @@ setting the timestamp will not set the corresponding timezone to UTC.
 String Formatting
 =================
 
+.. versionadded:: 0.6
+
+    Pendulum now supports an alternative formatter. It can either be set locally
+    when calling the ``format()`` method or set globally by using ``pendulum.set_formatter()``.
+
+    .. code-block:: python
+
+        import pendulum
+
+        dt = pendulum.Pendulum(1975, 12, 25, 14, 15, 16)
+        dt.format('YYYY-MM-DD HH:mm:ss', formatter='alternative')
+        '1975-12-25 14:15:16'
+
+        pendulum.set_formatter('alternative')
+        dt.format('YYYY-MM-DD HH:mm:ss')
+        '1975-12-25 14:15:16'
+
+        # Reset to default formatter
+        pendulum.set_formatter()
+
+    See `Alternative Formatter`_ for more information
+
 All the ``to_xxx_string()`` methods rely on the native ``datetime.strftime()`` with additional
 directives available.
 The ``__str__`` magic method is defined which allows ``Pendulum`` instances to be printed
@@ -456,6 +477,11 @@ You can also set the default ``__str__`` format.
 
     For localization support see the `Localization`_ section.
 
+.. warning::
+
+    Even if you have set the default formatter to the alternative one (See `Alternative Formatter`_),
+    the ``__str__`` format must still be in the default format (ie the standard Python format).
+
 Custom Directives
 -----------------
 
@@ -512,6 +538,145 @@ The following are methods to display a ``Pendulum`` instance as a common format:
 
     dt.to_w3c_string()
     '1975-12-25T14:15:16-05:00'
+
+Alternative formatter
+---------------------
+
+Pendulum supports an alternative format when using the ``format()`` method.
+This format is more intuitive to use than the default one and supports more
+directives.
+You can use this format either locally when calling the ``format()`` method
+or globally by using ``pendulum.set_formatter()``.
+
+.. code-block:: python
+
+    import pendulum
+
+    dt = pendulum.Pendulum(1975, 12, 25, 14, 15, 16)
+    dt.format('YYYY-MM-DD HH:mm:ss', formatter='alternative')
+    '1975-12-25 14:15:16'
+
+    pendulum.set_formatter('alternative')
+    dt.format('YYYY-MM-DD HH:mm:ss')
+    '1975-12-25 14:15:16'
+
+    # Reset to default formatter
+    pendulum.set_formatter()
+
+Tokens
+~~~~~~
+
+The following tokens are currently supported:
+
+
++--------------------------------+--------------+-------------------------------------------+
+|                                |Token         |Output                                     |
++================================+==============+===========================================+
+|**Year**                        |YYYY          |2000, 2001, 2002 ... 2012, 2013            |
++--------------------------------+--------------+-------------------------------------------+
+|                                |YY            |00, 01, 02 ... 12, 13                      |
++--------------------------------+--------------+-------------------------------------------+
+|**Quarter**                     |Q             |1 2 3 4                                    |
++--------------------------------+--------------+-------------------------------------------+
+|                                |Qo            |1st 2nd 3rd 4th                            |
++--------------------------------+--------------+-------------------------------------------+
+|**Month**                       |MMMM          |January, February, March ...               |
++--------------------------------+--------------+-------------------------------------------+
+|                                |MMM           |Jan, Feb, Mar ...                          |
++--------------------------------+--------------+-------------------------------------------+
+|                                |MM            |01, 02, 03 ... 11, 12                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |M             |1, 2, 3 ... 11, 12                         |
++--------------------------------+--------------+-------------------------------------------+
+|                                |Mo            |1st 2nd ... 11th 12th                      |
++--------------------------------+--------------+-------------------------------------------+
+|**Day of Year**                 |DDDD          |001, 002, 003 ... 364, 365                 |
++--------------------------------+--------------+-------------------------------------------+
+|                                |DDD           |1, 2, 3 ... 4, 5                           |
++--------------------------------+--------------+-------------------------------------------+
+|**Day of Month**                |DD            |01, 02, 03 ... 30, 31                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |D             |1, 2, 3 ... 30, 31                         |
++--------------------------------+--------------+-------------------------------------------+
+|                                |Do            |1st, 2nd, 3rd ... 30th, 31st               |
++--------------------------------+--------------+-------------------------------------------+
+|**Day of Week**                 |dddd          |Monday, Tuesday, Wednesday ...             |
++--------------------------------+--------------+-------------------------------------------+
+|                                |ddd           |Mon, Tue, Wed ...                          |
++--------------------------------+--------------+-------------------------------------------+
+|                                |d             |1, 2, 3 ... 6, 7                           |
++--------------------------------+--------------+-------------------------------------------+
+|**Hour**                        |HH            |00, 01, 02 ... 23, 24                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |H             |0, 1, 2 ... 23, 24                         |
++--------------------------------+--------------+-------------------------------------------+
+|                                |hh            |01, 02, 03 ... 11, 12                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |h             |1, 2, 3 ... 11, 12                         |
++--------------------------------+--------------+-------------------------------------------+
+|**Minute**                      |mm            |00, 01, 02 ... 58, 59                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |m             |0, 1, 2 ... 58, 59                         |
++--------------------------------+--------------+-------------------------------------------+
+|**Second**                      |ss            |00, 01, 02 ... 58, 59                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |s             |0, 1, 2 ... 58, 59                         |
++--------------------------------+--------------+-------------------------------------------+
+|**Fractional Second**           |S             |0 1 ... 8 9                                |
++--------------------------------+--------------+-------------------------------------------+
+|                                |SS            |00, 01, 02 ... 98, 99                      |
++--------------------------------+--------------+-------------------------------------------+
+|                                |SSS           |000 001 ... 998 999                        |
++--------------------------------+--------------+-------------------------------------------+
+|                                |SSSS ...      |000[0..] 001[0..] ... 998[0..] 999[0..]    |
+|                                |SSSSSS        |                                           |
++--------------------------------+--------------+-------------------------------------------+
+|**AM / PM**                     |A             |AM, PM                                     |
++--------------------------------+--------------+-------------------------------------------+
+|**Timezone**                    |ZZ            |-07:00, -06:00 ... +06:00, +07:00          |
++--------------------------------+--------------+-------------------------------------------+
+|                                |Z             |-0700, -0600 ... +0600, +0700              |
++--------------------------------+--------------+-------------------------------------------+
+|                                |zz            |Asia/Baku, Europe/Warsaw, GMT ...          |
++--------------------------------+--------------+-------------------------------------------+
+|                                |z             |EST CST ... MST PST                        |
++--------------------------------+--------------+-------------------------------------------+
+|**Timestamp**                   |X             |1381685817                                 |
++--------------------------------+--------------+-------------------------------------------+
+
+Localized Formats
+~~~~~~~~~~~~~~~~~
+
+Because preferred formatting differs based on locale,
+there are a few tokens that can be used to format an instance based on its locale.
+
++--------------------------------------------+--------------+-------------------------------------------+
+|**Time**                                    |LT            |8:30 PM                                    |
++--------------------------------------------+--------------+-------------------------------------------+
+|**Time with seconds**                       |LTS           |8:30:25 PM                                 |
++--------------------------------------------+--------------+-------------------------------------------+
+|**Month numeral, day of month, year**       |L             |09/04/1986                                 |
++--------------------------------------------+--------------+-------------------------------------------+
+|**Month name, day of month, year**          |LL            |September 4 1986                           |
++--------------------------------------------+--------------+-------------------------------------------+
+|**Month name, day of month, year, time**    |LLL           |September 4 1986 8:30 PM                   |
++--------------------------------------------+--------------+-------------------------------------------+
+|**Month name, day of month, day of week,**  |LLLL          |Thursday, September 4 1986 8:30 PM         |
+|**year, time**                              |              |                                           |
++--------------------------------------------+--------------+-------------------------------------------+
+
+Escaping Characters
+~~~~~~~~~~~~~~~~~~~
+
+To escape characters in format strings, you can wrap the characters in square brackets.
+
+.. code-block:: python
+
+    import pendulum
+
+    pendulum.now().format('[today] dddd', formatter='alternative')
+    'today Sunday'
+
 
 
 Comparison
@@ -1003,6 +1168,31 @@ given timezone to properly handle any transition that might have occurred.
     '2013-10-27T02:30:00+01:00'
 
 
+.. versionadded:: 0.6
+
+    You can now control the normalization behavior:
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
+
+        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        '2013-03-31T02:30:00+01:00'
+        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        '2013-10-27T02:30:00+02:00'
+
+        pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
+
+        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
+        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
+
+    Note that it only affects instances at creation time. Shifting time around
+    transition times still behaves the same.
+
 Shifting time to transition
 ---------------------------
 
@@ -1058,6 +1248,25 @@ Using the timezone library directly
 Like said in the introduction, you can use the timezone library
 directly with standard ``datetime`` objects but with limitations, especially
 when adding and subtracting time around transition times.
+
+.. versionadded:: 0.6
+
+    You can now control the normalization behavior:
+
+    .. code-block:: python
+
+        from datetime import datetime, timedelta
+        from pendulum import timezone
+
+        tz = timezone('Europe/Paris')
+
+        dt = datetime(2013, 3, 31, 2, 30)
+        dt = tz.convert(dt, dst_rule=tz.PRE_TRANSITION)
+        dt.isoformat()
+        '2013-03-31T02:30:00+01:00'
+        tz.convert(dt, dst_rule=tz.TRANSITION_ERROR)
+        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist.
+
 
 .. code-block:: python
 
@@ -1422,3 +1631,59 @@ You can check if a ``Pendulum`` instance is inside a period using the ``in`` key
 
     dt in period
     True
+
+Intersection
+------------
+
+.. versionadded:: 0.6.0
+
+    The ``intersect()`` method has been added.
+
+You can get the intersection of the current ``Period`` instance with others by
+using the ``intersect()`` method.
+
+.. code-block:: python
+
+    import pendulum
+
+
+    monday = pendulum.create(2016, 9, 12)
+    wednesday = monday.next(pendulum.WEDNESDAY)
+    friday = monday.next(pendulum.FRIDAY)
+    saturday = monday.next(pendulum.SATURDAY)
+
+    period = pendulum.period(monday, friday)
+
+    period.intersect(pendulum.period(wednesday, saturday))
+    # <Period [2016-09-14T00:00:00+00:00 -> 2016-09-16T00:00:00+00:00]>
+
+You can also pass multiple period to ``intersect()``.
+
+.. code-block:: python
+
+    import pendulum
+
+
+    monday = pendulum.create(2016, 9, 12)
+    wednesday = monday.next(pendulum.WEDNESDAY)
+    thursday = monday.next(pendulum.THURSDAY)
+    friday = monday.next(pendulum.FRIDAY)
+    saturday = monday.next(pendulum.SATURDAY)
+    sunday = monday.next(pendulum.SUNDAY)
+
+    period = pendulum.period(monday, friday)
+    wednesday_to_saturday = pendulum.period(wednesday, saturday)
+    thursday_to_sunday = pendulum.period(thursday, sunday)
+
+    period.intersect(
+        wednesday_to_saturday,
+        thursday_to_sunday
+    )
+    # <Period [2016-09-15T00:00:00+00:00 -> 2016-09-16T00:00:00+00:00]>
+
+If no intersection exists, ``intersect()`` will return ``None``:
+
+.. code-block:: python
+
+    period.intersect(pendulum.period(saturday, sunday))
+    None

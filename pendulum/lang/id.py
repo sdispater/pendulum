@@ -65,5 +65,14 @@ translations = {
     'from_now': '{time} dari sekarang',
     'after': '{time} setelah',
     'before': '{time} sebelum',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'HH.mm.ss',
+        'LT': 'HH.mm',
+        'LLLL': 'dddd, D MMMM YYYY [pukul] HH.mm',
+        'LLL': 'D MMMM YYYY [pukul] HH.mm',
+        'LL': 'D MMMM YYYY',
+        'L': 'DD/MM/YYYY',
+    },
+}

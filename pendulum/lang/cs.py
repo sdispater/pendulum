@@ -65,5 +65,14 @@ translations = {
     'from_now': 'za {time}',
     'after': '{time} později',
     'before': '{time} předtím',
-}
 
+    # Date formats
+    'date_formats': {
+        'LTS': 'H:mm:ss',
+        'LT': 'H:mm',
+        'LLLL': 'dddd D. MMMM YYYY H:mm',
+        'LLL': 'D. MMMM YYYY H:mm',
+        'LL': 'D. MMMM YYYY',
+        'L': 'DD.MM.YYYY',
+    },
+}

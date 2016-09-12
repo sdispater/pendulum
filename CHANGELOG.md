@@ -1,87 +1,133 @@
-### 0.5.5
+# Change Log
 
-(September 1st, 2016)
+## [Unreleased]
 
-- [Fix] Fixes local timezone loading for unix systems.
-- [Fix] Fixes potential `AttributeError` in `between` method. (Thanks to [iv597](https://github.com/iv597))
+### Added
 
-### 0.5.4
+- Adds an option to control transition normalization behavior.
+- Adds a separator keyword argument to `Interval.in_words()` method.
+- Adds an alternative formatter.
+- Adds support for pretty much any `tzinfo` instance in the `instance()` method.
+- Adds an `intersect()` method to the `Period` class.
 
-(August 30th, 2016)
+### Changed
 
-- [Fix] Fixes broken previous release.
+- Improves meridians formatting by supporting minutes.
+- Changes behavior of `create*()` methods (time now defaults to `00:00:00`)
 
-(August 29th, 2016)
+### Fixed
 
-- [Fix] Fixes setters and modifiers (start_of/end_of) to properly apply DST transitions.
-- [Fix] Fixes timezone file loading on some installs (See [#34](https://github.com/sdispater/pendulum/issues/34))
+- Fixes setters and modifiers (start_of/end_of) to properly apply transitions.
+- Fixes issue when compiling on 32 bit systems. (Thanks to [guyzmo](https://github.com/guyzmo))
+- Fixes NameError Exception on Python 3.2. (Thanks to [guyzmo](https://github.com/guyzmo))
+- Fixes absolute intervals.
+
+
+## [0.5.5] - 2016-09-01
+
+### Fixed
+
+- Fixes local timezone loading for unix systems.
+- Fixes potential `AttributeError` in `between` method. (Thanks to [iv597](https://github.com/iv597))
+
+
+## [0.5.4] - 2016-08-30
+
+### Fixed
+
+- Fixes broken previous release.
+
+
+## [0.5.3] - 2016-08-29
+
+### Fixed
+
+- Fixes setters and modifiers (start_of/end_of) to properly apply DST transitions.
+- Fixes timezone file loading on some installs (See [#34](https://github.com/sdispater/pendulum/issues/34))
 (Thanks to [mayfield](https://github.com/mayfield))
 
-### 0.5.2
 
-(August 22nd, 2016)
+## [0.5.2] - 2016-08-22
 
-- [Fix] Fixes `TimezoneInfo.utcoffset()` method.
-- [Fix] Fixes arithmetic operations on intervals not returning intervals.
-- [Fix] Allows Pendulum instances comparison to None . (Thanks to [jkeyes](https://github.com/jkeyes))
-- [Feature] Adds a small speedup when changing timezones.
-- [Feature] Makes .offset_hours return a float. 
+### Added
 
+- Adds a small speedup when changing timezones.
 
-### 0.5.1
+### Changed
 
-(August 18th, 2016)
+- Makes `.offset_hours` return a float. 
 
-- [Fix] Fixes `now()` not behaving properly when given a timezone.
-- [Fix] Fixes double file opening when getting local timezone. (Thanks to [yggdr](https://github.com/yggdr))
-- [Fix] Fixes `pt_BR` locale. (Thanks to [YomoFuno](https://github.com/YomoFuno))
-- [Fix] Fixes `pl` locale. (Thanks to [MichalTHEDUDE](https://github.com/MichalTHEDUDE))
+### Fixed
+
+- Fixes `TimezoneInfo.utcoffset()` method.
+- Fixes arithmetic operations on intervals not returning intervals.
+- Allows Pendulum instances comparison to None . (Thanks to [jkeyes](https://github.com/jkeyes))
 
 
-### 0.5
+## [0.5.1] - 2016-08-18
 
-(August 15th, 2016)
+### Fixed
+
+- Fixes `now()` not behaving properly when given a timezone.
+- Fixes double file opening when getting local timezone. (Thanks to [yggdr](https://github.com/yggdr))
+- Fixes `pt_BR` locale. (Thanks to [YomoFuno](https://github.com/YomoFuno))
+- Fixes `pl` locale. (Thanks to [MichalTHEDUDE](https://github.com/MichalTHEDUDE))
+
+
+## [0.5] - 2016-08-15
 
 This version introduces a new timezone library which improves
 timezone switching and behavior around DST transition times.
 
+### Added
+
 - Adds a new timezone library to properly normalize and localize datetimes.
 ``Pendulum`` no longer relies on ``pytz``.
-Check the [Documentation](/docs/#timezone) to see what has changed exactly.
+Check the [Documentation](https://pendulum.eustace.io/docs/#timezones) to see what has changed exactly.
 
 
-### 0.4
-
-(July 26th, 2016)
+## [0.4] - 2016-07-26
 
 This version mostly brings the new ``Period`` class and improves performances overall.
 
+### Added
+
 - Adds the `Period` class, which basically is a datetime-aware interval.
+
+### Changed
+
 - Makes the `format()` method support a `locale` keyword argument.
 - Changes custom directives. `%P` becomes `%_z` and `%t` becomes `%_t`.
-Basically, all new custom directives will be in the form `%_{directive}`
+Basically, all new custom directives will be in the form `%_{directive}`.
+
+### Fixed
+
 - Fixes singular for negative values of intervals.
 
-### 0.3.1
 
-(July 13th, 2016)
+## [0.3.1] - 2016-07-13
+
+### Fixed
 
 - Fixes parsing of string with partial offset.
 
 
-### 0.3
-
-(July 11th, 2016)
+## [0.3] - 2016-07-11
 
 This version causes major breaking API changes to simplify it and making it more intuitive.
 
+### Added
+
 - Improves testing by providing a `test()` contextmanager.
+
+
+### Changed
+
 - Makes passing a naive `datetime` to `instance()` default to `UTC`.
 - Reduces `add_xxx()`/`sub_xxx()` methods to `add(**kwargs)`/`subtract(**kwargs)`.
 - Changes the `for_humans()` method of the `Interval` class to `in_words()` to avoid confusion with the `diff_for_humans()` method.
 - Makes more constants and methods available at module level.
 - Makes the constructor behave like the standard one. No more `Pendulum()`.
-- Fixes "sl" locale.
 - Renames the `to()` method to `in_timezone()`.
 - Removes the comparison methods to just stick with the basic operators.
 - Reduces `first_of_xxx()`/`last_of_xxx()`/`nth_of_xxx()` methods to `first_of(unit)`/`last_of(unit)`/`nth_of(unit, nth)`.
@@ -90,27 +136,50 @@ This version causes major breaking API changes to simplify it and making it more
 - Renames the `PendulumInterval` class to simply `Interval`.
 - Makes the `Pendulum` class immutable.
 
+### Fixed
 
-### 0.2
-
-(July 4th, 2016)
-
-- Makes the `Pendulum` class truly inherits from `datetime`
+- Fixes "sl" locale.
 
 
-### 0.1.1
+## [0.2] - 2016-07-04
 
-(July 4th, 2016)
+### Changed
 
-- Adds support for the `TZ` environment variable
-- Adds `closest()`/`farthest()` comparison methods
-- Makes `set_test_now()` available at module level
+- Makes the `Pendulum` class truly inherits from `datetime`.
+
+
+## [0.1.1] - 2016-07-04
+
+### Added
+
+- Adds support for the `TZ` environment variable.
+- Adds `closest()`/`farthest()` comparison methods.
 - Adds min/max attributes. Renames min/max methods.
+
+### Changed
+
+- Makes `set_test_now()` available at module level.
+
+### Fixed
+
 - Fixes `diff_for_humans()` method when setting locale.
 
 
-### 0.1
+## [0.1] - 2016-07-04
 
-(July 4th, 2016)
+Initial release
 
-- Initial release
+
+[Unreleased]: https://github.com/sdispater/pendulum/compare/0.5.5...HEAD
+[0.5.5]: https://github.com/sdispater/pendulum/releases/tag/0.5.5
+[0.5.4]: https://github.com/sdispater/pendulum/releases/tag/0.5.4
+[0.5.3]: https://github.com/sdispater/pendulum/releases/tag/0.5.3
+[0.5.2]: https://github.com/sdispater/pendulum/releases/tag/0.5.2
+[0.5.1]: https://github.com/sdispater/pendulum/releases/tag/0.5.1
+[0.5]: https://github.com/sdispater/pendulum/releases/tag/0.5
+[0.4]: https://github.com/sdispater/pendulum/releases/tag/0.4
+[0.3.1]: https://github.com/sdispater/pendulum/releases/tag/0.3.1
+[0.3]: https://github.com/sdispater/pendulum/releases/tag/0.3
+[0.2]: https://github.com/sdispater/pendulum/releases/tag/0.2
+[0.1.1]: https://github.com/sdispater/pendulum/releases/tag/0.1.1
+[0.1]: https://github.com/sdispater/pendulum/releases/tag/0.1
