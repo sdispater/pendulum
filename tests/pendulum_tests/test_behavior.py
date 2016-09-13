@@ -63,7 +63,7 @@ class BehaviorTest(AbstractTestCase):
         self.assertEqual(self.d.isocalendar(), self.p.isocalendar())
 
     def test_fromtimestamp(self):
-        self.assertEqual(datetime.fromtimestamp(0), pendulum.fromtimestamp(0))
+        self.assertEqual(datetime.fromtimestamp(0, pendulum.UTC), pendulum.fromtimestamp(0, pendulum.UTC))
 
     def test_utcfromtimestamp(self):
         self.assertEqual(datetime.utcfromtimestamp(0), pendulum.utcfromtimestamp(0))
