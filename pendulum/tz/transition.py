@@ -64,46 +64,9 @@ class Transition(object):
     def time(self):
         return self._time
 
-    def __eq__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own == other
-
-    def __ne__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own != other
-
-    def __lt__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own < other
-
-    def __le__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own <= other
-
-    def __gt__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own > other
-
-    def __ge__(self, other):
-        own, other = self._get_comparables(other)
-
-        return own >= other
-
-    def _get_comparables(self, other):
-        if isinstance(other, Transition):
-            own = self._unix_time
-            other = other._unix_time
-        elif isinstance(other, datetime):
-            own = self._time
-        else:
-            own = self._unix_time
-
-        return own, other
+    @property
+    def utc_time(self):
+        return self._utc_time
 
     def __repr__(self):
         return '<Transition [{} UTC, {} -> {}]>'.format(

@@ -131,9 +131,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if isinstance(zone, Timezone):
             return zone
 
-        if isinstance(zone, TimezoneInfo):
-            return zone.tz
-
         return Timezone.load(zone)
 
     def __new__(cls, year, month, day,
@@ -217,8 +214,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                 # the timezone name, we fallback
                 # on a fixed offset
                 offset = dt.utcoffset()
-                if not offset:
-                    raise ValueError('Unsupported tzinfo [{}]'.format(tz))
 
                 tz = dt.utcoffset().total_seconds() / 3600
 
@@ -249,13 +244,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         dt = dateparser.parse(time)
 
-        if not dt:
-            raise PendulumException('Invalid time string "{}"'.format(time))
-
         if dt.tzinfo:
-            offset = dt.tzinfo.utcoffset(dt)
-            if not offset:
-                offset = datetime.timedelta()
+            offset = dt.utcoffset()
 
             tz = offset.total_seconds() / 3600
 
@@ -940,6 +930,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         if formatter is None:
             formatter = cls._DEFAULT_FORMATTER
+
+        if formatter not in FORMATTERS:
+            raise ValueError('Invalid formatter [{}]'.format(formatter))
 
         cls._FORMATTER = formatter
 
@@ -1836,7 +1829,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
         return getattr(self, '_first_of_{}'.format(unit))(day_of_week)
 
@@ -1857,7 +1850,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
         return getattr(self, '_last_of_{}'.format(unit))(day_of_week)
 
@@ -1881,7 +1874,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :rtype: Pendulum
         """
         if unit not in ['month', 'quarter', 'year']:
-            raise PendulumException('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
@@ -2151,15 +2144,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self.diff(self._get_datetime(other, True), False)
 
     def __add__(self, other):
-        if isinstance(other, datetime.timedelta):
-            return self.add_timedelta(other)
+        if not isinstance(other, datetime.timedelta):
+            return NotImplemented
 
-        result = self._datetime + other
-
-        if isinstance(result, datetime.datetime):
-            return Pendulum.instance(result)
-
-        return result
+        return self.add_timedelta(other)
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -2236,22 +2224,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            self.timezone
+            self.timezone_name
         )
-
-    def __setstate__(self, year, month, day, hour, minute, second, microsecond, tz):
-        self._year = year
-        self._month = year
-        self._day = year
-        self._hour = year
-        self._minute = year
-        self._second = year
-        self._datetime = tz.convert(datetime.datetime(
-            year, month, day,
-            hour, minute, second, microsecond
-        ))
-        self._tz = tz
-        self._tzinfo = self._datetime.tzinfo
 
     def __reduce__(self):
         return self.__class__, self._getstate()

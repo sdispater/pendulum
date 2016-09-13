@@ -92,4 +92,17 @@ class AddTest(AbstractTestCase):
         self.assertEqual(0, d.second)
         self.assertEqual(777777, d.microsecond)
 
+    def test_addition_invalid_type(self):
+        d = Pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
 
+        try:
+            d + 3
+            self.fail()
+        except TypeError:
+            pass
+
+        try:
+            3 + d
+            self.fail()
+        except TypeError:
+            pass

@@ -323,7 +323,6 @@ class Timezone(tzinfo):
     def __repr__(self):
         return '<Timezone [{}]>'.format(self._name)
 
-
 class FixedTimezone(Timezone):
     """
     A timezone that has a fixed offset to UTC.

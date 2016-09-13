@@ -14,9 +14,15 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 1, 2, 3)
         d2 = Pendulum(2000, 1, 1, 1, 2, 3)
         d3 = datetime(2000, 1, 1, 1, 2, 3)
+        d4 = 946688523
+        d5 = 946688523.0
+        d6 = '2000-01-01 01:02:03'
 
         self.assertEqual(d1, d2)
         self.assertEqual(d1, d3)
+        self.assertEqual(d1, d4)
+        self.assertEqual(d1, d5)
+        self.assertEqual(d1, d6)
 
     def test_equal_to_false(self):
         d1 = Pendulum(2000, 1, 1, 1, 2, 3)
@@ -367,6 +373,9 @@ class ComparisonTest(AbstractTestCase):
         closest = instance.closest(dt1, dt2)
         self.assertEqual(dt1, closest)
 
+        closest = instance.closest(dt2, dt1)
+        self.assertEqual(dt1, closest)
+
     def test_closest_with_datetime(self):
         instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
         dt1 = datetime(2015, 5, 28, 11, 0, 0)
@@ -389,6 +398,9 @@ class ComparisonTest(AbstractTestCase):
         closest = instance.farthest(dt1, dt2)
         self.assertEqual(dt2, closest)
 
+        closest = instance.farthest(dt2, dt1)
+        self.assertEqual(dt2, closest)
+
     def test_farthest_with_datetime(self):
         instance = Pendulum.create(2015, 5, 28, 12, 0, 0)
         dt1 = datetime(2015, 5, 28, 11, 0, 0)
@@ -403,3 +415,15 @@ class ComparisonTest(AbstractTestCase):
         dt2 = Pendulum.create(2015, 5, 28, 14, 0, 0)
         closest = instance.farthest(dt1, dt2)
         self.assertEqual(dt2, closest)
+
+    def test_is_same_day(self):
+        dt1 = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt2 = Pendulum.create(2015, 5, 29, 12, 0, 0)
+        dt3 = Pendulum.create(2015, 5, 28, 12, 0, 0)
+        dt4 = datetime(2015, 5, 28, 12, 0, 0)
+        dt5 = datetime(2015, 5, 29, 12, 0, 0)
+
+        self.assertFalse(dt1.is_same_day(dt2))
+        self.assertTrue(dt1.is_same_day(dt3))
+        self.assertTrue(dt1.is_same_day(dt4))
+        self.assertFalse(dt1.is_same_day(dt5))

@@ -202,12 +202,36 @@ class GettersTest(AbstractTestCase):
             d = d.subtract(days=1)
             self.assertTrue(d.is_past())
 
-    def is_same_day(self):
-        d = Pendulum.now()
-        d2 = d.start_of('day')
-        self.assertTrue(d.is_same_day(d2))
+    def test_is_day_of_week(self):
+        d = pendulum.now()
+        monday = d.next(pendulum.MONDAY)
+        tuesday = d.next(pendulum.TUESDAY)
+        wednesday = d.next(pendulum.WEDNESDAY)
+        thursday = d.next(pendulum.THURSDAY)
+        friday = d.next(pendulum.FRIDAY)
+        saturday = d.next(pendulum.SATURDAY)
+        sunday = d.next(pendulum.SUNDAY)
 
-    def is_day_of_week(self):
-        for i in Pendulum._days.values():
-            d = Pendulum.now().next(getattr(Pendulum, i.upper()))
-            self.assertTrue(getattr(d, 'is_{}s'.format(i.lower()))())
+        self.assertTrue(monday.is_monday())
+        self.assertFalse(tuesday.is_monday())
+
+        self.assertTrue(tuesday.is_tuesday())
+        self.assertFalse(wednesday.is_tuesday())
+
+        self.assertTrue(wednesday.is_wednesday())
+        self.assertFalse(thursday.is_wednesday())
+
+        self.assertTrue(thursday.is_thursday())
+        self.assertFalse(friday.is_thursday())
+
+        self.assertTrue(thursday.is_thursday())
+        self.assertFalse(friday.is_thursday())
+
+        self.assertTrue(friday.is_friday())
+        self.assertFalse(saturday.is_friday())
+
+        self.assertTrue(saturday.is_saturday())
+        self.assertFalse(sunday.is_saturday())
+
+        self.assertTrue(sunday.is_sunday())
+        self.assertFalse(monday.is_sunday())

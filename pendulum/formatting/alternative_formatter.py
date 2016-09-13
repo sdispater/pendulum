@@ -168,8 +168,6 @@ class AlternativeFormatter(Formatter):
 
             return '{}{:02d}{}{:02d}'.format(sign, hour, separator, minute)
 
-        return token
-
     def _format_localizable_token(self, dt, token, locale):
         """
         Formats a Pendulum instance
@@ -186,6 +184,9 @@ class AlternativeFormatter(Formatter):
 
         :rtype: str
         """
+        trans_id = ''
+        count = 0
+
         if token == 'MMM':
             count = dt.month
             trans_id = 'months_abbrev'
@@ -219,8 +220,6 @@ class AlternativeFormatter(Formatter):
         elif token == 'A':
             count = (dt.hour, dt.minute)
             trans_id = 'meridian'
-        else:
-            return token
 
         trans = dt.translator().transchoice(trans_id, count, locale=locale)
 
