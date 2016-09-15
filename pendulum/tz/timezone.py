@@ -348,21 +348,27 @@ class FixedTimezone(Timezone):
         super(FixedTimezone, self).__init__(name, [], [], 0, (datetime(1970, 1, 1),))
 
         self._tzinfos = (TimezoneInfo(self, transition_type),)
+        self._tzinfo = self._tzinfos[0]
+
+    def _normalize(self, dt, dst_rule=Timezone.POST_TRANSITION):
+        return dt.replace(tzinfo=self._tzinfo)
 
     def utcoffset(self, dt):
         if dt is None:
             return None
 
-        return self._tzinfos[0].utcoffset(dt)
+        return self._tzinfo.utcoffset(dt)
 
     def dst(self, dt):
         if dt is None:
             return None
 
-        return self._tzinfos[0].dst(dt)
+        return self._tzinfo.dst(dt)
 
     def fromutc(self, dt):
-        return dt.replace(tzinfo=self._tzinfos[0])
+        dt = dt.replace(tzinfo=None)
+
+        return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
 
 
 class _UTC(FixedTimezone):
