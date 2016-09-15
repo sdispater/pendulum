@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `Timezone._convert()` method for fixed timezones.
+
+
 ## [0.6.0] - 2016-09-12
 
 ### Added
@@ -170,6 +177,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/0.6.0...master
 [0.6.0]: https://github.com/sdispater/pendulum/releases/tag/0.6.0
 [0.5.5]: https://github.com/sdispater/pendulum/releases/tag/0.5.5
 [0.5.4]: https://github.com/sdispater/pendulum/releases/tag/0.5.4

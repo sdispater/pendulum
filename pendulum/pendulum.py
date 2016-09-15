@@ -261,7 +261,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Get a Pendulum instance for the current date and time.
 
         :param tz: The timezone
-        :type tz: Timezone or TimezoneInfo or str or None
+        :type tz: Timezone or TimezoneInfo or str or int or None
 
         :rtype: Pendulum
         """
