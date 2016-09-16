@@ -4,7 +4,8 @@
 
 ### Fixed
 
-- Fixed `Timezone._convert()` method for fixed timezones.
+- Fixes `Timezone._convert()` method for fixed timezones.
+- Fixes `instances()` for some `tzinfo`.
 
 
 ## [0.6.0] - 2016-09-12
