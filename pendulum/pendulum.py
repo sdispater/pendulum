@@ -1092,22 +1092,40 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     # Comparisons
     def __eq__(self, other):
-        return self._datetime == self._get_datetime(other)
+        try:
+            return self._datetime == self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def __ne__(self, other):
-        return self._datetime != self._get_datetime(other)
+        try:
+            return self._datetime != self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def __gt__(self, other):
-        return self._datetime > self._get_datetime(other)
+        try:
+            return self._datetime > self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def __ge__(self, other):
-        return self._datetime >= self._get_datetime(other)
+        try:
+            return self._datetime >= self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def __lt__(self, other):
-        return self._datetime < self._get_datetime(other)
+        try:
+            return self._datetime < self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def __le__(self, other):
-        return self._datetime <= self._get_datetime(other)
+        try:
+            return self._datetime <= self._get_datetime(other)
+        except ValueError:
+            return NotImplemented
 
     def between(self, dt1, dt2, equal=True):
         """
@@ -2110,20 +2128,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
             return value if not pendulum else Pendulum.instance(value)
 
-        if isinstance(value, (int, float)):
-            d = Pendulum.create_from_timestamp(value, self.timezone)
-            if pendulum:
-                return d
-
-            return d._datetime
-
-        if isinstance(value, basestring):
-            d = Pendulum.parse(value, tz=self.timezone)
-            if pendulum:
-                return d
-
-            return d._datetime
-
         raise ValueError('Invalid datetime "{}"'.format(value))
 
     def for_json(self):
@@ -2138,10 +2142,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if isinstance(other, datetime.timedelta):
             return self.subtract_timedelta(other)
 
-        return self._get_datetime(other, True).diff(self, False)
+        try:
+            return self._get_datetime(other, True).diff(self, False)
+        except ValueError:
+            return NotImplemented
 
     def __rsub__(self, other):
-        return self.diff(self._get_datetime(other, True), False)
+        try:
+            return self.diff(self._get_datetime(other, True), False)
+        except ValueError:
+            return NotImplemented
 
     def __add__(self, other):
         if not isinstance(other, datetime.timedelta):

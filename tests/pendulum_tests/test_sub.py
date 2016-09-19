@@ -88,3 +88,18 @@ class SubTest(AbstractTestCase):
         self.assertEqual(11, d.minute)
         self.assertEqual(59, d.second)
         self.assertEqual(123456, d.microsecond)
+
+    def test_subtract_invalid_type(self):
+        d = Pendulum(1975, 5, 21, 0, 0, 0)
+
+        try:
+            d - 'ab'
+            self.fail()
+        except TypeError:
+            pass
+
+        try:
+            'ab' - d
+            self.fail()
+        except TypeError:
+            pass

@@ -2,10 +2,15 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `Pendulum` instances can no longer be compared to strings and integers.
+
 ### Fixed
 
 - Fixes `Timezone._convert()` method for fixed timezones.
 - Fixes `instances()` for some `tzinfo`.
+- Fixes comparisons to incompatible objects raising an error.
 
 
 ## [0.6.0] - 2016-09-12

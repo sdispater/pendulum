@@ -14,15 +14,9 @@ class ComparisonTest(AbstractTestCase):
         d1 = Pendulum(2000, 1, 1, 1, 2, 3)
         d2 = Pendulum(2000, 1, 1, 1, 2, 3)
         d3 = datetime(2000, 1, 1, 1, 2, 3)
-        d4 = 946688523
-        d5 = 946688523.0
-        d6 = '2000-01-01 01:02:03'
 
         self.assertEqual(d1, d2)
         self.assertEqual(d1, d3)
-        self.assertEqual(d1, d4)
-        self.assertEqual(d1, d5)
-        self.assertEqual(d1, d6)
 
     def test_equal_to_false(self):
         d1 = Pendulum(2000, 1, 1, 1, 2, 3)
@@ -427,3 +421,9 @@ class ComparisonTest(AbstractTestCase):
         self.assertTrue(dt1.is_same_day(dt3))
         self.assertTrue(dt1.is_same_day(dt4))
         self.assertFalse(dt1.is_same_day(dt5))
+
+    def test_comparison_to_unsupported(self):
+        dt1 = Pendulum.now()
+
+        self.assertFalse(dt1 == 'test')
+        self.assertFalse(dt1 in ['test'])
