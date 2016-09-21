@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Transition(object):
@@ -15,6 +15,8 @@ class Transition(object):
         - the local time before the transition
         - the local time after the transition.
     """
+
+    _epoch = datetime.utcfromtimestamp(0)
 
     def __init__(self, unix_time,
                  transition_type_index, pre_time, time,
@@ -41,7 +43,9 @@ class Transition(object):
         self._transition_type_index = transition_type_index
         self._pre_time = pre_time
         self._time = time
-        self._utc_time = datetime.utcfromtimestamp(unix_time)
+        # We can't directly make datetime.utcfromtimestamp(unix_time)
+        # since it will fail on Windows for negative timestamps.
+        self._utc_time = self._epoch + timedelta(seconds=unix_time)
         self._pre_transition_type_index = pre_transition_type_index
 
     @property
