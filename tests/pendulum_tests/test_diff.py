@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from contextlib import contextmanager
 from pendulum import Pendulum
 
@@ -569,3 +570,11 @@ class DiffTest(AbstractTestCase):
     def test_seconds_until_end_of_day(self):
         d = Pendulum.create(2016, 7, 5, 12, 32, 25, 0)
         self.assertEqual(34 + 27 * 60 + 11 * 3600, d.seconds_until_end_of_day())
+
+    def test_subtraction(self):
+        d = Pendulum.create(2016, 7, 5, 12, 32, 25, 0)
+        future_dt = datetime(2016, 7, 5, 13, 32, 25, 0)
+        future = d.add(hours=1)
+
+        self.assertEqual(3600, (future - d).total_seconds())
+        self.assertEqual(3600, (future_dt - d).total_seconds())

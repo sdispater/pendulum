@@ -129,10 +129,15 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual('+02:00', now.timezone_name)
 
     def test_now(self):
-        now = Pendulum.now()
+        now = Pendulum.now('America/Toronto')
         in_paris = Pendulum.now('Europe/Paris')
 
         self.assertNotEqual(now.hour, in_paris.hour)
+
+    def test_now_with_fixed_offset(self):
+        now = Pendulum.now(6)
+
+        self.assertEqual(now.timezone_name, '+06:00')
 
     def test_create(self):
         with self.wrap_with_test_now(Pendulum(2016, 8, 7, 12, 34, 56)):

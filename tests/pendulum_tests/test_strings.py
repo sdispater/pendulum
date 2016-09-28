@@ -115,6 +115,8 @@ class StringsTest(AbstractTestCase):
 
     def test_set_formatter_globally(self):
         pendulum.set_formatter('alternative')
+        self.assertEqual('alternative', pendulum.get_formatter())
+
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual(
             'Thursday 25th of December 1975 02:15:16 PM -05:00',
@@ -125,3 +127,21 @@ class StringsTest(AbstractTestCase):
             'dddd Do [of] MMMM YYYY hh:mm:ss A ZZ',
             d.format('dddd Do [of] MMMM YYYY hh:mm:ss A ZZ')
         )
+
+    def test_invalid_formatter(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertRaises(ValueError, d.format, '', formatter='invalid')
+        self.assertRaises(ValueError, pendulum.set_formatter, 'invalid')
+
+    def test_strftime(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual('25', d.strftime('%d'))
+
+    def test_for_json(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual('1975-12-25T14:15:16-05:00', d.for_json())
+
+    def test_format(self):
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
+        self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
+        self.assertEqual('1975', '{:%Y}'.format(d))

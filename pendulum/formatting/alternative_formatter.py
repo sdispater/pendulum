@@ -75,12 +75,12 @@ class AlternativeFormatter(Formatter):
         's': lambda dt: '{:d}'.format(dt.second),
 
         # Fractional second
-        'S': lambda dt: '{:1d}'.format(dt.microsecond // 100000),
-        'SS': lambda dt: '{:2d}'.format(dt.microsecond // 10000),
-        'SSS': lambda dt: '{:3d}'.format(dt.microsecond // 1000),
-        'SSSS': lambda dt: '{:4d}'.format(dt.microsecond // 100),
-        'SSSSS': lambda dt: '{:5d}'.format(dt.microsecond // 10),
-        'SSSSSS': lambda dt: '{:6d}'.format(dt.microsecond),
+        'S': lambda dt: '{:01d}'.format(dt.microsecond // 100000),
+        'SS': lambda dt: '{:02d}'.format(dt.microsecond // 10000),
+        'SSS': lambda dt: '{:03d}'.format(dt.microsecond // 1000),
+        'SSSS': lambda dt: '{:04d}'.format(dt.microsecond // 100),
+        'SSSSS': lambda dt: '{:05d}'.format(dt.microsecond // 10),
+        'SSSSSS': lambda dt: '{:06d}'.format(dt.microsecond),
 
         # Timestamp
         'X': lambda dt: '{:d}'.format(dt.timestamp),
@@ -168,8 +168,6 @@ class AlternativeFormatter(Formatter):
 
             return '{}{:02d}{}{:02d}'.format(sign, hour, separator, minute)
 
-        return token
-
     def _format_localizable_token(self, dt, token, locale):
         """
         Formats a Pendulum instance
@@ -186,6 +184,9 @@ class AlternativeFormatter(Formatter):
 
         :rtype: str
         """
+        trans_id = ''
+        count = 0
+
         if token == 'MMM':
             count = dt.month
             trans_id = 'months_abbrev'
@@ -219,8 +220,6 @@ class AlternativeFormatter(Formatter):
         elif token == 'A':
             count = (dt.hour, dt.minute)
             trans_id = 'meridian'
-        else:
-            return token
 
         trans = dt.translator().transchoice(trans_id, count, locale=locale)
 

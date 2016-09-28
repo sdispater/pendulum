@@ -205,3 +205,13 @@ class StartEndOfTest(AbstractTestCase):
         self.assertEqual(7200, d.end_of('month').offset)
         self.assertEqual(7200, d.end_of('day').offset)
         self.assertEqual(3600, d.end_of('year').offset)
+
+    def test_start_of_invalid_unit(self):
+        d = Pendulum(2013, 3, 31, tzinfo='Europe/Paris')
+
+        self.assertRaises(ValueError, d.start_of, 'invalid')
+
+    def test_end_of_invalid_unit(self):
+        d = Pendulum(2013, 3, 31, tzinfo='Europe/Paris')
+
+        self.assertRaises(ValueError, d.end_of, 'invalid')

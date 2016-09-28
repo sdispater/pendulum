@@ -113,6 +113,11 @@ class DayOfWeekModifiersTest(AbstractTestCase):
 
         self.assertRaises(PendulumException, d.nth_of, 'month', 55, pendulum.MONDAY)
 
+    def test_nth_of_month_first(self):
+        d = Pendulum.create_from_date(1975, 12, 5).nth_of('month', 1, pendulum.MONDAY)
+
+        self.assertPendulum(d, 1975, 12, 1, 0, 0, 0)
+
     def test_2nd_monday_of_month(self):
         d = Pendulum.create_from_date(1975, 12, 5).nth_of('month', 2, pendulum.MONDAY)
 
@@ -165,6 +170,11 @@ class DayOfWeekModifiersTest(AbstractTestCase):
 
         self.assertRaises(PendulumException, d.nth_of, 'quarter', 55, pendulum.MONDAY)
 
+    def test_nth_of_quarter_first(self):
+        d = Pendulum.create_from_date(1975, 12, 5).nth_of('quarter', 1, pendulum.MONDAY)
+
+        self.assertPendulum(d, 1975, 10, 6, 0, 0, 0)
+
     def test_nth_of_quarter_from_a_day_that_will_not_exist_in_the_first_month(self):
         d = Pendulum.create_from_date(2014, 5, 31).nth_of('quarter', 2, pendulum.MONDAY)
         self.assertPendulum(d, 2014, 4, 14, 0, 0, 0)
@@ -206,6 +216,11 @@ class DayOfWeekModifiersTest(AbstractTestCase):
 
         self.assertRaises(PendulumException, d.nth_of, 'year', 55, pendulum.MONDAY)
 
+    def test_nth_of_year_first(self):
+        d = Pendulum.create_from_date(1975, 12, 5).nth_of('year', 1, pendulum.MONDAY)
+
+        self.assertPendulum(d, 1975, 1, 6, 0, 0, 0)
+
     def test_2nd_monday_of_year(self):
         d = Pendulum.create_from_date(1975, 8, 5).nth_of('year', 2, pendulum.MONDAY)
         self.assertPendulum(d, 1975, 1, 13, 0, 0, 0)
@@ -217,3 +232,18 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_7th_thursday_of_year(self):
         d = Pendulum.create_from_date(1975, 8, 31).nth_of('year', 7, pendulum.THURSDAY)
         self.assertPendulum(d, 1975, 2, 13, 0, 0, 0)
+
+    def test_first_of_invalid_unit(self):
+        d = Pendulum.create(1975, 8, 5)
+
+        self.assertRaises(ValueError, d.first_of, 'invalid')
+
+    def test_last_of_invalid_unit(self):
+        d = Pendulum.create(1975, 8, 5)
+
+        self.assertRaises(ValueError, d.last_of, 'invalid')
+
+    def test_nth_of_invalid_unit(self):
+        d = Pendulum.create(1975, 8, 5)
+
+        self.assertRaises(ValueError, d.nth_of, 'invalid', 3, pendulum.MONDAY)

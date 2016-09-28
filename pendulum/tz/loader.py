@@ -143,5 +143,5 @@ class Loader(object):
             transitions,
             transition_types,
             default_transition_type_index,
-            tuple(map(lambda tr: datetime.utcfromtimestamp(tr.unix_time), transitions))
+            tuple(map(lambda tr: tr.utc_time, transitions))
         )

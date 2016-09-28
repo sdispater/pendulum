@@ -2,10 +2,23 @@
 
 from pendulum import Pendulum
 from pendulum.formatting.alternative_formatter import AlternativeFormatter
+from pendulum.lang import TRANSLATIONS
 from .. import AbstractTestCase
 
 
 class ClassicFormatterTest(AbstractTestCase):
+
+    def setUp(self):
+        super(ClassicFormatterTest, self).setUp()
+
+        # Add dummy locale for testing purposes
+        TRANSLATIONS['dummy'] = {}
+
+    def tearDown(self):
+        super(ClassicFormatterTest, self).tearDown()
+
+        # Add dummy locale for testing purposes
+        del TRANSLATIONS['dummy']
 
     def test_year_tokens(self):
         d = Pendulum(2009, 1, 14, 15, 25, 50, 123456)
@@ -69,6 +82,12 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('241e', f.format(d, 'DDDo', locale='fr'))
         self.assertEqual('244e', f.format(d.add(days=3), 'DDDo', locale='fr'))
 
+    def test_week_of_year(self):
+        f = AlternativeFormatter()
+        d = Pendulum(2016, 8, 28)
+
+        self.assertEqual('34th', f.format(d, 'wo'))
+
     def test_day_of_week(self):
         f = AlternativeFormatter()
         d = Pendulum(2016, 8, 28)
@@ -81,6 +100,8 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('dim', f.format(d, 'dd', locale='fr'))
         self.assertEqual('dim', f.format(d, 'ddd', locale='fr'))
         self.assertEqual('dimanche', f.format(d, 'dddd', locale='fr'))
+
+        self.assertEqual('0th', f.format(d, 'do'))
 
     def test_am_pm(self):
         f = AlternativeFormatter()
@@ -120,6 +141,22 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('12345', f.format(d, 'SSSSS'))
         self.assertEqual('123456', f.format(d, 'SSSSSS'))
 
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 0)
+        self.assertEqual('0', f.format(d, 'S'))
+        self.assertEqual('00', f.format(d, 'SS'))
+        self.assertEqual('000', f.format(d, 'SSS'))
+        self.assertEqual('0000', f.format(d, 'SSSS'))
+        self.assertEqual('00000', f.format(d, 'SSSSS'))
+        self.assertEqual('000000', f.format(d, 'SSSSSS'))
+
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123)
+        self.assertEqual('0', f.format(d, 'S'))
+        self.assertEqual('00', f.format(d, 'SS'))
+        self.assertEqual('000', f.format(d, 'SSS'))
+        self.assertEqual('0001', f.format(d, 'SSSS'))
+        self.assertEqual('00012', f.format(d, 'SSSSS'))
+        self.assertEqual('000123', f.format(d, 'SSSSSS'))
+
     def test_timezone(self):
         f = AlternativeFormatter()
         d = Pendulum(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
@@ -139,6 +176,10 @@ class ClassicFormatterTest(AbstractTestCase):
         d = Pendulum(2016, 1, 28, 7, 3, 6, 123456, 'Europe/Paris')
         self.assertEqual('+0100', f.format(d, 'Z'))
         self.assertEqual('+01:00', f.format(d, 'ZZ'))
+
+        d = Pendulum(2016, 1, 28, 7, 3, 6, 123456, 'America/Guayaquil')
+        self.assertEqual('-0500', f.format(d, 'Z'))
+        self.assertEqual('-05:00', f.format(d, 'ZZ'))
 
     def test_timestamp(self):
         f = AlternativeFormatter()
@@ -168,3 +209,20 @@ class ClassicFormatterTest(AbstractTestCase):
         d = Pendulum(2016, 8, 28)
         self.assertEqual('YYYY 2016 [2016]', f.format(d, '[YYYY] YYYY \[YYYY\]'))
         self.assertEqual('D 28 \\28', f.format(d, '\D D \\\D'))
+
+    def test_date_formats_missing(self):
+        f = AlternativeFormatter()
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123456)
+
+        self.assertEqual('7:03 AM', f.format(d, 'LT', locale='dummy'))
+        self.assertEqual('7:03:06 AM', f.format(d, 'LTS', locale='dummy'))
+        self.assertEqual('08/28/2016', f.format(d, 'L', locale='dummy'))
+        self.assertEqual('August 28, 2016', f.format(d, 'LL', locale='dummy'))
+        self.assertEqual('August 28, 2016 7:03 AM', f.format(d, 'LLL', locale='dummy'))
+        self.assertEqual('Sunday, August 28, 2016 7:03 AM', f.format(d, 'LLLL', locale='dummy'))
+
+    def test_unknown_token(self):
+        f = AlternativeFormatter()
+        d = Pendulum(2016, 8, 28, 7, 3, 6, 123456)
+
+        self.assertEqual('J', f.format(d, 'J'))

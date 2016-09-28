@@ -329,7 +329,7 @@ class FixedTimezone(Timezone):
     A timezone that has a fixed offset to UTC.
     """
 
-    def __init__(self, offset):
+    def __init__(self, offset, name=None, transition_type=None):
         """
         :param offset: offset to UTC in seconds.
         :type offset: int
@@ -339,21 +339,43 @@ class FixedTimezone(Timezone):
         minutes = offset / 60
         hour, minute = divmod(abs(int(minutes)), 60)
 
-        name = '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
+        if not name:
+            name = '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
 
-        transition_type = TransitionType(int(offset), False, '')
+        if not transition_type:
+            transition_type = TransitionType(int(offset), False, '')
 
-        super(FixedTimezone, self).__init__(name, [], [], 0, (0,))
+        super(FixedTimezone, self).__init__(name, [], [], 0, (datetime(1970, 1, 1),))
 
         self._tzinfos = (TimezoneInfo(self, transition_type),)
+        self._tzinfo = self._tzinfos[0]
+
+    def _normalize(self, dt, dst_rule=Timezone.POST_TRANSITION):
+        return dt.replace(tzinfo=self._tzinfo)
+
+    def utcoffset(self, dt):
+        if dt is None:
+            return None
+
+        return self._tzinfo.utcoffset(dt)
+
+    def dst(self, dt):
+        if dt is None:
+            return None
+
+        return self._tzinfo.dst(dt)
+
+    def fromutc(self, dt):
+        dt = dt.replace(tzinfo=None)
+
+        return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
 
 
-class _UTC(Timezone):
+class _UTC(FixedTimezone):
 
     def __init__(self):
-        super(_UTC, self).__init__('UTC', [], [], 0, (0,))
+        super(_UTC, self).__init__(0, 'UTC', TransitionType(0, False, 'GMT'))
 
-        self._tzinfos = (TimezoneInfo(self, TransitionType(0, False, 'GMT')),)
         UTC._tz = self
 
     def fromutc(self, dt):

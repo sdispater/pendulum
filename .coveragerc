@@ -1,2 +1,6 @@
 [run]
-omit = pendulum/lang/*,pendulum/_compat.py,pendulum/version.py
+omit = pendulum/lang/*,
+    pendulum/_compat.py,
+    pendulum/version.py,
+    pendulum/_extensions/*,
+    pendulum/formatting/formatter.py

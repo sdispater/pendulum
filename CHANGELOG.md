@@ -1,6 +1,26 @@
 # Change Log
 
-## [Unreleased]
+## [0.6.2] - 2016-09-26
+
+### Fixed
+
+- Fixes timezones loading on Windows
+
+
+## [0.6.1] - 2016-09-19
+
+### Changed
+
+- `Pendulum` instances can no longer be compared to strings and integers.
+
+### Fixed
+
+- Fixes `Timezone._convert()` method for fixed timezones.
+- Fixes `instances()` for some `tzinfo`.
+- Fixes comparisons to incompatible objects raising an error.
+
+
+## [0.6.0] - 2016-09-12
 
 ### Added
 
@@ -170,7 +190,9 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/0.5.5...HEAD
+[0.6.2]: https://github.com/sdispater/pendulum/releases/tag/0.6.2
+[0.6.1]: https://github.com/sdispater/pendulum/releases/tag/0.6.1
+[0.6.0]: https://github.com/sdispater/pendulum/releases/tag/0.6.0
 [0.5.5]: https://github.com/sdispater/pendulum/releases/tag/0.5.5
 [0.5.4]: https://github.com/sdispater/pendulum/releases/tag/0.5.4
 [0.5.3]: https://github.com/sdispater/pendulum/releases/tag/0.5.3

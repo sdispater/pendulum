@@ -138,3 +138,10 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(0, d.hour)
         self.assertEqual(41, d.minute)
         self.assertEqual(20, d.second)
+
+    def test_with_timestamp(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20)
+        new = d.with_timestamp(0)
+
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, 1970, 1, 1, 0, 0, 0)

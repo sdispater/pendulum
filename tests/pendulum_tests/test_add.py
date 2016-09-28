@@ -2,6 +2,7 @@
 
 from .. import AbstractTestCase
 
+import pendulum
 from datetime import timedelta
 from pendulum import Pendulum
 
@@ -92,4 +93,25 @@ class AddTest(AbstractTestCase):
         self.assertEqual(0, d.second)
         self.assertEqual(777777, d.microsecond)
 
+    def test_addition_invalid_type(self):
+        d = Pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
 
+        try:
+            d + 3
+            self.fail()
+        except TypeError:
+            pass
+
+        try:
+            3 + d
+            self.fail()
+        except TypeError:
+            pass
+
+    def test_add_to_fixed_timezones(self):
+        dt = pendulum.parse('2015-03-08T01:00:00-06:00')
+        dt = dt.add(weeks=1)
+
+        self.assertPendulum(dt, 2015, 3, 15, 1, 0, 0)
+        self.assertEqual('-06:00', dt.timezone_name)
+        self.assertEqual(-6 * 3600, dt.offset)
