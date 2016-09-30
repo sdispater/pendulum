@@ -61,6 +61,7 @@ class FluentSettersTest(AbstractTestCase):
         new = d.timezone_('Europe/Paris')
         self.assertIsInstanceOfPendulum(new)
         self.assertEqual('Europe/Paris', new.timezone_name)
+        self.assertEqual('Europe/Paris', new.tzinfo.tz.name)
 
     def test_fluid_tz_setter(self):
         d = Pendulum.create(2016, 7, 2, 0, 41, 20)

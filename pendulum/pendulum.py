@@ -17,7 +17,6 @@ from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .formatting import FORMATTERS
-from ._compat import basestring
 from .constants import (
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
     THURSDAY, FRIDAY, SATURDAY,
@@ -500,12 +499,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._tz.convert(self.replace(**kwargs))
 
     def timezone_(self, tz):
-        tz = self._safe_create_datetime_zone(tz)
-
-        dt = self.copy()
-        dt._tz = tz
-
-        return dt
+        return self.__class__(
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond,
+            tz
+        )
 
     def tz_(self, tz):
         return self.timezone_(tz)
