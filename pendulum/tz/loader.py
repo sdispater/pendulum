@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import inspect
-import os
-import pytz
 
 from datetime import datetime
 from struct import unpack, calcsize
+from pytzdata import tz_file
+from pytzdata.exceptions import TimezoneNotFound
 
 from .. import _compat
 from ..helpers import local_time
@@ -27,15 +26,13 @@ def _std_string(s):
 
 class Loader(object):
 
-    path = os.path.join(os.path.dirname(inspect.getfile(pytz)), 'zoneinfo')
-
     @classmethod
     def load(cls, name):
         name = _compat.decode(name)
         try:
-            with pytz.open_resource(name) as f:
+            with tz_file(name) as f:
                 return cls._load(f)
-        except _compat.FileNotFoundError:
+        except TimezoneNotFound:
             raise ValueError('Unknown timezone [{}]'.format(name))
 
     @classmethod
