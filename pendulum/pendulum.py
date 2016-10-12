@@ -9,7 +9,6 @@ import locale as _locale
 
 from contextlib import contextmanager
 from dateutil.relativedelta import relativedelta
-from dateutil import parser as dateparser
 
 from .period import Period
 from .exceptions import PendulumException
@@ -17,6 +16,7 @@ from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .formatting import FORMATTERS
+from .parsing import parse
 from .constants import (
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
     THURSDAY, FRIDAY, SATURDAY,
@@ -241,16 +241,17 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if time == 'now':
             return cls.now(None)
 
-        dt = dateparser.parse(time)
+        parsed = parse(time)
 
-        if dt.tzinfo:
-            offset = dt.utcoffset()
-
-            tz = offset.total_seconds() / 3600
+        if parsed['offset'] is None:
+            tz = tz
+        else:
+            tz = parsed['offset'] / 3600
 
         return cls(
-            dt.year, dt.month, dt.day,
-            dt.hour, dt.minute, dt.second, dt.microsecond,
+            parsed['year'], parsed['month'], parsed['day'],
+            parsed['hour'], parsed['minute'], parsed['second'],
+            parsed['subsecond'] // 1000,
             tzinfo=tz
         )
 
