@@ -2236,10 +2236,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return(self, )
 
     def _getstate(self):
+        tz = self.timezone_name
+
+        # Fix for fixed timezones not being properly unpickled
+        if isinstance(self.tz, FixedTimezone):
+            tz = self.offset_hours
+
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            self.timezone_name
+            tz
         )
 
     def __reduce__(self):

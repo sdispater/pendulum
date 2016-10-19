@@ -91,3 +91,10 @@ class BehaviorTest(AbstractTestCase):
         dt2 = pickle.loads(s)
 
         self.assertEqual(dt1, dt2)
+
+    def test_pickle_with_integer_tzinfo(self):
+        dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 0)
+        s = pickle.dumps(dt1)
+        dt2 = pickle.loads(s)
+
+        self.assertEqual(dt1, dt2)
