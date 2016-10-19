@@ -1,5 +1,18 @@
 # Change Log
 
+
+## [0.6.3] - 2016-10-19
+
+### Changed
+
+- Makes `replace()` accept the same tzinfo types as the constructor.
+
+### Fixed
+
+- Fixes `timezone_()` not setting the tzinfo properly.
+- Fixes pickling/unpickling of Pendulum instances with fixed timezone.
+
+
 ## [0.6.2] - 2016-09-26
 
 ### Fixed
@@ -190,6 +203,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
 [0.6.2]: https://github.com/sdispater/pendulum/releases/tag/0.6.2
 [0.6.1]: https://github.com/sdispater/pendulum/releases/tag/0.6.1
 [0.6.0]: https://github.com/sdispater/pendulum/releases/tag/0.6.0
