@@ -223,7 +223,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     @classmethod
-    def parse(cls, time=None, tz=UTC):
+    def parse(cls, time=None, tz=UTC, **options):
         """
         Create a Pendulum instance from a string.
 
@@ -241,7 +241,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if time == 'now':
             return cls.now(None)
 
-        parsed = parse(time)
+        parsed = parse(time, **options)
 
         if parsed['offset'] is None:
             tz = tz
