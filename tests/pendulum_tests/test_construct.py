@@ -90,6 +90,13 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
+    def test_parse_with_options(self):
+        p = Pendulum.parse('2016-04-11T18:21:08.7454873-05:00', day_first=True)
+
+        self.assertPendulum(p, 2016, 11, 4, 18, 21, 8, 745487)
+        self.assertEqual('-05:00', p.timezone_name)
+        self.assertEqual(p.offset, -18000)
+
     def test_parse_with_invalid_string(self):
         self.assertRaises(ValueError, Pendulum.parse, 'Invalid_string')
 
