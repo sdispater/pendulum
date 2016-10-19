@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import re
-import logging
 import copy
 
 from dateutil import parser
 
 from .exceptions import ParserError
 
-logger = logging.getLogger('pendulum.parsing.parser')
-
 
 class Parser(object):
 
     COMMON = re.compile(
-        '(\d{4})(?:-|/)(\d{2})(?:-|/)(\d{2})' # YMD
+        '(\d{4})(?:-|/)(\d{1,2})(?:-|/)(\d{1,2})' # YMD or YDM
         '('
         '(?:T| )' # Separator
         '(\d{2}):(\d{2}):(\d{2})' # HH:mm:ss
@@ -23,7 +20,9 @@ class Parser(object):
         ')?'
     )
 
-    DEFAULT_OPTIONS = {}
+    DEFAULT_OPTIONS = {
+        'day_first': False
+    }
 
     def __init__(self, **options):
         self._options = copy.copy(self.DEFAULT_OPTIONS)
@@ -40,10 +39,18 @@ class Parser(object):
         """
         m = self.COMMON.match(text)
         if m:
+            year = int(m.group(1))
+            if self._options['day_first']:
+                month = int(m.group(3))
+                day = int(m.group(2))
+            else:
+                month = int(m.group(2))
+                day = int(m.group(3))
+
             parsed = {
-                'year': int(m.group(1)),
-                'month': int(m.group(2)),
-                'day': int(m.group(3)),
+                'year': year,
+                'month': month,
+                'day': day,
                 'hour': 0,
                 'minute': 0,
                 'second': 0,
@@ -94,7 +101,7 @@ class Parser(object):
             return parsed
 
         try:
-            dt = parser.parse(text)
+            dt = parser.parse(text, dayfirst=self._options['day_first'])
         except ValueError:
             raise ParserError('Invalid date string: {}'.format(text))
 

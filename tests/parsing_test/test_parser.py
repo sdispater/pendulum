@@ -19,6 +19,32 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(0, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
+    def test_ymd_one_character(self):
+        text = '2016-2-6'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2016, parsed['year'])
+        self.assertEqual(2, parsed['month'])
+        self.assertEqual(6, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+    def test_ymd_day_first(self):
+        text = '2016-02-06'
+
+        parsed = Parser(day_first=True).parse(text)
+        self.assertEqual(2016, parsed['year'])
+        self.assertEqual(6, parsed['month'])
+        self.assertEqual(2, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
     def test_ymd_hms(self):
         text = '2016-10-06 12:34:56'
 
