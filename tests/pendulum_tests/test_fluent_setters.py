@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
 from pendulum import Pendulum
+from pendulum.tz.exceptions import NonExistingTime
 
 from .. import AbstractTestCase
 
@@ -146,3 +148,34 @@ class FluentSettersTest(AbstractTestCase):
 
         self.assertIsInstanceOfPendulum(new)
         self.assertPendulum(new, 1970, 1, 1, 0, 0, 0)
+
+    def test_replace_tzinfo(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20)
+        new = d.replace(tzinfo='Europe/Paris')
+
+        self.assertEqual(new.timezone_name, 'Europe/Paris')
+
+    def test_replace_tzinfo_dst(self):
+        d = Pendulum.create(2013, 3, 31, 2, 30)
+        new = d.replace(tzinfo='Europe/Paris')
+
+        self.assertPendulum(new, 2013, 3, 31, 3, 30)
+        self.assertTrue(new.is_dst)
+        self.assertEqual(new.offset, 7200)
+        self.assertEqual(new.timezone_name, 'Europe/Paris')
+
+    def test_replace_tzinfo_dst_with_pre_transition_rule(self):
+        Pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
+        d = Pendulum.create(2013, 3, 31, 2, 30)
+        new = d.replace(tzinfo='Europe/Paris')
+
+        self.assertPendulum(new, 2013, 3, 31, 2, 30)
+        self.assertFalse(new.is_dst)
+        self.assertEqual(new.offset, 3600)
+        self.assertEqual(new.timezone_name, 'Europe/Paris')
+
+    def test_replace_tzinfo_dst_with_error_transition_rule(self):
+        Pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
+        d = Pendulum.create(2013, 3, 31, 2, 30)
+
+        self.assertRaises(NonExistingTime, d.replace, tzinfo='Europe/Paris')

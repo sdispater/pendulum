@@ -2193,7 +2193,14 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         minute = minute if minute is not None else self._minute
         second = second if second is not None else self._second
         microsecond = microsecond if microsecond is not None else self._microsecond
-        tzinfo = tzinfo if tzinfo is not True else self._tzinfo
+
+        # Checking tzinfo
+        if tzinfo is not None and tzinfo is not True:
+            tzinfo = self._safe_create_datetime_zone(tzinfo)
+        elif tzinfo is None:
+            tzinfo = tzinfo
+        else:
+            tzinfo = self._tzinfo
 
         return self.instance(
             self._datetime.replace(year=year, month=month, day=day,
