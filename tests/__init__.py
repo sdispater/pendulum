@@ -3,7 +3,7 @@
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import Pendulum, Interval
+from pendulum import Pendulum, Date, Interval
 from pendulum.tz import LocalTimezone, timezone, Timezone
 
 
@@ -17,8 +17,10 @@ class AbstractTestCase(TestCase):
     def tearDown(self):
         LocalTimezone.set_local_timezone()
         Pendulum.reset_to_string_format()
+        Date.reset_to_string_format()
         Pendulum.set_transition_rule(Timezone.POST_TRANSITION)
         Pendulum.set_formatter()
+        Date.set_formatter()
 
     def assertPendulum(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):
@@ -37,6 +39,11 @@ class AbstractTestCase(TestCase):
 
         if microsecond is not None:
             self.assertEqual(microsecond, d.microsecond)
+
+    def assertDate(self, d, year, month, day):
+        self.assertEqual(year, d.year)
+        self.assertEqual(month, d.month)
+        self.assertEqual(day, d.day)
 
     def assertInterval(self, pi, weeks, days=None,
                        hours=None, minutes=None, seconds=None,
@@ -68,6 +75,9 @@ class AbstractTestCase(TestCase):
 
     def assertIsInstanceOfPendulum(self, d):
         self.assertIsInstance(d, Pendulum)
+
+    def assertIsInstanceOfDate(self, d):
+        self.assertIsInstance(d, Date)
 
     def assertIsInstanceOfInterval(self, d):
         self.assertIsInstance(d, Interval)

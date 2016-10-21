@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import operator
+from datetime import datetime, date
 from .mixins.interval import WordableIntervalMixin
 from .interval import BaseInterval, Interval
 
@@ -13,15 +14,20 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     def __new__(cls, start, end, absolute=False):
         from .pendulum import Pendulum
+        from .date import Date
 
         if absolute and start > end:
             end, start = start, end
 
         if isinstance(start, Pendulum):
             start = start._datetime
+        elif isinstance(start, Date):
+            start = date(start.year, start.month, start.day)
 
         if isinstance(end, Pendulum):
             end = end._datetime
+        elif isinstance(end, Date):
+            end = date(end.year, end.month, end.day)
 
         delta = end - start
 
@@ -31,14 +37,21 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     def __init__(self, start, end, absolute=False):
         from .pendulum import Pendulum
+        from .date import Date
 
         super(Period, self).__init__()
 
-        if not isinstance(start, Pendulum):
-            start = Pendulum.instance(start)
+        if not isinstance(start, (Pendulum, Date)):
+            if isinstance(start, datetime):
+                start = Pendulum.instance(start)
+            else:
+                start = Date.instance(start)
 
-        if not isinstance(end, Pendulum):
-            end = Pendulum.instance(end)
+        if not isinstance(end, (Pendulum, Date)):
+            if isinstance(end, datetime):
+                end = Pendulum.instance(end)
+            else:
+                end = Date.instance(end)
 
         self._invert = False
         if start > end:

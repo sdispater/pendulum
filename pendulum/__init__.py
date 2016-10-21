@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .pendulum import Pendulum
+from .date import Date
 from .interval import Interval
 from .period import Period
 

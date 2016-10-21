@@ -2,42 +2,26 @@
 
 from __future__ import division
 
-import math
 import calendar
 import datetime
-import locale as _locale
 
 from contextlib import contextmanager
 from dateutil.relativedelta import relativedelta
 
+from .date import Date
 from .period import Period
 from .exceptions import PendulumException
-from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
-from .formatting import FORMATTERS
 from .parsing import parse
 from .constants import (
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
-    THURSDAY, FRIDAY, SATURDAY,
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
-    MONTHS_PER_YEAR, DAYS_PER_WEEK,
+    MONTHS_PER_YEAR,
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE
 )
 
 
-class Pendulum(datetime.datetime, TranslatableMixin):
-
-    # Names of days of the week
-    _days = {
-        SUNDAY: 'Sunday',
-        MONDAY: 'Monday',
-        TUESDAY: 'Tuesday',
-        WEDNESDAY: 'Wednesday',
-        THURSDAY: 'Thursday',
-        FRIDAY: 'Friday',
-        SATURDAY: 'Saturday'
-    }
+class Pendulum(Date, datetime.datetime):
 
     # Formats
     ATOM = '%Y-%m-%dT%H:%M:%S%_z'
@@ -54,34 +38,12 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     RSS = '%a, %d %b %Y %H:%M:%S %z'
     W3C = '%Y-%m-%dT%H:%M:%S%_z'
 
-    # Default format to use for __str__ method when type juggling occurs.
-    DEFAULT_TO_STRING_FORMAT = None
-
-    _to_string_format = DEFAULT_TO_STRING_FORMAT
-
-    # First day of week
-    _week_starts_at = MONDAY
-
-    # Last day of week
-    _week_ends_at = SUNDAY
-
-    # Weekend days
-    _weekend_days = [
-        SATURDAY,
-        SUNDAY
-    ]
-
     # A test Pendulum instance to be returned when now instances are created.
     _test_now = None
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
-    _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
-
     _TRANSITION_RULE = Timezone.POST_TRANSITION
-
-    _DEFAULT_FORMATTER = 'classic'
-    _FORMATTER = _DEFAULT_FORMATTER
 
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
@@ -339,7 +301,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                hour=0, minute=0, second=0, microsecond=0,
                tz=UTC):
         """
-        Create a new Carbon instance from a specific date and time.
+        Create a new Pendulum instance from a specific date and time.
 
         If any of year, month or day are set to None their now() values will
         be used.
@@ -473,15 +435,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     ### Getters/Setters
 
-    def year_(self, year):
-        return self._setter(year=year)
-
-    def month_(self, month):
-        return self._setter(month=month)
-
-    def day_(self, day):
-        return self._setter(day=day)
-
     def hour_(self, hour):
         return self._setter(hour=hour)
 
@@ -545,22 +498,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._tzinfo
 
     @property
-    def day_of_week(self):
-        return int(self.format('%w', formatter='classic'))
-
-    @property
-    def day_of_year(self):
-        return int(self.format('%-j', formatter='classic'))
-
-    @property
-    def week_of_year(self):
-        return self.isocalendar()[1]
-
-    @property
-    def days_in_month(self):
-        return calendar.monthrange(self.year, self.month)[1]
-
-    @property
     def timestamp(self):
         return int(self.float_timestamp // 1)
 
@@ -570,18 +507,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             self._timestamp = (self._datetime - self._EPOCH).total_seconds()
 
         return self._timestamp
-
-    @property
-    def week_of_month(self):
-        return math.ceil(self._day / DAYS_PER_WEEK)
-
-    @property
-    def age(self):
-        return self.diff().in_years()
-
-    @property
-    def quarter(self):
-        return int(math.ceil(self._month / 3))
 
     @property
     def offset(self):
@@ -622,6 +547,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def get_offset(self):
         return int(self._tzinfo.offset)
+
+    def date(self):
+        return Date.instance(self._datetime.date())
 
     def with_date(self, year, month, day):
         """
@@ -745,62 +673,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         return self.instance(dt)
 
-    ### Special week days
-
-    @classmethod
-    def get_week_starts_at(cls):
-        """
-        Get the first day of the week.
-
-        :rtype: int
-        """
-        return cls._week_starts_at
-
-    @classmethod
-    def set_week_starts_at(cls, value):
-        """
-        Set the first day of the week.
-
-        :type value: int
-        """
-        cls._week_starts_at = value
-
-    @classmethod
-    def get_week_ends_at(cls):
-        """
-        Get the last day of the week.
-
-        :rtype: int
-        """
-        return cls._week_ends_at
-
-    @classmethod
-    def set_week_ends_at(cls, value):
-        """
-        Set the last day of the week.
-
-        :type value: int
-        """
-        cls._week_ends_at = value
-
-    @classmethod
-    def get_weekend_days(cls):
-        """
-        Get weekend days.
-
-        :rtype: list
-        """
-        return cls._weekend_days
-
-    @classmethod
-    def set_weekend_days(cls, value):
-        """
-        Set weekend days.
-
-        :type value: list
-        """
-        cls._weekend_days = value
-
     # Normalization Rule
     @classmethod
     def set_transition_rule(cls, rule):
@@ -865,109 +737,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def has_test_now(cls):
         return cls.get_test_now() is not None
 
-    # String Formatting
-
-    @classmethod
-    def reset_to_string_format(cls):
-        """
-        Reset the format used to the default
-        when type juggling a Pendulum instance to a string.
-        """
-        cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
-
-    @classmethod
-    def set_to_string_format(cls, fmt):
-        """
-        Set the default format used
-        when type juggling a Pendulum instance to a string
-
-        :type fmt: str
-        """
-        cls._to_string_format = fmt
-
-    def format(self, fmt, locale=None, formatter=None):
-        """
-        Formats the Pendulum instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :param locale: The locale to use
-        :type locale: str or None
-
-        :param formatter: The formatter to use
-        :type formatter: str or None
-
-        :rtype: str
-        """
-        if formatter is None:
-            formatter = self._FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        return FORMATTERS[formatter].format(self, fmt, locale)
-
-    def strftime(self, fmt):
-        """
-        Formats the Pendulum instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :rtype: str
-        """
-        return self.format(fmt, _locale.getlocale()[0], 'classic')
-
-    @classmethod
-    def set_formatter(cls, formatter=None):
-        """
-        Sets the default string formatter.
-
-        :param formatter: The parameter to set as default.
-        :type formatter: str or None
-        """
-        if formatter is None:
-            formatter = cls._DEFAULT_FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        cls._FORMATTER = formatter
-
-    @classmethod
-    def get_formatter(cls):
-        """
-        Gets the currently used string formatter.
-
-        :rtype: str
-        """
-        return cls._FORMATTER
-
-    def __str__(self):
-        if self._to_string_format is None:
-            return self.isoformat()
-
-        return self.format(self._to_string_format, formatter='classic')
-
-    def __repr__(self):
-        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
-
-    def to_date_string(self):
-        """
-        Format the instance as date.
-
-        :rtype: str
-        """
-        return self.format('%Y-%m-%d', formatter='classic')
-
-    def to_formatted_date_string(self):
-        """
-        Format the instance as a readable date.
-
-        :rtype: str
-        """
-        return self.format('%b %d, %Y', formatter='classic')
+    # STRING FORMATTING
 
     def to_time_string(self):
         """
@@ -1235,22 +1005,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self.max_(dt)
 
-    def is_weekday(self):
-        """
-        Determines if the instance is a weekday.
-
-        :rtype: bool
-        """
-        return not self.is_weekend()
-
-    def is_weekend(self):
-        """
-        Determines if the instance is a weekend day.
-
-        :rtype: bool
-        """
-        return self.day_of_week in self._weekend_days
-
     def is_yesterday(self):
         """
         Determines if the instance is yesterday.
@@ -1291,14 +1045,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self < self.now(self.timezone)
 
-    def is_leap_year(self):
-        """
-        Determines if the instance is a leap year.
-
-        :rtype: bool
-        """
-        return calendar.isleap(self.year)
-
     def is_long_year(self):
         """
         Determines if the instance is a long year
@@ -1320,62 +1066,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         dt = self._get_datetime(dt, True)
 
         return self.to_date_string() == dt.to_date_string()
-
-    def is_sunday(self):
-        """
-        Checks if this day is a sunday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SUNDAY
-
-    def is_monday(self):
-        """
-        Checks if this day is a monday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == MONDAY
-
-    def is_tuesday(self):
-        """
-        Checks if this day is a tuesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == TUESDAY
-
-    def is_wednesday(self):
-        """
-        Checks if this day is a wednesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == WEDNESDAY
-
-    def is_thursday(self):
-        """
-        Checks if this day is a thursday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == THURSDAY
-
-    def is_friday(self):
-        """
-        Checks if this day is a friday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == FRIDAY
-
-    def is_saturday(self):
-        """
-        Checks if this day is a saturday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SATURDAY
 
     def is_birthday(self, dt=None):
         """
@@ -1435,7 +1125,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self.instance(dt)
 
     def subtract(self, years=0, months=0, weeks=0, days=0,
-            hours=0, minutes=0, seconds=0, microseconds=0):
+                 hours=0, minutes=0, seconds=0, microseconds=0):
         """
         Remove duration from the instance.
 
@@ -2128,14 +1818,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             return value if not pendulum else Pendulum.instance(value)
 
         raise ValueError('Invalid datetime "{}"'.format(value))
-
-    def for_json(self):
-        """
-        Methods for automatic json serialization by simplejson
-
-        :rtype: str
-        """
-        return str(self)
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):

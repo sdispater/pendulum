@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from pendulum import Pendulum
+from pendulum import Pendulum, Date
 from pendulum.formatting.classic_formatter import ClassicFormatter
 from .. import AbstractTestCase
 
@@ -55,3 +55,11 @@ class ClassicFormatterTest(AbstractTestCase):
         m = re.match('(.*)', '%_TTT')
 
         self.assertRaises(ValueError, f._strftime, d, m, 'fr')
+
+    def test_accepts_dates(self):
+        d = Date(1975, 12, 25)
+        f = ClassicFormatter()
+        self.assertEqual(
+            'Thursday 25th of December 1975',
+            f.format(d, '%A %-d%_t of %B %Y')
+        )

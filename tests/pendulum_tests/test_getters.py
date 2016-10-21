@@ -235,3 +235,9 @@ class GettersTest(AbstractTestCase):
 
         self.assertTrue(sunday.is_sunday())
         self.assertFalse(monday.is_sunday())
+
+    def test_date(self):
+        dt = Pendulum(2016, 10, 20, 10, 40, 34, 123456)
+        d = dt.date()
+        self.assertIsInstanceOfDate(d)
+        self.assertDate(d, 2016, 10, 20)
