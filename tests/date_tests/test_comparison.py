@@ -246,7 +246,7 @@ class ComparisonTest(AbstractTestCase):
         self.assertDate(d2, 2099, 12, 31)
 
     def test_is_birthday(self):
-        d = Date(2016, 10, 20)
+        d = Date.today()
         a_birthday = d.subtract(years=1)
         self.assertTrue(a_birthday.is_birthday())
         not_a_birthday = d.subtract(days=1)
