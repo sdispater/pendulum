@@ -98,10 +98,14 @@ class Period(WordableIntervalMixin, BaseInterval):
             op = operator.ge
 
         start, end = self.start, self.end
+
+        i = 1
         while op(start, end):
             yield start
 
-            start = getattr(start, method)(**{unit: 1})
+            start = getattr(self.start, method)(**{unit: i})
+
+            i += 1
 
     def intersect(self, *periods):
         """
