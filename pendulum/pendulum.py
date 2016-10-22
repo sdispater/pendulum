@@ -1429,7 +1429,14 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
         dt = self._datetime + delta
-        dt = self._tz.convert(dt)
+
+        if any([years, months, weeks, days]):
+            # If we specified any of years, months, weeks or days
+            # we will not apply the transition (if any)
+            dt = self._tz.convert(dt.replace(tzinfo=None))
+        else:
+            # Else, we need to apply the transition properly (if any)
+            dt = self._tz.convert(dt)
 
         return self.instance(dt)
 
@@ -1464,16 +1471,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: Pendulum
         """
-        delta = relativedelta(
-            years=years, months=months, weeks=weeks, days=days,
-            hours=hours, minutes=minutes, seconds=seconds,
-            microseconds=microseconds
+        return self.add(
+            years=-years, months=-months, weeks=-weeks, days=-days,
+            hours=-hours, minutes=-minutes, seconds=-seconds,
+            microseconds=-microseconds
         )
-
-        dt = self._datetime - delta
-        dt = self._tz.convert(dt)
-
-        return self.instance(dt)
 
     def add_timedelta(self, delta):
         """
