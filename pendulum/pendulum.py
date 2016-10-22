@@ -221,8 +221,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                 # We have no sure way to figure out
                 # the timezone name, we fallback
                 # on a fixed offset
-                offset = dt.utcoffset()
-
                 tz = dt.utcoffset().total_seconds() / 3600
 
         return cls(
