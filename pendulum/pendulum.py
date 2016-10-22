@@ -102,6 +102,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             timezone_offset = obj * 60 * 60
 
             return FixedTimezone(timezone_offset)
+        elif isinstance(obj, datetime.tzinfo) and not isinstance(obj, Timezone):
+            # pytz
+            if hasattr(obj, 'localize'):
+                obj = obj.zone
+            else:
+                # We have no sure way to figure out
+                # the timezone name, we raise an error
+
+                raise ValueError('Unsupported timezone {}'.format(obj))
 
         tz = cls._timezone(obj)
 

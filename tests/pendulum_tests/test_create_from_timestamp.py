@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pytz
 from pendulum import Pendulum, timezone
 
 from .. import AbstractTestCase
@@ -19,5 +20,10 @@ class CreateFromTimestampTest(AbstractTestCase):
 
     def test_create_from_timestamp_with_timezone(self):
         d = Pendulum.create_from_timestamp(0, timezone('America/Toronto'))
+        self.assertEqual('America/Toronto', d.timezone_name)
+        self.assertPendulum(d, 1969, 12, 31, 19, 0, 0)
+
+    def test_create_from_timestamp_with_pytz_timezone(self):
+        d = Pendulum.create_from_timestamp(0, pytz.timezone('America/Toronto'))
         self.assertEqual('America/Toronto', d.timezone_name)
         self.assertPendulum(d, 1969, 12, 31, 19, 0, 0)
