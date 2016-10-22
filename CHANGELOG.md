@@ -1,6 +1,18 @@
 # Change Log
 
 
+## [0.6.4] - 2016-10-22
+
+### Changed
+
+- Adds support for `pytz` timezones in constructor.
+
+### Fixed
+
+- Fixes behavior of `add()`/`subtract()` methods for years, months and days when a DST transition occurs.
+- Fixes `range()` behavior.
+
+
 ## [0.6.3] - 2016-10-19
 
 ### Changed
@@ -203,6 +215,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
 [0.6.2]: https://github.com/sdispater/pendulum/releases/tag/0.6.2
 [0.6.1]: https://github.com/sdispater/pendulum/releases/tag/0.6.1
