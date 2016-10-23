@@ -115,3 +115,124 @@ class AddTest(AbstractTestCase):
         self.assertPendulum(dt, 2015, 3, 15, 1, 0, 0)
         self.assertEqual('-06:00', dt.timezone_name)
         self.assertEqual(-6 * 3600, dt.offset)
+
+    def test_add_time_to_new_transition_skipped(self):
+        dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+
+        self.assertPendulum(dt, 2013, 3, 31, 1, 59, 59, 999999)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 2013, 3, 31, 3, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(7200, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+        dt = pendulum.create(2013, 3, 10, 1, 59, 59, 999999, 'America/New_York')
+
+        self.assertPendulum(dt, 2013, 3, 10, 1, 59, 59, 999999)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(-5 * 3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 2013, 3, 10, 3, 0, 0, 0)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(- 4 * 3600, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+        dt = pendulum.create(1957, 4, 28, 1, 59, 59, 999999, 'America/New_York')
+
+        self.assertPendulum(dt, 1957, 4, 28, 1, 59, 59, 999999)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(-5 * 3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 1957, 4, 28, 3, 0, 0, 0)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(- 4 * 3600, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+    def test_add_time_to_new_transition_skipped_big(self):
+        dt = pendulum.create(2013, 3, 31, 1, tz='Europe/Paris')
+
+        self.assertPendulum(dt, 2013, 3, 31, 1, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+        dt = dt.add(weeks=1)
+
+        self.assertPendulum(dt, 2013, 4, 7, 1, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(7200, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+    def test_add_time_to_new_transition_repeated(self):
+        dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, 'Europe/Paris')
+        dt = dt.add(hours=1)
+
+        self.assertPendulum(dt, 2013, 10, 27, 2, 59, 59, 999999)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(7200, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 2013, 10, 27, 2, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+
+        dt = pendulum.create(2013, 11, 3, 0, 59, 59, 999999, 'America/New_York')
+        dt = dt.add(hours=1)
+
+        self.assertPendulum(dt, 2013, 11, 3, 1, 59, 59, 999999)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(-4 * 3600, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 2013, 11, 3, 1, 0, 0, 0)
+        self.assertEqual('America/New_York', dt.timezone_name)
+        self.assertEqual(-5 * 3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+    def test_add_time_to_new_transition_repeated_big(self):
+        dt = pendulum.create(2013, 10, 27, 1, tz='Europe/Paris')
+
+        self.assertPendulum(dt, 2013, 10, 27, 1, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(7200, dt.offset)
+        self.assertTrue(dt.is_dst)
+
+        dt = dt.add(weeks=1)
+
+        self.assertPendulum(dt, 2013, 11, 3, 1, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+    def test_add_time_to_new_transition_does_not_use_transition_rule(self):
+        pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
+        dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+
+        self.assertPendulum(dt, 2013, 3, 31, 1, 59, 59, 999999)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(3600, dt.offset)
+        self.assertFalse(dt.is_dst)
+
+        dt = dt.add(microseconds=1)
+
+        self.assertPendulum(dt, 2013, 3, 31, 3, 0, 0, 0)
+        self.assertEqual('Europe/Paris', dt.timezone_name)
+        self.assertEqual(7200, dt.offset)
+        self.assertTrue(dt.is_dst)

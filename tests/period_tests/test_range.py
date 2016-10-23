@@ -73,3 +73,22 @@ class RangeTest(AbstractTestCase):
         p = Period(dt1, dt2)
         dt = datetime(2000, 1, 7)
         self.assertTrue(dt in p)
+
+    def test_range_months_overflow(self):
+        dt1 = Pendulum(2016, 1, 30, tzinfo='America/Sao_Paulo')
+        dt2 = dt1.add(months=4)
+
+        p = Period(dt1, dt2)
+        r = p.range('months')
+        self.assertPendulum(r[0], 2016, 1, 30, 0, 0, 0)
+        self.assertPendulum(r[-1], 2016, 5, 30, 0, 0, 0)
+
+    def test_range_with_dst(self):
+        dt1 = Pendulum(2016, 10, 14, tzinfo='America/Sao_Paulo')
+        dt2 = dt1.add(weeks=1)
+
+        p = Period(dt1, dt2)
+        r = p.range('days')
+        self.assertPendulum(r[0], 2016, 10, 14, 0, 0, 0)
+        self.assertPendulum(r[2], 2016, 10, 16, 1, 0, 0)
+        self.assertPendulum(r[-1], 2016, 10, 21, 0, 0, 0)

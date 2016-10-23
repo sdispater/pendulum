@@ -64,6 +64,15 @@ class Pendulum(Date, datetime.datetime):
             timezone_offset = obj * 60 * 60
 
             return FixedTimezone(timezone_offset)
+        elif isinstance(obj, datetime.tzinfo) and not isinstance(obj, Timezone):
+            # pytz
+            if hasattr(obj, 'localize'):
+                obj = obj.zone
+            else:
+                # We have no sure way to figure out
+                # the timezone name, we raise an error
+
+                raise ValueError('Unsupported timezone {}'.format(obj))
 
         tz = cls._timezone(obj)
 
@@ -174,8 +183,6 @@ class Pendulum(Date, datetime.datetime):
                 # We have no sure way to figure out
                 # the timezone name, we fallback
                 # on a fixed offset
-                offset = dt.utcoffset()
-
                 tz = dt.utcoffset().total_seconds() / 3600
 
         return cls(
@@ -1120,7 +1127,14 @@ class Pendulum(Date, datetime.datetime):
         )
 
         dt = self._datetime + delta
-        dt = self._tz.convert(dt)
+
+        if any([years, months, weeks, days]):
+            # If we specified any of years, months, weeks or days
+            # we will not apply the transition (if any)
+            dt = self._tz.convert(dt.replace(tzinfo=None))
+        else:
+            # Else, we need to apply the transition properly (if any)
+            dt = self._tz.convert(dt)
 
         return self.instance(dt)
 
@@ -1155,16 +1169,11 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        delta = relativedelta(
-            years=years, months=months, weeks=weeks, days=days,
-            hours=hours, minutes=minutes, seconds=seconds,
-            microseconds=microseconds
+        return self.add(
+            years=-years, months=-months, weeks=-weeks, days=-days,
+            hours=-hours, minutes=-minutes, seconds=-seconds,
+            microseconds=-microseconds
         )
-
-        dt = self._datetime - delta
-        dt = self._tz.convert(dt)
-
-        return self.instance(dt)
 
     def add_timedelta(self, delta):
         """
