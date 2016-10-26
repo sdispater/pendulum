@@ -165,3 +165,8 @@ class ConstructTest(AbstractTestCase):
 
             d = Pendulum.create(microsecond=123456)
             self.assertPendulum(d, now.year, now.month, now.day, 0, 0, 0, 123456)
+
+    def test_create_with_not_transition_timezone(self):
+        dt = Pendulum.create(tz='Etc/UTC')
+
+        self.assertEqual('Etc/UTC', dt.timezone_name)

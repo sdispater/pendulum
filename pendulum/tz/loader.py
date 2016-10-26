@@ -93,8 +93,11 @@ class Loader(object):
             i += 3
 
         # Now build the timezone object
-        if len(transition_times) == 0:
+        if not transition_times:
             transitions = tuple()
+
+            if transition_types:
+                transitions += (Transition(0, 0, datetime(1970, 1, 1), datetime(1970, 1, 1), 0),)
         else:
             # calculate transition info
             transitions = tuple()
