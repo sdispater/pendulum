@@ -345,7 +345,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
                hour=0, minute=0, second=0, microsecond=0,
                tz=UTC):
         """
-        Create a new Carbon instance from a specific date and time.
+        Create a new Pendulum instance from a specific date and time.
 
         If any of year, month or day are set to None their now() values will
         be used.
@@ -860,7 +860,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     @classmethod
     def get_test_now(cls):
         """
-        Get the Carbon instance (real or mock) to be returned when a "now"
+        Get the Pendulum instance (real or mock) to be returned when a "now"
         instance is created.
 
         :rtype: Pendulum or None
