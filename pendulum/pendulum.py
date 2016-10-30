@@ -769,8 +769,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :type value: int
         """
-        if value not in range(7):
-            raise ValueError('Invalid day of the week value: {}'.format(value))
+        if value not in cls._days:
+            raise ValueError('Invalid day of the week: {}'.format(value))
         cls._week_starts_at = value
 
     @classmethod
@@ -789,8 +789,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :type value: int
         """
-        if value not in range(7):
-            raise ValueError('Invalid day of the week value: {}'.format(value))
+        if value not in cls._days:
+            raise ValueError('Invalid day of the week: {}'.format(value))
         cls._week_ends_at = value
 
     @classmethod
@@ -810,8 +810,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         :type value: list
         """
         for value in values:
-            if value not in range(7):
-                raise ValueError('Invalid day of the week value: {}'
+            if value not in cls._days:
+                raise ValueError('Invalid day of the week: {}'
                                  .format(value))
         cls._weekend_days = values
 
