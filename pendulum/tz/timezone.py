@@ -280,7 +280,7 @@ class Timezone(tzinfo):
         elif dt.tzinfo.tz is not self:
             dt = self.convert(dt)
 
-            return dt.adjusted_offset
+            return dt.tzinfo.adjusted_offset
 
         return dt.utcoffset(dt)
 
