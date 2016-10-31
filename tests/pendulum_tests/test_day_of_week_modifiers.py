@@ -9,6 +9,9 @@ from .. import AbstractTestCase
 
 class DayOfWeekModifiersTest(AbstractTestCase):
 
+    def test_set_weekend_days_invalid_value(self):
+        self.assertRaises(ValueError, Pendulum.set_weekend_days, [7])
+
     def test_get_weekend_days(self):
         self.assertEqual(
             [pendulum.SATURDAY, pendulum.SUNDAY],
@@ -21,10 +24,16 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         )
         Pendulum.set_weekend_days([pendulum.SATURDAY, pendulum.SUNDAY])
 
+    def test_set_week_ends_at_invalid_value(self):
+        self.assertRaises(ValueError, Pendulum.set_week_ends_at, 7)
+
     def test_get_week_ends_at(self):
         Pendulum.set_week_ends_at(pendulum.SATURDAY)
         self.assertEqual(Pendulum.get_week_ends_at(), pendulum.SATURDAY)
         Pendulum.set_week_ends_at(pendulum.SUNDAY)
+
+    def test_set_week_starts_at_invalid_value(self):
+        self.assertRaises(ValueError, Pendulum.set_week_starts_at, 7)
 
     def test_get_week_starts_at(self):
         Pendulum.set_week_starts_at(pendulum.TUESDAY)
