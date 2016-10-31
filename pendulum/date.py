@@ -162,6 +162,9 @@ class Date(date, TranslatableMixin):
 
         :type value: int
         """
+        if value not in cls._days:
+            raise ValueError('Invalid day of the week: {}'.format(value))
+
         cls._week_starts_at = value
 
     @classmethod
@@ -180,6 +183,9 @@ class Date(date, TranslatableMixin):
 
         :type value: int
         """
+        if value not in cls._days:
+            raise ValueError('Invalid day of the week: {}'.format(value))
+
         cls._week_ends_at = value
 
     @classmethod
@@ -192,13 +198,18 @@ class Date(date, TranslatableMixin):
         return cls._weekend_days
 
     @classmethod
-    def set_weekend_days(cls, value):
+    def set_weekend_days(cls, values):
         """
         Set weekend days.
 
         :type value: list
         """
-        cls._weekend_days = value
+        for value in values:
+            if value not in cls._days:
+                raise ValueError('Invalid day of the week: {}'
+                                 .format(value))
+
+        cls._weekend_days = values
 
     # String Formatting
 
