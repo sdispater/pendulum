@@ -24,7 +24,7 @@ class SubTest(AbstractTestCase):
         self.assertEqual(12, Date.create(1975, 12).subtract(months=0).month)
 
     def test_subtract_months_negative(self):
-        self.assertEqual(12, Date.create(1975, 11).subtract(months=-1).month)
+        self.assertEqual(12, Date.create(1975, 11, 1).subtract(months=-1).month)
 
     def test_subtract_days_positive(self):
         self.assertEqual(31, Date(1975, 6, 1).subtract(days=1).day)
