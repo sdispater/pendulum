@@ -30,3 +30,8 @@ class TimezoneLoaderTest(AbstractTestCase):
         local_path = os.path.join(os.path.split(__file__)[0], '..')
         tz_file = os.path.join(local_path, 'fixtures', 'tz', 'NOT_A_TIMEZONE')
         self.assertRaises(ValueError, Loader.load_from_file, tz_file)
+
+    def test_set_transitions_for_no_transition_database_file(self):
+        tz = Loader.load('Etc/UTC')
+
+        self.assertEqual(1, len(tz[0]))

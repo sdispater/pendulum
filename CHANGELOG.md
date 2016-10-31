@@ -1,6 +1,19 @@
 # Change Log
 
 
+## [0.6.5] - 2016-10-31
+
+### Changed
+
+- Adds validation to `set_week_starts_at()`, `set_week_ends_at()` and `set_weekend_days()`. (thanks to [kleschenko](https://github.com/kleschenko))
+- Updates ukrainian localization. (thanks to [kleschenko](https://github.com/kleschenko))
+
+### Fixed
+
+- Fixes loading of timezones without transitions.
+- Fixes `Timezone.utcoffset()`. (thanks to [regnarock](https://github.com/regnarock))
+
+
 ## [0.6.4] - 2016-10-22
 
 ### Changed
@@ -215,6 +228,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
 [0.6.2]: https://github.com/sdispater/pendulum/releases/tag/0.6.2

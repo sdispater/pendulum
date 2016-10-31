@@ -733,7 +733,7 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def get_test_now(cls):
         """
-        Get the Carbon instance (real or mock) to be returned when a "now"
+        Get the Pendulum instance (real or mock) to be returned when a "now"
         instance is created.
 
         :rtype: Pendulum or None
