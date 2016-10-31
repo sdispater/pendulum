@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pendulum
-from datetime import datetime
+from datetime import datetime, timedelta
 from pendulum import timezone
 from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
 
@@ -146,3 +146,8 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
         self.assertFalse(dt.is_dst)
+
+    def test_utcoffset(self):
+        tz = pendulum.timezone('Europe/Paris')
+        utcoffset = tz.utcoffset(pendulum.utcoffset())
+        self.assertEqual(utcoffset, timedelta(0, 3600))
