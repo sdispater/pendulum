@@ -151,3 +151,9 @@ class TimezoneTest(AbstractTestCase):
         tz = pendulum.timezone('Europe/Paris')
         utcoffset = tz.utcoffset(pendulum.utcnow())
         self.assertEqual(utcoffset, timedelta(0, 3600))
+
+    def test_dst(self):
+        tz = pendulum.timezone('Europe/Amsterdam')
+        dst = tz.dst(pendulum.create(1940, 7, 1))
+
+        self.assertEqual(timedelta(0, 6000), dst)

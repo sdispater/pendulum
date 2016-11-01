@@ -2,7 +2,7 @@
 
 import os
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import tz
 from pendulum import Pendulum
 from pendulum.tz import timezone
@@ -121,7 +121,9 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual('UTC', now.timezone_name)
 
     def test_instance_timezone_aware_datetime(self):
-        now = Pendulum.instance(datetime.now(TimezoneInfo.create(timezone('Europe/Paris'), 7200, True, 'EST')))
+        now = Pendulum.instance(
+            datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, timedelta(0, 3600), 'EST'))
+        )
         self.assertEqual('Europe/Paris', now.timezone_name)
 
     def test_instance_timezone_aware_datetime_pytz(self):

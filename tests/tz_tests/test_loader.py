@@ -35,3 +35,4 @@ class TimezoneLoaderTest(AbstractTestCase):
         tz = Loader.load('Etc/UTC')
 
         self.assertEqual(1, len(tz[0]))
+        self.assertEqual(1, len(tz[1]))

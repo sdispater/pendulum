@@ -2,7 +2,7 @@
 
 import pickle
 import pendulum
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from pendulum import Pendulum, timezone
 from .. import AbstractTestCase
 
@@ -98,3 +98,8 @@ class BehaviorTest(AbstractTestCase):
         dt2 = pickle.loads(s)
 
         self.assertEqual(dt1, dt2)
+
+    def test_proper_dst(self):
+        dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
+
+        self.assertEqual(timedelta(0, 6000), dt.dst())

@@ -1,26 +1,33 @@
 # -*- coding: utf-8 -*-
 
-from datetime import tzinfo
-
-from .transition_type import TransitionType
+from datetime import tzinfo, timedelta
 
 
 class TimezoneInfo(tzinfo):
 
-    def __init__(self, tz, transition_type):
+    def __init__(self, tz, utc_offset, is_dst, dst, abbrev):
         """
+        :param tz: The parent timezone.
         :type tz: Timezone
 
-        :type transition_type: TransitionType
+        :param utc_offset: Offset from UTC (in seconds).
+        :type utc_offset: int
 
+        :param is_dst: Whether DST is in effect or not.
         :type is_dst: bool
+
+        :param dst: Transition time value (if any).
+        :type dst: timedelta or None
+
+        :param abbrev: Timezone name abbreviation (CET, CEST, ...)
+        :type abbrev: str
         """
         self._tz = tz
-        self._transition_type = transition_type
-
-    @classmethod
-    def create(cls, tz, utc_offset, is_dst, abbrev):
-        return cls(tz, TransitionType(utc_offset, is_dst, abbrev))
+        self._utc_offset = utc_offset
+        self._adjusted_offset = timedelta(seconds=round(utc_offset / 60) * 60)
+        self._is_dst = is_dst
+        self._dst = dst
+        self._abbrev = abbrev
 
     @property
     def tz(self):
@@ -32,22 +39,33 @@ class TimezoneInfo(tzinfo):
 
     @property
     def offset(self):
-        return self._transition_type.utc_offset
+        return self._utc_offset
 
     @property
     def is_dst(self):
-        return self._transition_type.is_dst
+        return self._is_dst
 
     @property
     def abbrev(self):
-        return self._transition_type.abbrev
+        return self._abbrev
 
     @property
     def adjusted_offset(self):
-        return self._transition_type.adjusted_offset
+        return self._adjusted_offset
+
+    @property
+    def dst_(self):
+        return self._dst
 
     def tzname(self, dt):
-        return self.abbrev
+        if dt is None:
+            return self._abbrev
+        elif dt.tzinfo is not self:
+            dt = self.tz.convert(dt)
+
+            return dt.tzinfo.abbrev
+        else:
+            return self._abbrev
 
     def utcoffset(self, dt):
         if dt is None:
@@ -57,7 +75,7 @@ class TimezoneInfo(tzinfo):
 
             return dt.tzinfo.adjusted_offset
         else:
-            return self._transition_type.adjusted_offset
+            return self._adjusted_offset
 
     def dst(self, dt):
         if not self.is_dst:
@@ -68,9 +86,9 @@ class TimezoneInfo(tzinfo):
         elif dt.tzinfo is not self:
             dt = self.tz.convert(dt)
 
-            offset = dt.tzinfo._transition_type.adjusted_offset
+            offset = dt.tzinfo._dst
         else:
-            offset = self._transition_type.adjusted_offset
+            offset = self._dst
 
         return offset
 
@@ -78,7 +96,7 @@ class TimezoneInfo(tzinfo):
         dt = dt.replace(tzinfo=None)
 
         idx = max(0, self._tz._find_transition_index(dt, '_utc_time') - 1)
-        tzinfo = self._tz._tzinfos[self._tz._transitions[idx]._transition_type_index]
+        tzinfo = self._tz._tzinfos[self._tz._transitions[idx]._tzinfo_index]
 
         return (dt + tzinfo.adjusted_offset).replace(tzinfo=tzinfo)
 
@@ -99,14 +117,14 @@ class TimezoneInfo(tzinfo):
 class _UTC(TimezoneInfo):
 
     def __init__(self):
-        super(_UTC, self).__init__(None, TransitionType(0, False, 'GMT'))
+        super(_UTC, self).__init__(None, 0, False, None, 'GMT')
 
     @property
     def name(self):
         return 'UTC'
 
     def utcoffset(self, dt):
-        return self._transition_type.adjusted_offset
+        return self._adjusted_offset
 
     def dst(self, dt):
         return None
