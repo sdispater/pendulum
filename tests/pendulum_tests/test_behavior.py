@@ -27,7 +27,7 @@ class BehaviorTest(AbstractTestCase):
         self.assertEqual(self.d.date(), self.p.date())
 
     def test_time(self):
-        self.assertEqual(self.d.time(), self.p.time())
+        self.assertEqual(self.p.time(), self.d.time())
 
     def test_timetz(self):
         self.assertEqual(self.d.timetz(), self.p.timetz())
