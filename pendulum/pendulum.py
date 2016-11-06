@@ -5,10 +5,10 @@ from __future__ import division
 import calendar
 import datetime
 
-from contextlib import contextmanager
 from dateutil.relativedelta import relativedelta
 
 from .date import Date
+from .time import Time
 from .period import Period
 from .exceptions import PendulumException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
@@ -37,9 +37,6 @@ class Pendulum(Date, datetime.datetime):
     RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
     RSS = '%a, %d %b %Y %H:%M:%S %z'
     W3C = '%Y-%m-%dT%H:%M:%S%_z'
-
-    # A test Pendulum instance to be returned when now instances are created.
-    _test_now = None
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
@@ -558,6 +555,9 @@ class Pendulum(Date, datetime.datetime):
     def date(self):
         return Date.instance(self._datetime.date())
 
+    def time(self):
+        return Time(self.hour, self.minute, self.second, self.microsecond)
+
     def with_date(self, year, month, day):
         """
         Returns a new instance with the current date set to a different date.
@@ -693,56 +693,6 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def get_transition_rule(cls):
         return cls._TRANSITION_RULE
-
-    # Testing aids
-
-    @classmethod
-    @contextmanager
-    def test(cls, mock):
-        """
-        Context manager to temporarily set the test_now value.
-
-        :type mock: Pendulum or None
-        """
-        cls.set_test_now(mock)
-
-        yield
-
-        cls.set_test_now()
-
-    @classmethod
-    def set_test_now(cls, test_now=None):
-        """
-        Set a Pendulum instance (real or mock) to be returned when a "now"
-        instance is created.  The provided instance will be returned
-        specifically under the following conditions:
-            - A call to the classmethod now() method, ex. Pendulum.now()
-            - When nothing is passed to the constructor or parse(), ex. Pendulum()
-            - When the string "now" is passed to parse(), ex. Pendulum.parse('now')
-
-        Note the timezone parameter was left out of the examples above and
-        has no affect as the mock value will be returned regardless of its value.
-
-        To clear the test instance call this method using the default
-        parameter of null.
-
-        :type test_now: Pendulum or None
-        """
-        cls._test_now = test_now
-
-    @classmethod
-    def get_test_now(cls):
-        """
-        Get the Pendulum instance (real or mock) to be returned when a "now"
-        instance is created.
-
-        :rtype: Pendulum or None
-        """
-        return cls._test_now
-
-    @classmethod
-    def has_test_now(cls):
-        return cls.get_test_now() is not None
 
     # STRING FORMATTING
 
@@ -1852,6 +1802,18 @@ class Pendulum(Date, datetime.datetime):
     def __radd__(self, other):
         return self.__add__(other)
 
+    # TESTING AIDS
+
+    @classmethod
+    def get_test_now(cls):
+        """
+        Get the Pendulum instance (real or mock) to be returned when a "now"
+        instance is created.
+
+        :rtype: Pendulum or None
+        """
+        return cls._test_now
+
     # Native methods override
 
     @classmethod
@@ -1915,12 +1877,6 @@ class Pendulum(Date, datetime.datetime):
     def dst(self):
         return self._datetime.dst()
 
-    def __format__(self, format_spec):
-        if len(format_spec) > 0:
-            return self.strftime(format_spec)
-
-        return str(self)
-
     def __hash__(self):
         return self._datetime.__hash__()
 
@@ -1945,3 +1901,4 @@ class Pendulum(Date, datetime.datetime):
 
 Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=UTC))
 Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=UTC))
+Pendulum.EPOCH = Pendulum(1970, 1, 1)

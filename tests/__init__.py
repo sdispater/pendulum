@@ -3,7 +3,7 @@
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import Pendulum, Date, Interval
+from pendulum import Pendulum, Date, Time, Interval
 from pendulum.tz import LocalTimezone, timezone, Timezone
 
 
@@ -18,9 +18,11 @@ class AbstractTestCase(TestCase):
         LocalTimezone.set_local_timezone()
         Pendulum.reset_to_string_format()
         Date.reset_to_string_format()
+        Time.reset_to_string_format()
         Pendulum.set_transition_rule(Timezone.POST_TRANSITION)
         Pendulum.set_formatter()
         Date.set_formatter()
+        Time.set_formatter()
 
     def assertPendulum(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):
@@ -44,6 +46,14 @@ class AbstractTestCase(TestCase):
         self.assertEqual(year, d.year)
         self.assertEqual(month, d.month)
         self.assertEqual(day, d.day)
+
+    def assertTime(self, t, hour, minute, second, microsecond=None):
+        self.assertEqual(hour, t.hour)
+        self.assertEqual(minute, t.minute)
+        self.assertEqual(second, t.second)
+
+        if microsecond is not None:
+            self.assertEqual(microsecond, t.microsecond)
 
     def assertInterval(self, pi, weeks, days=None,
                        hours=None, minutes=None, seconds=None,
@@ -78,6 +88,9 @@ class AbstractTestCase(TestCase):
 
     def assertIsInstanceOfDate(self, d):
         self.assertIsInstance(d, Date)
+
+    def assertIsInstanceOfTime(self, t):
+        self.assertIsInstance(t, Time)
 
     def assertIsInstanceOfInterval(self, d):
         self.assertIsInstance(d, Interval)

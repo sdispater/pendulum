@@ -297,11 +297,29 @@ class AbsoluteInterval(Interval):
             milliseconds, minutes, hours, weeks
         )
 
+        # We need to compute the total_seconds() value
+        # on a native timedelta object
+        delta = timedelta(
+            days, seconds, microseconds,
+            milliseconds, minutes, hours, weeks
+        )
+
         # Intuitive normalization
-        total = abs(self.total_seconds())
+        self._total = delta.total_seconds()
+        total = abs(self._total)
 
         self._microseconds = round(total % 1 * 1e6)
         self._seconds = int(total) % SECONDS_PER_DAY
         self._days = int(total) // SECONDS_PER_DAY
 
         return self
+
+    def total_seconds(self):
+        return abs(self._total)
+
+    @property
+    def invert(self):
+        if self._invert is None:
+            self._invert = self._total < 0
+
+        return self._invert

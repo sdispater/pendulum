@@ -1,0 +1,510 @@
+# -*- coding: utf-8 -*-
+
+from datetime import time, datetime, timedelta
+
+from .interval import Interval, AbsoluteInterval
+from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
+from .constants import (
+    USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
+)
+
+
+class Time(TranslatableMixin, FormattableMixing, TestableMixin):
+    """
+    Represents a time instance as hour, minute, second.
+
+    Unlike the stdlib time class it does not support a tzinfo object
+    when instantiating it since it does not make sense for a time
+    to store timezone information.
+    """
+
+    def __init__(self, hour, minute=0, second=0, microsecond=0):
+        """
+        Constructor.
+
+        :param hour: The hour.
+        :type hour: int
+
+        :param minute: The minute.
+        :type minute: int
+
+        :param second: The second
+        :type second: int
+
+        :param microsecond: The microsecond
+        :type microsecond: int
+        """
+        self._hour = hour
+        self._minute = minute
+        self._second = second
+        self._microsecond = microsecond
+        self._time = time(hour, minute, second, microsecond)
+
+    @classmethod
+    def instance(cls, t, copy=True):
+        """
+        Creates a Time instance from a time object.
+
+        It will raise a TypeError exception if the time
+        is timezone aware.
+
+        :param t: The time object
+        :type t: time
+
+        :param copy: Whether to return a copy of the instance or not.
+        :type copy: bool
+
+        :rtype: Time
+
+        :raises: TypeError
+        """
+        if isinstance(t, Time) and not copy:
+            return t
+
+        if hasattr(t, 'tzinfo') and t.tzinfo is not None:
+            raise TypeError('Cannot instantiate from an aware time.')
+
+        return cls(t.hour, t.minute, t.second, t.microsecond)
+
+    @classmethod
+    def now(cls, with_microseconds=False):
+        """
+        Return a Time instance corresponding to the current time.
+
+        It will return your local time.
+
+        By default, it will not include microseconds.
+        Just set ``with_microseconds`` to ``True`` to include them.
+
+        :param with_microseconds: Whether to include microseconds or not.
+        :type with_microseconds: bool
+
+        :rtype: Time
+        """
+        if cls.has_test_now():
+            return cls.get_test_now()
+
+        now = datetime.now()
+
+        microsecond = now.microsecond if with_microseconds else 0
+
+        return cls(now.hour, now.minute, now.second, microsecond)
+
+    @property
+    def hour(self):
+        return self._hour
+
+    @property
+    def minute(self):
+        return self._minute
+
+    @property
+    def second(self):
+        return self._second
+
+    @property
+    def microsecond(self):
+        return self._microsecond
+
+    # Comparisons
+
+    def between(self, dt1, dt2, equal=True):
+        """
+        Determines if the instance is between two others.
+
+        :type dt1: Time or time
+        :type dt2: Time or time
+
+        :param equal: Indicates if a > and < comparison shoud be used or <= and >=
+
+        :rtype: bool
+        """
+        if dt1 > dt2:
+            dt1, dt2 = dt2, dt1
+
+        if equal:
+            return self >= dt1 and self <= dt2
+
+        return self > dt1 and self < dt2
+
+    def closest(self, dt1, dt2):
+        """
+        Get the closest time from the instance.
+
+        :type dt1: Time or time
+        :type dt2: Time or time
+
+        :rtype: Time
+        """
+        dt1 = self.instance(dt1, False)
+        dt2 = self.instance(dt2, False)
+
+        if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
+            return dt1
+
+        return dt2
+
+    def farthest(self, dt1, dt2):
+        """
+        Get the farthest time from the instance.
+
+        :type dt1: Time or time
+        :type dt2: Time or time
+
+        :rtype: Time
+        """
+        dt1 = self.instance(dt1, False)
+        dt2 = self.instance(dt2, False)
+
+        if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
+            return dt1
+
+        return dt2
+
+    def min_(self, dt=None):
+        """
+        Get the minimum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Time or time
+
+        :rtype: Time
+        """
+        if dt is None:
+            dt = Time.now()
+
+        if self < dt:
+            return self
+
+        return self.instance(dt, False)
+
+    def minimum(self, dt=None):
+        """
+        Get the minimum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Time or time
+
+        :rtype: Time
+        """
+        return self.min_(dt)
+
+    def max_(self, dt=None):
+        """
+        Get the maximum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Time or time
+
+        :rtype: Time
+        """
+        if dt is None:
+            dt = Time.now()
+
+        if self > dt:
+            return self
+
+        return self.instance(dt, False)
+
+    def maximum(self, dt=None):
+        """
+        Get the maximum instance between a given instance (default now)
+        and the current instance.
+
+        :type dt: Time or time
+
+        :rtype: Time
+        """
+        return self.max_(dt)
+
+    def __eq__(self, other):
+        if isinstance(other, Time):
+            return other._time == self._time
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot compare aware times to Time.')
+
+            return other == self._time
+        else:
+            return False
+
+    def __le__(self, other):
+        if isinstance(other, Time):
+            return other._time >= self._time
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot compare aware times to Time.')
+
+            return other >= self._time
+        else:
+            return False
+
+    def __lt__(self, other):
+        if isinstance(other, Time):
+            return other._time > self._time
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot compare aware times to Time.')
+
+            return other > self._time
+        else:
+            return False
+
+    def __ge__(self, other):
+        if isinstance(other, Time):
+            return other._time <= self._time
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot compare aware times to Time.')
+
+            return other <= self._time
+        else:
+            return False
+
+    def __gt__(self, other):
+        if isinstance(other, Time):
+            return other._time < self._time
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot compare aware times to Time.')
+
+            return other < self._time
+        else:
+            return False
+
+    def __hash__(self):
+        return self._time.__hash__()
+
+    # ADDITIONS AND SUBSTRACTIONS
+
+    def add(self, hours=0, minutes=0, seconds=0, microseconds=0):
+        """
+        Add duration to the instance.
+
+        :param hours: The number of hours
+        :type hours: int
+
+        :param minutes: The number of minutes
+        :type minutes: int
+
+        :param seconds: The number of seconds
+        :type seconds: int
+
+        :param microseconds: The number of microseconds
+        :type microseconds: int
+
+        :rtype: Time
+        """
+        from .pendulum import Pendulum
+
+        return Pendulum.EPOCH.with_time(
+            self._hour, self._minute, self._second, self._microsecond
+        ).add(
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            microseconds=microseconds
+        ).time()
+
+    def subtract(self, hours=0, minutes=0, seconds=0, microseconds=0):
+        """
+        Add duration to the instance.
+
+        :param hours: The number of hours
+        :type hours: int
+
+        :param minutes: The number of minutes
+        :type minutes: int
+
+        :param seconds: The number of seconds
+        :type seconds: int
+
+        :param microseconds: The number of microseconds
+        :type microseconds: int
+
+        :rtype: Time
+        """
+        from .pendulum import Pendulum
+
+        return Pendulum.EPOCH.with_time(
+            self._hour, self._minute, self._second, self._microsecond
+        ).subtract(
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            microseconds=microseconds
+        ).time()
+
+    def add_timedelta(self, delta):
+        """
+        Add timedelta duration to the instance.
+
+        :param delta: The timedelta instance
+        :type delta: datetime.timedelta
+
+        :rtype: Time
+        """
+        if delta.days:
+            raise TypeError('Cannot timedelta with days to Time.')
+
+        return self.add(
+            seconds=delta.seconds,
+            microseconds=delta.microseconds
+        )
+
+    def subtract_timedelta(self, delta):
+        """
+        Remove timedelta duration from the instance.
+
+        :param delta: The timedelta instance
+        :type delta: datetime.timedelta
+
+        :rtype: Time
+        """
+        if delta.days:
+            raise TypeError('Cannot timedelta with days to Time.')
+
+        return self.subtract(
+            seconds=delta.seconds,
+            microseconds=delta.microseconds
+        )
+
+    def __add__(self, other):
+        if not isinstance(other, timedelta):
+            return NotImplemented
+
+        return self.add_timedelta(other)
+
+    def __sub__(self, other):
+        if not isinstance(other, (Time, time, timedelta)):
+            return NotImplemented
+
+        if isinstance(other, timedelta):
+            return self.subtract_timedelta(other)
+
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot subtract aware times to or from Time.')
+
+            other = self.instance(other)
+
+        return other.diff(self, False)
+
+    def __rsub__(self, other):
+        if not isinstance(other, (Time, time)):
+            return NotImplemented
+
+        if isinstance(other, time):
+            if other.tzinfo is not None:
+                raise TypeError('Cannot subtract aware times to or from Time.')
+
+            other = self.instance(other)
+
+        return other.__sub__(self)
+
+    # DIFFERENCES
+
+    def diff(self, dt=None, abs=True):
+        """
+        Returns the difference between two Time objects as an Interval.
+
+        :type dt: Time or None
+
+        :param abs: Whether to return an absolute interval or not
+        :type abs: bool
+
+        :rtype: Interval
+        """
+        if dt is None:
+            dt = self.now()
+        else:
+            dt = self.instance(dt, False)
+
+        us1 = (
+            self.hour * SECS_PER_HOUR
+            + self.minute * SECS_PER_MIN
+            + self.second
+        ) * USECS_PER_SEC
+
+        us2 = (
+            dt.hour * SECS_PER_HOUR
+            + dt.minute * SECS_PER_MIN
+            + dt.second
+        ) * USECS_PER_SEC
+
+        klass = Interval
+        if abs:
+            klass = AbsoluteInterval
+
+        return klass(microseconds=us2 - us1)
+
+    def diff_for_humans(self, other=None, absolute=False, locale=None):
+        """
+        Get the difference in a human readable format in the current locale.
+
+        :type other: Time or time
+
+        :param absolute: removes time difference modifiers ago, after, etc
+        :type absolute: bool
+
+        :param locale: The locale to use for localization
+        :type locale: str
+
+        :rtype: str
+        """
+        is_now = other is None
+
+        if is_now:
+            other = self.now()
+
+        diff = self.diff(other)
+
+        if diff.hours > 0:
+            unit = 'hour'
+            count = diff.hours
+        elif diff.minutes > 0:
+            unit = 'minute'
+            count = diff.minutes
+        else:
+            unit = 'second'
+            count = diff.seconds
+
+        if count == 0:
+            count = 1
+
+        time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
+
+        if absolute:
+            return time
+
+        is_future = diff.invert
+
+        if is_now:
+            trans_id = 'from_now' if is_future else 'ago'
+        else:
+            trans_id = 'after' if is_future else 'before'
+
+        # Some langs have special pluralization for past and future tense
+        try_key_exists = '%s_%s' % (unit, trans_id)
+        if try_key_exists != self.translator().transchoice(try_key_exists, count, locale=locale):
+            time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
+
+        return self.translator().trans(trans_id, {'time': time}, locale=locale)
+
+    # String formatting
+
+    def isoformat(self):
+        return self._time.isoformat()
+
+    # Testing aids
+
+    @classmethod
+    def get_test_now(cls):
+        if isinstance(cls._test_now, Time):
+            return cls._test_now
+
+        return cls._test_now.time()
+
+Time.min = Time(0, 0, 0)
+Time.max = Time(23, 59, 59, 999999)
+Time.resolution = Interval(microseconds=1)

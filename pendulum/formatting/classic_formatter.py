@@ -38,6 +38,9 @@ class ClassicFormatter(Formatter):
         if hasattr(dt, '_datetime'):
             return dt._datetime.strftime(fmt)
 
+        if hasattr(dt, '_time'):
+            return dt._time.strftime(fmt)
+
         return datetime.date(dt.year, dt.month, dt.day).strftime(fmt)
 
     def _localize_directive(self, dt, directive, locale):

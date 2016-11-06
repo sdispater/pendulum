@@ -2,6 +2,7 @@
 
 from .pendulum import Pendulum
 from .date import Date
+from .time import Time
 from .interval import Interval
 from .period import Period
 

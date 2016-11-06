@@ -51,6 +51,7 @@ class ConstructTest(AbstractTestCase):
         pi = AbsoluteInterval(days=-1177, seconds=-7284, microseconds=-1000001)
         self.assertInterval(pi, 168, 1, 2, 1, 25)
         self.assertEqual(1, pi.microseconds)
+        self.assertTrue(pi.invert)
 
     def test_invert(self):
         pi = Interval(days=1177, seconds=7284, microseconds=1000000)

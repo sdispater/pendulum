@@ -4,13 +4,11 @@ from __future__ import division
 
 import calendar
 import math
-import locale as _locale
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from .period import Period
-from .formatting import FORMATTERS
-from .mixins.default import TranslatableMixin
+from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
 from .constants import (
     DAYS_PER_WEEK, YEARS_PER_DECADE, YEARS_PER_CENTURY,
     MONTHS_PER_YEAR,
@@ -19,7 +17,7 @@ from .constants import (
 from .exceptions import PendulumException
 
 
-class Date(date, TranslatableMixin):
+class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
     # Names of days of the week
     _days = {
@@ -31,11 +29,6 @@ class Date(date, TranslatableMixin):
         FRIDAY: 'Friday',
         SATURDAY: 'Saturday'
     }
-
-    # Default format to use for __str__ method when type juggling occurs.
-    DEFAULT_TO_STRING_FORMAT = None
-
-    _to_string_format = DEFAULT_TO_STRING_FORMAT
 
     # First day of week
     _week_starts_at = MONDAY
@@ -50,9 +43,6 @@ class Date(date, TranslatableMixin):
     ]
 
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
-
-    _DEFAULT_FORMATTER = 'classic'
-    _FORMATTER = _DEFAULT_FORMATTER
 
     @classmethod
     def instance(cls, dt):
@@ -213,92 +203,6 @@ class Date(date, TranslatableMixin):
 
     # String Formatting
 
-    @classmethod
-    def reset_to_string_format(cls):
-        """
-        Reset the format used to the default
-        when type juggling a Date instance to a string.
-        """
-        cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
-
-    @classmethod
-    def set_to_string_format(cls, fmt):
-        """
-        Set the default format used
-        when type juggling a Date instance to a string
-
-        :type fmt: str
-        """
-        cls._to_string_format = fmt
-
-    def format(self, fmt, locale=None, formatter=None):
-        """
-        Formats the instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :param locale: The locale to use
-        :type locale: str or None
-
-        :param formatter: The formatter to use
-        :type formatter: str or None
-
-        :rtype: str
-        """
-        if formatter is None:
-            formatter = self._FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        return FORMATTERS[formatter].format(self, fmt, locale)
-
-    def strftime(self, fmt):
-        """
-        Formats the instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :rtype: str
-        """
-        return self.format(fmt, _locale.getlocale()[0], 'classic')
-
-    @classmethod
-    def set_formatter(cls, formatter=None):
-        """
-        Sets the default string formatter.
-
-        :param formatter: The parameter to set as default.
-        :type formatter: str or None
-        """
-        if formatter is None:
-            formatter = cls._DEFAULT_FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        cls._FORMATTER = formatter
-
-    @classmethod
-    def get_formatter(cls):
-        """
-        Gets the currently used string formatter.
-
-        :rtype: str
-        """
-        return cls._FORMATTER
-
-    def __str__(self):
-        if self._to_string_format is None:
-            return self.isoformat()
-
-        return self.format(self._to_string_format, formatter='classic')
-
-    def __repr__(self):
-        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
-
     def to_date_string(self):
         """
         Format the instance as date.
@@ -314,14 +218,6 @@ class Date(date, TranslatableMixin):
         :rtype: str
         """
         return self.format('%b %d, %Y', formatter='classic')
-
-    def for_json(self):
-        """
-        Methods for automatic json serialization by simplejson
-
-        :rtype: str
-        """
-        return str(self)
 
     # COMPARISONS
 
@@ -1272,6 +1168,15 @@ class Date(date, TranslatableMixin):
             return value if not as_date else Date.instance(value)
 
         raise ValueError('Invalid date "{}"'.format(value))
+
+    # Testing aids
+
+    @classmethod
+    def get_test_now(cls):
+        if isinstance(cls._test_now, Date):
+            return cls._test_now
+
+        return cls._test_now.date()
 
     # Native methods override
 

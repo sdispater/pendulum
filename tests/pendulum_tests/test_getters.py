@@ -241,3 +241,9 @@ class GettersTest(AbstractTestCase):
         d = dt.date()
         self.assertIsInstanceOfDate(d)
         self.assertDate(d, 2016, 10, 20)
+
+    def test_time(self):
+        dt = Pendulum(2016, 10, 20, 10, 40, 34, 123456)
+        t = dt.time()
+        self.assertIsInstanceOfTime(t)
+        self.assertTime(t, 10, 40, 34, 123456)
