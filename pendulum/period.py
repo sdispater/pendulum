@@ -176,7 +176,7 @@ class Period(WordableIntervalMixin, BaseInterval):
             ('day', self.days_exclude_weeks),
             ('hour', self.hours),
             ('minute', self.minutes),
-            ('second', self.seconds)
+            ('second', self.remaining_seconds)
         ]
 
         return super(Period, self).in_words(
