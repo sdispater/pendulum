@@ -546,6 +546,10 @@ class Pendulum(Date, datetime.datetime):
     def timezone_name(self):
         return self.timezone.name
 
+    @property
+    def age(self):
+        return self.date().diff(self.now(self._tz).date()).in_years()
+
     def get_timezone(self):
         return self._tz
 

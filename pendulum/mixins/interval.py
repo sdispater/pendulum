@@ -5,7 +5,7 @@ from .default import TranslatableMixin
 
 class WordableIntervalMixin(TranslatableMixin):
 
-    def in_words(self, locale=None, separator=' '):
+    def in_words(self, locale=None, separator=' ', _periods=None):
         """
         Get the current interval in words in the current locale.
 
@@ -17,18 +17,22 @@ class WordableIntervalMixin(TranslatableMixin):
         :param separator: The separator to use between each unit
         :type separator: str
 
+        :param _periods: Custom periods to use as word parts
+        :type _periods: list or None
+
         :rtype: str
         """
-        periods = [
-            ('week', self.weeks),
-            ('day', self.days_exclude_weeks),
-            ('hour', self.hours),
-            ('minute', self.minutes),
-            ('second', self.seconds)
-        ]
+        if _periods is None:
+            _periods = [
+                ('week', self.weeks),
+                ('day', self.remaining_days),
+                ('hour', self.hours),
+                ('minute', self.minutes),
+                ('second', self.remaining_seconds)
+            ]
 
         parts = []
-        for period in periods:
+        for period in _periods:
             unit, count = period
             if abs(count) > 0:
                 parts.append(

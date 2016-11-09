@@ -11,6 +11,8 @@ from .constants import (
     SECONDS_PER_MINUTE
 )
 
+from .utils import deprecated
+
 
 def _divide_and_round(a, b):
     """divide a by b and round result to the nearest integer
@@ -78,13 +80,25 @@ class BaseInterval(timedelta):
     def total_weeks(self):
         return self.total_days() / 7
 
+    @deprecated(
+        'Interval.total_months() is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def total_months(self):
         return round(self.total_days() / 30.436875, 1)
 
+    @deprecated(
+        'Interval.total_years() is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def total_years(self):
         return round(self.total_days() / 365.2425, 1)
 
     @property
+    @deprecated(
+        'Interval.years is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def years(self):
         if self._y is None:
             days = self._days
@@ -92,7 +106,12 @@ class BaseInterval(timedelta):
 
         return self._y
 
+
     @property
+    @deprecated(
+        'Interval.months is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def months(self):
         if self._m is None:
             days = self._days
@@ -109,8 +128,17 @@ class BaseInterval(timedelta):
         return self._days
 
     @property
+    @deprecated(
+        'Interval.days_exclude_weeks is deprecated. '
+        'It will be removed in the next major version. '
+        'Use Interval.remaing_days instead.'
+    )
     def days_exclude_weeks(self):
         return abs(self._days) % 7 * self._sign(self._days)
+
+    @property
+    def remaining_days(self):
+        return self.days_exclude_weeks
 
     @property
     def hours(self):
@@ -134,6 +162,10 @@ class BaseInterval(timedelta):
 
     @property
     def seconds(self):
+        return self._seconds
+
+    @property
+    def remaining_seconds(self):
         if self._s is None:
             self._s = self._seconds
             self._s = abs(self._s) % 60 * self._sign(self._s)
@@ -151,9 +183,17 @@ class BaseInterval(timedelta):
 
         return self._invert
 
+    @deprecated(
+        'Interval.in_years() is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def in_years(self):
         return int(self.total_years())
 
+    @deprecated(
+        'Interval.in_months() is deprecated. '
+        'It will be removed in the next major version.'
+    )
     def in_months(self):
         return int(self.total_months())
 
@@ -177,6 +217,14 @@ class BaseInterval(timedelta):
             return -1
 
         return 1
+
+    def as_timedelta(self):
+        """
+        Return the interval as a native timedelta.
+
+        :rtype: timedelta
+        """
+        return timedelta(seconds=self.total_seconds())
 
 
 class Interval(WordableIntervalMixin, BaseInterval):

@@ -1429,7 +1429,7 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
     1117
 
     # If you want the remaining days not included in full weeks
-    it.days_exclude_weeks
+    it.remaning_days
     1
 
     # The remaining number in each unit
@@ -1437,10 +1437,46 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
     2
     it.minutes
     1
+
+    # Seconds are, like days, a special case and the default
+    # property will return the whole value of remaining
+    # seconds just like the timedelta class for compatibility
     it.seconds
+    7284
+
+    # If you want the number of seconds not included
+    # in hours and minutes
+    it.remaining_seconds
     24
+
     it.microseconds
     1234
+
+.. note::
+
+    You might notice that the value of the ``seconds`` property is different that
+    the one you would obtain from the standard ``timedelta`` class.
+
+    .. code-block:: python
+
+        from datetime import timedelta
+
+        it = timedelta(days=1177, seconds=7284, microseconds=1234)
+
+        it.seconds
+        7284
+
+    The reason for that is the fact that ``pendulum`` provides the ``minutes`` and ``hours``
+    units, so ``seconds`` is just the remaining seconds after the computation of hours and minutes:
+
+    .. code-block:: python
+
+        import pendulum
+
+        it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
+
+        it.hours * 3600 + it.minutes * 60 + it.seconds
+        7284
 
 If you want to get the total duration of the interval in each supported unit
 you can use the appropriate methods.
@@ -1526,6 +1562,30 @@ instances that generated it, so that it can give access to more methods and prop
     period.in_weekend_days()
     10
 
+    # You also have access to the years and months
+    # properties and there related methods
+    start = Pendulum(2000, 11, 20)
+    end = Pendulum(2016, 11, 5)
+
+    period = end - start
+
+    period.years
+    15
+    period.months
+    11
+    period.in_years()
+    15
+    period.in_months()
+    191
+
+    # Note that the weeks property
+    # will change compared to the Interval class
+    period.weeks = 2 # 832 for the interval
+
+    # However the days property will still remain the same
+    # to keep the compatiblity with the timedelta class
+    period.days
+    5829
 
 .. warning::
 

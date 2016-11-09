@@ -62,7 +62,7 @@ class AbstractTestCase(TestCase):
         actual = {'weeks': weeks}
 
         if days is not None:
-            expected['days'] = pi.days_exclude_weeks
+            expected['days'] = pi.remaining_days
             actual['days'] = days
 
         if hours is not None:
@@ -74,7 +74,7 @@ class AbstractTestCase(TestCase):
             actual['minutes'] = minutes
 
         if seconds is not None:
-            expected['seconds'] = pi.seconds
+            expected['seconds'] = pi.remaining_seconds
             actual['seconds'] = seconds
 
         if microseconds is not None:

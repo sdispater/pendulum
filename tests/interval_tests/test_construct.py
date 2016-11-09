@@ -42,6 +42,8 @@ class ConstructTest(AbstractTestCase):
     def test_all(self):
         pi = Interval(days=1177, seconds=7284, microseconds=1000000)
         self.assertInterval(pi, 168, 1, 2, 1, 25)
+        self.assertEqual(1177, pi.days)
+        self.assertEqual(7285, pi.seconds)
 
     def test_instance(self):
         pi = Interval.instance(timedelta(days=1177, seconds=7284, microseconds=1000000))
@@ -59,3 +61,11 @@ class ConstructTest(AbstractTestCase):
 
         pi = Interval(days=-1177, seconds=-7284, microseconds=-1000000)
         self.assertTrue(pi.invert)
+
+    def test_as_timedelta(self):
+        pi = Interval(seconds=3456.123456)
+        self.assertInterval(pi, 0, 0, 0, 57, 36, 123456)
+        delta = pi.as_timedelta()
+        self.assertIsInstance(delta, timedelta)
+        self.assertEqual(3456.123456, delta.total_seconds())
+        self.assertEqual(3456, delta.seconds)

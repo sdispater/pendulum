@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- `Period` properties (especially `years` and `months`) are now accurate.
+- `Interval` properties and methods related to years and months are now deprecated.
+- `Interval.days_exclude_weeks` is now deprecated, you should use `remaing_days` instead.
+- `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
+
+### Fixed
+
+- Accuracy of `Period` instances properties has been improved.
+
 
 ## [0.6.5] - 2016-10-31
 
@@ -228,6 +241,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
 [0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
