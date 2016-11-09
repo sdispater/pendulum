@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import warnings
 from datetime import timedelta
 
 from .mixins.interval import (
@@ -10,8 +11,6 @@ from .constants import (
     SECONDS_PER_DAY, SECONDS_PER_HOUR,
     SECONDS_PER_MINUTE
 )
-
-from .utils import deprecated
 
 
 def _divide_and_round(a, b):
@@ -80,26 +79,29 @@ class BaseInterval(timedelta):
     def total_weeks(self):
         return self.total_days() / 7
 
-    @deprecated(
-        'Interval.total_months() is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def total_months(self):
+        warnings.warn(
+            'Interval.total_months() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         return round(self.total_days() / 30.436875, 1)
 
-    @deprecated(
-        'Interval.total_years() is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def total_years(self):
+        warnings.warn(
+            'Interval.total_years() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         return round(self.total_days() / 365.2425, 1)
 
     @property
-    @deprecated(
-        'Interval.years is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def years(self):
+        warnings.warn(
+            'Interval.years is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         if self._y is None:
             days = self._days
             self._y = int(round(abs(days) / 365, 1) * self._sign(days))
@@ -108,11 +110,12 @@ class BaseInterval(timedelta):
 
 
     @property
-    @deprecated(
-        'Interval.months is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def months(self):
+        warnings.warn(
+            'Interval.months is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         if self._m is None:
             days = self._days
             self._m = int(round(abs(days) / 30.436875, 1) % 12 * self._sign(days))
@@ -128,12 +131,13 @@ class BaseInterval(timedelta):
         return self._days
 
     @property
-    @deprecated(
-        'Interval.days_exclude_weeks is deprecated. '
-        'It will be removed in the next major version. '
-        'Use Interval.remaing_days instead.'
-    )
     def days_exclude_weeks(self):
+        warnings.warn(
+            'Interval.days_exclude_weeks is deprecated. '
+            'It will be removed in the next major version. '
+            'Use Interval.remaing_days instead.',
+            category=DeprecationWarning
+        )
         return abs(self._days) % 7 * self._sign(self._days)
 
     @property
@@ -183,18 +187,20 @@ class BaseInterval(timedelta):
 
         return self._invert
 
-    @deprecated(
-        'Interval.in_years() is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def in_years(self):
+        warnings.warn(
+            'Interval.in_years() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         return int(self.total_years())
 
-    @deprecated(
-        'Interval.in_months() is deprecated. '
-        'It will be removed in the next major version.'
-    )
     def in_months(self):
+        warnings.warn(
+            'Interval.in_months() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning
+        )
         return int(self.total_months())
 
     def in_weeks(self):
