@@ -20,6 +20,7 @@
 
 ### Fixed
 
+- `end_of('day')` now properly sets microseconds to `999999`.
 - Accuracy of `Period` instances properties has been improved.
 
 
