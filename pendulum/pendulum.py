@@ -1307,12 +1307,12 @@ class Pendulum(Date, datetime.datetime):
         Returns a copy of the instance with the time reset
         with the following rules:
 
-        * day: time to 23:59:59
-        * week: date to last day of the week and time to 23:59:59
-        * month: date to last day of the month and time to 23:59:59
-        * year: date to last day of the year and time to 23:59:59
-        * decade: date to last day of the decade and time to 23:59:59
-        * century: date to last day of century and time to 23:59:59
+        * day: time to 23:59:59.999999
+        * week: date to last day of the week and time to 23:59:59.999999
+        * month: date to last day of the month and time to 23:59:59.999999
+        * year: date to last day of the year and time to 23:59:59.999999
+        * decade: date to last day of the decade and time to 23:59:59.999999
+        * century: date to last day of century and time to 23:59:59.999999
 
         :param unit: The unit to reset to
         :type unit: str
@@ -1334,11 +1334,11 @@ class Pendulum(Date, datetime.datetime):
 
     def _end_of_day(self):
         """
-        Reset the time to 23:59:59
+        Reset the time to 23:59:59.999999
 
         :rtype: Pendulum
         """
-        return self.with_time(23, 59, 59)
+        return self.with_time(23, 59, 59, 999999)
 
     def _start_of_month(self):
         """
@@ -1350,7 +1350,8 @@ class Pendulum(Date, datetime.datetime):
 
     def _end_of_month(self):
         """
-        Reset the date to the last day of the month and the time to 23:59:59.
+        Reset the date to the last day of the month
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
@@ -1368,7 +1369,8 @@ class Pendulum(Date, datetime.datetime):
 
     def _end_of_year(self):
         """
-        Reset the date to the last day of the year and the time to 23:59:59.
+        Reset the date to the last day of the year
+        and the time to 23:59:59.999999
 
         :rtype: Pendulum
         """
@@ -1389,7 +1391,7 @@ class Pendulum(Date, datetime.datetime):
     def _end_of_decade(self):
         """
         Reset the date to the last day of the decade
-        and the time to 23:59:59.
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
@@ -1413,7 +1415,7 @@ class Pendulum(Date, datetime.datetime):
     def _end_of_century(self):
         """
         Reset the date to the last day of the century
-        and the time to 23:59:59.
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
