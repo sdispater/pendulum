@@ -2,12 +2,15 @@
 
 ## [Unreleased]
 
-### Changed
+### Added
 
 - Added a `Date` class.
 - Added a `Time` class.
-- `Period` properties (especially `years` and `months`) are now accurate.
 - Added a `remaing_days` property to the `Interval` class.
+
+### Changed
+
+- `Period` properties (especially `years` and `months`) are now accurate.
 - `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
 - Improved parsing performances for common formats.
 
@@ -16,7 +19,7 @@
 - `timestamp` should now be used as a method and no longer as a property. It will be a native method in the next major version.
 - `float_timestamp` is now deprecated. Use `timestamp()` instead.
 - `Interval` properties and methods related to years and months are now deprecated.
-- `Interval.days_exclude_weeks` is now deprecated, you should use `remaing_days` instead.
+- `Interval.days_exclude_weeks` is now deprecated. Use `remaing_days` instead.
 
 ### Fixed
 
