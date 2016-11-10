@@ -4,6 +4,7 @@ from __future__ import division
 
 import calendar
 import datetime
+import warnings
 
 from dateutil.relativedelta import relativedelta
 
@@ -19,6 +20,7 @@ from .constants import (
     MONTHS_PER_YEAR,
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE
 )
+from .utils import CallableTimestamp
 
 
 class Pendulum(Date, datetime.datetime):
@@ -503,10 +505,22 @@ class Pendulum(Date, datetime.datetime):
 
     @property
     def timestamp(self):
-        return int(self.float_timestamp // 1)
+        if self._timestamp is None:
+            self._timestamp = CallableTimestamp(
+                (self._datetime - self._EPOCH).total_seconds()
+            )
+
+        return self._timestamp
 
     @property
     def float_timestamp(self):
+        warnings.warn(
+            'Pendulum.float_timestamp is deprecated. '
+            'It will be removed in the next major version. '
+            'Use Pendulum.timestamp() instead.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         if self._timestamp is None:
             self._timestamp = (self._datetime - self._EPOCH).total_seconds()
 

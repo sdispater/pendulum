@@ -313,15 +313,15 @@ Pendulum gives access to more attributes and properties than the default `dateti
     36
     dt.days_in_month
     30
-    dt.timestamp
+    dt.timestamp()
+    1346887571.123789
+    dt.timestamp(True)
     1346887571
+
     pendulum.from_date(1975, 5, 21).age
     41 # calculated vs now in the same tz
     dt.quarter
     3
-
-    dt.float_timestamp
-    1346887571.123789
 
     # Returns an int of seconds difference from UTC (+/- sign included)
     pendulum.from_timestamp(0).offset

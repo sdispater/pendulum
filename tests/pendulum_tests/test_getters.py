@@ -58,8 +58,9 @@ class GettersTest(AbstractTestCase):
 
     def test_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
-        self.assertEqual(0, d.timestamp)
-        self.assertEqual(60, d.add(minutes=1).timestamp)
+        self.assertEqual(0, d.timestamp())
+        self.assertEqual(60.123456, d.add(minutes=1, microseconds=123456).timestamp())
+        self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp(True))
 
     def test_float_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
