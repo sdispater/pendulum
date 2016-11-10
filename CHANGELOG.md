@@ -4,10 +4,13 @@
 
 ### Changed
 
+- Added a `Date` class.
+- Added a `Time` class.
 - `Period` properties (especially `years` and `months`) are now accurate.
 - `Interval` properties and methods related to years and months are now deprecated.
 - `Interval.days_exclude_weeks` is now deprecated, you should use `remaing_days` instead.
 - `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
+- Improved parsing performances for common formats.
 
 ### Fixed
 
