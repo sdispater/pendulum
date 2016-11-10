@@ -83,7 +83,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.total_months() is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         return round(self.total_days() / 30.436875, 1)
 
@@ -91,7 +92,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.total_years() is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         return round(self.total_days() / 365.2425, 1)
 
@@ -100,7 +102,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.years is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         if self._y is None:
             days = self._days
@@ -114,7 +117,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.months is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         if self._m is None:
             days = self._days
@@ -136,7 +140,8 @@ class BaseInterval(timedelta):
             'Interval.days_exclude_weeks is deprecated. '
             'It will be removed in the next major version. '
             'Use Interval.remaing_days instead.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         return abs(self._days) % 7 * self._sign(self._days)
 
@@ -191,7 +196,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.in_years() is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         return int(self.total_years())
 
@@ -199,7 +205,8 @@ class BaseInterval(timedelta):
         warnings.warn(
             'Interval.in_months() is deprecated. '
             'It will be removed in the next major version.',
-            category=DeprecationWarning
+            category=DeprecationWarning,
+            stacklevel=2
         )
         return int(self.total_months())
 
