@@ -521,10 +521,7 @@ class Pendulum(Date, datetime.datetime):
             category=DeprecationWarning,
             stacklevel=2
         )
-        if self._timestamp is None:
-            self._timestamp = (self._datetime - self._EPOCH).total_seconds()
-
-        return self._timestamp
+        return self.timestamp()
 
     @property
     def offset(self):
