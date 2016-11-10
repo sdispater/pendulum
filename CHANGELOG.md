@@ -6,7 +6,7 @@
 
 - Added a `Date` class.
 - Added a `Time` class.
-- Added a `remaing_days` property to the `Interval` class.
+- Added a `remaining_days` property to the `Interval` class.
 
 ### Changed
 
@@ -19,7 +19,7 @@
 - `timestamp` should now be used as a method and no longer as a property. It will be a native method in the next major version.
 - `float_timestamp` is now deprecated. Use `timestamp()` instead.
 - `Interval` properties and methods related to years and months are now deprecated.
-- `Interval.days_exclude_weeks` is now deprecated. Use `remaing_days` instead.
+- `Interval.days_exclude_weeks` is now deprecated. Use `remaining_days` instead.
 
 ### Fixed
 
