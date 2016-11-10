@@ -9,16 +9,12 @@ from .constants import (
 )
 
 
-class Time(TranslatableMixin, FormattableMixing, TestableMixin):
+class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
     """
-    Represents a time instance as hour, minute, second.
-
-    Unlike the stdlib time class it does not support a tzinfo object
-    when instantiating it since it does not make sense for a time
-    to store timezone information.
+    Represents a time instance as hour, minute, second, microsecond.
     """
 
-    def __init__(self, hour, minute=0, second=0, microsecond=0):
+    def __init__(self, hour, minute=0, second=0, microsecond=0, tzinfo=None):
         """
         Constructor.
 
@@ -33,12 +29,16 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin):
 
         :param microsecond: The microsecond
         :type microsecond: int
+
+        :param tzinfo: The timezone info (not used)
+        :type tzinfo: tzinfo or None
         """
         self._hour = hour
         self._minute = minute
         self._second = second
         self._microsecond = microsecond
-        self._time = time(hour, minute, second, microsecond)
+        self._tzinfo = tzinfo
+        self._time = time(hour, minute, second, microsecond, tzinfo)
 
     @classmethod
     def instance(cls, t, copy=True):
@@ -61,10 +61,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin):
         if isinstance(t, Time) and not copy:
             return t
 
-        if hasattr(t, 'tzinfo') and t.tzinfo is not None:
-            raise TypeError('Cannot instantiate from an aware time.')
-
-        return cls(t.hour, t.minute, t.second, t.microsecond)
+        return cls(t.hour, t.minute, t.second, t.microsecond, t.tzinfo)
 
     @classmethod
     def now(cls, with_microseconds=False):
@@ -105,6 +102,10 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin):
     @property
     def microsecond(self):
         return self._microsecond
+
+    @property
+    def tzinfo(self):
+        return self._tzinfo
 
     # Comparisons
 
@@ -216,61 +217,6 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin):
         :rtype: Time
         """
         return self.max_(dt)
-
-    def __eq__(self, other):
-        if isinstance(other, Time):
-            return other._time == self._time
-        if isinstance(other, time):
-            if other.tzinfo is not None:
-                raise TypeError('Cannot compare aware times to Time.')
-
-            return other == self._time
-        else:
-            return False
-
-    def __le__(self, other):
-        if isinstance(other, Time):
-            return other._time >= self._time
-        if isinstance(other, time):
-            if other.tzinfo is not None:
-                raise TypeError('Cannot compare aware times to Time.')
-
-            return other >= self._time
-        else:
-            return False
-
-    def __lt__(self, other):
-        if isinstance(other, Time):
-            return other._time > self._time
-        if isinstance(other, time):
-            if other.tzinfo is not None:
-                raise TypeError('Cannot compare aware times to Time.')
-
-            return other > self._time
-        else:
-            return False
-
-    def __ge__(self, other):
-        if isinstance(other, Time):
-            return other._time <= self._time
-        if isinstance(other, time):
-            if other.tzinfo is not None:
-                raise TypeError('Cannot compare aware times to Time.')
-
-            return other <= self._time
-        else:
-            return False
-
-    def __gt__(self, other):
-        if isinstance(other, Time):
-            return other._time < self._time
-        if isinstance(other, time):
-            if other.tzinfo is not None:
-                raise TypeError('Cannot compare aware times to Time.')
-
-            return other < self._time
-        else:
-            return False
 
     def __hash__(self):
         return self._time.__hash__()
@@ -504,6 +450,43 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin):
             return cls._test_now
 
         return cls._test_now.time()
+
+    # Compatibility methods
+
+    def replace(self, hour=None, minute=None, second=None, microsecond=None,
+                tzinfo=True):
+        if tzinfo is True:
+            tzinfo = self._tzinfo
+
+        return self.instance(
+            self._time.replace(
+                hour, minute, second, microsecond,
+                tzinfo=tzinfo
+            )
+        )
+
+    def utcoffset(self):
+        return self._time.utcoffset()
+
+    def dst(self):
+        return self._time.dst()
+
+    def tzname(self):
+        if self._tzinfo is None:
+            return None
+
+        return self._time.tzname()
+
+    def _getstate(self):
+        tz = self.tzinfo
+
+        return (
+            self.hour, self.minute, self.second, self.microsecond,
+            tz
+        )
+
+    def __reduce__(self):
+        return self.__class__, self._getstate()
 
 Time.min = Time(0, 0, 0)
 Time.max = Time(23, 59, 59, 999999)

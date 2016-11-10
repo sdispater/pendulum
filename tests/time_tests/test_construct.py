@@ -38,7 +38,7 @@ class ConstructTest(AbstractTestCase):
         tz = timezone('Europe/Paris')
         native = time(12, 34, 56, 123456, tzinfo=tz)
 
-        self.assertRaises(TypeError, Time.instance, native)
+        self.assertEqual('Europe/Paris', Time.instance(native).tzinfo.name)
 
     def test_now(self):
         t = Time.now()

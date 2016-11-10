@@ -290,18 +290,4 @@ class ComparisonTest(AbstractTestCase):
 
         self.assertFalse(t1 == 'test')
         self.assertTrue(t1 != 'test')
-        self.assertFalse(t1 < 'test')
-        self.assertFalse(t1 <= 'test')
-        self.assertFalse(t1 > 'test')
-        self.assertFalse(t1 >= 'test')
         self.assertFalse(t1 in ['test'])
-
-    def test_comparison_to_aware_time(self):
-        t1 = Time.now()
-        t2 = time(1, 2, 3, tzinfo=pytz.timezone('Europe/Paris'))
-
-        self.assertRaises(TypeError, t1.__eq__, t2)
-        self.assertRaises(TypeError, t1.__lt__, t2)
-        self.assertRaises(TypeError, t1.__le__, t2)
-        self.assertRaises(TypeError, t1.__gt__, t2)
-        self.assertRaises(TypeError, t1.__ge__, t2)
