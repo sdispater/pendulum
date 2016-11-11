@@ -13,6 +13,7 @@
 - `Period` properties (especially `years` and `months`) are now accurate.
 - `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
 - Improved parsing performances for common formats.
+- The library no longer relies on `pytz`. It now depends on [pytzdata](https://github.com/sdispater/pytzdata) for its timezone database.
 
 ### Deprecated
 
@@ -23,6 +24,7 @@
 
 ### Fixed
 
+- Exception when loading specific timezones has been fixed.
 - `end_of('day')` now properly sets microseconds to `999999`.
 - Accuracy of `Period` instances properties has been improved.
 
