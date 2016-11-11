@@ -157,3 +157,10 @@ class TimezoneTest(AbstractTestCase):
         dst = tz.dst(pendulum.create(1940, 7, 1))
 
         self.assertEqual(timedelta(0, 6000), dst)
+
+    def test_short_timezones(self):
+        tz = pendulum.timezone('CET')
+        self.assertTrue(len(tz.transitions) > 0)
+
+        tz = pendulum.timezone('EET')
+        self.assertTrue(len(tz.transitions) > 0)
