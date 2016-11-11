@@ -85,6 +85,21 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         return cls(year, month, day)
 
     @classmethod
+    def today(cls, tz=None):
+        """
+        Create a Pendulum instance for today.
+
+        :param tz: The timezone
+        :type tz: Timezone or TimezoneInfo or str or None
+
+        :rtype: Pendulum
+        """
+        if cls.has_test_now():
+            return cls.get_test_now()
+
+        return cls.create()
+
+    @classmethod
     def yesterday(cls):
         return cls.today().subtract(days=1)
 
@@ -1172,7 +1187,32 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
     # Testing aids
 
     @classmethod
+    def set_test_now(cls, test_now=None):
+        """
+        Set a Date instance (real or mock) to be returned when a "now"
+        instance is created.  The provided instance will be returned
+        specifically under the following conditions:
+            - A call to the classmethod today() method, ex.Date.now()
+            - When nothing is passed to create(), ex. Date.create()
+
+        To clear the test instance call this method using the default
+        parameter of None.
+
+        :type test_now: Date or Pendulum or None
+        """
+        if test_now is not None and not isinstance(test_now, Date):
+            raise TypeError(
+                'Date.set_test_now() only accepts a Date instance, '
+                'a Pendulum instance or None.'
+            )
+
+        cls._test_now = test_now
+
+    @classmethod
     def get_test_now(cls):
+        if cls._test_now is None:
+            return None
+
         if isinstance(cls._test_now, Date):
             return cls._test_now
 

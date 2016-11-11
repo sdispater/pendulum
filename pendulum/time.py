@@ -445,7 +445,33 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
     # Testing aids
 
     @classmethod
+    def set_test_now(cls, test_now=None):
+        """
+        Set a Time instance (real or mock) to be returned when a "now"
+        instance is created.  The provided instance will be returned
+        specifically under the following conditions:
+            - A call to the classmethod now() method, ex. Time.now()
+
+        To clear the test instance call this method using the default
+        parameter of None.
+
+        :type test_now: Date or Pendulum or None
+        """
+        from .pendulum import Pendulum
+
+        if test_now is not None and not isinstance(test_now, (Pendulum, Time)):
+            raise TypeError(
+                'Time.set_test_now() only accepts a Time instance, '
+                'a Pendulum instance or None.'
+            )
+
+        cls._test_now = test_now
+
+    @classmethod
     def get_test_now(cls):
+        if cls._test_now is None:
+            return None
+
         if isinstance(cls._test_now, Time):
             return cls._test_now
 
