@@ -82,8 +82,8 @@ kwargs = dict(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'tzlocal',
-        'pytz',
         'python-dateutil',
+        'pytzdata',
     ],
     include_package_data=True,
     tests_require=['pytest'],
