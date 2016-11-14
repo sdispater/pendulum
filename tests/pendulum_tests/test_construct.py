@@ -179,3 +179,10 @@ class ConstructTest(AbstractTestCase):
         dt = Pendulum.create(tz='Etc/UTC')
 
         self.assertEqual('Etc/UTC', dt.timezone_name)
+
+    def test_create_maintains_microseconds(self):
+        d = Pendulum.create(2016, 11, 12, 2, 9, 39, 594000, 'America/Panama')
+        self.assertPendulum(d, 2016, 11, 12, 2, 9, 39, 594000)
+
+        d = Pendulum.create(2316, 11, 12, 2, 9, 39, 857, 'America/Panama')
+        self.assertPendulum(d, 2316, 11, 12, 2, 9, 39, 857)
