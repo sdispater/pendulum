@@ -3,6 +3,7 @@
 from datetime import datetime, tzinfo
 from bisect import bisect_right
 
+from ..constants import SECONDS_PER_DAY
 from .loader import Loader
 from .timezone_info import TimezoneInfo, UTC
 from ..helpers import local_time as _local_time
@@ -220,7 +221,7 @@ class Timezone(tzinfo):
                 (unix_time,
                  tzinfo_index) = self._get_previous_transition_time(tr, dt)
 
-        return self._to_local_time(unix_time, tzinfo_index)
+        return self._to_local_time(unix_time, dt.microsecond, tzinfo_index)
 
     def _convert(self, dt):
         """
@@ -238,26 +239,21 @@ class Timezone(tzinfo):
 
         return dt.astimezone(self)
 
-    def _to_local_time(self, unix_time, tzinfo_index):
+    def _to_local_time(self, unix_time, microseconds, tzinfo_index):
         tzinfo = self._tzinfos[tzinfo_index]
 
         local_time = _local_time(
             unix_time,
-            tzinfo.offset
+            tzinfo.offset,
+            microseconds
         )
 
         return local_time + (tzinfo,)
 
-    def _get_timestamp(self, dt):
-        if hasattr(dt, 'float_timestamp'):
-            return dt.float_timestamp
+    def _get_diff(self, dt1, dt2):
+        diff = dt2 - dt1
 
-        t = (dt - datetime(1970, 1, 1, tzinfo=UTC)).total_seconds()
-
-        if dt.microsecond > 0 and t < 0:
-            t -= 1
-
-        return t
+        return diff.days * SECONDS_PER_DAY + diff.seconds
 
     def _find_transition_index(self, dt, prop='_time'):
         lo, hi = 0, len(self._transitions)
@@ -282,7 +278,7 @@ class Timezone(tzinfo):
         return lo
 
     def _get_previous_transition_time(self, tr, dt):
-        diff = (dt - tr.pre_time).total_seconds()
+        diff = self._get_diff(tr.pre_time, dt)
         if -1 < diff < 0 and tr.unix_time < 0:
             diff -= 1
 

@@ -15,18 +15,18 @@ from ..constants import (
 )
 
 
-def local_time(unix_time, utc_offset):
+def local_time(unix_time, utc_offset, microseconds):
     """
     Returns a UNIX time as a broken down time
     for a particular transition type.
 
     :type unix_time: int
     :type utc_offset: int
+    :type microseconds: int
 
     :rtype: tuple
     """
     year = EPOCH_YEAR
-    microsecond = int(round(unix_time % 1, 6) * 1e6)
     seconds = int(unix_time)
 
     # Shift to a base year that is 400-year aligned.
@@ -89,5 +89,5 @@ def local_time(unix_time, utc_offset):
 
     return (
         year, month, day,
-        hour, minute, second, microsecond
+        hour, minute, second, microseconds
     )

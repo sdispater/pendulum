@@ -121,11 +121,13 @@ class Loader(object):
                 # we retrieved
                 pre_time = datetime(
                     *local_time(transition_times[i],
-                                pre_transition_type.utc_offset)
+                                pre_transition_type.utc_offset,
+                                0)
                 )
                 time = datetime(
                     *local_time(transition_times[i],
-                                transition_type.utc_offset)
+                                transition_type.utc_offset,
+                                0)
                 )
 
                 # We build the tzinfo information as tuples

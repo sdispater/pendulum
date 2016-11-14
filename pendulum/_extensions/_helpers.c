@@ -92,7 +92,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     double unix_time;
     int32_t utc_offset;
     int32_t year;
-    int64_t microsecond;
+    int32_t microsecond;
     int64_t seconds;
     int32_t leap_year;
     int64_t sec_per_100years;
@@ -105,7 +105,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     int32_t minute;
     int32_t second;
 
-    if (!PyArg_ParseTuple(args, "di", &unix_time, &utc_offset)) {
+    if (!PyArg_ParseTuple(args, "dii", &unix_time, &utc_offset, &microsecond)) {
         PyErr_SetString(
             PyExc_ValueError, "Invalid parameters"
         );
@@ -113,10 +113,6 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     }
 
     year = EPOCH_YEAR;
-    microsecond = (int64_t) (unix_time * 1000000) % 1000000;
-    if (microsecond < 0) {
-        microsecond += 1000000;
-    }
     seconds = (int64_t) unix_time;
 
     // Shift to a base year that is 400-year aligned.
@@ -179,7 +175,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
         month -= 1;
     }
 
-    // Handle hours, minutes, seconds and microseconds
+    // Handle hours, minutes and seconds
     hour = seconds / SECS_PER_HOUR;
     seconds %= SECS_PER_HOUR;
     minute = seconds / SECS_PER_MIN;
