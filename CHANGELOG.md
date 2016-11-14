@@ -15,7 +15,7 @@
 - `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
 - Improved parsing performances for common formats.
 - The library no longer relies on `pytz`. It now depends on [pytzdata](https://github.com/sdispater/pytzdata) for its timezone database.
-- Locale, test instance and formatter are not set gobally at the module level when using the corresponding module methods.
+- Locale, test instance and formatter are now set gobally at the module level when using the corresponding module methods.
 
 ### Deprecated
 
