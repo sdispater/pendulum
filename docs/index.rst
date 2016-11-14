@@ -315,7 +315,9 @@ Pendulum gives access to more attributes and properties than the default `dateti
     30
     dt.timestamp()
     1346887571.123789
-    dt.timestamp(True)
+    dt.float_timestamp
+    1346887571.123789
+    dt.int_timestamp
     1346887571
 
     pendulum.from_date(1975, 5, 21).age

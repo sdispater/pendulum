@@ -18,7 +18,8 @@ from .parsing import parse
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
-    MINUTES_PER_HOUR, SECONDS_PER_MINUTE
+    MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
+    SECONDS_PER_DAY
 )
 from .utils import CallableTimestamp
 
@@ -156,6 +157,7 @@ class Pendulum(Date, datetime.datetime):
             self._tzinfo = dt.tzinfo
 
         self._timestamp = None
+        self._int_timestamp = None
         self._datetime = dt
 
     @classmethod
@@ -507,21 +509,24 @@ class Pendulum(Date, datetime.datetime):
     def timestamp(self):
         if self._timestamp is None:
             self._timestamp = CallableTimestamp(
-                (self._datetime - self._EPOCH).total_seconds()
+                self.int_timestamp
             )
+            self._timestamp.set_float(self._datetime.timestamp())
 
         return self._timestamp
 
     @property
     def float_timestamp(self):
-        warnings.warn(
-            'Pendulum.float_timestamp is deprecated. '
-            'It will be removed in the next major version. '
-            'Use Pendulum.timestamp() instead.',
-            category=DeprecationWarning,
-            stacklevel=2
-        )
         return self.timestamp()
+
+    @property
+    def int_timestamp(self):
+        if self._int_timestamp is None:
+            delta = self._datetime - self._EPOCH
+
+            self._int_timestamp = delta.days * SECONDS_PER_DAY + delta.seconds
+
+        return self._int_timestamp
 
     @property
     def offset(self):

@@ -10,10 +10,13 @@ class CallableTimestamp(int):
     ``timestamp`` property that should be a method.
     """
 
-    def __init__(self, value):
-        self._float = value
+    def __init__(self, value, float_=None):
+        self._float = float_ or value
 
         super(CallableTimestamp, self).__init__()
+
+    def set_float(self, float_):
+        self._float = float_
 
     def __call__(self, as_int=False):
         if as_int:

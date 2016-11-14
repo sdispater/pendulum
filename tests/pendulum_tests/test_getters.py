@@ -59,12 +59,28 @@ class GettersTest(AbstractTestCase):
     def test_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
         self.assertEqual(0, d.timestamp())
+        self.assertEqual(0, d.timestamp)
         self.assertEqual(60.123456, d.add(minutes=1, microseconds=123456).timestamp())
-        self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp(True))
+        self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp)
+
+    def test_timestamp_accuracy(self):
+        d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
+
+        self.assertEqual(32527311790, d.timestamp)
 
     def test_float_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
         self.assertEqual(0.123456, d.float_timestamp)
+
+    def test_int_timestamp(self):
+        d = Pendulum(1970, 1, 1, 0, 0, 0)
+        self.assertEqual(0, d.int_timestamp)
+        self.assertEqual(60, d.add(minutes=1, microseconds=123456).int_timestamp)
+
+    def test_int_timestamp_accuracy(self):
+        d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
+
+        self.assertEqual(32527311790, d.int_timestamp)
 
     def test_age(self):
         d = Pendulum.now()
