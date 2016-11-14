@@ -83,7 +83,7 @@ class AlternativeFormatter(Formatter):
         'SSSSSS': lambda dt: '{:06d}'.format(dt.microsecond),
 
         # Timestamp
-        'X': lambda dt: '{:d}'.format(dt.timestamp(True)),
+        'X': lambda dt: '{:d}'.format(dt.int_timestamp),
 
         # Timezone
         'z': lambda dt: '{}'.format(dt.tzinfo.abbrev),

@@ -4,7 +4,6 @@ from __future__ import division
 
 import calendar
 import datetime
-import warnings
 
 from dateutil.relativedelta import relativedelta
 
@@ -508,10 +507,12 @@ class Pendulum(Date, datetime.datetime):
     @property
     def timestamp(self):
         if self._timestamp is None:
+            delta = self._datetime - self._EPOCH
+
             self._timestamp = CallableTimestamp(
-                self.int_timestamp
+                delta.days * SECONDS_PER_DAY + delta.seconds
             )
-            self._timestamp.set_float(self._datetime.timestamp())
+            self._timestamp.set_float(delta.total_seconds())
 
         return self._timestamp
 

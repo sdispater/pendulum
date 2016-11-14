@@ -18,8 +18,5 @@ class CallableTimestamp(int):
     def set_float(self, float_):
         self._float = float_
 
-    def __call__(self, as_int=False):
-        if as_int:
-            return self
-
+    def __call__(self):
         return self._float
