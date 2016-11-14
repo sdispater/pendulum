@@ -190,14 +190,14 @@ class GettersTest(AbstractTestCase):
             self.assertTrue(d.is_tomorrow())
 
     def test_is_future(self):
-        with self.wrap_with_test_now():
+        with self.wrap_with_test_now(Pendulum(2000, 1, 1)):
             d = Pendulum.now()
             self.assertFalse(d.is_future())
             d = d.add(days=1)
             self.assertTrue(d.is_future())
 
     def test_is_past(self):
-        with self.wrap_with_test_now():
+        with self.wrap_with_test_now(Pendulum(2000, 1, 1)):
             d = Pendulum.now()
             self.assertFalse(d.is_past())
             d = d.subtract(days=1)

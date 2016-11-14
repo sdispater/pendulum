@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
+
 from unittest import TestCase
 from contextlib import contextmanager
 
@@ -15,14 +17,14 @@ class AbstractTestCase(TestCase):
         super(AbstractTestCase, self).setUp()
 
     def tearDown(self):
+        pendulum.set_test_now()
+        pendulum.set_formatter()
+        pendulum.set_locale('en')
         LocalTimezone.set_local_timezone()
         Pendulum.reset_to_string_format()
         Date.reset_to_string_format()
         Time.reset_to_string_format()
         Pendulum.set_transition_rule(Timezone.POST_TRANSITION)
-        Pendulum.set_formatter()
-        Date.set_formatter()
-        Time.set_formatter()
 
     def assertPendulum(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):
@@ -97,8 +99,8 @@ class AbstractTestCase(TestCase):
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):
-        Pendulum.set_test_now(dt or Pendulum.now())
+        pendulum.set_test_now(dt or Pendulum.now())
 
         yield
 
-        Pendulum.set_test_now()
+        pendulum.set_test_now()

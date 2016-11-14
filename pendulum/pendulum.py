@@ -236,9 +236,9 @@ class Pendulum(Date, datetime.datetime):
         # If the class has a test now set and we are trying to create a now()
         # instance then override as required
         if cls.has_test_now():
-            test_instance = cls._test_now
+            test_instance = cls.get_test_now()
 
-            if tz is not None and tz != cls._test_now.timezone:
+            if tz is not None and tz != test_instance.timezone:
                 test_instance = test_instance.in_timezone(tz)
 
             return test_instance
@@ -327,7 +327,7 @@ class Pendulum(Date, datetime.datetime):
 
         if any([year is None, month is None, day is None]):
             if cls.has_test_now():
-                now = cls._test_now.in_tz(tz)
+                now = cls.get_test_now().in_tz(tz)
             else:
                 now = datetime.datetime.utcnow().replace(tzinfo=UTC)
                 now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
@@ -1818,18 +1818,6 @@ class Pendulum(Date, datetime.datetime):
 
     def __radd__(self, other):
         return self.__add__(other)
-
-    # TESTING AIDS
-
-    @classmethod
-    def get_test_now(cls):
-        """
-        Get the Pendulum instance (real or mock) to be returned when a "now"
-        instance is created.
-
-        :rtype: Pendulum or None
-        """
-        return cls._test_now
 
     # Native methods override
 
