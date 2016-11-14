@@ -3,6 +3,7 @@
 #include <Python.h>
 #include <stdint.h>
 #include <datetime.h>
+#include <math.h>
 
 #ifndef PyVarObject_HEAD_INIT
 #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
@@ -113,7 +114,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     }
 
     year = EPOCH_YEAR;
-    microsecond = (int64_t) (unix_time * 1000000) % 1000000;
+    microsecond = (int64_t) round(fmod(unix_time, 1) * 1000000);
     if (microsecond < 0) {
         microsecond += 1000000;
     }
