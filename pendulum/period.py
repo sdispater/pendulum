@@ -283,3 +283,16 @@ class Period(WordableIntervalMixin, BaseInterval):
         return '<Period [{} -> {}]>'.format(
             self._start, self._end
         )
+
+    def _getstate(self):
+        start, end = self.start, self.end
+
+        if self._invert and self._absolute:
+            end, start = start, end
+
+        return (
+            start, end, self._absolute
+        )
+
+    def __reduce__(self):
+        return self.__class__, self._getstate()
