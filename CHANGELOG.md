@@ -29,6 +29,7 @@
 - `end_of('day')` now properly sets microseconds to `999999`.
 - Accuracy of `Period` instances properties has been improved.
 - Accuracy for microseconds when initializing a Pendulum instance in some timezones has been fixed.
+- Periods are now serializable with `pickle`.
 
 
 ## [0.6.5] - 2016-10-31
