@@ -9,6 +9,7 @@
 - Added a `remaining_days` property to the `Interval` class.
 - Added a `in_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
 - `start_of()`/`end_of()` now supports `hour`, `minute` and `second` units.
+- `astimezone()` now supports timezone strings.
 
 ### Changed
 

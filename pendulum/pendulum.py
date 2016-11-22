@@ -1934,6 +1934,8 @@ class Pendulum(Date, datetime.datetime):
         )
 
     def astimezone(self, tz=None):
+        tz = self._safe_create_datetime_zone(tz)
+
         return self.instance(self._datetime.astimezone(tz))
 
     def isoformat(self, sep='T'):
