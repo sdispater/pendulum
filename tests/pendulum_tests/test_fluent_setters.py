@@ -58,6 +58,11 @@ class FluentSettersTest(AbstractTestCase):
         self.assertEqual(987654, new.microsecond)
         self.assertEqual(123456, d.microsecond)
 
+    def test_fluid_setter_keeps_timezone(self):
+        d = Pendulum.create(2016, 7, 2, 0, 41, 20, 123456, tz='Europe/Paris')
+        new = d.microsecond_(987654)
+        self.assertPendulum(new, 2016, 7, 2, 0, 41, 20, 987654)
+
     def test_fluid_timezone_setter(self):
         d = Pendulum.create(2016, 7, 2, 0, 41, 20)
         new = d.timezone_('Europe/Paris')

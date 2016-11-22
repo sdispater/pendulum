@@ -8,6 +8,7 @@
 - Added a `Time` class.
 - Added a `remaining_days` property to the `Interval` class.
 - Added a `in_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
+- `start_of()`/`end_of()` now supports `hour`, `minute` and `second` units.
 
 ### Changed
 
@@ -30,6 +31,7 @@
 - Accuracy of `Period` instances properties has been improved.
 - Accuracy for microseconds when initializing a Pendulum instance in some timezones has been fixed.
 - Periods are now serializable with `pickle`.
+- Fixed `minute_()`, `second_()` and `microsecond_()` setters changing the hour unit.
 
 
 ## [0.6.5] - 2016-10-31

@@ -7,6 +7,42 @@ from .. import AbstractTestCase
 
 class StartEndOfTest(AbstractTestCase):
 
+    def test_start_of_second(self):
+        d = Pendulum.now()
+        new = d.start_of('second')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 0)
+
+    def test_end_of_second(self):
+        d = Pendulum.now()
+        new = d.end_of('second')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 999999)
+
+    def test_start_of_minute(self):
+        d = Pendulum.now()
+        new = d.start_of('minute')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, 0, 0)
+
+    def test_end_of_minute(self):
+        d = Pendulum.now()
+        new = d.end_of('minute')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, 59, 999999)
+
+    def test_start_of_hour(self):
+        d = Pendulum.now()
+        new = d.start_of('hour')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, 0, 0, 0)
+
+    def test_end_of_hour(self):
+        d = Pendulum.now()
+        new = d.end_of('hour')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, 59, 59, 999999)
+
     def test_start_of_day(self):
         d = Pendulum.now()
         new = d.start_of('day')

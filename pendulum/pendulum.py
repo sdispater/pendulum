@@ -44,6 +44,12 @@ class Pendulum(Date, datetime.datetime):
 
     _TRANSITION_RULE = Timezone.POST_TRANSITION
 
+    _MODIFIERS_VALID_UNITS = [
+        'second', 'minute', 'hour',
+        'day', 'week', 'month', 'year',
+        'decade', 'century'
+    ]
+
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
         """
@@ -455,7 +461,7 @@ class Pendulum(Date, datetime.datetime):
         return self._setter(microsecond=microsecond)
 
     def _setter(self, **kwargs):
-        kwargs['tzinfo'] = None
+        kwargs['tzinfo'] = True
 
         return self._tz.convert(self.replace(**kwargs))
 
@@ -1291,6 +1297,9 @@ class Pendulum(Date, datetime.datetime):
         Returns a copy of the instance with the time reset
         with the following rules:
 
+        * second: microsecond set to 0
+        * minute: second and microsecond set to 0
+        * hour: minute, second and microsecond set to 0
         * day: time to 00:00:00
         * week: date to first day of the week and time to 00:00:00
         * month: date to first day of the month and time to 00:00:00
@@ -1313,6 +1322,9 @@ class Pendulum(Date, datetime.datetime):
         Returns a copy of the instance with the time reset
         with the following rules:
 
+        * second: microsecond set to 999999
+        * minute: second set to 59 and microsecond set to 999999
+        * hour: minute and second set to 59 and microsecond set to 999999
         * day: time to 23:59:59.999999
         * week: date to last day of the week and time to 23:59:59.999999
         * month: date to last day of the month and time to 23:59:59.999999
@@ -1329,6 +1341,54 @@ class Pendulum(Date, datetime.datetime):
             raise ValueError('Invalid unit "%s" for end_of()' % unit)
 
         return getattr(self, '_end_of_%s' % unit)()
+
+    def _start_of_second(self):
+        """
+        Reset microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.microsecond_(0)
+
+    def _end_of_second(self):
+        """
+        Set microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.microsecond_(999999)
+
+    def _start_of_minute(self):
+        """
+        Reset seconds and microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.replace(second=0, microsecond=0)
+
+    def _end_of_minute(self):
+        """
+        Set seconds to 59 and microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.replace(second=59, microsecond=999999)
+
+    def _start_of_hour(self):
+        """
+        Reset minutes, seconds and microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.replace(minute=0, second=0, microsecond=0)
+
+    def _end_of_hour(self):
+        """
+        Set minutes and seconds to 59 and microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.replace(minute=59, second=59, microsecond=999999)
 
     def _start_of_day(self):
         """
