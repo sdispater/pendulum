@@ -35,7 +35,7 @@ with_extensions = os.getenv('PENDULUM_EXTENSIONS', None)
 if with_extensions == '1' or with_extensions is None:
     with_extensions = True
 
-if hasattr(sys, 'pypy_version_info'):
+if with_extensions == '0' or hasattr(sys, 'pypy_version_info'):
     with_extensions = False
 
 extensions = []
@@ -45,7 +45,6 @@ if with_extensions:
                   ['pendulum/_extensions/_helpers.c'],
                   extra_compile_args=['-Wno-unused-function']),
     ]
-
 
 class BuildFailed(Exception):
 
