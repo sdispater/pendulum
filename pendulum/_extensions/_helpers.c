@@ -185,8 +185,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     minute = seconds / SECS_PER_MIN;
     second = seconds % SECS_PER_MIN;
 
-    return PyTuple_Pack(
-        7,
+    return Py_BuildValue("NNNNNNN",
         PyLong_FromLong(year),
         PyLong_FromLong(month),
         PyLong_FromLong(day),
