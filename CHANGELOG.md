@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.6.6] - 2016-11-25
+
+### Fixed
+
+- Fixed a memory leak in C extension. (thanks to [ntoll](https://github.com/ntoll))
+
 
 ## [0.6.5] - 2016-10-31
 
@@ -228,6 +234,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[0.6.6]: https://github.com/sdispater/pendulum/releases/tag/0.6.6
 [0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
