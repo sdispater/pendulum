@@ -1504,6 +1504,20 @@ It also has a handy ``in_words()``, which determines the interval representation
     it.in_words(locale='de')
     '168 Wochen 1 Tag 2 Stunden 1 Minute 24 Sekunden'
 
+Some commonly used intervals are also provided as class variables of the ``Interval`` class.
+
+.. code-block:: python
+
+    from pendulum import interval
+
+    it = interval(days=10, hours=5)
+
+    it2 = it + 2 * interval.day - 3 * interval.hour
+
+    it2.days
+    12
+    it2.hours
+    2
 
 Period
 ======

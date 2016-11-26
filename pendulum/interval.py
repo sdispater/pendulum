@@ -284,6 +284,14 @@ Interval.max = Interval(days=999999999, hours=23,
                         microseconds=999999)
 Interval.resolution = Interval(microseconds=1)
 
+Interval.day = Interval(days=1)
+Interval.second = Interval(seconds=1)
+Interval.microsecond = Interval(microseconds=1)
+Interval.millisecond = Interval(milliseconds=1)
+Interval.minute = Interval(minutes=1)
+Interval.hour = Interval(hours=1)
+Interval.week = Interval(weeks=1)
+
 
 class AbsoluteInterval(Interval):
     """
