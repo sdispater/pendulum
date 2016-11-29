@@ -6,6 +6,7 @@
 
 - Added a `Date` class.
 - Added a `Time` class.
+- Added experimental support for the `fold` attribute introduced in Python 3.6.
 - Added a `remaining_days` property to the `Interval` class.
 - Added a `in_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
 - `start_of()`/`end_of()` now supports `hour`, `minute` and `second` units.
@@ -34,6 +35,7 @@
 - Accuracy for microseconds when initializing a Pendulum instance in some timezones has been fixed.
 - Periods are now serializable with `pickle`.
 - Fixed `minute_()`, `second_()` and `microsecond_()` setters changing the hour unit.
+- Fixed Windows support.
 
 
 ## [0.6.6] - 2016-11-25
