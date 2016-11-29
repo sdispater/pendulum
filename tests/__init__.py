@@ -120,3 +120,7 @@ class AbstractTestCase(TestCase):
     def skip_if_32bit(self):
         if struct.calcsize("P") * 8 == 32:
             self.skipTest('Tests only available for 64bit systems')
+
+    def skip_if_windows(self):
+        if sys.platform == 'win32':
+            self.skipTest('Tests only available for UNIX systems')
