@@ -773,7 +773,7 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format('%a, %b %d, %Y %-I:%M %p', formatter='classic')
+        return self.format('ddd, MMM D, YYYY h:mm A', formatter='alternative')
 
     def to_atom_string(self):
         """

@@ -2,6 +2,7 @@
 
 import sys
 import pendulum
+import struct
 
 from unittest import TestCase
 from contextlib import contextmanager
@@ -115,3 +116,7 @@ class AbstractTestCase(TestCase):
     def skip_if_36(self):
         if PY36:
             self.skipTest('Tests only available for Python <= 3.5')
+
+    def skip_if_32bit(self):
+        if struct.calcsize("P") * 8 == 32:
+            self.skipTest('Tests only available for 64bit systems')

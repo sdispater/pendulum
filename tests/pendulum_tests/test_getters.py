@@ -64,6 +64,8 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp)
 
     def test_timestamp_accuracy(self):
+        self.skip_if_32bit()
+
         d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
 
         self.assertEqual(32527311790, d.timestamp)
@@ -78,6 +80,8 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(60, d.add(minutes=1, microseconds=123456).int_timestamp)
 
     def test_int_timestamp_accuracy(self):
+        self.skip_if_32bit()
+
         d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
 
         self.assertEqual(32527311790, d.int_timestamp)

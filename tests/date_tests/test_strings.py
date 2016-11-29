@@ -33,7 +33,7 @@ class StringsTest(AbstractTestCase):
         d = Date(1975, 12, 25)
         self.assertEqual(
             'Thursday 25th of December 1975',
-            d.format('%A %-d%_t of %B %Y')
+            d.format('%A %d%_t of %B %Y')
         )
 
     def test_repr(self):
@@ -44,7 +44,7 @@ class StringsTest(AbstractTestCase):
     def test_format_with_locale(self):
         d = Date(1975, 12, 25)
         self.assertEqual('jeudi 25e jour de décembre 1975',
-                         d.format('%A %-d%_t jour de %B %Y', locale='fr'))
+                         d.format('%A %d%_t jour de %B %Y', locale='fr'))
 
     def test_set_formatter_globally(self):
         Date.set_formatter('alternative')

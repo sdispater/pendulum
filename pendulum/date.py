@@ -127,7 +127,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
     @property
     def day_of_year(self):
-        return int(self.format('%-j', formatter='classic'))
+        return int(self.format('%j', formatter='classic'))
 
     @property
     def week_of_year(self):
