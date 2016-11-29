@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from ._compat import long
 
-class CallableTimestamp(int):
+
+class CallableTimestamp(long):
     """
     An int object representing a timestamp that
     returns a float when called.
