@@ -5,6 +5,7 @@ import sys
 PY2 = sys.version_info[0] == 2
 PY3K = sys.version_info[0] >= 3
 PY33 = sys.version_info >= (3, 3)
+PY36 = sys.version_info >= (3, 6)
 
 
 if PY2:

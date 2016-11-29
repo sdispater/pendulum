@@ -110,7 +110,7 @@ class Pendulum(Date, datetime.datetime):
 
     def __new__(cls, year, month, day,
                 hour=0, minute=0, second=0, microsecond=0,
-                tzinfo=None):
+                tzinfo=None, fold=None):
         """
         Constructor.
 
@@ -125,7 +125,7 @@ class Pendulum(Date, datetime.datetime):
 
     def __init__(self, year, month, day,
                  hour=0, minute=0, second=0, microsecond=0,
-                 tzinfo=UTC):
+                 tzinfo=UTC, fold=None):
         # If a TimezoneInfo is passed we do not convert
         if isinstance(tzinfo, TimezoneInfo):
             self._tz = tzinfo.tz
@@ -139,6 +139,15 @@ class Pendulum(Date, datetime.datetime):
             self._microsecond = microsecond
             self._tzinfo = tzinfo
 
+            if fold is None:
+                # Converting rule to fold value
+                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
+                    fold = 1
+                else:
+                    fold = 0
+
+            self._fold = fold
+
             dt = datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond,
@@ -147,10 +156,24 @@ class Pendulum(Date, datetime.datetime):
         else:
             self._tz = self._safe_create_datetime_zone(tzinfo)
 
+            # Support for explicit fold attribute
+            if fold is None:
+                transition_rule = self._TRANSITION_RULE
+
+                # Converting rule to fold value
+                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
+                    fold = 1
+                else:
+                    fold = 0
+            elif fold == 1:
+                transition_rule = Timezone.POST_TRANSITION
+            else:
+                transition_rule = Timezone.PRE_TRANSITION
+
             dt = self._tz.convert(datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond
-            ), dst_rule=self._TRANSITION_RULE)
+            ), dst_rule=transition_rule)
 
             self._year = dt.year
             self._month = dt.month
@@ -160,6 +183,7 @@ class Pendulum(Date, datetime.datetime):
             self._second = dt.second
             self._microsecond = dt.microsecond
             self._tzinfo = dt.tzinfo
+            self._fold = getattr(dt, 'fold', fold)
 
         self._timestamp = None
         self._int_timestamp = None
@@ -337,7 +361,7 @@ class Pendulum(Date, datetime.datetime):
                 now = cls.get_test_now().in_tz(tz)
             else:
                 now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-                now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
+                now = tz.convert(now)
 
             if year is None:
                 year = now.year
@@ -509,6 +533,10 @@ class Pendulum(Date, datetime.datetime):
     @property
     def tzinfo(self):
         return self._tzinfo
+
+    @property
+    def fold(self):
+        return self._fold
 
     @property
     def timestamp(self):
@@ -1108,7 +1136,10 @@ class Pendulum(Date, datetime.datetime):
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
             # we will not apply the transition (if any)
-            dt = self._tz.convert(dt.replace(tzinfo=None))
+            dt = self._tz.convert(
+                dt.replace(tzinfo=None),
+                dst_rule=Timezone.POST_TRANSITION
+            )
         else:
             # Else, we need to apply the transition properly (if any)
             dt = self._tz.convert(dt)
@@ -1956,7 +1987,7 @@ class Pendulum(Date, datetime.datetime):
     def __getnewargs__(self):
         return(self, )
 
-    def _getstate(self):
+    def _getstate(self, protocol=3):
         tz = self.timezone_name
 
         # Fix for fixed timezones not being properly unpickled
@@ -1966,11 +1997,15 @@ class Pendulum(Date, datetime.datetime):
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            tz
+            tz,
+            self.fold
         )
 
     def __reduce__(self):
-        return self.__class__, self._getstate()
+        return self.__reduce_ex__(2)
+
+    def __reduce_ex__(self, protocol):
+        return self.__class__, self._getstate(protocol)
 
 Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=UTC))
 Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=UTC))

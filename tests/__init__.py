@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import pendulum
 
 from unittest import TestCase
@@ -7,6 +8,8 @@ from contextlib import contextmanager
 
 from pendulum import Pendulum, Date, Time, Interval
 from pendulum.tz import LocalTimezone, timezone, Timezone
+
+PY36 = sys.version_info >= (3, 6)
 
 
 class AbstractTestCase(TestCase):
@@ -104,3 +107,11 @@ class AbstractTestCase(TestCase):
         yield
 
         pendulum.set_test_now()
+
+    def skip_if_not_36(self):
+        if not PY36:
+            self.skipTest('Tests only available for Python 3.6')
+
+    def skip_if_36(self):
+        if PY36:
+            self.skipTest('Tests only available for Python <= 3.5')

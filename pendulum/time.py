@@ -14,7 +14,8 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
     Represents a time instance as hour, minute, second, microsecond.
     """
 
-    def __init__(self, hour, minute=0, second=0, microsecond=0, tzinfo=None):
+    def __init__(self, hour, minute=0, second=0, microsecond=0,
+                 tzinfo=None, fold=0):
         """
         Constructor.
 
@@ -39,6 +40,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         self._microsecond = microsecond
         self._tzinfo = tzinfo
         self._time = time(hour, minute, second, microsecond, tzinfo)
+        self._fold = fold
 
     @classmethod
     def instance(cls, t, copy=True):
@@ -106,6 +108,10 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
     @property
     def tzinfo(self):
         return self._tzinfo
+
+    @property
+    def fold(self):
+        return self._fold
 
     # Comparisons
 
@@ -503,7 +509,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         return self._time.tzname()
 
-    def _getstate(self):
+    def _getstate(self, protocol=3):
         tz = self.tzinfo
 
         return (
@@ -512,7 +518,10 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         )
 
     def __reduce__(self):
-        return self.__class__, self._getstate()
+        return self.__reduce_ex__(2)
+
+    def __reduce_ex__(self, protocol):
+        return self.__class__, self._getstate(protocol)
 
 Time.min = Time(0, 0, 0)
 Time.max = Time(23, 59, 59, 999999)

@@ -284,7 +284,7 @@ class Period(WordableIntervalMixin, BaseInterval):
             self._start, self._end
         )
 
-    def _getstate(self):
+    def _getstate(self, protocol=3):
         start, end = self.start, self.end
 
         if self._invert and self._absolute:
@@ -295,4 +295,7 @@ class Period(WordableIntervalMixin, BaseInterval):
         )
 
     def __reduce__(self):
-        return self.__class__, self._getstate()
+        return self.__reduce_ex__(2)
+
+    def __reduce_ex__(self, protocol):
+        return self.__class__, self._getstate(protocol)

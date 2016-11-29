@@ -4,7 +4,7 @@ import os
 import pytz
 from datetime import datetime, timedelta
 from dateutil import tz
-from pendulum import Pendulum
+from pendulum import Pendulum, PRE_TRANSITION, POST_TRANSITION
 from pendulum.tz import timezone
 from pendulum.tz.timezone_info import TimezoneInfo
 from .. import AbstractTestCase
@@ -186,3 +186,22 @@ class ConstructTest(AbstractTestCase):
 
         d = Pendulum.create(2316, 11, 12, 2, 9, 39, 857, 'America/Panama')
         self.assertPendulum(d, 2316, 11, 12, 2, 9, 39, 857)
+
+    def test_init_fold_is_honored_if_explicit(self):
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris')
+        # Default value of None for Pendulum instances
+        # so default rule will be applied
+        self.assertPendulum(d, 2013, 3, 31, 3, 30)
+
+        Pendulum.set_transition_rule(PRE_TRANSITION)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris')
+        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+
+        Pendulum.set_transition_rule(POST_TRANSITION)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=0)
+        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=1)
+        self.assertPendulum(d, 2013, 3, 31, 3, 30)

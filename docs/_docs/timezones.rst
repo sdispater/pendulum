@@ -57,6 +57,38 @@ given timezone to properly handle any transition that might have occurred.
     Note that it only affects instances at creation time. Shifting time around
     transition times still behaves the same.
 
+.. note::
+
+    As of version **0.7.0**, and to be consistent with the standard library (Python 3.6+),
+    the ``Pendulum`` class accepts a ``fold`` keyword argument which will be used, when set explicitely,
+    to determine the rule to apply on ambiguous or non-existing times.
+    Be aware that when it is not set explicitely, the previous behavior remains,
+    i.e. the configured transition rule or the default one will be used.
+
+    .. code-block:: python
+
+        from pendulum import Pendulum
+
+        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        dt.isoformat()
+        '2013-03-31T03:30:00+02:00'
+
+        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=0)
+        dt.isoformat()
+        '2013-03-31T02:30:00+01:00'
+
+        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=1)
+        dt.isoformat()
+        '2013-03-31T02:30:00+01:00'
+
+        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=0)
+        dt.isoformat()
+        '2013-10-27T02:30:00+02:00'
+
+        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=1)
+        dt.isoformat()
+        '2013-10-27T02:30:00+01:00'
+
 Shifting time to transition
 ---------------------------
 
@@ -112,6 +144,41 @@ Using the timezone library directly
 Like said in the introduction, you can use the timezone library
 directly with standard ``datetime`` objects but with limitations, especially
 when adding and subtracting time around transition times.
+
+.. warning::
+
+    By default in **Python 3.6+**, the value of the ``fold`` attribute will be used
+    to determine the transition rule. So the behavior will be slightly different
+    compared to previous versions.
+
+    .. code-block:: python
+
+        from datetime import datetime
+        from pendulum import timezone
+
+        paris = timezone('Europe/Paris')
+        dt = datetime(2013, 3, 31, 2, 30)
+        # By default, fold is set to 0
+        dt = paris.convert(dt)
+        dt.isoformat()
+        '2013-03-31T02:30:00+01:00'
+
+        dt = datetime(2013, 3, 31, 2, 30, fold=1)
+        dt = paris.convert(dt)
+        dt.isoformat()
+        '2013-03-31T03:30:00+02:00'
+
+    You can override this behavior by explicitely passing the
+    transition rule to ``convert()``.
+
+    .. code-block:: python
+
+        paris = timezone('Europe/Paris')
+        dt = datetime(2013, 3, 31, 2, 30)
+        # By default, fold is set to 0
+        dt = paris.convert(dt, dst_rule=paris.POST_TRANSITION)
+        dt.isoformat()
+        '2013-03-31T03:30:00+02:00'
 
 
 .. code-block:: python

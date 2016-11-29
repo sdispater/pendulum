@@ -98,7 +98,7 @@ class Timezone(tzinfo):
 
         return cls._cache[name]
 
-    def convert(self, dt, dst_rule=POST_TRANSITION):
+    def convert(self, dt, dst_rule=None):
         """
         Converts or normalizes a datetime.
 
@@ -110,22 +110,34 @@ class Timezone(tzinfo):
         if dt.tzinfo is None:
             # we assume local time
             converted = self._normalize(dt, dst_rule=dst_rule)
-
         else:
             converted = self._convert(dt)
 
         if not isinstance(converted, tuple):
             return converted
 
-        return dt.__class__(*converted)
+        return dt.__class__(*converted[0], **converted[1])
 
-    def _normalize(self, dt, dst_rule=POST_TRANSITION):
+    def _normalize(self, dt, dst_rule=None):
         # if tzinfo is set, something wrong happened
         if dt.tzinfo is not None:
             raise ValueError(
                 'A datetime with a tzinfo cannot be normalized. '
                 'Use _convert() instead.'
             )
+
+        # fold attribute (Python 3.6)?
+        # We use it to determine the DST rule if none has been specified.
+        fold = None
+        if dst_rule is None:
+            if hasattr(dt, 'fold'):
+                fold = dt.fold
+                if dt.fold == 1:
+                    dst_rule = self.POST_TRANSITION
+                else:
+                    dst_rule = self.PRE_TRANSITION
+            else:
+                dst_rule = self.POST_TRANSITION
 
         if not self._transitions:
             # Use the default offset
@@ -217,11 +229,13 @@ class Timezone(tzinfo):
             else:
                 # In between transitions
                 # The actual transition type is the previous transition one
-
                 (unix_time,
                  tzinfo_index) = self._get_previous_transition_time(tr, dt)
 
-        return self._to_local_time(unix_time, dt.microsecond, tzinfo_index)
+        return self._to_local_time(
+            unix_time, dt.microsecond, tzinfo_index,
+            fold
+        )
 
     def _convert(self, dt):
         """
@@ -239,7 +253,24 @@ class Timezone(tzinfo):
 
         return dt.astimezone(self)
 
-    def _to_local_time(self, unix_time, microseconds, tzinfo_index):
+    def _to_local_time(self, unix_time, microseconds, tzinfo_index, fold):
+        """
+        Returns the local time information
+        as a tuple of date, time and keyword arguments (tzinfo and fold),
+        given a unix time and a tzinfo index.
+
+        :param unix_time: The timestamp of the transition time (UTC)
+        :type unix_time: int
+
+        :param microseconds: The microseconds value
+        :type microseconds: int
+
+        :param tzinfo_index: The index of the TimezoneInfo instance
+        :type tzinfo_index: int
+
+        :param fold: The fold value (if None, will be discarded)
+        :type fold: int or None
+        """
         tzinfo = self._tzinfos[tzinfo_index]
 
         local_time = _local_time(
@@ -248,7 +279,14 @@ class Timezone(tzinfo):
             microseconds
         )
 
-        return local_time + (tzinfo,)
+        keywords = {
+            'tzinfo': tzinfo
+        }
+
+        if fold is not None:
+            keywords['fold'] = fold
+
+        return local_time, keywords
 
     def _get_diff(self, dt1, dt2):
         diff = dt2 - dt1
@@ -289,22 +327,35 @@ class Timezone(tzinfo):
         return unix_time, tzinfo_index
 
     def tzname(self, dt):
-        return self.abbrev
+        if dt is None:
+            return None
+
+        tzinfo = dt.tzinfo
+        if tzinfo is None or tzinfo.tz is not self:
+            dt = self.convert(dt)
+
+            return dt.tzinfo.abbrev
+
+        return dt.tzinfo.tzname(dt)
 
     def utcoffset(self, dt):
         if dt is None:
             return None
-        elif dt.tzinfo.tz is not self:
+
+        tzinfo = dt.tzinfo
+        if tzinfo is None or tzinfo.tz is not self:
             dt = self.convert(dt)
 
             return dt.tzinfo.adjusted_offset
 
-        return dt.utcoffset(dt)
+        return dt.tzinfo.utcoffset(dt)
 
     def dst(self, dt):
         if dt is None:
             return None
-        elif dt.tzinfo.tz is not self:
+
+        tzinfo = dt.tzinfo
+        if tzinfo is None or tzinfo.tz is not self:
             dt = self.convert(dt)
 
             return dt.tzinfo.dst_
