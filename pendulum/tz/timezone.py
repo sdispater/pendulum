@@ -175,7 +175,8 @@ class Timezone(tzinfo):
                 unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
 
                 return self._to_local_time(
-                    unix_time, self._default_tzinfo_index
+                    unix_time, dt.microsecond, self._default_tzinfo_index,
+                    fold
                 )
             else:
                 # tr.pre_time < dt < tr.time
@@ -316,13 +317,25 @@ class Timezone(tzinfo):
         return lo
 
     def _get_previous_transition_time(self, tr, dt):
+        """
+        Returns the time before the transition
+        as a (unix_time, tzinfo_index) tuple.
+
+        :param tr: The transition
+        :type tr: Transition
+
+        :param dt: The datetime
+        :type dt: datetime
+
+        :rtype: tuple
+        """
         diff = self._get_diff(tr.pre_time, dt)
         if -1 < diff < 0 and tr.unix_time < 0:
             diff -= 1
 
-        unix_time = tr.unix_time + diff
-
         tzinfo_index = tr.pre_tzinfo_index
+
+        unix_time = tr.unix_time + diff
 
         return unix_time, tzinfo_index
 
@@ -330,37 +343,34 @@ class Timezone(tzinfo):
         if dt is None:
             return None
 
-        tzinfo = dt.tzinfo
-        if tzinfo is None or tzinfo.tz is not self:
+        if dt.tzinfo is self:
+            dt = self.convert(dt.replace(tzinfo=None))
+        else:
             dt = self.convert(dt)
 
-            return dt.tzinfo.abbrev
-
-        return dt.tzinfo.tzname(dt)
+        return dt.tzinfo.abbrev
 
     def utcoffset(self, dt):
         if dt is None:
             return None
 
-        tzinfo = dt.tzinfo
-        if tzinfo is None or tzinfo.tz is not self:
+        if dt.tzinfo is self:
+            dt = self.convert(dt.replace(tzinfo=None))
+        else:
             dt = self.convert(dt)
 
-            return dt.tzinfo.adjusted_offset
-
-        return dt.tzinfo.utcoffset(dt)
+        return dt.tzinfo.adjusted_offset
 
     def dst(self, dt):
         if dt is None:
             return None
 
-        tzinfo = dt.tzinfo
-        if tzinfo is None or tzinfo.tz is not self:
+        if dt.tzinfo is self:
+            dt = self.convert(dt.replace(tzinfo=None))
+        else:
             dt = self.convert(dt)
 
-            return dt.tzinfo.dst_
-
-        return dt.tzinfo.dst(dt)
+        return dt.tzinfo.dst_
 
     def fromutc(self, dt):
         dt = dt.replace(tzinfo=None)

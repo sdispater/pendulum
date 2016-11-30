@@ -256,3 +256,15 @@ class TimezoneTest(AbstractTestCase):
         name = tz.tzname(dt.replace(fold=1))
 
         self.assertEqual('EST', name)
+
+    def test_constructor_fold_attribute_is_honored(self):
+        self.skip_if_not_36()
+
+        tz = pendulum.timezone('US/Eastern')
+        dt = datetime(2014, 11, 2, 1, 30, tzinfo=tz)
+
+        self.assertEqual('-0400', dt.strftime('%z'))
+
+        dt = datetime(2014, 11, 2, 1, 30, tzinfo=tz, fold=1)
+
+        self.assertEqual('-0500', dt.strftime('%z'))
