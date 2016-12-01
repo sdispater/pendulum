@@ -123,11 +123,27 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
     @property
     def day_of_week(self):
-        return int(self.format('%w', formatter='classic'))
+        """
+        Returns the day of the week (0-6).
+
+        :rtype: int
+        """
+        return self.isoweekday() % 7
 
     @property
     def day_of_year(self):
-        return int(self.format('%j', formatter='classic'))
+        """
+        Returns the day of the year (1-366).
+
+        :rtype: int
+        """
+        k = 1 if self.is_leap_year else 2
+
+        return (
+            (275 * self.month) // 9
+            - k * (self.month + 9) // 12
+            + self.day - 30
+        )
 
     @property
     def week_of_year(self):
