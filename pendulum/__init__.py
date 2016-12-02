@@ -6,6 +6,11 @@ from .time import Time
 from .interval import Interval
 from .period import Period
 
+# Mimicking standard library
+datetime = Pendulum
+date = Date
+time = Time
+
 # Constants
 from .constants import (
     MONDAY, TUESDAY, WEDNESDAY,
