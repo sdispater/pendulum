@@ -8,7 +8,7 @@
 - Added a `Time` class.
 - Added experimental support for the `fold` attribute introduced in Python 3.6.
 - Added a `remaining_days` property to the `Interval` class.
-- Added a `in_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
+- Added a `int_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
 - `start_of()`/`end_of()` now supports `hour`, `minute` and `second` units.
 - `astimezone()` now supports timezone strings.
 - `in_words()` now displays subseconds when no other units are available.
@@ -272,11 +272,8 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-<<<<<<< HEAD
 [Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
-=======
 [0.6.6]: https://github.com/sdispater/pendulum/releases/tag/0.6.6
->>>>>>> master
 [0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/pendulum/releases/tag/0.6.3
