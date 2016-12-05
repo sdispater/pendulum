@@ -87,12 +87,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
     @classmethod
     def today(cls, tz=None):
         """
-        Create a Pendulum instance for today.
+        Create a Date instance for today.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: Date
         """
         if cls.has_test_now():
             return cls.get_test_now()
@@ -429,7 +429,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         Determines if the instance is a long year
 
-        See link `https://en.wikipedia.org/wiki/ISO_8601#Week_dates`_
+        See link `<https://en.wikipedia.org/wiki/ISO_8601#Week_dates>`_
 
         :rtype: bool
         """
