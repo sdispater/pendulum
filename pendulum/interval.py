@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import warnings
 from datetime import timedelta
 
 from .mixins.interval import (
@@ -79,21 +80,46 @@ class BaseInterval(timedelta):
         return self.total_days() / 7
 
     def total_months(self):
+        warnings.warn(
+            'Interval.total_months() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         return round(self.total_days() / 30.436875, 1)
 
     def total_years(self):
+        warnings.warn(
+            'Interval.total_years() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         return round(self.total_days() / 365.2425, 1)
 
     @property
     def years(self):
+        warnings.warn(
+            'Interval.years is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         if self._y is None:
             days = self._days
             self._y = int(round(abs(days) / 365, 1) * self._sign(days))
 
         return self._y
 
+
     @property
     def months(self):
+        warnings.warn(
+            'Interval.months is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         if self._m is None:
             days = self._days
             self._m = int(round(abs(days) / 30.436875, 1) % 12 * self._sign(days))
@@ -110,7 +136,18 @@ class BaseInterval(timedelta):
 
     @property
     def days_exclude_weeks(self):
+        warnings.warn(
+            'Interval.days_exclude_weeks is deprecated. '
+            'It will be removed in the next major version. '
+            'Use Interval.remaing_days instead.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         return abs(self._days) % 7 * self._sign(self._days)
+
+    @property
+    def remaining_days(self):
+        return self.days_exclude_weeks
 
     @property
     def hours(self):
@@ -134,6 +171,10 @@ class BaseInterval(timedelta):
 
     @property
     def seconds(self):
+        return self._seconds
+
+    @property
+    def remaining_seconds(self):
         if self._s is None:
             self._s = self._seconds
             self._s = abs(self._s) % 60 * self._sign(self._s)
@@ -152,9 +193,21 @@ class BaseInterval(timedelta):
         return self._invert
 
     def in_years(self):
+        warnings.warn(
+            'Interval.in_years() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         return int(self.total_years())
 
     def in_months(self):
+        warnings.warn(
+            'Interval.in_months() is deprecated. '
+            'It will be removed in the next major version.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         return int(self.total_months())
 
     def in_weeks(self):
@@ -177,6 +230,14 @@ class BaseInterval(timedelta):
             return -1
 
         return 1
+
+    def as_timedelta(self):
+        """
+        Return the interval as a native timedelta.
+
+        :rtype: timedelta
+        """
+        return timedelta(seconds=self.total_seconds())
 
 
 class Interval(WordableIntervalMixin, BaseInterval):
@@ -297,11 +358,29 @@ class AbsoluteInterval(Interval):
             milliseconds, minutes, hours, weeks
         )
 
+        # We need to compute the total_seconds() value
+        # on a native timedelta object
+        delta = timedelta(
+            days, seconds, microseconds,
+            milliseconds, minutes, hours, weeks
+        )
+
         # Intuitive normalization
-        total = abs(self.total_seconds())
+        self._total = delta.total_seconds()
+        total = abs(self._total)
 
         self._microseconds = round(total % 1 * 1e6)
         self._seconds = int(total) % SECONDS_PER_DAY
         self._days = int(total) // SECONDS_PER_DAY
 
         return self
+
+    def total_seconds(self):
+        return abs(self._total)
+
+    @property
+    def invert(self):
+        if self._invert is None:
+            self._invert = self._total < 0
+
+        return self._invert

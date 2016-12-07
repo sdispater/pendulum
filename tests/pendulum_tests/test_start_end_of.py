@@ -7,6 +7,42 @@ from .. import AbstractTestCase
 
 class StartEndOfTest(AbstractTestCase):
 
+    def test_start_of_second(self):
+        d = Pendulum.now()
+        new = d.start_of('second')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 0)
+
+    def test_end_of_second(self):
+        d = Pendulum.now()
+        new = d.end_of('second')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 999999)
+
+    def test_start_of_minute(self):
+        d = Pendulum.now()
+        new = d.start_of('minute')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, 0, 0)
+
+    def test_end_of_minute(self):
+        d = Pendulum.now()
+        new = d.end_of('minute')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, d.minute, 59, 999999)
+
+    def test_start_of_hour(self):
+        d = Pendulum.now()
+        new = d.start_of('hour')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, 0, 0, 0)
+
+    def test_end_of_hour(self):
+        d = Pendulum.now()
+        new = d.end_of('hour')
+        self.assertIsInstanceOfPendulum(new)
+        self.assertPendulum(new, d.year, d.month, d.day, d.hour, 59, 59, 999999)
+
     def test_start_of_day(self):
         d = Pendulum.now()
         new = d.start_of('day')
@@ -17,7 +53,7 @@ class StartEndOfTest(AbstractTestCase):
         d = Pendulum.now()
         new = d.end_of('day')
         self.assertIsInstanceOfPendulum(new)
-        self.assertPendulum(new, d.year, d.month, d.day, 23, 59, 59)
+        self.assertPendulum(new, d.year, d.month, d.day, 23, 59, 59, 999999)
 
     def test_start_of_month_is_fluid(self):
         d = Pendulum.now()
@@ -79,17 +115,17 @@ class StartEndOfTest(AbstractTestCase):
     def test_end_of_year_from_now(self):
         d = Pendulum.now().end_of('year')
         new = d.end_of('year')
-        self.assertPendulum(new, d.year, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, d.year, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_year_from_first_day(self):
         d = Pendulum(2000, 1, 1, 1, 1, 1)
         new = d.end_of('year')
-        self.assertPendulum(new, 2000, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2000, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_year_from_last_day(self):
-        d = Pendulum(2000, 12, 31, 23, 59, 59)
+        d = Pendulum(2000, 12, 31, 23, 59, 59, 999999)
         new = d.end_of('year')
-        self.assertPendulum(new, 2000, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2000, 12, 31, 23, 59, 59, 999999)
 
     def test_start_of_decade_is_fluid(self):
         d = Pendulum.now()
@@ -117,17 +153,17 @@ class StartEndOfTest(AbstractTestCase):
     def test_end_of_decade_from_now(self):
         d = Pendulum.now()
         new  = d.end_of('decade')
-        self.assertPendulum(new, d.year - d.year % 10 + 9, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, d.year - d.year % 10 + 9, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_decade_from_first_day(self):
         d = Pendulum(2000, 1, 1, 1, 1, 1)
         new = d.end_of('decade')
-        self.assertPendulum(new, 2009, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2009, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_decade_from_last_day(self):
-        d = Pendulum(2009, 12, 31, 23, 59, 59)
+        d = Pendulum(2009, 12, 31, 23, 59, 59, 999999)
         new = d.end_of('decade')
-        self.assertPendulum(new, 2009, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2009, 12, 31, 23, 59, 59, 999999)
 
     def test_start_of_century_is_fluid(self):
         d = Pendulum.now()
@@ -155,17 +191,17 @@ class StartEndOfTest(AbstractTestCase):
     def test_end_of_century_from_now(self):
         now = Pendulum.now()
         d = now.end_of('century')
-        self.assertPendulum(d, now.year - now.year % 100 + 100, 12, 31, 23, 59, 59)
+        self.assertPendulum(d, now.year - now.year % 100 + 100, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_century_from_first_day(self):
         d = Pendulum(2001, 1, 1, 1, 1, 1)
         new = d.end_of('century')
-        self.assertPendulum(new, 2100, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2100, 12, 31, 23, 59, 59, 999999)
 
     def test_end_of_century_from_last_day(self):
-        d = Pendulum(2100, 12, 31, 23, 59, 59)
+        d = Pendulum(2100, 12, 31, 23, 59, 59, 999999)
         new = d.end_of('century')
-        self.assertPendulum(new, 2100, 12, 31, 23, 59, 59)
+        self.assertPendulum(new, 2100, 12, 31, 23, 59, 59, 999999)
 
     def test_average_is_fluid(self):
         d = Pendulum.now().average()

@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from .pendulum import Pendulum
+from .date import Date
+from .time import Time
 from .interval import Interval
 from .period import Period
+
+# Mimicking standard library
+datetime = Pendulum
+date = Date
+time = Time
 
 # Constants
 from .constants import (
@@ -16,9 +23,25 @@ from .constants import (
 
 from .tz.timezone import Timezone
 
+from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
+
+from ._global import Global
+
 PRE_TRANSITION = Timezone.PRE_TRANSITION
 POST_TRANSITION = Timezone.POST_TRANSITION
 TRANSITION_ERROR = Timezone.TRANSITION_ERROR
+
+# Global helpers
+test = Global.test
+set_test_now = Global.set_test_now
+has_test_now = Global.has_test_now
+get_test_now = Global.get_test_now
+set_locale = Global.set_locale
+get_locale = Global.get_locale
+translator = Global.translator
+set_translator = Global.set_translator
+set_formatter = Global.set_formatter
+get_formatter = Global.get_formatter
 
 # Helpers
 instance = Pendulum.instance
@@ -34,20 +57,10 @@ from_time = Pendulum.create_from_time
 from_format = Pendulum.create_from_format
 strptime = Pendulum.strptime
 from_timestamp = Pendulum.create_from_timestamp
-test = Pendulum.test
-set_test_now = Pendulum.set_test_now
-has_test_now = Pendulum.has_test_now
-get_test_now = Pendulum.get_test_now
-set_locale = Pendulum.set_locale
-get_locale = Pendulum.get_locale
-translator = Pendulum.translator
-set_translator = Pendulum.set_translator
 set_to_string_format = Pendulum.set_to_string_format
 reset_to_string_format = Pendulum.reset_to_string_format
 set_transition_rule = Pendulum.set_transition_rule
 get_transition_rule = Pendulum.get_transition_rule
-set_formatter = Pendulum.set_formatter
-get_formatter = Pendulum.get_formatter
 
 # Standard helpers
 min = Pendulum.min

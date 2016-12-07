@@ -2,9 +2,9 @@
 
 import os
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import tz
-from pendulum import Pendulum
+from pendulum import Pendulum, PRE_TRANSITION, POST_TRANSITION
 from pendulum.tz import timezone
 from pendulum.tz.timezone_info import TimezoneInfo
 from .. import AbstractTestCase
@@ -90,6 +90,13 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
+    def test_parse_with_options(self):
+        p = Pendulum.parse('2016-04-11T18:21:08.7454873-05:00', day_first=True)
+
+        self.assertPendulum(p, 2016, 11, 4, 18, 21, 8, 745487)
+        self.assertEqual('-05:00', p.timezone_name)
+        self.assertEqual(p.offset, -18000)
+
     def test_parse_with_invalid_string(self):
         self.assertRaises(ValueError, Pendulum.parse, 'Invalid_string')
 
@@ -114,7 +121,9 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual('UTC', now.timezone_name)
 
     def test_instance_timezone_aware_datetime(self):
-        now = Pendulum.instance(datetime.now(TimezoneInfo.create(timezone('Europe/Paris'), 7200, True, 'EST')))
+        now = Pendulum.instance(
+            datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, timedelta(0, 3600), 'EST'))
+        )
         self.assertEqual('Europe/Paris', now.timezone_name)
 
     def test_instance_timezone_aware_datetime_pytz(self):
@@ -170,3 +179,29 @@ class ConstructTest(AbstractTestCase):
         dt = Pendulum.create(tz='Etc/UTC')
 
         self.assertEqual('Etc/UTC', dt.timezone_name)
+
+    def test_create_maintains_microseconds(self):
+        d = Pendulum.create(2016, 11, 12, 2, 9, 39, 594000, 'America/Panama')
+        self.assertPendulum(d, 2016, 11, 12, 2, 9, 39, 594000)
+
+        d = Pendulum.create(2316, 11, 12, 2, 9, 39, 857, 'America/Panama')
+        self.assertPendulum(d, 2316, 11, 12, 2, 9, 39, 857)
+
+    def test_init_fold_is_honored_if_explicit(self):
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris')
+        # Default value of None for Pendulum instances
+        # so default rule will be applied
+        self.assertPendulum(d, 2013, 3, 31, 3, 30)
+
+        Pendulum.set_transition_rule(PRE_TRANSITION)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris')
+        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+
+        Pendulum.set_transition_rule(POST_TRANSITION)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=0)
+        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+
+        d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=1)
+        self.assertPendulum(d, 2013, 3, 31, 3, 30)

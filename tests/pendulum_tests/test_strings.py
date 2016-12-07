@@ -102,7 +102,10 @@ class StringsTest(AbstractTestCase):
 
     def test_custom_formatters(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
-        self.assertEqual('Thursday 25th of December 1975 02:15:16 PM -05:00', d.format('%A %-d%_t of %B %Y %I:%M:%S %p %_z'))
+        self.assertEqual(
+            'Thursday 25th of December 1975 02:15:16 PM -05:00',
+            d.format('%A %d%_t of %B %Y %I:%M:%S %p %_z')
+        )
 
     def test_repr(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
@@ -111,18 +114,18 @@ class StringsTest(AbstractTestCase):
     def test_format_with_locale(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
-                         d.format('%A %-d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr'))
+                         d.format('%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr'))
 
     def test_set_formatter_globally(self):
-        pendulum.set_formatter('alternative')
-        self.assertEqual('alternative', pendulum.get_formatter())
+        pendulum.Pendulum.set_formatter('alternative')
+        self.assertEqual('alternative', pendulum.Pendulum.get_formatter())
 
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual(
             'Thursday 25th of December 1975 02:15:16 PM -05:00',
             d.format('dddd Do [of] MMMM YYYY hh:mm:ss A ZZ')
         )
-        pendulum.set_formatter()
+        pendulum.Pendulum.set_formatter()
         self.assertEqual(
             'dddd Do [of] MMMM YYYY hh:mm:ss A ZZ',
             d.format('dddd Do [of] MMMM YYYY hh:mm:ss A ZZ')

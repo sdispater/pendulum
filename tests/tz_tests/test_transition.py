@@ -15,8 +15,8 @@ class TransitionTest(AbstractTestCase):
         self.assertEqual(datetime(1970, 1, 1, 1), t.time)
         self.assertEqual(datetime(1970, 1, 1), t.pre_time)
         self.assertEqual(datetime(1970, 1, 1, 1), t.utc_time)
-        self.assertEqual(1, t.transition_type_index)
-        self.assertEqual(0, t.pre_transition_type_index)
+        self.assertEqual(1, t.tzinfo_index)
+        self.assertEqual(0, t.pre_tzinfo_index)
 
     def test_repr(self):
         t = Transition(3600, 1, datetime(1970, 1, 1), datetime(1970, 1, 1, 1), 0)

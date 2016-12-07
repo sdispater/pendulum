@@ -2,42 +2,28 @@
 
 from __future__ import division
 
-import math
 import calendar
 import datetime
-import locale as _locale
 
-from contextlib import contextmanager
 from dateutil.relativedelta import relativedelta
-from dateutil import parser as dateparser
 
+from .date import Date
+from .time import Time
 from .period import Period
 from .exceptions import PendulumException
-from .mixins.default import TranslatableMixin
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
-from .formatting import FORMATTERS
+from .parsing import parse
 from .constants import (
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
-    THURSDAY, FRIDAY, SATURDAY,
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
-    MONTHS_PER_YEAR, DAYS_PER_WEEK,
-    MINUTES_PER_HOUR, SECONDS_PER_MINUTE
+    MONTHS_PER_YEAR,
+    MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
+    SECONDS_PER_DAY
 )
+from .utils import CallableTimestamp
 
 
-class Pendulum(datetime.datetime, TranslatableMixin):
-
-    # Names of days of the week
-    _days = {
-        SUNDAY: 'Sunday',
-        MONDAY: 'Monday',
-        TUESDAY: 'Tuesday',
-        WEDNESDAY: 'Wednesday',
-        THURSDAY: 'Thursday',
-        FRIDAY: 'Friday',
-        SATURDAY: 'Saturday'
-    }
+class Pendulum(Date, datetime.datetime):
 
     # Formats
     ATOM = '%Y-%m-%dT%H:%M:%S%_z'
@@ -54,34 +40,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     RSS = '%a, %d %b %Y %H:%M:%S %z'
     W3C = '%Y-%m-%dT%H:%M:%S%_z'
 
-    # Default format to use for __str__ method when type juggling occurs.
-    DEFAULT_TO_STRING_FORMAT = None
-
-    _to_string_format = DEFAULT_TO_STRING_FORMAT
-
-    # First day of week
-    _week_starts_at = MONDAY
-
-    # Last day of week
-    _week_ends_at = SUNDAY
-
-    # Weekend days
-    _weekend_days = [
-        SATURDAY,
-        SUNDAY
-    ]
-
-    # A test Pendulum instance to be returned when now instances are created.
-    _test_now = None
-
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
-
-    _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
 
     _TRANSITION_RULE = Timezone.POST_TRANSITION
 
-    _DEFAULT_FORMATTER = 'classic'
-    _FORMATTER = _DEFAULT_FORMATTER
+    _MODIFIERS_VALID_UNITS = [
+        'second', 'minute', 'hour',
+        'day', 'week', 'month', 'year',
+        'decade', 'century'
+    ]
 
     @classmethod
     def _safe_create_datetime_zone(cls, obj):
@@ -143,7 +110,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def __new__(cls, year, month, day,
                 hour=0, minute=0, second=0, microsecond=0,
-                tzinfo=None):
+                tzinfo=None, fold=None):
         """
         Constructor.
 
@@ -158,7 +125,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def __init__(self, year, month, day,
                  hour=0, minute=0, second=0, microsecond=0,
-                 tzinfo=UTC):
+                 tzinfo=UTC, fold=None):
         # If a TimezoneInfo is passed we do not convert
         if isinstance(tzinfo, TimezoneInfo):
             self._tz = tzinfo.tz
@@ -172,6 +139,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             self._microsecond = microsecond
             self._tzinfo = tzinfo
 
+            if fold is None:
+                # Converting rule to fold value
+                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
+                    fold = 1
+                else:
+                    fold = 0
+
+            self._fold = fold
+
             dt = datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond,
@@ -180,10 +156,24 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         else:
             self._tz = self._safe_create_datetime_zone(tzinfo)
 
+            # Support for explicit fold attribute
+            if fold is None:
+                transition_rule = self._TRANSITION_RULE
+
+                # Converting rule to fold value
+                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
+                    fold = 1
+                else:
+                    fold = 0
+            elif fold == 1:
+                transition_rule = Timezone.POST_TRANSITION
+            else:
+                transition_rule = Timezone.PRE_TRANSITION
+
             dt = self._tz.convert(datetime.datetime(
                 year, month, day,
                 hour, minute, second, microsecond
-            ), dst_rule=self._TRANSITION_RULE)
+            ), dst_rule=transition_rule)
 
             self._year = dt.year
             self._month = dt.month
@@ -193,8 +183,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
             self._second = dt.second
             self._microsecond = dt.microsecond
             self._tzinfo = dt.tzinfo
+            self._fold = getattr(dt, 'fold', fold)
 
         self._timestamp = None
+        self._int_timestamp = None
         self._datetime = dt
 
     @classmethod
@@ -230,7 +222,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     @classmethod
-    def parse(cls, time=None, tz=UTC):
+    def parse(cls, time=None, tz=UTC, **options):
         """
         Create a Pendulum instance from a string.
 
@@ -248,16 +240,17 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if time == 'now':
             return cls.now(None)
 
-        dt = dateparser.parse(time)
+        parsed = parse(time, **options)
 
-        if dt.tzinfo:
-            offset = dt.utcoffset()
-
-            tz = offset.total_seconds() / 3600
+        if parsed['offset'] is None:
+            tz = tz
+        else:
+            tz = parsed['offset'] / 3600
 
         return cls(
-            dt.year, dt.month, dt.day,
-            dt.hour, dt.minute, dt.second, dt.microsecond,
+            parsed['year'], parsed['month'], parsed['day'],
+            parsed['hour'], parsed['minute'], parsed['second'],
+            parsed['subsecond'] // 1000,
             tzinfo=tz
         )
 
@@ -274,9 +267,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         # If the class has a test now set and we are trying to create a now()
         # instance then override as required
         if cls.has_test_now():
-            test_instance = cls._test_now
+            test_instance = cls.get_test_now()
 
-            if tz is not None and tz != cls._test_now.timezone:
+            if tz is not None and tz != test_instance.timezone:
                 test_instance = test_instance.in_timezone(tz)
 
             return test_instance
@@ -365,10 +358,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         if any([year is None, month is None, day is None]):
             if cls.has_test_now():
-                now = cls._test_now.in_tz(tz)
+                now = cls.get_test_now().in_tz(tz)
             else:
                 now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-                now = tz.convert(now, dst_rule=cls._TRANSITION_RULE)
+                now = tz.convert(now)
 
             if year is None:
                 year = now.year
@@ -479,15 +472,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     ### Getters/Setters
 
-    def year_(self, year):
-        return self._setter(year=year)
-
-    def month_(self, month):
-        return self._setter(month=month)
-
-    def day_(self, day):
-        return self._setter(day=day)
-
     def hour_(self, hour):
         return self._setter(hour=hour)
 
@@ -501,7 +485,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._setter(microsecond=microsecond)
 
     def _setter(self, **kwargs):
-        kwargs['tzinfo'] = None
+        kwargs['tzinfo'] = True
 
         return self._tz.convert(self.replace(**kwargs))
 
@@ -551,43 +535,33 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self._tzinfo
 
     @property
-    def day_of_week(self):
-        return int(self.format('%w', formatter='classic'))
-
-    @property
-    def day_of_year(self):
-        return int(self.format('%-j', formatter='classic'))
-
-    @property
-    def week_of_year(self):
-        return self.isocalendar()[1]
-
-    @property
-    def days_in_month(self):
-        return calendar.monthrange(self.year, self.month)[1]
+    def fold(self):
+        return self._fold
 
     @property
     def timestamp(self):
-        return int(self.float_timestamp // 1)
-
-    @property
-    def float_timestamp(self):
         if self._timestamp is None:
-            self._timestamp = (self._datetime - self._EPOCH).total_seconds()
+            delta = self._datetime - self._EPOCH
+
+            self._timestamp = CallableTimestamp(
+                delta.days * SECONDS_PER_DAY + delta.seconds
+            )
+            self._timestamp.set_float(delta.total_seconds())
 
         return self._timestamp
 
     @property
-    def week_of_month(self):
-        return math.ceil(self._day / DAYS_PER_WEEK)
+    def float_timestamp(self):
+        return self.timestamp()
 
     @property
-    def age(self):
-        return self.diff().in_years()
+    def int_timestamp(self):
+        if self._int_timestamp is None:
+            delta = self._datetime - self._EPOCH
 
-    @property
-    def quarter(self):
-        return int(math.ceil(self._month / 3))
+            self._int_timestamp = delta.days * SECONDS_PER_DAY + delta.seconds
+
+        return self._int_timestamp
 
     @property
     def offset(self):
@@ -623,11 +597,21 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def timezone_name(self):
         return self.timezone.name
 
+    @property
+    def age(self):
+        return self.date().diff(self.now(self._tz).date()).in_years()
+
     def get_timezone(self):
         return self._tz
 
     def get_offset(self):
         return int(self._tzinfo.offset)
+
+    def date(self):
+        return Date.instance(self._datetime.date())
+
+    def time(self):
+        return Time(self.hour, self.minute, self.second, self.microsecond)
 
     def with_date(self, year, month, day):
         """
@@ -751,70 +735,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         return self.instance(dt)
 
-    ### Special week days
-
-    @classmethod
-    def get_week_starts_at(cls):
-        """
-        Get the first day of the week.
-
-        :rtype: int
-        """
-        return cls._week_starts_at
-
-    @classmethod
-    def set_week_starts_at(cls, value):
-        """
-        Set the first day of the week.
-
-        :type value: int
-        """
-        if value not in cls._days:
-            raise ValueError('Invalid day of the week: {}'.format(value))
-        cls._week_starts_at = value
-
-    @classmethod
-    def get_week_ends_at(cls):
-        """
-        Get the last day of the week.
-
-        :rtype: int
-        """
-        return cls._week_ends_at
-
-    @classmethod
-    def set_week_ends_at(cls, value):
-        """
-        Set the last day of the week.
-
-        :type value: int
-        """
-        if value not in cls._days:
-            raise ValueError('Invalid day of the week: {}'.format(value))
-        cls._week_ends_at = value
-
-    @classmethod
-    def get_weekend_days(cls):
-        """
-        Get weekend days.
-
-        :rtype: list
-        """
-        return cls._weekend_days
-
-    @classmethod
-    def set_weekend_days(cls, values):
-        """
-        Set weekend days.
-
-        :type value: list
-        """
-        for value in values:
-            if value not in cls._days:
-                raise ValueError('Invalid day of the week: {}'
-                                 .format(value))
-        cls._weekend_days = values
-
     # Normalization Rule
     @classmethod
     def set_transition_rule(cls, rule):
@@ -829,159 +749,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def get_transition_rule(cls):
         return cls._TRANSITION_RULE
 
-    # Testing aids
-
-    @classmethod
-    @contextmanager
-    def test(cls, mock):
-        """
-        Context manager to temporarily set the test_now value.
-
-        :type mock: Pendulum or None
-        """
-        cls.set_test_now(mock)
-
-        yield
-
-        cls.set_test_now()
-
-    @classmethod
-    def set_test_now(cls, test_now=None):
-        """
-        Set a Pendulum instance (real or mock) to be returned when a "now"
-        instance is created.  The provided instance will be returned
-        specifically under the following conditions:
-            - A call to the classmethod now() method, ex. Pendulum.now()
-            - When nothing is passed to the constructor or parse(), ex. Pendulum()
-            - When the string "now" is passed to parse(), ex. Pendulum.parse('now')
-
-        Note the timezone parameter was left out of the examples above and
-        has no affect as the mock value will be returned regardless of its value.
-
-        To clear the test instance call this method using the default
-        parameter of null.
-
-        :type test_now: Pendulum or None
-        """
-        cls._test_now = test_now
-
-    @classmethod
-    def get_test_now(cls):
-        """
-        Get the Pendulum instance (real or mock) to be returned when a "now"
-        instance is created.
-
-        :rtype: Pendulum or None
-        """
-        return cls._test_now
-
-    @classmethod
-    def has_test_now(cls):
-        return cls.get_test_now() is not None
-
-    # String Formatting
-
-    @classmethod
-    def reset_to_string_format(cls):
-        """
-        Reset the format used to the default
-        when type juggling a Pendulum instance to a string.
-        """
-        cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
-
-    @classmethod
-    def set_to_string_format(cls, fmt):
-        """
-        Set the default format used
-        when type juggling a Pendulum instance to a string
-
-        :type fmt: str
-        """
-        cls._to_string_format = fmt
-
-    def format(self, fmt, locale=None, formatter=None):
-        """
-        Formats the Pendulum instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :param locale: The locale to use
-        :type locale: str or None
-
-        :param formatter: The formatter to use
-        :type formatter: str or None
-
-        :rtype: str
-        """
-        if formatter is None:
-            formatter = self._FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        return FORMATTERS[formatter].format(self, fmt, locale)
-
-    def strftime(self, fmt):
-        """
-        Formats the Pendulum instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :rtype: str
-        """
-        return self.format(fmt, _locale.getlocale()[0], 'classic')
-
-    @classmethod
-    def set_formatter(cls, formatter=None):
-        """
-        Sets the default string formatter.
-
-        :param formatter: The parameter to set as default.
-        :type formatter: str or None
-        """
-        if formatter is None:
-            formatter = cls._DEFAULT_FORMATTER
-
-        if formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-
-        cls._FORMATTER = formatter
-
-    @classmethod
-    def get_formatter(cls):
-        """
-        Gets the currently used string formatter.
-
-        :rtype: str
-        """
-        return cls._FORMATTER
-
-    def __str__(self):
-        if self._to_string_format is None:
-            return self.isoformat()
-
-        return self.format(self._to_string_format, formatter='classic')
-
-    def __repr__(self):
-        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
-
-    def to_date_string(self):
-        """
-        Format the instance as date.
-
-        :rtype: str
-        """
-        return self.format('%Y-%m-%d', formatter='classic')
-
-    def to_formatted_date_string(self):
-        """
-        Format the instance as a readable date.
-
-        :rtype: str
-        """
-        return self.format('%b %d, %Y', formatter='classic')
+    # STRING FORMATTING
 
     def to_time_string(self):
         """
@@ -1005,7 +773,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         :rtype: str
         """
-        return self.format('%a, %b %d, %Y %-I:%M %p', formatter='classic')
+        return self.format('ddd, MMM D, YYYY h:mm A', formatter='alternative')
 
     def to_atom_string(self):
         """
@@ -1249,22 +1017,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self.max_(dt)
 
-    def is_weekday(self):
-        """
-        Determines if the instance is a weekday.
-
-        :rtype: bool
-        """
-        return not self.is_weekend()
-
-    def is_weekend(self):
-        """
-        Determines if the instance is a weekend day.
-
-        :rtype: bool
-        """
-        return self.day_of_week in self._weekend_days
-
     def is_yesterday(self):
         """
         Determines if the instance is yesterday.
@@ -1305,14 +1057,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         """
         return self < self.now(self.timezone)
 
-    def is_leap_year(self):
-        """
-        Determines if the instance is a leap year.
-
-        :rtype: bool
-        """
-        return calendar.isleap(self.year)
-
     def is_long_year(self):
         """
         Determines if the instance is a long year
@@ -1334,62 +1078,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         dt = self._get_datetime(dt, True)
 
         return self.to_date_string() == dt.to_date_string()
-
-    def is_sunday(self):
-        """
-        Checks if this day is a sunday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SUNDAY
-
-    def is_monday(self):
-        """
-        Checks if this day is a monday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == MONDAY
-
-    def is_tuesday(self):
-        """
-        Checks if this day is a tuesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == TUESDAY
-
-    def is_wednesday(self):
-        """
-        Checks if this day is a wednesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == WEDNESDAY
-
-    def is_thursday(self):
-        """
-        Checks if this day is a thursday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == THURSDAY
-
-    def is_friday(self):
-        """
-        Checks if this day is a friday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == FRIDAY
-
-    def is_saturday(self):
-        """
-        Checks if this day is a saturday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SATURDAY
 
     def is_birthday(self, dt=None):
         """
@@ -1448,7 +1136,10 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
             # we will not apply the transition (if any)
-            dt = self._tz.convert(dt.replace(tzinfo=None))
+            dt = self._tz.convert(
+                dt.replace(tzinfo=None),
+                dst_rule=Timezone.POST_TRANSITION
+            )
         else:
             # Else, we need to apply the transition properly (if any)
             dt = self._tz.convert(dt)
@@ -1456,7 +1147,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return self.instance(dt)
 
     def subtract(self, years=0, months=0, weeks=0, days=0,
-            hours=0, minutes=0, seconds=0, microseconds=0):
+                 hours=0, minutes=0, seconds=0, microseconds=0):
         """
         Remove duration from the instance.
 
@@ -1637,6 +1328,9 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Returns a copy of the instance with the time reset
         with the following rules:
 
+        * second: microsecond set to 0
+        * minute: second and microsecond set to 0
+        * hour: minute, second and microsecond set to 0
         * day: time to 00:00:00
         * week: date to first day of the week and time to 00:00:00
         * month: date to first day of the month and time to 00:00:00
@@ -1659,12 +1353,15 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         Returns a copy of the instance with the time reset
         with the following rules:
 
-        * day: time to 23:59:59
-        * week: date to last day of the week and time to 23:59:59
-        * month: date to last day of the month and time to 23:59:59
-        * year: date to last day of the year and time to 23:59:59
-        * decade: date to last day of the decade and time to 23:59:59
-        * century: date to last day of century and time to 23:59:59
+        * second: microsecond set to 999999
+        * minute: second set to 59 and microsecond set to 999999
+        * hour: minute and second set to 59 and microsecond set to 999999
+        * day: time to 23:59:59.999999
+        * week: date to last day of the week and time to 23:59:59.999999
+        * month: date to last day of the month and time to 23:59:59.999999
+        * year: date to last day of the year and time to 23:59:59.999999
+        * decade: date to last day of the decade and time to 23:59:59.999999
+        * century: date to last day of century and time to 23:59:59.999999
 
         :param unit: The unit to reset to
         :type unit: str
@@ -1676,6 +1373,54 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         return getattr(self, '_end_of_%s' % unit)()
 
+    def _start_of_second(self):
+        """
+        Reset microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.microsecond_(0)
+
+    def _end_of_second(self):
+        """
+        Set microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.microsecond_(999999)
+
+    def _start_of_minute(self):
+        """
+        Reset seconds and microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.replace(second=0, microsecond=0)
+
+    def _end_of_minute(self):
+        """
+        Set seconds to 59 and microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.replace(second=59, microsecond=999999)
+
+    def _start_of_hour(self):
+        """
+        Reset minutes, seconds and microseconds to 0.
+
+        :rtype: Pendulum
+        """
+        return self.replace(minute=0, second=0, microsecond=0)
+
+    def _end_of_hour(self):
+        """
+        Set minutes and seconds to 59 and microseconds to 999999.
+
+        :rtype: Pendulum
+        """
+        return self.replace(minute=59, second=59, microsecond=999999)
+
     def _start_of_day(self):
         """
         Reset the time to 00:00:00
@@ -1686,11 +1431,11 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def _end_of_day(self):
         """
-        Reset the time to 23:59:59
+        Reset the time to 23:59:59.999999
 
         :rtype: Pendulum
         """
-        return self.with_time(23, 59, 59)
+        return self.with_time(23, 59, 59, 999999)
 
     def _start_of_month(self):
         """
@@ -1702,7 +1447,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def _end_of_month(self):
         """
-        Reset the date to the last day of the month and the time to 23:59:59.
+        Reset the date to the last day of the month
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
@@ -1720,7 +1466,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
     def _end_of_year(self):
         """
-        Reset the date to the last day of the year and the time to 23:59:59.
+        Reset the date to the last day of the year
+        and the time to 23:59:59.999999
 
         :rtype: Pendulum
         """
@@ -1741,7 +1488,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def _end_of_decade(self):
         """
         Reset the date to the last day of the decade
-        and the time to 23:59:59.
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
@@ -1765,7 +1512,7 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def _end_of_century(self):
         """
         Reset the date to the last day of the century
-        and the time to 23:59:59.
+        and the time to 23:59:59.999999.
 
         :rtype: Pendulum
         """
@@ -2145,14 +1892,6 @@ class Pendulum(datetime.datetime, TranslatableMixin):
 
         raise ValueError('Invalid datetime "{}"'.format(value))
 
-    def for_json(self):
-        """
-        Methods for automatic json serialization by simplejson
-
-        :rtype: str
-        """
-        return str(self)
-
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
             return self.subtract_timedelta(other)
@@ -2226,6 +1965,8 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         )
 
     def astimezone(self, tz=None):
+        tz = self._safe_create_datetime_zone(tz)
+
         return self.instance(self._datetime.astimezone(tz))
 
     def isoformat(self, sep='T'):
@@ -2240,19 +1981,13 @@ class Pendulum(datetime.datetime, TranslatableMixin):
     def dst(self):
         return self._datetime.dst()
 
-    def __format__(self, format_spec):
-        if len(format_spec) > 0:
-            return self.strftime(format_spec)
-
-        return str(self)
-
     def __hash__(self):
         return self._datetime.__hash__()
 
     def __getnewargs__(self):
         return(self, )
 
-    def _getstate(self):
+    def _getstate(self, protocol=3):
         tz = self.timezone_name
 
         # Fix for fixed timezones not being properly unpickled
@@ -2262,11 +1997,16 @@ class Pendulum(datetime.datetime, TranslatableMixin):
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            tz
+            tz,
+            self.fold
         )
 
     def __reduce__(self):
-        return self.__class__, self._getstate()
+        return self.__reduce_ex__(2)
+
+    def __reduce_ex__(self, protocol):
+        return self.__class__, self._getstate(protocol)
 
 Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=UTC))
 Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=UTC))
+Pendulum.EPOCH = Pendulum(1970, 1, 1)

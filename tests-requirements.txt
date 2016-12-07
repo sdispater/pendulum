@@ -2,3 +2,4 @@
 pytest
 pytest-cov
 coverage<4
+pytz

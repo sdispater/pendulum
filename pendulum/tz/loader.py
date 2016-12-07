@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import inspect
-import os
-import pytz
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from struct import unpack, calcsize
+from pytzdata import tz_file
+from pytzdata.exceptions import TimezoneNotFound
 
 from .. import _compat
 from ..helpers import local_time
@@ -27,15 +26,13 @@ def _std_string(s):
 
 class Loader(object):
 
-    path = os.path.join(os.path.dirname(inspect.getfile(pytz)), 'zoneinfo')
-
     @classmethod
     def load(cls, name):
         name = _compat.decode(name)
         try:
-            with pytz.open_resource(name) as f:
+            with tz_file(name) as f:
                 return cls._load(f)
-        except _compat.FileNotFoundError:
+        except TimezoneNotFound:
             raise ValueError('Unknown timezone [{}]'.format(name))
 
     @classmethod
@@ -93,15 +90,23 @@ class Loader(object):
             i += 3
 
         # Now build the timezone object
-        if not transition_times:
-            transitions = tuple()
+        transitions = tuple()
+        tzinfos = tuple()
 
+        if not transition_times:
             if transition_types:
                 transitions += (Transition(0, 0, datetime(1970, 1, 1), datetime(1970, 1, 1), 0),)
+                tzinfos += ((
+                    transition_types[0].utc_offset,
+                    transition_types[0].is_dst,
+                    None,
+                    transition_types[0].abbrev
+                ),)
         else:
             # calculate transition info
-            transitions = tuple()
+            tr = None
             for i in range(len(transition_times)):
+                # We retrieve transition types indexes
                 transition_type_index = lindexes[i]
 
                 if i == 0:
@@ -109,42 +114,87 @@ class Loader(object):
                 else:
                     pre_transition_type_index = lindexes[i - 1]
 
+                pre_transition_type = transition_types[pre_transition_type_index]
+                transition_type = transition_types[transition_type_index]
+
+                # We calculate local times based on the transition types
+                # we retrieved
                 pre_time = datetime(
                     *local_time(transition_times[i],
-                                transition_types[pre_transition_type_index].utc_offset)
+                                pre_transition_type.utc_offset,
+                                0)
                 )
                 time = datetime(
                     *local_time(transition_times[i],
-                                transition_types[transition_type_index].utc_offset)
+                                transition_type.utc_offset,
+                                0)
                 )
+
+                # We build the tzinfo information as tuples
+                # and retrieve their index to store them
+                # in the transition.
+                # If they do not already exist we add them
+                # to the tzinfos tuple to look them up later
+                # if necessary.
+                dst = tr.time - tr.pre_time if tr else None
+                pre_tzinfo = (
+                    pre_transition_type.utc_offset,
+                    pre_transition_type.is_dst,
+                    dst if dst != timedelta() else None,
+                    pre_transition_type.abbrev
+                )
+
+                try:
+                    pre_tzinfo_index = tzinfos.index(pre_tzinfo)
+                except ValueError:
+                    tzinfos += (pre_tzinfo,)
+
+                    pre_tzinfo_index = len(tzinfos) - 1
+
+                dst = time - pre_time
+                tzinfo = (
+                    transition_type.utc_offset,
+                    transition_type.is_dst,
+                    dst if dst != timedelta() else None,
+                    transition_type.abbrev
+                )
+
+                try:
+                    tzinfo_index = tzinfos.index(tzinfo)
+                except ValueError:
+                    tzinfos += (tzinfo,)
+
+                    tzinfo_index = len(tzinfos) - 1
+
+                # Finally, we build the transition instance.
                 tr = Transition(
                     transition_times[i],
-                    transition_type_index,
+                    tzinfo_index,
                     pre_time,
                     time,
-                    pre_transition_type_index
+                    pre_tzinfo_index
                 )
 
                 transitions += (tr,)
 
         # Determine the before-first-transition type
-        default_transition_type_index = 0
+        default_tzinfo_index = 0
         if transitions:
             index = 0
-            if transition_types[0].is_dst:
-                index = transition_types.index(transitions[0].transition_type)
-                while index != 0 and transition_types[index].is_dst:
+            if tzinfos[0][2]:
+                index = transitions[0].tzinfo_index
+                while index != 0 and tzinfos[index][2]:
                     index -= 1
 
-            while index != len(transition_types) and transition_types[index].is_dst:
+            while index != len(tzinfos) and tzinfos[index][2]:
                 index += 1
 
             if index != len(transitions):
-                default_transition_type_index = index
+                default_tzinfo_index = index
 
         return (
             transitions,
-            transition_types,
-            default_transition_type_index,
+            tzinfos,
+            default_tzinfo_index,
             tuple(map(lambda tr: tr.utc_time, transitions))
         )

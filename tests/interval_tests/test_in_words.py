@@ -57,3 +57,19 @@ class ForHumansTest(AbstractTestCase):
             '168 weeks, 1 day, 2 hours, 1 minute, 25 seconds',
             pi.in_words(separator=', ')
         )
+
+    def test_subseconds(self):
+        pi = Interval(microseconds=123456)
+
+        self.assertEqual(
+            '0.12 second',
+            pi.in_words()
+        )
+
+    def test_subseconds_with_seconds(self):
+        pi = Interval(seconds=12, microseconds=123456)
+
+        self.assertEqual(
+            '12 seconds',
+            pi.in_words()
+        )

@@ -1,5 +1,43 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added a `Date` class.
+- Added a `Time` class.
+- Added experimental support for the `fold` attribute introduced in Python 3.6.
+- Added a `remaining_days` property to the `Interval` class.
+- Added a `int_timestamp` property to the `Pendulum` class to retrieve the behavior of the now deprecated `timestamp` property.
+- `start_of()`/`end_of()` now supports `hour`, `minute` and `second` units.
+- `astimezone()` now supports timezone strings.
+- `in_words()` now displays subseconds when no other units are available.
+
+### Changed
+
+- `Period` properties (especially `years` and `months`) are now accurate.
+- `Interval.seconds` now returns the whole number of remaining seconds, like `timedelta`, for compatibility. Use `remaining_seconds` to retrieve the previous behavior.
+- Improved parsing performances for common formats.
+- The library no longer relies on `pytz`. It now depends on [pytzdata](https://github.com/sdispater/pytzdata) for its timezone database.
+- Locale, test instance and formatter are now set gobally at the module level when using the corresponding module methods.
+
+### Deprecated
+
+- `timestamp` should now be used as a method and no longer as a property. It will be a native method in the next major version.
+- `Interval` properties and methods related to years and months are now deprecated.
+- `Interval.days_exclude_weeks` is now deprecated. Use `remaining_days` instead.
+
+### Fixed
+
+- Exception when loading specific timezones has been fixed.
+- `end_of('day')` now properly sets microseconds to `999999`.
+- Accuracy of `Period` instances properties has been improved.
+- Accuracy for microseconds when initializing a Pendulum instance in some timezones has been fixed.
+- Periods are now serializable with `pickle`.
+- Fixed `minute_()`, `second_()` and `microsecond_()` setters changing the hour unit.
+- Fixed Windows support.
+
+
 ## [0.6.6] - 2016-11-25
 
 ### Fixed
@@ -234,6 +272,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
 [0.6.6]: https://github.com/sdispater/pendulum/releases/tag/0.6.6
 [0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/pendulum/releases/tag/0.6.4

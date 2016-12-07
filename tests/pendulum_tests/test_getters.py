@@ -58,12 +58,33 @@ class GettersTest(AbstractTestCase):
 
     def test_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
+        self.assertEqual(0, d.timestamp())
         self.assertEqual(0, d.timestamp)
-        self.assertEqual(60, d.add(minutes=1).timestamp)
+        self.assertEqual(60.123456, d.add(minutes=1, microseconds=123456).timestamp())
+        self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp)
+
+    def test_timestamp_accuracy(self):
+        self.skip_if_32bit()
+
+        d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
+
+        self.assertEqual(32527311790, d.timestamp)
 
     def test_float_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
         self.assertEqual(0.123456, d.float_timestamp)
+
+    def test_int_timestamp(self):
+        d = Pendulum(1970, 1, 1, 0, 0, 0)
+        self.assertEqual(0, d.int_timestamp)
+        self.assertEqual(60, d.add(minutes=1, microseconds=123456).int_timestamp)
+
+    def test_int_timestamp_accuracy(self):
+        self.skip_if_32bit()
+
+        d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
+
+        self.assertEqual(32527311790, d.int_timestamp)
 
     def test_age(self):
         d = Pendulum.now()
@@ -189,14 +210,14 @@ class GettersTest(AbstractTestCase):
             self.assertTrue(d.is_tomorrow())
 
     def test_is_future(self):
-        with self.wrap_with_test_now():
+        with self.wrap_with_test_now(Pendulum(2000, 1, 1)):
             d = Pendulum.now()
             self.assertFalse(d.is_future())
             d = d.add(days=1)
             self.assertTrue(d.is_future())
 
     def test_is_past(self):
-        with self.wrap_with_test_now():
+        with self.wrap_with_test_now(Pendulum(2000, 1, 1)):
             d = Pendulum.now()
             self.assertFalse(d.is_past())
             d = d.subtract(days=1)
@@ -235,3 +256,15 @@ class GettersTest(AbstractTestCase):
 
         self.assertTrue(sunday.is_sunday())
         self.assertFalse(monday.is_sunday())
+
+    def test_date(self):
+        dt = Pendulum(2016, 10, 20, 10, 40, 34, 123456)
+        d = dt.date()
+        self.assertIsInstanceOfDate(d)
+        self.assertDate(d, 2016, 10, 20)
+
+    def test_time(self):
+        dt = Pendulum(2016, 10, 20, 10, 40, 34, 123456)
+        t = dt.time()
+        self.assertIsInstanceOfTime(t)
+        self.assertTime(t, 10, 40, 34, 123456)

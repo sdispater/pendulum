@@ -43,6 +43,6 @@ class CreateFromDateTest(AbstractTestCase):
 
     def test_create_from_date_with_tzinfo(self):
         tz = timezone('Europe/London')
-        d = Pendulum.create_from_date(1975, 12, 25, tz=TimezoneInfo.create(tz, 3600, True, ''))
+        d = Pendulum.create_from_date(1975, 12, 25, tz=TimezoneInfo(tz, 3600, True, None, ''))
         self.assertPendulum(d, 1975, 12, 25)
         self.assertEqual('Europe/London', d.timezone_name)
