@@ -38,27 +38,3 @@ The default timezone, except when using the ``now()``, method will always be ``U
     This doesn't make sense since ``now()`` in tokyo is always today in Tokyo.
 
     Thus the comparison to ``now()`` is done in the same timezone as the current instance.
-
-
-.. note::
-
-    Every class methods that will be covered in this documentation are also accessible at module
-    level and vice-versa with the following correspondences:
-
-    ============================= =====================
-    Class Method                  Module Function
-    ============================= =====================
-    ``instance()``                ``instance()``
-    ``parse()``                   ``parse()``
-    ``now()``                     ``now()``
-    ``utcnow()``                  ``utcnow()``
-    ``today()``                   ``today()``
-    ``tomorrow()``                ``tomorrow()``
-    ``yesterday()``               ``yesterday()``
-    ``create()``                  ``create()``
-    ``create_from_date()``        ``from_date()``
-    ``create_from_time()``        ``from_time()``
-    ``create_from_format()``      ``from_time()``
-    ``strptime()``                ``strptime()``
-    ``create_from_timestamp()``   ``from_timestamp()``
-    ============================= =====================

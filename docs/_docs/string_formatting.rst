@@ -1,28 +1,6 @@
 String Formatting
 =================
 
-.. versionadded:: 0.6
-
-    Pendulum now supports an alternative formatter. It can either be set locally
-    when calling the ``format()`` method or set globally by using ``pendulum.set_formatter()``.
-
-    .. code-block:: python
-
-        import pendulum
-
-        dt = pendulum.Pendulum(1975, 12, 25, 14, 15, 16)
-        dt.format('YYYY-MM-DD HH:mm:ss', formatter='alternative')
-        '1975-12-25 14:15:16'
-
-        pendulum.set_formatter('alternative')
-        dt.format('YYYY-MM-DD HH:mm:ss')
-        '1975-12-25 14:15:16'
-
-        # Reset to default formatter
-        pendulum.set_formatter()
-
-    See `Alternative Formatter`_ for more information
-
 All the ``to_xxx_string()`` methods rely on the native ``datetime.strftime()`` with additional
 directives available.
 The ``__str__`` magic method is defined which allows ``Pendulum`` instances to be printed

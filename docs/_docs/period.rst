@@ -152,10 +152,6 @@ You can check if a ``Pendulum`` instance is inside a period using the ``in`` key
 Intersection
 ------------
 
-.. versionadded:: 0.6.0
-
-    The ``intersect()`` method has been added.
-
 You can get the intersection of the current ``Period`` instance with others by
 using the ``intersect()`` method.
 

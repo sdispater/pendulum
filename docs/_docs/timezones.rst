@@ -79,7 +79,7 @@ given timezone to properly handle any transition that might have occurred.
 
         dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=1)
         dt.isoformat()
-        '2013-03-31T02:30:00+01:00'
+        '2013-03-31T03:30:00+02:00'
 
         dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=0)
         dt.isoformat()
