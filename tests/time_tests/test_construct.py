@@ -44,3 +44,11 @@ class ConstructTest(AbstractTestCase):
         t = Time.now()
 
         self.assertIsInstanceOfTime(t)
+
+    def test_now_microseconds(self):
+        with Time.test(Time(1, 2, 3, 123456)):
+            t = Time.now()
+            self.assertTime(t, 1, 2, 3, 123456)
+
+            t = Time.now(False)
+            self.assertTime(t, 1, 2, 3, 0)

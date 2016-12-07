@@ -66,14 +66,14 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         return cls(t.hour, t.minute, t.second, t.microsecond, t.tzinfo)
 
     @classmethod
-    def now(cls, with_microseconds=False):
+    def now(cls, with_microseconds=True):
         """
         Return a Time instance corresponding to the current time.
 
         It will return your local time.
 
-        By default, it will not include microseconds.
-        Just set ``with_microseconds`` to ``True`` to include them.
+        By default, it will include microseconds.
+        Just set ``with_microseconds`` to ``False`` to exclude them.
 
         :param with_microseconds: Whether to include microseconds or not.
         :type with_microseconds: bool
@@ -81,6 +81,9 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         :rtype: Time
         """
         if cls.has_test_now():
+            if not with_microseconds:
+                return cls.get_test_now().replace(microsecond=0)
+
             return cls.get_test_now()
 
         now = datetime.now()
@@ -489,6 +492,11 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
                 tzinfo=True):
         if tzinfo is True:
             tzinfo = self._tzinfo
+
+        hour = hour if hour is not None else self._hour
+        minute = minute if minute is not None else self._minute
+        second = second if second is not None else self._second
+        microsecond = microsecond if microsecond is not None else self._microsecond
 
         return self.instance(
             self._time.replace(
