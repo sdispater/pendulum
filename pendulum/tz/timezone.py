@@ -145,7 +145,8 @@ class Timezone(tzinfo):
             unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
 
             return self._to_local_time(
-                unix_time, self._default_tzinfo_index
+                unix_time, dt.microsecond, self._default_tzinfo_index,
+                fold
             )
 
         # Find the first transition after our target date/time

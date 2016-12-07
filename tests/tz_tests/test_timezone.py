@@ -3,6 +3,8 @@
 import pendulum
 from datetime import datetime, timedelta
 from pendulum import timezone
+from pendulum.tz import Timezone
+from pendulum.tz.timezone_info import TimezoneInfo
 from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
 
 from .. import AbstractTestCase
@@ -268,3 +270,16 @@ class TimezoneTest(AbstractTestCase):
         dt = datetime(2014, 11, 2, 1, 30, tzinfo=tz, fold=1)
 
         self.assertEqual('-0500', dt.strftime('%z'))
+
+    def test_timezone_with_no_transitions(self):
+        tz = Timezone('Test', (), ((0, False, None, ''),), 0, [])
+
+        dt = datetime(2016, 11, 26)
+        dt = tz.convert(dt)
+
+        self.assertEqual(dt.year, 2016)
+        self.assertEqual(dt.month, 11)
+        self.assertEqual(dt.day, 26)
+        self.assertEqual(dt.hour, 0)
+        self.assertEqual(dt.minute, 0)
+        self.assertEqual(dt.second, 0)
