@@ -21,7 +21,7 @@ nosetests.xml
 .idea/*
 
 /test.py
-/test_*.py
+/test_*.*
 /benchmark/*
 benchmark.py
 results.json
