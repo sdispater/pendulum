@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed parsing of some ISO 8601 strings.
+
+
 ## [0.7.0] - 2016-12-07
 
 ### Added
@@ -272,6 +279,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/0.7.0...master
 [0.7.0]: https://github.com/sdispater/pendulum/releases/tag/0.7.0
 [0.6.6]: https://github.com/sdispater/pendulum/releases/tag/0.6.6
 [0.6.5]: https://github.com/sdispater/pendulum/releases/tag/0.6.5

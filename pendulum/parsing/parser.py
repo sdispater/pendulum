@@ -11,13 +11,30 @@ from .exceptions import ParserError
 class Parser(object):
 
     COMMON = re.compile(
-        '(\d{4})(?:-|/)(\d{1,2})(?:-|/)(\d{1,2})' # YMD or YDM
+        # Date
+        '^'
+        '(\d{4})'  # Year
         '('
-        '(?:T| )' # Separator
-        '(\d{2}):(\d{2}):(\d{2})' # HH:mm:ss
-        '(\.(\d{1,9}))?' # Subsecond
-        '((-|\+)\d{2}:\d{2}|Z)?' # Timezone offset
+        '    ((?:-|/)?(\d{1,2}))?'  # Month (optional)
+        '    ((?:-|/)?(\d{1,2}))?'  # Day (optional)
         ')?'
+
+        # Time (Optional)
+        '('
+        '    (?:T|\ )'  # Separator (T or space)
+        '    (\d{1,2}):?(\d{1,2})?:?(\d{1,2})?'  # HH:mm:ss (optional mm and ss)
+        # Subsecond part (optional)
+        '    ('
+        '        (?:\.|,)'  # Subsecond separator (optional)
+        '        (\d{1,9})'  # Subsecond
+        '    )?'
+        # Timezone offset
+        '    ('
+        '        (-|\+)\d{2}:?\d{2}|Z'  # Offset (+HH:mm or +HHmm or Z)
+        '    )?'
+        ')?'
+        '$',
+        re.VERBOSE
     )
 
     DEFAULT_OPTIONS = {
@@ -40,12 +57,24 @@ class Parser(object):
         m = self.COMMON.match(text)
         if m:
             year = int(m.group(1))
-            if self._options['day_first']:
-                month = int(m.group(3))
-                day = int(m.group(2))
+
+            if not m.group(2):
+                # No month and day
+                month = 1
+                day = 1
             else:
-                month = int(m.group(2))
-                day = int(m.group(3))
+                if m.group(4) and m.group(6):
+                    # Month and day
+                    if self._options['day_first']:
+                        month = int(m.group(6))
+                        day = int(m.group(4))
+                    else:
+                        month = int(m.group(4))
+                        day = int(m.group(6))
+                else:
+                    # Only month
+                    month = int(m.group(4) or m.group(6))
+                    day = 1
 
             parsed = {
                 'year': year,
@@ -57,26 +86,35 @@ class Parser(object):
                 'subsecond': 0,
                 'offset': None,
             }
-            if not m.group(4):
+            if not m.group(7):
                 return parsed
 
             # Grabbing hh:mm:ss
-            parsed['hour'] = int(m.group(5))
-            parsed['minute'] = int(m.group(6))
-            parsed['second'] = int(m.group(7))
+            parsed['hour'] = int(m.group(8))
+
+            if m.group(9):
+                parsed['minute'] = int(m.group(9))
+
+            if m.group(10):
+                parsed['second'] = int(m.group(10))
 
             # Grabbing subseconds, if any
-            if m.group(8):
-                parsed['subsecond'] = int('{:0<9}'.format(m.group(9)))
+            if m.group(11):
+                parsed['subsecond'] = int('{:0<9}'.format(m.group(12)))
 
             # Grabbing timezone, if any
-            tz = m.group(10)
+            tz = m.group(13)
             if tz:
                 if tz == 'Z':
                     offset = 0
                 else:
                     negative = True if tz.startswith('-') else False
-                    off_hour, off_minute = tz[1:].split(':')
+                    tz = tz[1:]
+                    if ':' not in tz:
+                        off_hour = tz[0:2]
+                        off_minute = tz[2:4]
+                    else:
+                        off_hour, off_minute = tz.split(':')
 
                     offset = ((int(off_hour) * 60) + int(off_minute)) * 60
 
