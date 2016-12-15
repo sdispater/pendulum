@@ -9,6 +9,7 @@
 ### Deprecated
 
 - `with_date()` and `with_time()` are deprecated. Use `on()` and `at()` instead.
+- `create_from_date()` and `create_from_time()` are deprecated. Use `create()` instead.
 
 
 ## [0.7.0] - 2016-12-07

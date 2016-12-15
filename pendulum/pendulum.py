@@ -391,6 +391,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'create_from_date() is deprecated. '
+            'It will be removed in the next major version. '
+            'Use create(year, month, day) instead.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
+
         return cls.create(year, month, day, tz=tz)
 
     @classmethod
@@ -408,6 +416,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'create_from_time() is deprecated. '
+            'It will be removed in the next major version. '
+            'Use create(hour=hour, minute=minute, second=second) instead.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
+
         return cls.now(tz).replace(
             hour=hour, minute=minute, second=second,
             microsecond=microsecond
