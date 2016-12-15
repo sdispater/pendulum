@@ -4,6 +4,7 @@ from __future__ import division
 
 import calendar
 import datetime
+import warnings
 
 from .date import Date
 from .time import Time
@@ -612,6 +613,25 @@ class Pendulum(Date, datetime.datetime):
     def time(self):
         return Time(self.hour, self.minute, self.second, self.microsecond)
 
+    def on(self, year, month, day):
+        """
+        Returns a new instance with the current date set to a different date.
+
+        :param year: The year
+        :type year: int
+
+        :param month: The month
+        :type month: int
+
+        :param day: The day
+        :type day: int
+
+        :rtype: Pendulum
+        """
+        return self.replace(
+            year=int(year), month=int(month), day=int(day)
+        )
+
     def with_date(self, year, month, day):
         """
         Returns a new instance with the current date set to a different date.
@@ -627,13 +647,15 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = self.replace(
-            year=int(year), month=int(month), day=int(day)
+        warnings.warn(
+            'with_date() is deprecated. Use on() instead.',
+            category=DeprecationWarning,
+            stacklevel=2
         )
 
-        return self._tz.convert(dt)
+        return self.on(year, month, day)
 
-    def with_time(self, hour, minute, second, microsecond=0):
+    def at(self, hour, minute, second, microsecond=0):
         """
         Returns a new instance with the current time to a different time.
 
@@ -651,13 +673,36 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = self._datetime.replace(
-            hour=int(hour), minute=int(minute), second=int(second),
-            microsecond=microsecond,
-            tzinfo=None
+        return self.replace(
+            hour=hour, minute=minute, second=second,
+            microsecond=microsecond
         )
 
-        return self.instance(dt, self._tz)
+    def with_time(self, hour, minute, second, microsecond=0):
+        """
+        Returns a new instance with the current time set to a different time.
+
+        :param hour: The hour
+        :type hour: int
+
+        :param minute: The minute
+        :type minute: int
+
+        :param second: The second
+        :type second: int
+
+        :param microsecond: The microsecond
+        :type microsecond: int
+
+        :rtype: Pendulum
+        """
+        warnings.warn(
+            'with_time() is deprecated. Use at() instead.',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.at(hour, minute, second, microsecond)
 
     def with_date_time(self, year, month, day, hour, minute, second, microsecond=0):
         """
@@ -672,14 +717,11 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = self._datetime.replace(
+        return self.replace(
             year=year, month=month, day=day,
-            hour=int(hour), minute=int(minute), second=int(second),
-            microsecond=microsecond,
-            tzinfo=None
+            hour=hour, minute=minute, second=second,
+            microsecond=microsecond
         )
-
-        return self.instance(dt, self._tz)
 
     def with_time_from_string(self, time):
         """
@@ -692,11 +734,11 @@ class Pendulum(Date, datetime.datetime):
         """
         time = time.split(':')
 
-        hour = time[0]
-        minute = time[1] if len(time) > 1 else 0
-        second = time[2] if len(time) > 2 else 0
+        hour = int(time[0])
+        minute = int(time[1]) if len(time) > 1 else 0
+        second = int(time[2]) if len(time) > 2 else 0
 
-        return self.with_time(hour, minute, second)
+        return self.at(hour, minute, second)
 
     def in_timezone(self, tz):
         """
@@ -1425,7 +1467,7 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_time(0, 0, 0)
+        return self.at(0, 0, 0)
 
     def _end_of_day(self):
         """
@@ -1433,7 +1475,7 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_time(23, 59, 59, 999999)
+        return self.at(23, 59, 59, 999999)
 
     def _start_of_month(self):
         """
@@ -1753,7 +1795,7 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_date(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
+        return self.on(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
 
     def _last_of_quarter(self, day_of_week=None):
         """
@@ -1766,7 +1808,7 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        return self.with_date(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
+        return self.on(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
 
     def _nth_of_quarter(self, nth, day_of_week):
         """
@@ -1795,7 +1837,7 @@ class Pendulum(Date, datetime.datetime):
         if last_month < dt.month or year != dt.year:
             return False
 
-        return self.with_date(self.year, dt.month, dt.day).start_of('day')
+        return self.on(self.year, dt.month, dt.day).start_of('day')
 
     def _first_of_year(self, day_of_week=None):
         """
@@ -1848,7 +1890,7 @@ class Pendulum(Date, datetime.datetime):
         if year != dt.year:
             return False
 
-        return self.with_date(self.year, dt.month, dt.day).start_of('day')
+        return self.on(self.year, dt.month, dt.day).start_of('day')
 
     def average(self, dt=None):
         """
@@ -1939,7 +1981,8 @@ class Pendulum(Date, datetime.datetime):
         return self._datetime.utctimetuple()
 
     def replace(self, year=None, month=None, day=None, hour=None,
-                minute=None, second=None, microsecond=None, tzinfo=True):
+                minute=None, second=None, microsecond=None, tzinfo=True,
+                fold=None):
         year = year if year is not None else self._year
         month = month if month is not None else self._month
         day = day if day is not None else self._day
@@ -1952,14 +1995,14 @@ class Pendulum(Date, datetime.datetime):
         if tzinfo is not None and tzinfo is not True:
             tzinfo = self._safe_create_datetime_zone(tzinfo)
         elif tzinfo is None:
-            tzinfo = tzinfo
+            tzinfo = UTC
         else:
-            tzinfo = self._tzinfo
+            tzinfo = self._tzinfo.tz
 
-        return self.instance(
-            self._datetime.replace(year=year, month=month, day=day,
-                                   hour=hour, minute=minute, second=second,
-                                   microsecond=microsecond, tzinfo=tzinfo)
+        return self.__class__(
+            year, month, day,
+            hour, minute, second, microsecond,
+            tzinfo=tzinfo, fold=fold
         )
 
     def astimezone(self, tz=None):
