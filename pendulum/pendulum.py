@@ -5,8 +5,6 @@ from __future__ import division
 import calendar
 import datetime
 
-from dateutil.relativedelta import relativedelta
-
 from .date import Date
 from .time import Time
 from .period import Period
@@ -14,6 +12,7 @@ from .exceptions import PendulumException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .parsing import parse
+from .helpers import add_duration
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
@@ -1125,13 +1124,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        delta = relativedelta(
+        dt = add_duration(
+            self._datetime,
             years=years, months=months, weeks=weeks, days=days,
             hours=hours, minutes=minutes, seconds=seconds,
             microseconds=microseconds
         )
-
-        dt = self._datetime + delta
 
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
