@@ -6,6 +6,10 @@
 
 - Added `on()` and `at()` methods which replace `with_date()` and `with_time()`.
 
+### Changed
+
+- Improved parsing of ISO 8601 strings.
+
 ### Deprecated
 
 - `with_date()` and `with_time()` are deprecated. Use `on()` and `at()` instead.
