@@ -61,28 +61,16 @@ besides behaving as expected, all accept a timezone parameter and each has their
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
-The next group of static helpers are the ``from_xxx()`` and ``create()`` helpers.
-Most of the static ``create`` functions allow you to provide
+The next helper is ``create()`` which allows you to provide
 as many or as few arguments as you want and will provide default values for all others.
-Generally default values are the current date, time set to ``00:00:00`` and ``UTC`` timezone.
 
 .. code-block:: python
 
-    pendulum.from_date(year, month, day, tz)
-    pendulum.from_time(hour, minute, second, microsecond, tz)
     pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
-``from_date()`` will default the time to ``00:00:00``. ``from_time()`` will default the date to today.
 ``create()`` will default any null parameter to the current date for the date part and to ``00:00:00`` for time.
-As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``TimezoneInfo`` instance
+As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``Timezone`` instance
 or simply a string timezone value.
-
-.. code-block:: python
-
-    xmas_this_year = pendulum.from_date(None, 12, 25)
-    # Year defaults to current year
-    y2k = pendulum.create(2000, 1, 1, 0, 0, 0)
-    noon_london_tz = pendulum.from_time(12, 0, 0, tz='Europe/London')
 
 .. code-block:: python
 

@@ -21,8 +21,8 @@ For example all comparisons are done in UTC or in the timezone of the datetime b
 
     import pendulum
 
-    dt_toronto = pendulum.from_date(2012, 1, 1, 'America/Toronto')
-    dt_vancouver = pendulum.from_date(2012, 1, 1, 'America/Vancouver')
+    dt_toronto = pendulum.create(2012, 1, 1, tz='America/Toronto')
+    dt_vancouver = pendulum.create(2012, 1, 1, tz='America/Vancouver')
 
     print(dt_vancouver.diff(dt_toronto).in_hours())
     3
