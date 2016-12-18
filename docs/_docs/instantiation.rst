@@ -229,7 +229,7 @@ When passing only time information the date will default to today.
 
 .. note::
 
-    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact time
+    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact type
     that the string represents:
 
     .. code-block:: python
