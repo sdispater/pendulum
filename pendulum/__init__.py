@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Types
 from .pendulum import Pendulum
 from .date import Date
 from .time import Time
@@ -44,8 +45,9 @@ set_formatter = Global.set_formatter
 get_formatter = Global.get_formatter
 
 # Helpers
+from .parser import parse
+
 instance = Pendulum.instance
-parse = Pendulum.parse
 now = Pendulum.now
 utcnow = Pendulum.utcnow
 today = Pendulum.today

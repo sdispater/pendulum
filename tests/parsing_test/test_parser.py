@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
+
 from .. import AbstractTestCase
 from pendulum.parsing.parser import Parser, ParserError
 
@@ -196,18 +198,6 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(0, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
-        text = '201205'
-
-        parsed = Parser().parse(text)
-        self.assertEqual(2012, parsed['year'])
-        self.assertEqual(5, parsed['month'])
-        self.assertEqual(1, parsed['day'])
-        self.assertEqual(0, parsed['hour'])
-        self.assertEqual(0, parsed['minute'])
-        self.assertEqual(0, parsed['second'])
-        self.assertEqual(0, parsed['subsecond'])
-        self.assertEqual(None, parsed['offset'])
-
     def test_iso8601_datetime(self):
         text = '2016-10-01T14'
 
@@ -367,11 +357,99 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(0, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
+    def test_iso8601_time(self):
+        now = pendulum.create(2015, 11, 12)
+
+        text = '201205'
+
+        parsed = Parser(now=now).parse(text)
+        self.assertEqual(2015, parsed['year'])
+        self.assertEqual(11, parsed['month'])
+        self.assertEqual(12, parsed['day'])
+        self.assertEqual(20, parsed['hour'])
+        self.assertEqual(12, parsed['minute'])
+        self.assertEqual(5, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '20:12:05'
+
+        parsed = Parser(now=now).parse(text)
+        self.assertEqual(2015, parsed['year'])
+        self.assertEqual(11, parsed['month'])
+        self.assertEqual(12, parsed['day'])
+        self.assertEqual(20, parsed['hour'])
+        self.assertEqual(12, parsed['minute'])
+        self.assertEqual(5, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '20:12:05.123456'
+
+        parsed = Parser(now=now).parse(text)
+        self.assertEqual(2015, parsed['year'])
+        self.assertEqual(11, parsed['month'])
+        self.assertEqual(12, parsed['day'])
+        self.assertEqual(20, parsed['hour'])
+        self.assertEqual(12, parsed['minute'])
+        self.assertEqual(5, parsed['second'])
+        self.assertEqual(123456000, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
     def test_iso8601_ordinal_invalid(self):
         text = '2012-007-05'
 
         self.assertRaises(ParserError, Parser().parse, text)
 
+    def test_strict(self):
+        text = '2012'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+
+        text = '2012-03'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(3, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+
+        text = '2012-03-13'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(3, parsed['month'])
+        self.assertEqual(13, parsed['day'])
+
+        text = '2012W055'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(2, parsed['month'])
+        self.assertEqual(3, parsed['day'])
+
+        text = '2012007'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(7, parsed['day'])
+
+        text = '20:12:05'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 5)
+        self.assertEqual(20, parsed['hour'])
+        self.assertEqual(12, parsed['minute'])
+        self.assertEqual(5, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
 
     def test_invalid(self):
         text = '201610T'

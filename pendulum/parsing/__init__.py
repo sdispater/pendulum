@@ -13,7 +13,7 @@ def parse(text, **options):
     :param options: The parsing options.
     :type options: dict
 
-    :rtype: Pendulum or Span
+    :rtype: dict
 
     :raises: ParserError
     """

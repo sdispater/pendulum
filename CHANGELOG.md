@@ -5,6 +5,7 @@
 ### Added
 
 - Added `on()` and `at()` methods which replace `with_date()` and `with_time()`.
+- Added a `strict` keyword argument to `parse()` to get the type matching the parsed string.
 
 ### Changed
 
