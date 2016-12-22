@@ -486,7 +486,7 @@ class Pendulum(Date, datetime.datetime):
         """
         return self.instance(self._datetime)
 
-    ### Getters/Setters
+    # Getters/Setters
 
     def hour_(self, hour):
         return self._setter(hour=hour)
@@ -586,8 +586,8 @@ class Pendulum(Date, datetime.datetime):
     @property
     def offset_hours(self):
         return (self.get_offset()
-                   / SECONDS_PER_MINUTE
-                   / MINUTES_PER_HOUR)
+                / SECONDS_PER_MINUTE
+                / MINUTES_PER_HOUR)
 
     @property
     def local(self):
