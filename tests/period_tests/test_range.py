@@ -92,3 +92,16 @@ class RangeTest(AbstractTestCase):
         self.assertPendulum(r[0], 2016, 10, 14, 0, 0, 0)
         self.assertPendulum(r[2], 2016, 10, 16, 1, 0, 0)
         self.assertPendulum(r[-1], 2016, 10, 21, 0, 0, 0)
+
+    def test_range_amount(self):
+        dt1 = Pendulum(2016, 10, 14, tzinfo='America/Sao_Paulo')
+        dt2 = dt1.add(weeks=1)
+
+        p = Period(dt1, dt2)
+        r = p.range('days', 2)
+
+        self.assertEqual(len(r), 4)
+        self.assertPendulum(r[0], 2016, 10, 14, 0, 0, 0)
+        self.assertPendulum(r[1], 2016, 10, 16, 1, 0, 0)
+        self.assertPendulum(r[2], 2016, 10, 18, 0, 0, 0)
+        self.assertPendulum(r[3], 2016, 10, 20, 0, 0, 0)

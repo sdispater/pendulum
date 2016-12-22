@@ -6,6 +6,7 @@
 
 - Added `on()` and `at()` methods which replace `with_date()` and `with_time()`.
 - Added a `strict` keyword argument to `parse()` to get the type matching the parsed string.
+- Added the ability to pass an amount to the `range()` method to control the length of the gap.
 
 ### Changed
 

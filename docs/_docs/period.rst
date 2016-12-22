@@ -133,6 +133,19 @@ If you want to iterate over a period, you can use the ``range()`` method:
 
     If you just want a generator you can use the ``xrange()`` method.
 
+You can pass an amount for the passed unit to control the length of the gap:
+
+.. code-block:: python
+
+    for dt in period.range('days', 2):
+        print(dt)
+
+    '2000-01-01T00:00:00+00:00'
+    '2000-01-03T00:00:00+00:00'
+    '2000-01-05T00:00:00+00:00'
+    '2000-01-07T00:00:00+00:00'
+    '2000-01-09T00:00:00+00:00'
+
 You can also directly iterate over the ``Period`` instance, the unit will be ``days`` in this case:
 
 .. code-block:: python
