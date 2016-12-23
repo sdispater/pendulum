@@ -215,7 +215,6 @@ when adding and subtracting time around transition times.
     '2013-03-31T03:00:00+02:00'
 
 
-
 .. note::
 
     You can control the normalization behavior:
@@ -233,3 +232,15 @@ when adding and subtracting time around transition times.
         '2013-03-31T02:30:00+01:00'
         tz.convert(dt, dst_rule=tz.TRANSITION_ERROR)
         # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist.
+
+
+You can also get a normalized ``datetime`` object from a ``Timezone`` by using the ``datetime()`` method:
+
+.. code-block:: python
+
+    import pendulum
+
+    tz = pendulum.timezone('Europe/Paris')
+    dt = tz.datetime(2013, 3, 31, 2, 30)
+    dt.isoformat()
+    '2013-03-31T03:30:00+02:00'
