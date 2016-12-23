@@ -283,3 +283,24 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(dt.hour, 0)
         self.assertEqual(dt.minute, 0)
         self.assertEqual(dt.second, 0)
+
+    def test_datetime(self):
+        tz = timezone('Europe/Paris')
+
+        dt = tz.datetime(2013, 3, 24, 1, 30)
+        self.assertEqual(2013, dt.year)
+        self.assertEqual(3, dt.month)
+        self.assertEqual(24, dt.day)
+        self.assertEqual(1, dt.hour)
+        self.assertEqual(30, dt.minute)
+        self.assertEqual(0, dt.second)
+        self.assertEqual(0, dt.microsecond)
+
+        dt = tz.datetime(2013, 3, 31, 2, 30)
+        self.assertEqual(2013, dt.year)
+        self.assertEqual(3, dt.month)
+        self.assertEqual(31, dt.day)
+        self.assertEqual(3, dt.hour)
+        self.assertEqual(30, dt.minute)
+        self.assertEqual(0, dt.second)
+        self.assertEqual(0, dt.microsecond)

@@ -13,4 +13,6 @@
 .. include:: _docs/testing.rst
 .. include:: _docs/interval.rst
 .. include:: _docs/period.rst
+.. include:: _docs/limitations.rst
 .. include:: _docs/date.rst
+.. include:: _docs/time.rst

@@ -118,6 +118,38 @@ class Timezone(tzinfo):
 
         return dt.__class__(*converted[0], **converted[1])
 
+    def datetime(self, year, month, day,
+                 hour=0, minute=0, second=0, microsecond=0):
+        """
+        Creates a new datetime object for the current timezone.
+
+        :param year: The year
+        :type year: int
+
+        :param month: The month
+        :type month: int
+
+        :param day: The day
+        :type day: int
+
+        :param hour: The hour
+        :type hour: int
+
+        :param minute: The minute
+        :type minute: int
+
+        :param second: The second
+        :type second: int
+
+        :param microsecond: The microsecond
+        :type microsecond: int
+
+        :rtype: datetime
+        """
+        dt = datetime(year, month, day, hour, minute, second, microsecond)
+
+        return self.convert(dt, dst_rule=self.POST_TRANSITION)
+
     def _normalize(self, dt, dst_rule=None):
         # if tzinfo is set, something wrong happened
         if dt.tzinfo is not None:

@@ -61,28 +61,16 @@ besides behaving as expected, all accept a timezone parameter and each has their
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
-The next group of static helpers are the ``from_xxx()`` and ``create()`` helpers.
-Most of the static ``create`` functions allow you to provide
+The next helper is ``create()`` which allows you to provide
 as many or as few arguments as you want and will provide default values for all others.
-Generally default values are the current date, time set to ``00:00:00`` and ``UTC`` timezone.
 
 .. code-block:: python
 
-    pendulum.from_date(year, month, day, tz)
-    pendulum.from_time(hour, minute, second, microsecond, tz)
     pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
 
-``from_date()`` will default the time to ``00:00:00``. ``from_time()`` will default the date to today.
 ``create()`` will default any null parameter to the current date for the date part and to ``00:00:00`` for time.
-As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``TimezoneInfo`` instance
+As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``Timezone`` instance
 or simply a string timezone value.
-
-.. code-block:: python
-
-    xmas_this_year = pendulum.from_date(None, 12, 25)
-    # Year defaults to current year
-    y2k = pendulum.create(2000, 1, 1, 0, 0, 0)
-    noon_london_tz = pendulum.from_time(12, 0, 0, tz='Europe/London')
 
 .. code-block:: python
 
@@ -138,3 +126,118 @@ you can create a ``Pendulum`` instance via the ``instance()`` function.
     p = pendulum.instance(dt)
     print(p.to_datetime_string())
     '2008-01-01 00:00:00'
+
+Parsing
+-------
+
+You can also instantiate ``Pendulum`` instances by passing a string to the ``parse()`` method.
+
+.. code-block:: python
+
+    import pendulum
+
+    dt = pendulum.parse('1975-05-21 22:00:00')
+    print(dt)
+    '1975-05-21T22:00:00+00:00
+
+The library natively supports the RFC 3339 format, most ISO 8601 formats and some other common formats. If you pass a non-standard or more complicated
+string, the library will fallback on the `dateutil <https://dateutil.readthedocs.io>`_ parser.
+
+RFC 3339
+~~~~~~~~
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|1996-12-19T16:39:57-08:00          |1996-12-19T16:39:57-08:00                  |
++-----------------------------------+-------------------------------------------+
+|1990-12-31T23:59:59Z               |1990-12-31T23:59:59+00:00                  |
++-----------------------------------+-------------------------------------------+
+
+ISO 8601
+~~~~~~~~
+
+Datetime
+++++++++
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|20161001T143028+0530               |2016-10-01T14:30:28+05:30                  |
++-----------------------------------+-------------------------------------------+
+|20161001T14                        |2016-10-01T14:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+
+Date
+++++
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|2012                               |2012-01-01T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012-05-03                         |2012-05-03T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|20120503                           |2012-05-03T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012-05                            |2016-10-01T14:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+
+Ordinal day
++++++++++++
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|2012-007                           |2012-01-07T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012007                            |2012-01-07T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+
+Week number
++++++++++++
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|2012-W05                           |2012-01-30T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012W05                            |2012-01-30T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012-W05-5                         |2012-02-03T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|2012W055                           |2012-02-03T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+
+Time
+++++
+
+When passing only time information the date will default to today.
+
++-----------------------------------+-------------------------------------------+
+|String                             |Output                                     |
++===================================+===========================================+
+|00:00                              |2016-12-17T00:00:00+00:00                  |
++-----------------------------------+-------------------------------------------+
+|12:04:23                           |2016-12-17T12:04:23+00:00                  |
++-----------------------------------+-------------------------------------------+
+|120423                             |2016-12-17T12:04:23+00:00                  |
++-----------------------------------+-------------------------------------------+
+|12:04:23.45                        |2016-12-17T12:04:23.450000+00:00           |
++-----------------------------------+-------------------------------------------+
+
+
+.. note::
+
+    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact type
+    that the string represents:
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.parse('2012-05-03', strict=True)
+        # <Date [2012-05-03]>
+
+        pendulum.parse('12:04:23', strict=True)
+        # <Time [12:04:23]>

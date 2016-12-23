@@ -183,10 +183,10 @@ class Period(WordableIntervalMixin, BaseInterval):
             locale=locale, separator=separator, _periods=periods
         )
 
-    def range(self, unit):
-        return list(self.xrange(unit))
+    def range(self, unit, amount=1):
+        return list(self.xrange(unit, amount))
 
-    def xrange(self, unit):
+    def xrange(self, unit, amount=1):
         method = 'add'
         op = operator.le
         if not self._absolute and self.invert:
@@ -195,13 +195,13 @@ class Period(WordableIntervalMixin, BaseInterval):
 
         start, end = self.start, self.end
 
-        i = 1
+        i = amount
         while op(start, end):
             yield start
 
             start = getattr(self.start, method)(**{unit: i})
 
-            i += 1
+            i += amount
 
     def intersect(self, *periods):
         """

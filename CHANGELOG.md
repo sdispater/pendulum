@@ -2,9 +2,21 @@
 
 ## [Unreleased]
 
-### Fixed
+### Added
 
-- Fixed parsing of some ISO 8601 strings.
+- Added `on()` and `at()` methods which replace `with_date()` and `with_time()`.
+- Added a `strict` keyword argument to `parse()` to get the type matching the parsed string.
+- Added the ability to pass an amount to the `range()` method to control the length of the gap.
+- Added a `datetime()` helper method to the `Timezone` class.
+
+### Changed
+
+- Improved parsing of ISO 8601 strings.
+
+### Deprecated
+
+- `with_date()` and `with_time()` are deprecated. Use `on()` and `at()` instead.
+- `create_from_date()` and `create_from_time()` are deprecated. Use `create()` instead.
 
 
 ## [0.7.0] - 2016-12-07
