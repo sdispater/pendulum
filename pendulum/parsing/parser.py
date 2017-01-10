@@ -10,16 +10,26 @@ from .exceptions import ParserError
 
 
 class Parser(object):
-
     COMMON = re.compile(
         # Date (optional)
         '^'
-        '(?P<date>'
-        '    (?P<year>\d{4})'  # Year
-        '    (?P<monthday>'
-        '        (?P<monthsep>-|/)?(?P<month>\d{2})'  # Month (optional)
-        '        ((?:-|/)?(?P<day>\d{1,2}))?'  # Day (optional)
-        '    )?'
+        '('
+        '    (?P<date>'  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
+        '        (?P<year>\d{4})'  # Year
+        '        (?P<monthday>'
+        '            (?P<monthsep>-|/)?(?P<month>\d{2})'  # Month (optional)
+        '            ((?:-|/)?(?P<day>\d{1,2}))?'  # Day (optional)
+        '        )?'
+        '    )'
+        '    |'
+        '    (?P<isocalendar>'  # Calendar date (2016-W05 or 2016-W05-5)
+        '        (?P<isoyear>\d{4})'  # Year
+        '        -?'  # Separator (optional)
+        '        W'  # W separator
+        '        (?P<isoweek>\d{2})'  # Week number
+        '        -?'  # Separator (optional)
+        '        (?P<isoweekday>\d)?'  # Weekday (optional)
+        '    )'
         ')?'
 
         # Time (optional)
@@ -38,17 +48,6 @@ class Parser(object):
         ')?'
         '$',
         re.VERBOSE
-    )
-
-    ISO8601_WEEK = re.compile(
-        '^'
-        '(\d{4})'  # Year
-        '-?'  # Separator (optional)
-        'W'  # W separator
-        '(\d{2})'  # Week number
-        '-?'  # Separator (optional)
-        '(\d)?'  # Weekday (optional)
-        '$'
     )
 
     DEFAULT_OPTIONS = {
@@ -82,7 +81,23 @@ class Parser(object):
         has_date = False
 
         if m:
-            if m.group('date'):
+            if m.group('isocalendar'):
+                date = self._get_iso_8601_week(
+                    m.group('isoyear'),
+                    m.group('isoweek'),
+                    m.group('isoweekday')
+                )
+
+                year = date['year']
+                month = date['month']
+                day = date['day']
+
+                parsed.update({
+                    'year': year,
+                    'month': month,
+                    'day': day,
+                })
+            elif m.group('date'):
                 has_date = True
                 # A date has been specified
                 year = int(m.group('year'))
@@ -197,26 +212,7 @@ class Parser(object):
 
             return parsed
 
-    def parse_iso_8601_week(self, text):
-        """
-        Tries to parse a ISO 8601 week string.
-
-        2012-W05
-        2012-W05-5
-
-        :param text: The string to parse.
-        :type text: str
-
-        :rtype: dict
-        """
-        m = self.ISO8601_WEEK.match(text)
-
-        if not m:
-            return {}
-
-        year = m.group(1)
-        week = m.group(2)
-        weekday = m.group(3)
+    def _get_iso_8601_week(self, year, week, weekday):
         if not weekday:
             weekday = '1'
 
@@ -271,11 +267,6 @@ class Parser(object):
         return default
 
     def _parse(self, text):
-        # ISO8601 week notation
-        parsed = self.parse_iso_8601_week(text)
-        if parsed:
-            return parsed
-
         parsed = self.parse_common(text)
         if parsed:
             return parsed
