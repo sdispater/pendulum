@@ -1192,13 +1192,15 @@ class Pendulum(Date, datetime.datetime):
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
             # we will not apply the transition (if any)
-            dt = self._tz.convert(
-                dt.replace(tzinfo=None),
-                dst_rule=Timezone.POST_TRANSITION
+            return self.__class__(
+                dt.year, dt.month, dt.day,
+                dt.hour, dt.minute, dt.second, dt.microsecond,
+                tzinfo=self._tz,
+                fold=1
             )
-        else:
-            # Else, we need to apply the transition properly (if any)
-            dt = self._tz.convert(dt)
+
+        # Else, we need to apply the transition properly (if any)
+        dt = self._tz.convert(dt)
 
         return self.instance(dt)
 
