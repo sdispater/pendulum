@@ -22,9 +22,9 @@ matrix:
       env: PENDULUM_EXTENSIONS=1
     - python: 3.5
       env: PENDULUM_EXTENSIONS=0
-    - python: 3.6-dev
+    - python: 3.6
       env: PENDULUM_EXTENSIONS=1
-    - python: 3.6-dev
+    - python: 3.6
       env: PENDULUM_EXTENSIONS=0
     - python: pypy
 
@@ -40,7 +40,7 @@ install:
         else
           rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
         fi
-        export PYPY_VERSION="5.4.1"
+        export PYPY_VERSION="5.6.0"
         "$PYENV_ROOT/bin/pyenv" install --skip-existing "pypy-$PYPY_VERSION"
         virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
