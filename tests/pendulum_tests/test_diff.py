@@ -21,15 +21,15 @@ class DiffTest(AbstractTestCase):
         Pendulum.set_test_now()
 
     def test_diff_in_years_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(years=1)).in_years())
 
     def test_diff_in_years_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-1, dt.diff(dt.copy().subtract(years=1), False).in_years())
 
     def test_diff_in_years_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().subtract(years=1)).in_years())
 
     def test_diff_in_years_vs_default_now(self):
@@ -37,19 +37,19 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(1, Pendulum.now().subtract(years=1).diff().in_years())
 
     def test_diff_in_years_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(years=1).add(months=7)).in_years())
 
     def test_diff_in_months_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(13, dt.diff(dt.copy().add(years=1).add(months=1)).in_months())
 
     def test_diff_in_months_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-11, dt.diff(dt.copy().subtract(years=1).add(months=1), False).in_months())
 
     def test_diff_in_months_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(11, dt.diff(dt.copy().subtract(years=1).add(months=1)).in_months())
 
     def test_diff_in_months_vs_default_now(self):
@@ -57,19 +57,19 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(12, Pendulum.now().subtract(years=1).diff().in_months())
 
     def test_diff_in_months_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(months=1).add(days=16)).in_months())
 
     def test_diff_in_days_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(366, dt.diff(dt.copy().add(years=1)).in_days())
 
     def test_diff_in_days_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-365, dt.diff(dt.copy().subtract(years=1), False).in_days())
 
     def test_diff_in_days_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(365, dt.diff(dt.copy().subtract(years=1)).in_days())
 
     def test_diff_in_days_vs_default_now(self):
@@ -77,43 +77,43 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(7, Pendulum.now().subtract(weeks=1).diff().in_days())
 
     def test_diff_in_days_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(days=1).add(hours=13)).in_days())
 
     def test_diff_in_weekdays_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(21, dt.diff(dt.end_of('month')).in_weekdays())
 
     def test_diff_in_weekdays_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 31)
+        dt = Pendulum.create(2000, 1, 31)
         self.assertEqual(21, dt.diff(dt.start_of('month')).in_weekdays())
 
     def test_diff_in_weekdays_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 31)
+        dt = Pendulum.create(2000, 1, 31)
         self.assertEqual(-21, dt.diff(dt.start_of('month'), False).in_weekdays())
 
     def test_diff_in_weekend_days_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(10, dt.diff(dt.end_of('month')).in_weekend_days())
 
     def test_diff_in_weekend_days_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 31)
+        dt = Pendulum.create(2000, 1, 31)
         self.assertEqual(10, dt.diff(dt.start_of('month')).in_weekend_days())
 
     def test_diff_in_weekend_days_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 31)
+        dt = Pendulum.create(2000, 1, 31)
         self.assertEqual(-10, dt.diff(dt.start_of('month'), False).in_weekend_days())
 
     def test_diff_in_weeks_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(52, dt.diff(dt.copy().add(years=1)).in_weeks())
 
     def test_diff_in_weeks_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-52, dt.diff(dt.copy().subtract(years=1), False).in_weeks())
 
     def test_diff_in_weeks_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(52, dt.diff(dt.copy().subtract(years=1)).in_weeks())
 
     def test_diff_in_weeks_vs_default_now(self):
@@ -121,31 +121,31 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(1, Pendulum.now().subtract(weeks=1).diff().in_weeks())
 
     def test_diff_in_weeks_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(0, dt.diff(dt.copy().add(weeks=1).subtract(days=1)).in_weeks())
 
     def test_diff_in_hours_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(26, dt.diff(dt.copy().add(days=1).add(hours=2)).in_hours())
 
     def test_diff_in_hours_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-22, dt.diff(dt.copy().subtract(days=1).add(hours=2), False).in_hours())
 
     def test_diff_in_hours_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(22, dt.diff(dt.copy().subtract(days=1).add(hours=2)).in_hours())
 
     def test_diff_in_hours_vs_default_now(self):
-        with self.wrap_with_test_now(Pendulum.create_from_date(2012, 1, 15)):
+        with self.wrap_with_test_now(Pendulum.create(2012, 1, 15)):
             self.assertEqual(48, Pendulum.now().subtract(days=2).diff().in_hours())
 
     def test_diff_in_hours_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(hours=1).add(minutes=31)).in_hours())
 
     def test_diff_in_minutes_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(62, dt.diff(dt.copy().add(hours=1).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_positive_big(self):
@@ -153,11 +153,11 @@ class DiffTest(AbstractTestCase):
         self.assertEqual(1502, dt.diff(dt.copy().add(hours=25).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-58, dt.diff(dt.copy().subtract(hours=1).add(minutes=2), False).in_minutes())
 
     def test_diff_in_minutes_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(58, dt.diff(dt.copy().subtract(hours=1).add(minutes=2)).in_minutes())
 
     def test_diff_in_minutes_vs_default_now(self):
@@ -165,23 +165,23 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(60, Pendulum.now().subtract(hours=1).diff().in_minutes())
 
     def test_diff_in_minutes_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(minutes=1).add(seconds=59)).in_minutes())
 
     def test_diff_in_seconds_positive(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(62, dt.diff(dt.copy().add(minutes=1).add(seconds=2)).in_seconds())
 
     def test_diff_in_seconds_positive_big(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(7202, dt.diff(dt.copy().add(hours=2).add(seconds=2)).in_seconds())
 
     def test_diff_in_seconds_negative_with_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(-58, dt.diff(dt.copy().subtract(minutes=1).add(seconds=2), False).in_seconds())
 
     def test_diff_in_seconds_negative_no_sign(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(58, dt.diff(dt.copy().subtract(minutes=1).add(seconds=2)).in_seconds())
 
     def test_diff_in_seconds_vs_default_now(self):
@@ -189,7 +189,7 @@ class DiffTest(AbstractTestCase):
             self.assertEqual(3600, Pendulum.now().subtract(hours=1).diff().in_seconds())
 
     def test_diff_in_seconds_ensure_is_truncated(self):
-        dt = Pendulum.create_from_date(2000, 1, 1)
+        dt = Pendulum.create(2000, 1, 1)
         self.assertEqual(1, dt.diff(dt.copy().add(seconds=1.9)).in_seconds())
 
     def test_diff_in_seconds_with_timezones(self):

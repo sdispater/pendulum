@@ -9,7 +9,7 @@ from .. import AbstractTestCase
 class CreateFromTimestampTest(AbstractTestCase):
 
     def test_create_from_timestamp_returns_pendulum(self):
-        d = Pendulum.create_from_timestamp(Pendulum(1975, 5, 21, 22, 32, 5).timestamp)
+        d = Pendulum.create_from_timestamp(Pendulum(1975, 5, 21, 22, 32, 5).timestamp())
         self.assertPendulum(d, 1975, 5, 21, 22, 32, 5)
         self.assertEqual('UTC', d.timezone_name)
 

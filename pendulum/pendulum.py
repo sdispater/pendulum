@@ -4,7 +4,6 @@ from __future__ import division
 
 import calendar
 import datetime
-import warnings
 
 from .date import Date
 from .time import Time
@@ -20,7 +19,6 @@ from .constants import (
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
     SECONDS_PER_DAY
 )
-from .utils import CallableTimestamp
 
 
 class Pendulum(Date, datetime.datetime):
@@ -379,57 +377,6 @@ class Pendulum(Date, datetime.datetime):
         return cls.instance(dt, tz)
 
     @classmethod
-    def create_from_date(cls, year=None, month=None, day=None, tz='UTC'):
-        """
-        Create a Pendulum instance from just a date.
-        The time portion is set to 00:00:00.
-
-        :type year: int
-        :type month: int
-        :type day: int
-        :type tz: tzinfo or str or None
-
-        :rtype: Pendulum
-        """
-        warnings.warn(
-            'create_from_date() is deprecated. '
-            'It will be removed in the next major version. '
-            'Use create(year, month, day) instead.',
-            category=DeprecationWarning,
-            stacklevel=2
-        )
-
-        return cls.create(year, month, day, tz=tz)
-
-    @classmethod
-    def create_from_time(cls, hour=0, minute=0, second=0,
-                         microsecond=0, tz='UTC'):
-        """
-        Create a Pendulum instance from just a time.
-        The date portion is set to today.
-
-        :type hour: int
-        :type minute: int
-        :type second: int
-        :type microsecond: int
-        :type tz: tzinfo or str or int or None
-
-        :rtype: Pendulum
-        """
-        warnings.warn(
-            'create_from_time() is deprecated. '
-            'It will be removed in the next major version. '
-            'Use create(hour=hour, minute=minute, second=second) instead.',
-            category=DeprecationWarning,
-            stacklevel=2
-        )
-
-        return cls.now(tz).replace(
-            hour=hour, minute=minute, second=second,
-            microsecond=microsecond
-        )
-
-    @classmethod
     def create_from_format(cls, time, fmt, tz=UTC):
         """
         Create a Pendulum instance from a specific format.
@@ -554,15 +501,11 @@ class Pendulum(Date, datetime.datetime):
     def fold(self):
         return self._fold
 
-    @property
     def timestamp(self):
         if self._timestamp is None:
             delta = self._datetime - self._EPOCH
 
-            self._timestamp = CallableTimestamp(
-                delta.days * SECONDS_PER_DAY + delta.seconds
-            )
-            self._timestamp.set_float(delta.total_seconds())
+            self._timestamp = delta.total_seconds()
 
         return self._timestamp
 
@@ -648,29 +591,6 @@ class Pendulum(Date, datetime.datetime):
             year=int(year), month=int(month), day=int(day)
         )
 
-    def with_date(self, year, month, day):
-        """
-        Returns a new instance with the current date set to a different date.
-
-        :param year: The year
-        :type year: int
-
-        :param month: The month
-        :type month: int
-
-        :param day: The day
-        :type day: int
-
-        :rtype: Pendulum
-        """
-        warnings.warn(
-            'with_date() is deprecated. Use on() instead.',
-            category=DeprecationWarning,
-            stacklevel=2
-        )
-
-        return self.on(year, month, day)
-
     def at(self, hour, minute, second, microsecond=0):
         """
         Returns a new instance with the current time to a different time.
@@ -693,32 +613,6 @@ class Pendulum(Date, datetime.datetime):
             hour=hour, minute=minute, second=second,
             microsecond=microsecond
         )
-
-    def with_time(self, hour, minute, second, microsecond=0):
-        """
-        Returns a new instance with the current time set to a different time.
-
-        :param hour: The hour
-        :type hour: int
-
-        :param minute: The minute
-        :type minute: int
-
-        :param second: The second
-        :type second: int
-
-        :param microsecond: The microsecond
-        :type microsecond: int
-
-        :rtype: Pendulum
-        """
-        warnings.warn(
-            'with_time() is deprecated. Use at() instead.',
-            category=DeprecationWarning,
-            stacklevel=2
-        )
-
-        return self.at(hour, minute, second, microsecond)
 
     def with_date_time(self, year, month, day, hour, minute, second, microsecond=0):
         """

@@ -252,7 +252,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         from .pendulum import Pendulum
 
-        return Pendulum.EPOCH.with_time(
+        return Pendulum.EPOCH.at(
             self._hour, self._minute, self._second, self._microsecond
         ).add(
             hours=hours,
@@ -281,7 +281,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         from .pendulum import Pendulum
 
-        return Pendulum.EPOCH.with_time(
+        return Pendulum.EPOCH.at(
             self._hour, self._minute, self._second, self._microsecond
         ).subtract(
             hours=hours,

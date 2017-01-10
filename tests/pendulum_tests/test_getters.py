@@ -59,16 +59,7 @@ class GettersTest(AbstractTestCase):
     def test_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0)
         self.assertEqual(0, d.timestamp())
-        self.assertEqual(0, d.timestamp)
         self.assertEqual(60.123456, d.add(minutes=1, microseconds=123456).timestamp())
-        self.assertEqual(60, d.add(minutes=1, microseconds=123456).timestamp)
-
-    def test_timestamp_accuracy(self):
-        self.skip_if_32bit()
-
-        d = Pendulum(3000, 10, 1, 12, 23, 10, 999999)
-
-        self.assertEqual(32527311790, d.timestamp)
 
     def test_float_timestamp(self):
         d = Pendulum(1970, 1, 1, 0, 0, 0, 123456)
@@ -92,88 +83,88 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(1, d.add(years=1).age)
 
     def test_local(self):
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').local)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'America/New_York').local)
-        self.assertFalse(Pendulum.create_from_date(2012, 1, 1, 'UTC').local)
-        self.assertFalse(Pendulum.create_from_date(2012, 1, 1, 'Europe/London').local)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='America/Toronto').local)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='America/New_York').local)
+        self.assertFalse(Pendulum.create(2012, 1, 1, tz='UTC').local)
+        self.assertFalse(Pendulum.create(2012, 1, 1, tz='Europe/London').local)
 
     def test_utc(self):
-        self.assertFalse(Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').utc)
-        self.assertFalse(Pendulum.create_from_date(2012, 1, 1, 'Europe/Paris').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'Atlantic/Reykjavik').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'Europe/Lisbon').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'Africa/Casablanca').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'Africa/Dakar').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'UTC').utc)
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1, 'GMT').utc)
+        self.assertFalse(Pendulum.create(2012, 1, 1, tz='America/Toronto').utc)
+        self.assertFalse(Pendulum.create(2012, 1, 1, tz='Europe/Paris').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='Atlantic/Reykjavik').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='Europe/Lisbon').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='Africa/Casablanca').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='Africa/Dakar').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='UTC').utc)
+        self.assertTrue(Pendulum.create(2012, 1, 1, tz='GMT').utc)
 
     def test_is_dst(self):
-        self.assertFalse(Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').is_dst)
-        self.assertTrue(Pendulum.create_from_date(2012, 7, 1, 'America/Toronto').is_dst)
+        self.assertFalse(Pendulum.create(2012, 1, 1, tz='America/Toronto').is_dst)
+        self.assertTrue(Pendulum.create(2012, 7, 1, tz='America/Toronto').is_dst)
 
     def test_offset_with_dst(self):
-        self.assertEqual(-18000, Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').offset)
+        self.assertEqual(-18000, Pendulum.create(2012, 1, 1, tz='America/Toronto').offset)
 
     def test_offset_no_dst(self):
-        self.assertEqual(-14400, Pendulum.create_from_date(2012, 6, 1, 'America/Toronto').offset)
+        self.assertEqual(-14400, Pendulum.create(2012, 6, 1, tz='America/Toronto').offset)
 
     def test_offset_for_gmt(self):
-        self.assertEqual(0, Pendulum.create_from_date(2012, 6, 1, 'GMT').offset)
+        self.assertEqual(0, Pendulum.create(2012, 6, 1, tz='GMT').offset)
 
     def test_offset_hours_with_dst(self):
-        self.assertEqual(-5, Pendulum.create_from_date(2012, 1, 1, 'America/Toronto').offset_hours)
+        self.assertEqual(-5, Pendulum.create(2012, 1, 1, tz='America/Toronto').offset_hours)
 
     def test_offset_hours_no_dst(self):
-        self.assertEqual(-4, Pendulum.create_from_date(2012, 6, 1, 'America/Toronto').offset_hours)
+        self.assertEqual(-4, Pendulum.create(2012, 6, 1, tz='America/Toronto').offset_hours)
 
     def test_offset_hours_for_gmt(self):
-        self.assertEqual(0, Pendulum.create_from_date(2012, 6, 1, 'GMT').offset_hours)
+        self.assertEqual(0, Pendulum.create(2012, 6, 1, tz='GMT').offset_hours)
 
     def test_offset_hours_float(self):
-        self.assertEqual(9.5, Pendulum.create_from_date(2012, 6, 1, 9.5).offset_hours)
+        self.assertEqual(9.5, Pendulum.create(2012, 6, 1, tz=9.5).offset_hours)
 
     def test_is_leap_year(self):
-        self.assertTrue(Pendulum.create_from_date(2012, 1, 1).is_leap_year())
-        self.assertFalse(Pendulum.create_from_date(2011, 1, 1).is_leap_year())
+        self.assertTrue(Pendulum.create(2012, 1, 1).is_leap_year())
+        self.assertFalse(Pendulum.create(2011, 1, 1).is_leap_year())
 
     def test_is_long_year(self):
-        self.assertTrue(Pendulum.create_from_date(2015, 1, 1).is_long_year())
-        self.assertFalse(Pendulum.create_from_date(2016, 1, 1).is_long_year())
+        self.assertTrue(Pendulum.create(2015, 1, 1).is_long_year())
+        self.assertFalse(Pendulum.create(2016, 1, 1).is_long_year())
 
     def test_week_of_month(self):
-        self.assertEqual(5, Pendulum.create_from_date(2012, 9, 30).week_of_month)
-        self.assertEqual(4, Pendulum.create_from_date(2012, 9, 28).week_of_month)
-        self.assertEqual(3, Pendulum.create_from_date(2012, 9, 20).week_of_month)
-        self.assertEqual(2, Pendulum.create_from_date(2012, 9, 8).week_of_month)
-        self.assertEqual(1, Pendulum.create_from_date(2012, 9, 1).week_of_month)
+        self.assertEqual(5, Pendulum.create(2012, 9, 30).week_of_month)
+        self.assertEqual(4, Pendulum.create(2012, 9, 28).week_of_month)
+        self.assertEqual(3, Pendulum.create(2012, 9, 20).week_of_month)
+        self.assertEqual(2, Pendulum.create(2012, 9, 8).week_of_month)
+        self.assertEqual(1, Pendulum.create(2012, 9, 1).week_of_month)
 
     def test_week_of_year_first_week(self):
-        self.assertEqual(52, Pendulum.create_from_date(2012, 1, 1).week_of_year)
-        self.assertEqual(1, Pendulum.create_from_date(2012, 1, 2).week_of_year)
+        self.assertEqual(52, Pendulum.create(2012, 1, 1).week_of_year)
+        self.assertEqual(1, Pendulum.create(2012, 1, 2).week_of_year)
 
     def test_week_of_year_last_week(self):
-        self.assertEqual(52, Pendulum.create_from_date(2012, 12, 30).week_of_year)
-        self.assertEqual(1, Pendulum.create_from_date(2012, 12, 31).week_of_year)
+        self.assertEqual(52, Pendulum.create(2012, 12, 30).week_of_year)
+        self.assertEqual(1, Pendulum.create(2012, 12, 31).week_of_year)
 
     def test_timezone(self):
-        d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
+        d = Pendulum.create(2000, 1, 1, tz='America/Toronto')
         self.assertEqual('America/Toronto', d.timezone.name)
 
-        d = Pendulum.create_from_date(2000, 1, 1, -5)
+        d = Pendulum.create(2000, 1, 1, tz=-5)
         self.assertEqual('-05:00', d.timezone.name)
 
     def test_tz(self):
-        d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
+        d = Pendulum.create(2000, 1, 1, tz='America/Toronto')
         self.assertEqual('America/Toronto', d.tz.name)
 
-        d = Pendulum.create_from_date(2000, 1, 1, -5)
+        d = Pendulum.create(2000, 1, 1, tz=-5)
         self.assertEqual('-05:00', d.tz.name)
 
     def test_timezone_name(self):
-        d = Pendulum.create_from_date(2000, 1, 1, 'America/Toronto')
+        d = Pendulum.create(2000, 1, 1, tz='America/Toronto')
         self.assertEqual('America/Toronto', d.timezone_name)
 
-        d = Pendulum.create_from_date(2000, 1, 1, -5)
+        d = Pendulum.create(2000, 1, 1, tz=-5)
         self.assertEqual('-05:00', d.timezone_name)
 
     def test_is_weekday(self):
