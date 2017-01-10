@@ -84,20 +84,17 @@ and it will try its best to return something while silently failing to handle so
     pendulum.parse('2016-1-17')
     # <Pendulum [2016-01-17T00:00:00+00:00]>
 
-    # Parsing of a date with wrong day
-    arrow.get('2015-06-31')
-    # <Arrow [2015-06-01T00:00:00+00:00]>
+    arrow.get('20160413')
+    # <Arrow [1970-08-22T08:06:53+00:00]>
 
-    pendulum.parse('2016-06-31')
-    # ValueError: day is out of range for month
+    pendulum.parse('20160413')
+    # <Pendulum [2016-04-13T00:00:00+00:00]>
 
-    # fromtimestamp with timezone displays wrong offset
-    arrow.Arrow.fromtimestamp(0, pytz.timezone('Europe/Paris'))
-    # <Arrow [1970-01-01T01:00:00+00:09]>
+    arrow.get('2016-W07-5')
+    # <Arrow [2016-01-01T00:00:00+00:00]>
 
-    pendulum.from_timestamp(0, pytz.timezone('Europe/Paris'))
-    # fromtimestamp() is also possible
-    # <Pendulum [1970-01-01T01:00:00+01:00]>
+    pendulum.parse('2016-W07-5')
+    # <Pendulum [2016-02-19T00:00:00+00:00]>
 
     # Working with DST
     just_before = arrow.Arrow(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
