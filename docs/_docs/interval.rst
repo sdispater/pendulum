@@ -86,32 +86,6 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
     it.microseconds
     1234
 
-.. note::
-
-    You might notice that the value of the ``seconds`` property is different that
-    the one you would obtain from the standard ``timedelta`` class.
-
-    .. code-block:: python
-
-        from datetime import timedelta
-
-        it = timedelta(days=1177, seconds=7284, microseconds=1234)
-
-        it.seconds
-        7284
-
-    The reason for that is the fact that ``pendulum`` provides the ``minutes`` and ``hours``
-    units, so ``seconds`` is just the remaining seconds after the computation of hours and minutes:
-
-    .. code-block:: python
-
-        import pendulum
-
-        it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
-
-        it.hours * 3600 + it.minutes * 60 + it.seconds
-        7284
-
 If you want to get the total duration of the interval in each supported unit
 you can use the appropriate methods.
 
