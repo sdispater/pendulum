@@ -10,11 +10,15 @@ from .exceptions import ParserError
 
 
 class Parser(object):
+    """
+    Parser which parses common formats (like RFC3339 and ISO8601).
+    """
+
     COMMON = re.compile(
         # Date (optional)
         '^'
-        '('
-        '    (?P<date>'  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
+        '(?P<date>'
+        '    (?P<classic>'  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
         '        (?P<year>\d{4})'  # Year
         '        (?P<monthday>'
         '            (?P<monthsep>-|/)?(?P<month>\d{2})'  # Month (optional)
@@ -81,58 +85,57 @@ class Parser(object):
         has_date = False
 
         if m:
-            if m.group('isocalendar'):
-                date = self._get_iso_8601_week(
-                    m.group('isoyear'),
-                    m.group('isoweek'),
-                    m.group('isoweekday')
-                )
-
-                year = date['year']
-                month = date['month']
-                day = date['day']
-
-                parsed.update({
-                    'year': year,
-                    'month': month,
-                    'day': day,
-                })
-            elif m.group('date'):
-                has_date = True
+            if m.group('date'):
                 # A date has been specified
-                year = int(m.group('year'))
+                has_date = True
 
-                if not m.group('monthday'):
-                    # No month and day
-                    month = 1
-                    day = 1
+                if m.group('isocalendar'):
+                    # We have a ISO 8601 string defined
+                    # by week number
+                    date = self._get_iso_8601_week(
+                        m.group('isoyear'),
+                        m.group('isoweek'),
+                        m.group('isoweekday')
+                    )
+
+                    year = date['year']
+                    month = date['month']
+                    day = date['day']
                 else:
-                    if m.group('month') and m.group('day'):
-                        # Month and day
-                        if len(m.group('day')) == 1:
-                            # Ordinal day
-                            dt = datetime.strptime(
-                                '{}-{}'.format(year, m.group('month') + m.group('day')),
-                                '%Y-%j'
-                            )
-                            month = dt.month
-                            day = dt.day
-                        elif self._options['day_first']:
-                            month = int(m.group('day'))
-                            day = int(m.group('month'))
-                        else:
-                            month = int(m.group('month'))
-                            day = int(m.group('day'))
-                    else:
-                        # Only month
-                        if not m.group('monthsep'):
-                            # The date looks like 201207
-                            # which is invalid for a date
-                            # But it might be a time in the form hhmmss
-                            ambiguous_date = True
+                    # We have a classic date representation
+                    year = int(m.group('year'))
 
-                        month = int(m.group('month'))
+                    if not m.group('monthday'):
+                        # No month and day
+                        month = 1
                         day = 1
+                    else:
+                        if m.group('month') and m.group('day'):
+                            # Month and day
+                            if len(m.group('day')) == 1:
+                                # Ordinal day
+                                dt = datetime.strptime(
+                                    '{}-{}'.format(year, m.group('month') + m.group('day')),
+                                    '%Y-%j'
+                                )
+                                month = dt.month
+                                day = dt.day
+                            elif self._options['day_first']:
+                                month = int(m.group('day'))
+                                day = int(m.group('month'))
+                            else:
+                                month = int(m.group('month'))
+                                day = int(m.group('day'))
+                        else:
+                            # Only month
+                            if not m.group('monthsep'):
+                                # The date looks like 201207
+                                # which is invalid for a date
+                                # But it might be a time in the form hhmmss
+                                ambiguous_date = True
+
+                            month = int(m.group('month'))
+                            day = 1
 
                 parsed.update({
                     'year': year,
@@ -271,6 +274,8 @@ class Parser(object):
         if parsed:
             return parsed
 
+        # We couldn't parse the string
+        # so we fallback on the dateutil parser
         try:
             dt = parser.parse(text, dayfirst=self._options['day_first'])
         except ValueError:
