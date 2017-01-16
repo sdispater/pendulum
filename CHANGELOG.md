@@ -5,6 +5,7 @@
 
 ### Changed
 
+- Using `PRE_TRANSITION` rule no longer produces a time in a DST gap.
 - Improved performances when adding time to a `Pendulum` instance.
 - Improved parsing of ISO 8601 strings.
 - Removed deprecated methods
