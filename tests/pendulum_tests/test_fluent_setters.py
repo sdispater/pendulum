@@ -174,7 +174,7 @@ class FluentSettersTest(AbstractTestCase):
         d = Pendulum.create(2013, 3, 31, 2, 30)
         new = d.replace(tzinfo='Europe/Paris')
 
-        self.assertPendulum(new, 2013, 3, 31, 2, 30)
+        self.assertPendulum(new, 2013, 3, 31, 1, 30)
         self.assertFalse(new.is_dst)
         self.assertEqual(new.offset, 3600)
         self.assertEqual(new.timezone_name, 'Europe/Paris')

@@ -196,12 +196,12 @@ class ConstructTest(AbstractTestCase):
         Pendulum.set_transition_rule(PRE_TRANSITION)
 
         d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris')
-        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+        self.assertPendulum(d, 2013, 3, 31, 1, 30)
 
         Pendulum.set_transition_rule(POST_TRANSITION)
 
         d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=0)
-        self.assertPendulum(d, 2013, 3, 31, 2, 30)
+        self.assertPendulum(d, 2013, 3, 31, 1, 30)
 
         d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=1)
         self.assertPendulum(d, 2013, 3, 31, 3, 30)

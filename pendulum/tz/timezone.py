@@ -219,7 +219,7 @@ class Timezone(tzinfo):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
+                     tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
                 else:
                     unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
         elif tr is end:
@@ -246,7 +246,7 @@ class Timezone(tzinfo):
                 elif dst_rule == self.PRE_TRANSITION:
                     # We do not apply the transition
                     (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
+                     tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
                 else:
                     unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
             elif tr.time <= dt <= tr.pre_time:
@@ -349,7 +349,7 @@ class Timezone(tzinfo):
 
         return lo
 
-    def _get_previous_transition_time(self, tr, dt):
+    def _get_previous_transition_time(self, tr, dt, skipped=False):
         """
         Returns the time before the transition
         as a (unix_time, tzinfo_index) tuple.
@@ -360,6 +360,9 @@ class Timezone(tzinfo):
         :param dt: The datetime
         :type dt: datetime
 
+        :param skipped: Whether we are in a gap or not
+        :type skipped: bool
+
         :rtype: tuple
         """
         diff = self._get_diff(tr.pre_time, dt)
@@ -369,6 +372,13 @@ class Timezone(tzinfo):
         tzinfo_index = tr.pre_tzinfo_index
 
         unix_time = tr.unix_time + diff
+
+        if skipped:
+            # If skipped time, we round down
+            # Only occurs when PRE_TRANSITION is used
+            forward = (self._tzinfos[tr.tzinfo_index].offset
+                       - self._tzinfos[tzinfo_index].offset)
+            unix_time -= forward
 
         return unix_time, tzinfo_index
 
