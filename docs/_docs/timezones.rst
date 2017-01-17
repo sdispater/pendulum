@@ -43,7 +43,7 @@ given timezone to properly handle any transition that might have occurred.
         pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
 
         pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
-        '2013-03-31T02:30:00+01:00'
+        '2013-03-31T01:30:00+01:00'
         pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
         '2013-10-27T02:30:00+02:00'
 
@@ -75,7 +75,7 @@ given timezone to properly handle any transition that might have occurred.
 
         dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=0)
         dt.isoformat()
-        '2013-03-31T02:30:00+01:00'
+        '2013-03-31T01:30:00+01:00'
 
         dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=1)
         dt.isoformat()
@@ -94,7 +94,7 @@ Shifting time to transition
 
 So, what happens when you add time to a ``Pendulum`` instance and stumble upon
 a transition time?
-Well, ``Pendulum``, provided with the context of the previous instance, will
+Well ``Pendulum``, provided with the context of the previous instance, will
 adopt the proper behavior and apply the transition accordingly.
 
 .. code-block:: python
@@ -161,7 +161,7 @@ when adding and subtracting time around transition times.
         # By default, fold is set to 0
         dt = paris.convert(dt)
         dt.isoformat()
-        '2013-03-31T02:30:00+01:00'
+        '2013-03-31T01:30:00+01:00'
 
         dt = datetime(2013, 3, 31, 2, 30, fold=1)
         dt = paris.convert(dt)
@@ -229,7 +229,7 @@ when adding and subtracting time around transition times.
         dt = datetime(2013, 3, 31, 2, 30)
         dt = tz.convert(dt, dst_rule=tz.PRE_TRANSITION)
         dt.isoformat()
-        '2013-03-31T02:30:00+01:00'
+        '2013-03-31T01:30:00+01:00'
         tz.convert(dt, dst_rule=tz.TRANSITION_ERROR)
         # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist.
 

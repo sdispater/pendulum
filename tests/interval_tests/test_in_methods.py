@@ -7,14 +7,6 @@ from .. import AbstractTestCase
 
 class InMethodsTest(AbstractTestCase):
 
-    def test_in_years(self):
-        it = Interval(days=365)
-        self.assertEqual(1, it.in_years())
-
-    def test_in_months(self):
-        it = Interval(days=75)
-        self.assertEqual(2, it.in_months())
-
     def test_in_weeks(self):
         it = Interval(days=17)
         self.assertEqual(2, it.in_weeks())

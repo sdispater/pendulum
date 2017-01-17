@@ -1,5 +1,5 @@
 #!/bin/bash
-PYTHON_VERSIONS="cp27-cp27m cp35-cp35m"
+PYTHON_VERSIONS="cp27-cp27m cp35-cp35m cp36-cp36m"
 
 echo "Compile wheels"
 for PYTHON in ${PYTHON_VERSIONS}; do

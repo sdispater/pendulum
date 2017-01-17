@@ -1,5 +1,16 @@
 # Change Log
 
+
+## [Unreleased]
+
+### Changed
+
+- Using `PRE_TRANSITION` rule no longer produces a time in a DST gap.
+- Improved performances when adding time to a `Pendulum` instance.
+- Improved parsing of ISO 8601 strings.
+- Removed deprecated methods
+
+
 ## [0.8.0] - 2016-12-23
 
 ### Added
@@ -291,6 +302,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/0.8.0...develop
 [0.8.0]: https://github.com/sdispater/pendulum/releases/tag/0.8.0
 [0.7.0]: https://github.com/sdispater/pendulum/releases/tag/0.7.0
 [0.6.6]: https://github.com/sdispater/pendulum/releases/tag/0.6.6

@@ -332,6 +332,55 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(0, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
+    def test_iso8601_week_number_with_time(self):
+        text = '2012-W05T09'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(30, parsed['day'])
+        self.assertEqual(9, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '2012W05T09'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(30, parsed['day'])
+        self.assertEqual(9, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '2012-W05-5T09'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(2, parsed['month'])
+        self.assertEqual(3, parsed['day'])
+        self.assertEqual(9, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '2012W055T09'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(2, parsed['month'])
+        self.assertEqual(3, parsed['day'])
+        self.assertEqual(9, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
     def test_iso8601_ordinal(self):
         text = '2012-007'
 
