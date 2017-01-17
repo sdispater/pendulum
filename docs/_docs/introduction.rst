@@ -1,11 +1,6 @@
 Introduction
 ============
 
-.. warning::
-
-    Pendulum is still in development, so expect (not to many I hope) breaking API changes in
-    the future.
-
 Pendulum is a Python package to ease datetimes manipulation.
 
 It is heavily inspired by `Carbon <http://carbon.nesbot.com>`_ for PHP.
