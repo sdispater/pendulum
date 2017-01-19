@@ -22,7 +22,7 @@ class Parser(object):
         '        (?P<year>\d{4})'  # Year
         '        (?P<monthday>'
         '            (?P<monthsep>-|/)?(?P<month>\d{2})'  # Month (optional)
-        '            ((?:-|/)?(?P<day>\d{1,2}))?'  # Day (optional)
+        '            ((?P<daysep>-|/)?(?P<day>\d{1,2}))?'  # Day (optional)
         '        )?'
         '    )'
         '    |'
@@ -56,6 +56,7 @@ class Parser(object):
 
     DEFAULT_OPTIONS = {
         'day_first': False,
+        'year_first': True,
         'strict': False,
         'now': None
     }
@@ -92,11 +93,14 @@ class Parser(object):
                 if m.group('isocalendar'):
                     # We have a ISO 8601 string defined
                     # by week number
-                    date = self._get_iso_8601_week(
-                        m.group('isoyear'),
-                        m.group('isoweek'),
-                        m.group('isoweekday')
-                    )
+                    try:
+                        date = self._get_iso_8601_week(
+                            m.group('isoyear'),
+                            m.group('isoweek'),
+                            m.group('isoweekday')
+                        )
+                    except ValueError:
+                        raise ParserError('Invalid date string: {}'.format(text))
 
                     year = date['year']
                     month = date['month']
@@ -112,7 +116,7 @@ class Parser(object):
                     else:
                         if m.group('month') and m.group('day'):
                             # Month and day
-                            if len(m.group('day')) == 1:
+                            if not m.group('daysep') and len(m.group('day')) == 1:
                                 # Ordinal day
                                 dt = datetime.strptime(
                                     '{}-{}'.format(year, m.group('month') + m.group('day')),
@@ -277,7 +281,11 @@ class Parser(object):
         # We couldn't parse the string
         # so we fallback on the dateutil parser
         try:
-            dt = parser.parse(text, dayfirst=self._options['day_first'])
+            dt = parser.parse(
+                text,
+                dayfirst=self._options['day_first'],
+                yearfirst=self._options['year_first']
+            )
         except ValueError:
             raise ParserError('Invalid date string: {}'.format(text))
 

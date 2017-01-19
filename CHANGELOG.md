@@ -1,6 +1,13 @@
 # Change Log
 
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed parsing, especially for strings in the form `31-01-01`.
+
+
 ## [1.0.0]
 
 ### Changed
@@ -302,6 +309,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.0...master
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0
 [0.8.0]: https://github.com/sdispater/pendulum/releases/tag/0.8.0
 [0.7.0]: https://github.com/sdispater/pendulum/releases/tag/0.7.0
