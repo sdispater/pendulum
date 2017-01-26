@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import pendulum
-from pendulum.exceptions import PendulumException
-
 from .. import AbstractTestCase
 
 
