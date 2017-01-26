@@ -25,8 +25,10 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(pendulum.MONDAY, d.day_of_week)
 
     def test_day_of_year(self):
-        d = Date(2012, 5, 7)
-        self.assertEqual(128, d.day_of_year)
+        d = Date(2015, 12, 31)
+        self.assertEqual(365, d.day_of_year)
+        d = Date(2016, 12, 31)
+        self.assertEqual(366, d.day_of_year)
 
     def test_days_in_month(self):
         d = Date(2012, 5, 7)

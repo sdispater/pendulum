@@ -137,11 +137,11 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: int
         """
-        k = 1 if self.is_leap_year else 2
+        k = 1 if self.is_leap_year() else 2
 
         return (
             (275 * self.month) // 9
-            - k * (self.month + 9) // 12
+            - k * ((self.month + 9) // 12)
             + self.day - 30
         )
 
