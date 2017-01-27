@@ -500,7 +500,64 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(5, parsed['second'])
         self.assertEqual(0, parsed['subsecond'])
 
+    def test_edge_cases(self):
+        text = '2013-11-1'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2013, parsed['year'])
+        self.assertEqual(11, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '10-01-01'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2010, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '31-01-01'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2031, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '32-01-01'
+
+        parsed = Parser().parse(text)
+        self.assertEqual(2032, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(1, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
     def test_invalid(self):
         text = '201610T'
+
+        self.assertRaises(ParserError, Parser().parse, text)
+
+        text = '2012-W54'
+
+        self.assertRaises(ParserError, Parser().parse, text)
+
+        text = '2012-W13-8'
 
         self.assertRaises(ParserError, Parser().parse, text)
