@@ -8,16 +8,6 @@ class DifferenceFormatter(object):
     Handles formatting differences in text.
     """
 
-    THRESHOLDS = (
-        ('remaining_seconds', 'second', 59),
-        ('minutes', 'minute', 59),
-        ('hours', 'hour', 23),
-        ('remaining_days', 'day', 6),
-        ('weeks', 'week', 3),
-        ('months', 'month', 11),
-        ('years', 'year', None),
-    )
-
     def __init__(self, translator=Translator()):
         self._translator = translator
 
