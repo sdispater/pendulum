@@ -5,6 +5,7 @@
 ### Changed
 
 - Improved `diff_for_humans()` method to display more intuitive strings on edge cases.
+- Formatting (with f-strings or `format()`) will now use the configured formatter.
 
 
 ## [1.0.1]
