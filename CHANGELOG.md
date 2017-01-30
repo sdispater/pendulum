@@ -1,5 +1,11 @@
 # Change Log
 
+[Unreleased]
+
+### Changed
+
+- Improved `diff_for_humans()` method to display more intuitive strings on edge cases.
+
 
 ## [1.0.1]
 
@@ -309,7 +315,7 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.1...develop
 [1.0.1]: https://github.com/sdispater/pendulum/releases/tag/1.0.1
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0
 [0.8.0]: https://github.com/sdispater/pendulum/releases/tag/0.8.0

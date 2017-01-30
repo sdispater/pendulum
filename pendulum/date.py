@@ -8,6 +8,7 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from .period import Period
+from .formatting.difference_formatter import DifferenceFormatter
 from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
 from .constants import (
     DAYS_PER_WEEK, YEARS_PER_DECADE, YEARS_PER_CENTURY,
@@ -43,6 +44,8 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
     ]
 
     _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
+
+    _diff_formatter = None
 
     @classmethod
     def instance(cls, dt):
@@ -609,6 +612,18 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
     # DIFFERENCES
 
+    @property
+    def diff_formatter(self):
+        """
+        Returns a DifferenceFormatter instance.
+
+        :rtype: DifferenceFormatter
+        """
+        if not self.__class__._diff_formatter:
+            self.__class__._diff_formatter = DifferenceFormatter(self.__class__.translator())
+
+        return self.__class__._diff_formatter
+
     def diff(self, dt=None, abs=True):
         """
         Returns the difference between two Date objects as a Period.
@@ -655,50 +670,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: str
         """
-        is_now = other is None
-
-        if is_now:
-            other = self.today()
-
-        diff = self.diff(other)
-
-        if diff.years > 0:
-            unit = 'year'
-            count = diff.years
-        elif diff.months > 0:
-            unit = 'month'
-            count = diff.months
-        elif diff.weeks > 0:
-            unit = 'week'
-            count = diff.weeks
-        elif diff.days > 0:
-            unit = 'day'
-            count = diff.days
-        else:
-            unit = 'second'
-            count = diff.seconds
-
-        if count == 0:
-            count = 1
-
-        time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
-
-        if absolute:
-            return time
-
-        is_future = diff.invert
-
-        if is_now:
-            trans_id = 'from_now' if is_future else 'ago'
-        else:
-            trans_id = 'after' if is_future else 'before'
-
-        # Some langs have special pluralization for past and future tense
-        try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self.translator().transchoice(try_key_exists, count, locale=locale):
-            time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
-
-        return self.translator().trans(trans_id, {'time': time}, locale=locale)
+        return self.diff_formatter.diff_for_humans(self, other, absolute, locale)
 
     # MODIFIERS
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date
-from pendulum import Date
+from pendulum import Pendulum, Date
 
 from .. import AbstractTestCase
 
@@ -255,6 +255,19 @@ class DiffTest(AbstractTestCase):
     def test_diff_for_humans_absolute_years(self):
         self.assertEqual('1 year', Date.today().diff_for_humans(Date.today().subtract(years=1), True))
         self.assertEqual('1 year', Date.today().diff_for_humans(Date.today().add(years=1), True))
+
+    def test_diff_for_humans_accuracy(self):
+        today = Pendulum.today()
+
+        with self.wrap_with_test_now(today.add(days=1)):
+            self.assertEqual('1 year', today.add(years=1).diff_for_humans(absolute=True))
+
+        with self.wrap_with_test_now(today):
+            self.assertEqual('6 days', today.add(days=6).diff_for_humans(absolute=True))
+            self.assertEqual('1 week', today.add(days=7).diff_for_humans(absolute=True))
+            self.assertEqual('3 weeks', today.add(days=20).diff_for_humans(absolute=True))
+            self.assertEqual('2 weeks', today.add(days=14).diff_for_humans(absolute=True))
+            self.assertEqual('2 weeks', today.add(days=13).diff_for_humans(absolute=True))
 
     def test_subtraction(self):
         d = Date(2016, 7, 5)

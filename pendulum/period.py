@@ -100,7 +100,7 @@ class Period(WordableIntervalMixin, BaseInterval):
         return self._days
 
     @property
-    def days_exclude_weeks(self):
+    def remaining_days(self):
         return abs(self._delta.days) % 7 * self._sign(self._days)
 
     @property
@@ -173,7 +173,7 @@ class Period(WordableIntervalMixin, BaseInterval):
             ('year', self.years),
             ('month', self.months),
             ('week', self.weeks),
-            ('day', self.days_exclude_weeks),
+            ('day', self.remaining_days),
             ('hour', self.hours),
             ('minute', self.minutes),
             ('second', self.remaining_seconds)
