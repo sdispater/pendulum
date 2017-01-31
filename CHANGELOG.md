@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `day_of_year` not returning the correct value. (Thanks to [asrenzo](https://github.com/asrenzo))
+
 
 ## [1.0.1]
 
