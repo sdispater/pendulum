@@ -1,9 +1,15 @@
 Pendulum
 ########
 
+.. image:: https://img.shields.io/pypi/v/pendulum.svg
+    :target: https://pypi.python.org/pypi/pendulum
+
+.. image:: https://img.shields.io/pypi/l/pendulum.svg
+    :target: https://pypi.python.org/pypi/pendulum
+
 .. image:: https://travis-ci.org/sdispater/pendulum.png
-   :alt: Pendulum Build status
-   :target: https://travis-ci.org/sdispater/pendulum
+    :alt: Pendulum Build status
+    :target: https://travis-ci.org/sdispater/pendulum
 
 Python datetimes made easy.
 
