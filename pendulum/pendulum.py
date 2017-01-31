@@ -1421,7 +1421,7 @@ class Pendulum(Date, datetime.datetime):
 
         return dt.end_of('day')
 
-    def next(self, day_of_week=None):
+    def next(self, day_of_week=None, keep_time=False):
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -1431,18 +1431,26 @@ class Pendulum(Date, datetime.datetime):
         :param day_of_week: The next day of week to reset to.
         :type day_of_week: int or None
 
+        :param keep_time: Whether to keep the time information or not.
+        :type keep_time: bool
+
         :rtype: Pendulum
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').add(days=1)
+        if keep_time:
+            dt = self
+        else:
+            dt = self.start_of('day')
+
+        dt = dt.add(days=1)
         while dt.day_of_week != day_of_week:
             dt = dt.add(days=1)
 
         return dt
 
-    def previous(self, day_of_week=None):
+    def previous(self, day_of_week=None, keep_time=False):
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -1452,12 +1460,20 @@ class Pendulum(Date, datetime.datetime):
         :param day_of_week: The previous day of week to reset to.
         :type day_of_week: int or None
 
+        :param keep_time: Whether to keep the time information or not.
+        :type keep_time: bool
+
         :rtype: Pendulum
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').subtract(days=1)
+        if keep_time:
+            dt = self
+        else:
+            dt = self.start_of('day')
+
+        dt = dt.subtract(days=1)
         while dt.day_of_week != day_of_week:
             dt = dt.subtract(days=1)
 

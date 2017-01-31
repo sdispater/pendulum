@@ -76,6 +76,13 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         d = Pendulum.create(1975, 5, 21).next(6)
         self.assertPendulum(d, 1975, 5, 24, 0, 0, 0)
 
+    def test_next_keep_time(self):
+        d = Pendulum.create(1975, 5, 21, 12).next()
+        self.assertPendulum(d, 1975, 5, 28, 0, 0, 0)
+
+        d = Pendulum.create(1975, 5, 21, 12).next(keep_time=True)
+        self.assertPendulum(d, 1975, 5, 28, 12, 0, 0)
+
     def test_previous(self):
         d = Pendulum.create(1975, 5, 21).previous()
         self.assertPendulum(d, 1975, 5, 14, 0, 0, 0)
@@ -87,6 +94,13 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_previous_saturday(self):
         d = Pendulum.create(1975, 5, 21).previous(6)
         self.assertPendulum(d, 1975, 5, 17, 0, 0, 0)
+
+    def test_previous_keep_time(self):
+        d = Pendulum.create(1975, 5, 21, 12).previous()
+        self.assertPendulum(d, 1975, 5, 14, 0, 0, 0)
+
+        d = Pendulum.create(1975, 5, 21, 12).previous(keep_time=True)
+        self.assertPendulum(d, 1975, 5, 14, 12, 0, 0)
 
     def test_first_day_of_month(self):
         d = Pendulum.create(1975, 11, 21).first_of('month', )

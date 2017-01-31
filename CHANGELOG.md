@@ -2,6 +2,10 @@
 
 [Unreleased]
 
+### Added
+
+- Added the `keep_time` keyword argument to `next()`/`previous()` methods to keep time information.
+
 ### Changed
 
 - Improved `diff_for_humans()` method to display more intuitive strings on edge cases.
