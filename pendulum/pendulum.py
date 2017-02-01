@@ -71,6 +71,10 @@ class Pendulum(Date, datetime.datetime):
             # pytz
             if hasattr(obj, 'localize'):
                 obj = obj.zone
+            elif hasattr(obj, 'utcoffset'):
+                delta = obj.utcoffset(None)
+
+                return FixedTimezone(delta.total_seconds() * 60 * 60)
             else:
                 # We have no sure way to figure out
                 # the timezone name, we raise an error
