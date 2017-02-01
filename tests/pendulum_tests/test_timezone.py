@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from datetime import timezone
+import sys
 from pendulum import Pendulum
 
 from .. import AbstractTestCase
+
+if sys.version_info >= (3, 2):
+    from datetime import timezone
 
 
 class TimezoneTest(AbstractTestCase):
@@ -38,6 +41,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('Europe/Paris', d.timezone_name)
         self.assertPendulum(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
-        d = d.astimezone(timezone.utc)
-        self.assertEqual('+00:00', d.timezone_name)
-        self.assertPendulum(d, now.year, now.month, now.day, now.hour, now.minute)
+        if sys.version_info >= (3, 2):
+            d = d.astimezone(timezone.utc)
+            self.assertEqual('+00:00', d.timezone_name)
+            self.assertPendulum(d, now.year, now.month, now.day, now.hour, now.minute)
