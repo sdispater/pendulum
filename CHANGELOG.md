@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-### Added
+### Changed
 
 - Adds support for external tzinfo as timezones. (Thanks to [iv597](https://github.com/iv597))
 
