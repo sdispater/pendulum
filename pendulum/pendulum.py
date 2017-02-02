@@ -74,11 +74,7 @@ class Pendulum(Date, datetime.datetime):
 
             return FixedTimezone(obj.utcoffset(None).total_seconds())
 
-        try:
-            tz = cls._timezone(obj)
-            return tz
-        except:
-            raise ValueError('Unsupported timezone {}'.format(obj))
+        return cls._timezone(obj)
 
     @classmethod
     def _local_timezone(cls):
