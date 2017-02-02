@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Adds support for external tzinfo as timezones. (Thanks to [iv597](https://github.com/iv597))
+
 ### Fixed
 
 - Fixed `day_of_year` not returning the correct value. (Thanks to [asrenzo](https://github.com/asrenzo))
