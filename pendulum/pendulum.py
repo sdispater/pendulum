@@ -70,16 +70,11 @@ class Pendulum(Date, datetime.datetime):
         elif isinstance(obj, datetime.tzinfo) and not isinstance(obj, Timezone):
             # pytz
             if hasattr(obj, 'localize'):
-                obj = obj.zone
-            else:
-                # We have no sure way to figure out
-                # the timezone name, we raise an error
+                return cls._timezone(obj.zone)
 
-                raise ValueError('Unsupported timezone {}'.format(obj))
+            return FixedTimezone(obj.utcoffset(None).total_seconds())
 
-        tz = cls._timezone(obj)
-
-        return tz
+        return cls._timezone(obj)
 
     @classmethod
     def _local_timezone(cls):
