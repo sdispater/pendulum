@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.0.2]
 
 ### Changed
 
@@ -319,7 +319,8 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.2...master
+[1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2
 [1.0.1]: https://github.com/sdispater/pendulum/releases/tag/1.0.1
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0
 [0.8.0]: https://github.com/sdispater/pendulum/releases/tag/0.8.0
