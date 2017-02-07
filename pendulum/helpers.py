@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
+
 from math import copysign
 from datetime import timedelta
 
@@ -16,7 +18,7 @@ def is_leap(year):
 
 
 def add_duration(dt, years=0, months=0, weeks=0, days=0,
-        hours=0, minutes=0, seconds=0, microseconds=0):
+                 hours=0, minutes=0, seconds=0, microseconds=0):
     """
     Adds a duration to a datetime instance.
 
@@ -106,6 +108,107 @@ def add_duration(dt, years=0, months=0, weeks=0, days=0,
         microseconds=microseconds
     )
 
+
+def precise_diff(d1, d2):
+    """
+    Calculate a precise difference between two datetimes.
+
+    :param d1: The first datetime
+    :type d1: pendulum.Pendulum or pendulum.Date
+
+    :param d2: The second datetime
+    :type d2: pendulum.Pendulum or pendulum.Date
+
+    :rtype: dict
+    """
+    diff = {
+        'years': 0,
+        'months': 0,
+        'days': 0,
+        'hours': 0,
+        'minutes': 0,
+        'seconds': 0,
+        'microseconds': 0
+    }
+    sign = 1
+
+    if d1 == d2:
+        return diff
+
+    if d1 > d2:
+        d1, d2 = d2, d1
+        sign = -1
+
+    y_diff = d2.year - d1.year
+    m_diff = d2.month - d1.month
+    d_diff = d2.day - d1.day
+    hour_diff = 0
+    min_diff = 0
+    sec_diff = 0
+    mic_diff = 0
+
+    if hasattr(d2, 'hour'):
+        hour_diff = d2.hour - d1.hour
+        min_diff = d2.minute - d1.minute
+        sec_diff = d2.second - d1.second
+        mic_diff = d2.microsecond - d1.microsecond
+
+        if mic_diff < 0:
+            mic_diff += 1000000
+            sec_diff -= 1
+
+        if sec_diff < 0:
+            sec_diff += 60
+            min_diff -= 1
+
+        if min_diff < 0:
+            min_diff += 60
+            hour_diff -= 1
+
+        if hour_diff < 0:
+            hour_diff += 24
+            d_diff -= 1
+
+    if d_diff < 0:
+        year = d2.year
+        month = d2.month
+
+        if month == 1:
+            month = 12
+            year -= 1
+        else:
+            month -= 1
+
+        leap = int(is_leap(year))
+
+        days_in_last_month = DAYS_PER_MONTHS[leap][month]
+        days_in_month = DAYS_PER_MONTHS[int(is_leap(d2.year))][d2.month]
+
+        if d_diff < days_in_month - days_in_last_month:
+            # We don't have a full month, we calculate days
+            if days_in_last_month < d1.day:
+                d_diff += d1.day
+            else:
+                d_diff += days_in_last_month
+
+            m_diff -= 1
+        else:
+            # We have a full month, remove days
+            d_diff = 0
+
+    if m_diff < 0:
+        m_diff += 12
+        y_diff -= 1
+
+    diff['microseconds'] = sign * mic_diff
+    diff['seconds'] = sign * sec_diff
+    diff['minutes'] = sign * min_diff
+    diff['hours'] = sign * hour_diff
+    diff['days'] = sign * d_diff
+    diff['months'] = sign * m_diff
+    diff['years'] = sign * y_diff
+
+    return diff
 
 def _sign(x):
     return int(copysign(1, x))

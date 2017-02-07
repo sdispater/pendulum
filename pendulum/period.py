@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import operator
-from dateutil.relativedelta import relativedelta
+import pendulum
+
 from datetime import datetime, date
 
 from .mixins.interval import WordableIntervalMixin
 from .interval import BaseInterval, Interval
 from .constants import MONTHS_PER_YEAR
+from .helpers import precise_diff
 
 
 class Period(WordableIntervalMixin, BaseInterval):
@@ -16,20 +18,17 @@ class Period(WordableIntervalMixin, BaseInterval):
     """
 
     def __new__(cls, start, end, absolute=False):
-        from .pendulum import Pendulum
-        from .date import Date
-
         if absolute and start > end:
             end, start = start, end
 
-        if isinstance(start, Pendulum):
+        if isinstance(start, pendulum.Pendulum):
             start = start._datetime
-        elif isinstance(start, Date):
+        elif isinstance(start, pendulum.Date):
             start = date(start.year, start.month, start.day)
 
-        if isinstance(end, Pendulum):
+        if isinstance(end, pendulum.Pendulum):
             end = end._datetime
-        elif isinstance(end, Date):
+        elif isinstance(end, pendulum.Date):
             end = date(end.year, end.month, end.day)
 
         delta = end - start
@@ -39,33 +38,30 @@ class Period(WordableIntervalMixin, BaseInterval):
         )
 
     def __init__(self, start, end, absolute=False):
-        from .pendulum import Pendulum
-        from .date import Date
-
         super(Period, self).__init__()
 
-        if not isinstance(start, (Pendulum, Date)):
+        if not isinstance(start, (pendulum.Date)):
             if isinstance(start, datetime):
-                start = Pendulum.instance(start)
+                start = pendulum.Pendulum.instance(start)
             else:
-                start = Date.instance(start)
+                start = pendulum.Date.instance(start)
 
             _start = start
         else:
-            if isinstance(start, Pendulum):
+            if isinstance(start, pendulum.Pendulum):
                 _start = start._datetime
             else:
                 _start = date(start.year, start.month, start.day)
 
-        if not isinstance(end, (Pendulum, Date)):
+        if not isinstance(end, (pendulum.Date)):
             if isinstance(end, datetime):
-                end = Pendulum.instance(end)
+                end = pendulum.Pendulum.instance(end)
             else:
-                end = Date.instance(end)
+                end = pendulum.Date.instance(end)
 
             _end = end
         else:
-            if isinstance(end, Pendulum):
+            if isinstance(end, pendulum.Pendulum):
                 _end = end._datetime
             else:
                 _end = date(end.year, end.month, end.day)
@@ -81,19 +77,19 @@ class Period(WordableIntervalMixin, BaseInterval):
         self._absolute = absolute
         self._start = start
         self._end = end
-        self._delta = relativedelta(_end, _start)
+        self._delta = precise_diff(_start, _end)
 
     @property
     def years(self):
-        return self._delta.years
+        return self._delta['years']
 
     @property
     def months(self):
-        return self._delta.months
+        return self._delta['months']
 
     @property
     def weeks(self):
-        return self._delta.weeks
+        return self._delta['days'] // 7
 
     @property
     def days(self):
@@ -101,7 +97,7 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     @property
     def remaining_days(self):
-        return abs(self._delta.days) % 7 * self._sign(self._days)
+        return abs(self._delta['days']) % 7 * self._sign(self._days)
 
     @property
     def start(self):

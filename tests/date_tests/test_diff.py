@@ -123,8 +123,12 @@ class DiffTest(AbstractTestCase):
         self.assertEqual('3 weeks ago', Date.today().subtract(weeks=3).diff_for_humans())
 
     def test_diff_for_humans_now_and_month(self):
-        self.assertEqual('4 weeks ago', Date.today().subtract(weeks=4).diff_for_humans())
-        self.assertEqual('1 month ago', Date.today().subtract(months=1).diff_for_humans())
+        with self.wrap_with_test_now(Pendulum.create(2016, 3, 1)):
+            self.assertEqual('4 weeks ago', Date.today().subtract(weeks=4).diff_for_humans())
+            self.assertEqual('1 month ago', Date.today().subtract(months=1).diff_for_humans())
+
+        with self.wrap_with_test_now(Pendulum.create(2017, 2, 28)):
+            self.assertEqual('1 month ago', Date.today().subtract(weeks=4).diff_for_humans())
 
     def test_diff_for_humans_now_and_months(self):
         self.assertEqual('2 months ago', Date.today().subtract(months=2).diff_for_humans())
@@ -159,6 +163,12 @@ class DiffTest(AbstractTestCase):
     def test_diff_for_humans_now_and_future_month(self):
         with self.wrap_with_test_now(Pendulum.create(2016, 3, 1)):
             self.assertEqual('4 weeks from now', Date.today().add(weeks=4).diff_for_humans())
+            self.assertEqual('1 month from now', Date.today().add(months=1).diff_for_humans())
+
+        with self.wrap_with_test_now(Pendulum.create(2017, 3, 31)):
+            self.assertEqual('1 month from now', Date.today().add(months=1).diff_for_humans())
+
+        with self.wrap_with_test_now(Pendulum.create(2017, 4, 30)):
             self.assertEqual('1 month from now', Date.today().add(months=1).diff_for_humans())
 
         with self.wrap_with_test_now(Pendulum.create(2017, 1, 31)):
@@ -199,6 +209,12 @@ class DiffTest(AbstractTestCase):
             self.assertEqual('4 weeks before', Date.today().diff_for_humans(Date.today().add(weeks=4)))
             self.assertEqual('1 month before', Date.today().diff_for_humans(Date.today().add(months=1)))
 
+        with self.wrap_with_test_now(Pendulum.create(2017, 3, 31)):
+            self.assertEqual('1 month before', Date.today().diff_for_humans(Date.today().add(months=1)))
+
+        with self.wrap_with_test_now(Pendulum.create(2017, 4, 30)):
+            self.assertEqual('1 month before', Date.today().diff_for_humans(Date.today().add(months=1)))
+
         with self.wrap_with_test_now(Pendulum.create(2017, 1, 31)):
             self.assertEqual('1 month before', Date.today().diff_for_humans(Date.today().add(weeks=4)))
 
@@ -233,8 +249,12 @@ class DiffTest(AbstractTestCase):
         self.assertEqual('3 weeks after', Date.today().diff_for_humans(Date.today().subtract(weeks=3)))
 
     def test_diff_for_humans_other_and_future_month(self):
-        self.assertEqual('4 weeks after', Date.today().diff_for_humans(Date.today().subtract(weeks=4)))
-        self.assertEqual('1 month after', Date.today().diff_for_humans(Date.today().subtract(months=1)))
+        with self.wrap_with_test_now(Pendulum.create(2016, 3, 1)):
+            self.assertEqual('4 weeks after', Date.today().diff_for_humans(Date.today().subtract(weeks=4)))
+            self.assertEqual('1 month after', Date.today().diff_for_humans(Date.today().subtract(months=1)))
+
+        with self.wrap_with_test_now(Pendulum.create(2017, 2, 28)):
+            self.assertEqual('1 month after', Date.today().diff_for_humans(Date.today().subtract(weeks=4)))
 
     def test_diff_for_humans_other_and_future_months(self):
         self.assertEqual('2 months after', Date.today().diff_for_humans(Date.today().subtract(months=2)))

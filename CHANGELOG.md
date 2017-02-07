@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Greatly improved `diff()` performance.
 - Improved `diff_for_humans()` method to display more intuitive strings on edge cases.
 - Formatting (with f-strings or `format()`) will now use the configured formatter.
 
