@@ -7,6 +7,9 @@ Pendulum
 .. image:: https://img.shields.io/pypi/l/pendulum.svg
     :target: https://pypi.python.org/pypi/pendulum
 
+.. image:: https://img.shields.io/codecov/c/github/sdispater/pendulum/master.svg
+    :target: https://codecov.io/gh/sdispater/pendulum/branch/master
+
 .. image:: https://travis-ci.org/sdispater/pendulum.png
     :alt: Pendulum Build status
     :target: https://travis-ci.org/sdispater/pendulum
