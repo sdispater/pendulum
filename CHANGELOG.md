@@ -13,6 +13,17 @@
 - Formatting (with f-strings or `format()`) will now use the configured formatter.
 
 
+## [1.0.2]
+
+### Changed
+
+- Adds support for external tzinfo as timezones. (Thanks to [iv597](https://github.com/iv597))
+
+### Fixed
+
+- Fixed `day_of_year` not returning the correct value. (Thanks to [asrenzo](https://github.com/asrenzo))
+
+
 ## [1.0.1]
 
 ### Fixed
@@ -321,7 +332,9 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.1...develop
+
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.2...develop
+[1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2
 [1.0.1]: https://github.com/sdispater/pendulum/releases/tag/1.0.1
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0
 [0.8.0]: https://github.com/sdispater/pendulum/releases/tag/0.8.0
