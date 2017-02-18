@@ -190,11 +190,17 @@ def precise_diff(d1, d2):
                 d_diff += d1.day
             else:
                 d_diff += days_in_last_month
-
-            m_diff -= 1
-        else:
-            # We have a full month, remove days
+        elif d_diff == days_in_month - days_in_last_month:
+            # We have exactly a full month
+            # We remove the days difference
+            # and add one to the months difference
             d_diff = 0
+            m_diff += 1
+        else:
+            # We have a full month
+            d_diff += days_in_last_month
+
+        m_diff -= 1
 
     if m_diff < 0:
         m_diff += 12

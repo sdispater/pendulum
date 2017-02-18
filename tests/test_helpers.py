@@ -37,6 +37,15 @@ class HelpersTestCase(AbstractTestCase):
             hours=20, minutes=54, seconds=47, microseconds=282310
         )
 
+        dt1 = datetime(2017, 2, 17, 16, 5, 45, 123456)
+        dt2 = datetime(2018, 2, 17, 16, 5, 45, 123256)
+
+        diff = precise_diff(dt1, dt2)
+        self.assert_diff(
+            diff,
+            months=11, days=30, hours=23, minutes=59, seconds=59, microseconds=999800
+        )
+
     def assert_diff(self, diff,
                     years=0, months=0, days=0,
                     hours=0, minutes=0, seconds=0, microseconds=0):
