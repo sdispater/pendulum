@@ -40,7 +40,7 @@ It moves your instance to the middle date between itself and the provided Pendul
     dt.start_of('decade')
     '2010-01-01 00:00:00'
 
-    dt = Pendulum.create(2012, 1, 31, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.end_of('decade')
     '2019-01-31 23:59:59'
 
@@ -76,9 +76,11 @@ It moves your instance to the middle date between itself and the provided Pendul
     dt.day_of_week == pendulum.WEDNESDAY
     True
 
-    dt = Pendulum.create(2012, 1, 1, 12, 0, 0)
+    dt = pendulum.create(2012, 1, 1, 12, 0, 0)
     dt.next()
     '2012-01-08 00:00:00'
+    dt.next(keep_time=True)
+    '2012-01-08T12:00:00+00:00'
 
     dt = pendulum.create(2012, 1, 31, 12, 0, 0)
     dt.previous(pendulum.WEDNESDAY)
@@ -89,6 +91,8 @@ It moves your instance to the middle date between itself and the provided Pendul
     dt = pendulum.create(2012, 1, 1, 12, 0, 0)
     dt.previous()
     '2011-12-25 00:00:00'
+    dt.previous(keep_time=True)
+    '2011-12-25 12:00:00'
 
     start = pendulum.create(2014, 1, 1, 0, 0, 0)
     end = pendulum.create(2014, 1, 30, 0, 0, 0)

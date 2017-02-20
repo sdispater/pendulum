@@ -148,3 +148,11 @@ class StringsTest(AbstractTestCase):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
         self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
         self.assertEqual('1975', '{:%Y}'.format(d))
+
+    def test_format_alternative_formatter(self):
+        pendulum.set_formatter('alternative')
+        d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
+
+        self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
+        self.assertEqual('1975', '{:YYYY}'.format(d))
+        self.assertEqual('%1975', '{:%Y}'.format(d))

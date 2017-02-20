@@ -1,5 +1,18 @@
 # Change Log
 
+[Unreleased]
+
+### Added
+
+- Added the `keep_time` keyword argument to `next()`/`previous()` methods to keep time information.
+
+### Changed
+
+- Greatly improved `diff()` performance.
+- Improved `diff_for_humans()` method to display more intuitive strings on edge cases.
+- Formatting (with f-strings or `format()`) will now use the configured formatter.
+
+
 ## [1.0.2]
 
 ### Changed
@@ -319,7 +332,8 @@ This version causes major breaking API changes to simplify it and making it more
 Initial release
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.2...master
+
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.2...develop
 [1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2
 [1.0.1]: https://github.com/sdispater/pendulum/releases/tag/1.0.1
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0

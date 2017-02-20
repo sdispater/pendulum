@@ -6,7 +6,7 @@ from .lang import TRANSLATIONS
 
 class Translator(object):
 
-    def __init__(self, locale):
+    def __init__(self, locale='en'):
         self._locale = self._format_locale(locale)
         self._translations = TRANSLATIONS
 

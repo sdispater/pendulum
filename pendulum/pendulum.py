@@ -1188,87 +1188,6 @@ class Pendulum(Date, datetime.datetime):
 
         return Period(self, self._get_datetime(dt, pendulum=True), absolute=abs)
 
-    def diff_for_humans(self, other=None, absolute=False, locale=None):
-        """
-        Get the difference in a human readable format in the current locale.
-
-        When comparing a value in the past to default now:
-        1 hour ago
-        5 months ago
-
-        When comparing a value in the future to default now:
-        1 hour from now
-        5 months from now
-
-        When comparing a value in the past to another value:
-        1 hour before
-        5 months before
-
-        When comparing a value in the future to another value:
-        1 hour after
-        5 months after
-
-        :type other: Pendulum
-
-        :param absolute: removes time difference modifiers ago, after, etc
-        :type absolute: bool
-
-        :param locale: The locale to use for localization
-        :type locale: str
-
-        :rtype: str
-        """
-        is_now = other is None
-
-        if is_now:
-            other = self.now(self.timezone)
-
-        diff = self.diff(other)
-
-        if diff.years > 0:
-            unit = 'year'
-            count = diff.years
-        elif diff.months > 0:
-            unit = 'month'
-            count = diff.months
-        elif diff.weeks > 0:
-            unit = 'week'
-            count = diff.weeks
-        elif diff.days > 0:
-            unit = 'day'
-            count = diff.days
-        elif diff.hours > 0:
-            unit = 'hour'
-            count = diff.hours
-        elif diff.minutes > 0:
-            unit = 'minute'
-            count = diff.minutes
-        else:
-            unit = 'second'
-            count = diff.seconds
-
-        if count == 0:
-            count = 1
-
-        time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
-
-        if absolute:
-            return time
-
-        is_future = diff.invert
-
-        if is_now:
-            trans_id = 'from_now' if is_future else 'ago'
-        else:
-            trans_id = 'after' if is_future else 'before'
-
-        # Some langs have special pluralization for past and future tense
-        try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self.translator().transchoice(try_key_exists, count, locale=locale):
-            time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
-
-        return self.translator().trans(trans_id, {'time': time}, locale=locale)
-
     # Modifiers
     def start_of(self, unit):
         """
@@ -1497,7 +1416,7 @@ class Pendulum(Date, datetime.datetime):
 
         return dt.end_of('day')
 
-    def next(self, day_of_week=None):
+    def next(self, day_of_week=None, keep_time=False):
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -1507,18 +1426,26 @@ class Pendulum(Date, datetime.datetime):
         :param day_of_week: The next day of week to reset to.
         :type day_of_week: int or None
 
+        :param keep_time: Whether to keep the time information or not.
+        :type keep_time: bool
+
         :rtype: Pendulum
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').add(days=1)
+        if keep_time:
+            dt = self
+        else:
+            dt = self.start_of('day')
+
+        dt = dt.add(days=1)
         while dt.day_of_week != day_of_week:
             dt = dt.add(days=1)
 
         return dt
 
-    def previous(self, day_of_week=None):
+    def previous(self, day_of_week=None, keep_time=False):
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -1528,12 +1455,20 @@ class Pendulum(Date, datetime.datetime):
         :param day_of_week: The previous day of week to reset to.
         :type day_of_week: int or None
 
+        :param keep_time: Whether to keep the time information or not.
+        :type keep_time: bool
+
         :rtype: Pendulum
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        dt = self.start_of('day').subtract(days=1)
+        if keep_time:
+            dt = self
+        else:
+            dt = self.start_of('day')
+
+        dt = dt.subtract(days=1)
         while dt.day_of_week != day_of_week:
             dt = dt.subtract(days=1)
 

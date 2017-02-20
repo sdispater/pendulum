@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
 from pendulum import Date
 from .. import AbstractTestCase
 
@@ -78,3 +79,11 @@ class StringsTest(AbstractTestCase):
         d = Date(1975, 12, 25)
         self.assertEqual('1975-12-25', '{}'.format(d))
         self.assertEqual('1975', '{:%Y}'.format(d))
+
+    def test_format_alternative_formatter(self):
+        pendulum.set_formatter('alternative')
+
+        d = Date(1975, 12, 25)
+        self.assertEqual('1975-12-25', '{}'.format(d))
+        self.assertEqual('1975', '{:YYYY}'.format(d))
+        self.assertEqual('%1975', '{:%Y}'.format(d))

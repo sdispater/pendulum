@@ -61,7 +61,7 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(11, p1.months)
         self.assertEqual(191, p1.in_months())
         self.assertEqual(5829, p1.days)
-        self.assertEqual(2, p1.days_exclude_weeks)
+        self.assertEqual(2, p1.remaining_days)
         self.assertEqual(5829, p1.in_days())
 
         self.assertEqual(15, p2.years)
@@ -69,7 +69,7 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(11, p2.months)
         self.assertEqual(191, p2.in_months())
         self.assertEqual(5824, p2.days)
-        self.assertEqual(4, p2.days_exclude_weeks)
+        self.assertEqual(4, p2.remaining_days)
         self.assertEqual(5824, p2.in_days())
 
     def test_timedelta_behavior(self):
