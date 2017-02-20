@@ -1,6 +1,6 @@
 # Change Log
 
-[Unreleased]
+[1.1.0]
 
 ### Added
 
@@ -333,7 +333,8 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.0.2...develop
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.1.0...master
+[1.1.0]: https://github.com/sdispater/pendulum/releases/tag/1.1.0
 [1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2
 [1.0.1]: https://github.com/sdispater/pendulum/releases/tag/1.0.1
 [1.0.0]: https://github.com/sdispater/pendulum/releases/tag/1.0.0
