@@ -573,6 +573,11 @@ class DiffTest(AbstractTestCase):
             self.assertEqual('1 year', now.add(years=1, months=3).diff_for_humans(absolute=True))
             self.assertEqual('2 years', now.add(years=1, months=8).diff_for_humans(absolute=True))
 
+        # DST
+        now = Pendulum.create(2017, 3, 7, tz='America/Toronto')
+        with self.wrap_with_test_now(now):
+            self.assertEqual('6 days', now.add(days=6).diff_for_humans(absolute=True))
+
     def test_seconds_since_midnight(self):
         d = Pendulum.create(2016, 7, 5, 12, 32, 25, 0)
         self.assertEqual(25 + 32 * 60 + 12 * 3600, d.seconds_since_midnight())

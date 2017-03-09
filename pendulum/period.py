@@ -100,6 +100,14 @@ class Period(WordableIntervalMixin, BaseInterval):
         return abs(self._delta['days']) % 7 * self._sign(self._days)
 
     @property
+    def hours(self):
+        return self._delta['hours']
+
+    @property
+    def minutes(self):
+        return self._delta['minutes']
+
+    @property
     def start(self):
         return self._start
 
