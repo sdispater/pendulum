@@ -1,6 +1,13 @@
 # Change Log
 
-[1.1.0]
+## [Unreleased]
+
+### Fixed
+
+- Fixed `diff_for_humans()` when crossing DST transitions.
+
+
+## [1.1.0] - 2017-02-20
 
 ### Added
 
@@ -13,7 +20,7 @@
 - Formatting (with f-strings or `format()`) will now use the configured formatter.
 
 
-## [1.0.2]
+## [1.0.2] - 2017-02-04
 
 ### Changed
 
@@ -24,14 +31,14 @@
 - Fixed `day_of_year` not returning the correct value. (Thanks to [asrenzo](https://github.com/asrenzo))
 
 
-## [1.0.1]
+## [1.0.1] - 2017-01-25
 
 ### Fixed
 
 - Fixed parsing, especially for strings in the form `31-01-01`.
 
 
-## [1.0.0]
+## [1.0.0] - 2017-01-17
 
 ### Changed
 
