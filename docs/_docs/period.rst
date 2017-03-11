@@ -37,12 +37,41 @@ instances that generated it, so that it can give access to more methods and prop
 
     # Note that the weeks property
     # will change compared to the Interval class
-    period.weeks = 2 # 832 for the interval
+    period.weeks
+    2 # 832 for the interval
 
     # However the days property will still remain the same
     # to keep the compatiblity with the timedelta class
     period.days
     5829
+
+Be aware that a period, just like an interval, is compatible with the ``timedelta`` class regarding
+its attributes. However, its custom attributes (like ``remaining_days``) will be aware of any DST
+transitions that might have occurred and adjust accordingly. Let's take an example:
+
+.. code-block:: python
+
+    import pendulum
+
+    start = pendulum.create(2017, 3, 7, tz='America/Toronto')
+    end = start.add(days=6)
+
+    period = end - start
+
+    # timedelta properties
+    period.days
+    5
+    period.seconds
+    82800
+
+    # period properties
+    period.remaining_days
+    6
+    period.hours
+    0
+    period.remaining_seconds
+    0
+
 
 .. warning::
 
