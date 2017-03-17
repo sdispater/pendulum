@@ -561,3 +561,15 @@ class ParserTest(AbstractTestCase):
         text = '2012-W13-8'
 
         self.assertRaises(ParserError, Parser().parse, text)
+
+    def test_exif_edge_case(self):
+        text = '2016:12:26 15:45:28'
+
+        parsed = Parser().parse(text)
+
+        self.assertEqual(2016, parsed['year'])
+        self.assertEqual(12, parsed['month'])
+        self.assertEqual(26, parsed['day'])
+        self.assertEqual(15, parsed['hour'])
+        self.assertEqual(45, parsed['minute'])
+        self.assertEqual(28, parsed['second'])
