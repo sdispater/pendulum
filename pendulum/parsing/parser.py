@@ -21,8 +21,8 @@ class Parser(object):
         '    (?P<classic>'  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
         '        (?P<year>\d{4})'  # Year
         '        (?P<monthday>'
-        '            (?P<monthsep>-|/)?(?P<month>\d{2})'  # Month (optional)
-        '            ((?P<daysep>-|/)?(?P<day>\d{1,2}))?'  # Day (optional)
+        '            (?P<monthsep>[-/:])?(?P<month>\d{2})'  # Month (optional)
+        '            ((?P<daysep>[-/:])?(?P<day>\d{1,2}))?'  # Day (optional)
         '        )?'
         '    )'
         '    |'
