@@ -140,8 +140,14 @@ You can also instantiate ``Pendulum`` instances by passing a string to the ``par
     print(dt)
     '1975-05-21T22:00:00+00:00
 
-The library natively supports the RFC 3339 format, most ISO 8601 formats and some other common formats. If you pass a non-standard or more complicated
-string, the library will fallback on the `dateutil <https://dateutil.readthedocs.io>`_ parser.
+    # You can pass a tz keyword to specify the timezone
+    dt = pendulum.parse('1975-05-21 22:00:00', tz='Europe/Paris')
+    print(dt)
+    '1975-05-21T22:00:00+01:00'
+
+The library natively supports the RFC 3339 format, most ISO 8601 formats and some other common formats.
+If you pass a non-standard or more complicated string, the library will fallback on the
+`dateutil <https://dateutil.readthedocs.io>`_ parser.
 
 RFC 3339
 ~~~~~~~~

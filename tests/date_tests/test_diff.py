@@ -284,6 +284,17 @@ class DiffTest(AbstractTestCase):
         self.assertEqual('1 year', Date.today().diff_for_humans(Date.today().subtract(years=1), True))
         self.assertEqual('1 year', Date.today().diff_for_humans(Date.today().add(years=1), True))
 
+    def test_diff_accuracy(self):
+        # DST
+        today = Pendulum.create(2017, 3, 7, tz='America/Toronto')
+
+        with self.wrap_with_test_now(today):
+            diff = today.add(days=6).diff(today, abs=True)
+            self.assertEqual(5, diff.days)
+            self.assertEqual(6, diff.remaining_days)
+            self.assertEqual(0, diff.hours)
+            self.assertEqual('6 days', diff.in_words())
+
     def test_diff_for_humans_accuracy(self):
         today = Pendulum.today()
 
@@ -296,6 +307,11 @@ class DiffTest(AbstractTestCase):
             self.assertEqual('3 weeks', today.add(days=20).diff_for_humans(absolute=True))
             self.assertEqual('2 weeks', today.add(days=14).diff_for_humans(absolute=True))
             self.assertEqual('2 weeks', today.add(days=13).diff_for_humans(absolute=True))
+
+        # DST
+        today = Pendulum.create(2017, 3, 7, tz='America/Toronto')
+        with self.wrap_with_test_now(today):
+            self.assertEqual('6 days', today.add(days=6).diff_for_humans(absolute=True))
 
     def test_subtraction(self):
         d = Date(2016, 7, 5)

@@ -63,9 +63,9 @@ class DifferenceFormatter(object):
 
             if diff.remaining_days > 3:
                 count += 1
-        elif diff.days > 0:
+        elif diff.remaining_days > 0:
             unit = 'day'
-            count = diff.days
+            count = diff.remaining_days
         elif diff.hours > 0:
             unit = 'hour'
             count = diff.hours
