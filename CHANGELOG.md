@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added support for EXIF-formatted strings in parser. (Thanks to [emattiza](https://github.com/emattiza))
+
+
 ## [1.1.1] - 2017-03-14
 
 ### Fixed
@@ -340,7 +347,7 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.1.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
 [1.1.1]: https://github.com/sdispater/pendulum/releases/tag/1.1.1
 [1.1.0]: https://github.com/sdispater/pendulum/releases/tag/1.1.0
 [1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2
