@@ -6,6 +6,14 @@
 
 - Added support for EXIF-formatted strings in parser. (Thanks to [emattiza](https://github.com/emattiza))
 
+### Changed
+
+- Improved performances when parsing ISO 8601 string with C extensions.
+
+### Fixed
+
+- Fixed parsing of ISO 8601 week dates.
+
 
 ## [1.1.1] - 2017-03-14
 

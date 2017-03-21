@@ -6,11 +6,19 @@ from math import copysign
 from datetime import timedelta
 
 try:
-    from ._extensions._helpers import local_time
+    from ._extensions._helpers import local_time, parse_iso8601 as _parse_iso8601
+
+    def parse_iso8601(text, day_first=False):
+        return _parse_iso8601(text, day_first)
+
 except ImportError:
     from ._extensions.helpers import local_time
 
-from .constants import DAYS_PER_MONTHS
+    parse_iso8601 = None
+
+from .constants import (
+    DAYS_PER_MONTHS, DAY_OF_WEEK_TABLE, DAYS_PER_L_YEAR, DAYS_PER_N_YEAR
+)
 
 
 def is_leap(year):
@@ -215,6 +223,25 @@ def precise_diff(d1, d2):
     diff['years'] = sign * y_diff
 
     return diff
+
+
+def week_day(year, month, day):
+    if month < 3:
+        year -= 1
+
+    w = (year + year//4 - year//100 + year//400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7
+
+    if not w:
+        w = 7
+
+    return w
+
+
+def days_in_year(year):
+    if is_leap(year):
+        return DAYS_PER_L_YEAR
+
+    return DAYS_PER_N_YEAR
 
 def _sign(x):
     return int(copysign(1, x))

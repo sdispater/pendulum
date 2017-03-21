@@ -85,6 +85,10 @@ MONTHS_OFFSETS = (
     (-1, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366)
 )
 
+DAY_OF_WEEK_TABLE = (
+    0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4
+)
+
 TM_SUNDAY = 0
 TM_MONDAY = 1
 TM_TUESDAY = 2

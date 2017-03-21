@@ -243,7 +243,7 @@ class Pendulum(Date, datetime.datetime):
         return cls(
             parsed['year'], parsed['month'], parsed['day'],
             parsed['hour'], parsed['minute'], parsed['second'],
-            parsed['subsecond'] // 1000,
+            parsed['subsecond'],
             tzinfo=tz
         )
 

@@ -3,9 +3,10 @@
 import re
 import copy
 
-from datetime import datetime
+from datetime import datetime, date, time
 from dateutil import parser
 
+from ..helpers import parse_iso8601, week_day, days_in_year
 from .exceptions import ParserError
 
 
@@ -99,6 +100,8 @@ class Parser(object):
                             m.group('isoweek'),
                             m.group('isoweekday')
                         )
+                    except ParserError:
+                        raise
                     except ValueError:
                         raise ParserError('Invalid date string: {}'.format(text))
 
@@ -191,7 +194,10 @@ class Parser(object):
 
             # Grabbing subseconds, if any
             if m.group('subsecondsection'):
-                parsed['subsecond'] = int('{:0<9}'.format(m.group('subsecond')))
+                # Limiting to 6 chars
+                subsecond = m.group('subsecond')[:6]
+
+                parsed['subsecond'] = int('{:0<6}'.format(subsecond))
 
             # Grabbing timezone, if any
             tz = m.group('tz')
@@ -221,10 +227,35 @@ class Parser(object):
 
     def _get_iso_8601_week(self, year, week, weekday):
         if not weekday:
-            weekday = '1'
+            weekday = 1
+        else:
+            weekday = int(weekday)
 
-        fmt = '%YW%W%w'
-        string = '{}W{}{}'.format(year, week, weekday)
+        year = int(year)
+        week = int(week)
+
+        if week > 53:
+            raise ParserError('Invalid week for week date')
+
+        if weekday > 7:
+            raise ParserError('Invalid weekday for week date')
+
+        # We can't rely on strptime directly here since
+        # it does not support ISO week date
+        ordinal = week * 7 + weekday - (week_day(year, 1, 4) + 3)
+
+        if ordinal < 1:
+            # Previous year
+            ordinal += days_in_year(year - 1)
+            year -= 1
+
+        if ordinal > days_in_year(year):
+            # Next year
+            ordinal -= days_in_year(year)
+            year += 1
+
+        fmt = '%Y-%j'
+        string = '{}-{}'.format(year, ordinal)
 
         dt = datetime.strptime(string, fmt)
 
@@ -257,23 +288,37 @@ class Parser(object):
         if self.is_strict():
             return parsed
 
-        now = self.now()
-        default = {
-            'year': now.year,
-            'month': now.month,
-            'day': now.day,
-            'hour': 0,
-            'minute': 0,
-            'second': 0,
-            'subsecond': 0,
-            'offset': None
-        }
+        if any(('year' not in parsed, 'month' not in parsed, 'day' not in parsed)):
+            now = self.now()
+            default = {
+                'year': now.year,
+                'month': now.month,
+                'day': now.day,
+                'hour': 0,
+                'minute': 0,
+                'second': 0,
+                'subsecond': 0,
+                'offset': None
+            }
+        else:
+            default = {
+                'hour': 0,
+                'minute': 0,
+                'second': 0,
+                'subsecond': 0,
+                'offset': None
+            }
 
         default.update(parsed)
 
         return default
 
     def _parse(self, text):
+        # Trying to parse ISO8601 with C extension
+        parsed = self._parse_iso8601(text)
+        if parsed:
+            return parsed
+
         parsed = self.parse_common(text)
         if parsed:
             return parsed
@@ -296,6 +341,44 @@ class Parser(object):
             'hour': dt.hour,
             'minute': dt.minute,
             'second': dt.second,
-            'subsecond': dt.microsecond * 1000,
+            'subsecond': dt.microsecond,
             'offset': dt.utcoffset().total_seconds() if dt.tzinfo else None,
         }
+
+    def _parse_iso8601(self, text):
+        if not parse_iso8601:
+            return
+
+        try:
+            dt = parse_iso8601(text, self._options['day_first'])
+        except ValueError:
+            return
+
+        if isinstance(dt, time):
+            return {
+                'hour': dt.hour,
+                'minute': dt.minute,
+                'second': dt.second,
+                'subsecond': dt.microsecond
+            }
+        elif isinstance(dt, date) and not isinstance(dt, datetime):
+            return {
+                'year': dt.year,
+                'month': dt.month,
+                'day': dt.day
+            }
+
+        parsed = {
+            'year': dt.year,
+            'month': dt.month,
+            'day': dt.day,
+            'hour': dt.hour,
+            'minute': dt.minute,
+            'second': dt.second,
+            'subsecond': dt.microsecond
+        }
+
+        if dt.tzinfo is not None:
+            parsed['offset'] = dt.utcoffset().total_seconds()
+
+        return parsed

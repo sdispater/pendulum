@@ -95,7 +95,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(12, parsed['hour'])
         self.assertEqual(34, parsed['minute'])
         self.assertEqual(56, parsed['second'])
-        self.assertEqual(123456000, parsed['subsecond'])
+        self.assertEqual(123456, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
     def test_rfc_3339(self):
@@ -121,7 +121,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(12, parsed['hour'])
         self.assertEqual(34, parsed['minute'])
         self.assertEqual(56, parsed['second'])
-        self.assertEqual(123456000, parsed['subsecond'])
+        self.assertEqual(123456, parsed['subsecond'])
         self.assertEqual(19800, parsed['offset'])
 
         text = '2016-10-06T12:34:56.000123+05:30'
@@ -133,7 +133,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(12, parsed['hour'])
         self.assertEqual(34, parsed['minute'])
         self.assertEqual(56, parsed['second'])
-        self.assertEqual(123000, parsed['subsecond'])
+        self.assertEqual(123, parsed['subsecond'])
         self.assertEqual(19800, parsed['offset'])
 
     def test_rfc_3339_extended_nanoseconds(self):
@@ -146,7 +146,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(12, parsed['hour'])
         self.assertEqual(34, parsed['minute'])
         self.assertEqual(56, parsed['second'])
-        self.assertEqual(123456789, parsed['subsecond'])
+        self.assertEqual(123456, parsed['subsecond'])
         self.assertEqual(19800, parsed['offset'])
 
     def test_iso_8601_date(self):
@@ -268,7 +268,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(14, parsed['hour'])
         self.assertEqual(30, parsed['minute'])
         self.assertEqual(0, parsed['second'])
-        self.assertEqual(400000000, parsed['subsecond'])
+        self.assertEqual(400000, parsed['subsecond'])
         self.assertEqual(19800, parsed['offset'])
 
         text = '2008-09-03T20:56:35.450686+01'
@@ -280,7 +280,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(20, parsed['hour'])
         self.assertEqual(56, parsed['minute'])
         self.assertEqual(35, parsed['second'])
-        self.assertEqual(450686000, parsed['subsecond'])
+        self.assertEqual(450686, parsed['subsecond'])
         self.assertEqual(3600, parsed['offset'])
 
     def test_iso8601_week_number(self):
@@ -326,6 +326,28 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(2, parsed['month'])
         self.assertEqual(3, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '2009-W53-7'
+        parsed = Parser().parse(text)
+        self.assertEqual(2010, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(3, parsed['day'])
+        self.assertEqual(0, parsed['hour'])
+        self.assertEqual(0, parsed['minute'])
+        self.assertEqual(0, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+        self.assertEqual(None, parsed['offset'])
+
+        text = '2009-W01-1'
+        parsed = Parser().parse(text)
+        self.assertEqual(2008, parsed['year'])
+        self.assertEqual(12, parsed['month'])
+        self.assertEqual(29, parsed['day'])
         self.assertEqual(0, parsed['hour'])
         self.assertEqual(0, parsed['minute'])
         self.assertEqual(0, parsed['second'])
@@ -442,7 +464,7 @@ class ParserTest(AbstractTestCase):
         self.assertEqual(20, parsed['hour'])
         self.assertEqual(12, parsed['minute'])
         self.assertEqual(5, parsed['second'])
-        self.assertEqual(123456000, parsed['subsecond'])
+        self.assertEqual(123456, parsed['subsecond'])
         self.assertEqual(None, parsed['offset'])
 
     def test_iso8601_ordinal_invalid(self):
