@@ -989,11 +989,15 @@ init_helpers(void)
 #if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
 #else
-    module = Py_InitModule("_helpers", helpers_methods, NULL);
+    module = Py_InitModule3("_helpers", helpers_methods, NULL);
 #endif
 
     if (module == NULL)
+#if PY_MAJOR_VERSION >= 3
         return NULL;
+#else
+        return;
+#endif
 
     FixedOffset_type.tp_new = PyType_GenericNew;
     FixedOffset_type.tp_base = PyDateTimeAPI->TZInfoType;
@@ -1002,12 +1006,17 @@ init_helpers(void)
     FixedOffset_type.tp_init = (initproc)FixedOffset_init;
 
     if (PyType_Ready(&FixedOffset_type) < 0)
+#if PY_MAJOR_VERSION >= 3
         return NULL;
+#else
+        return;
+#endif
 
     Py_INCREF(&FixedOffset_type);
 
     PyModule_AddObject(module, "TZFixedOffset", (PyObject *)&FixedOffset_type);
-
+#if PY_MAJOR_VERSION >= 3
     return module;
+#endif
 }
 #endif
