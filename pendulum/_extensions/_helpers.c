@@ -401,6 +401,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     char* str;
     char* c;
     PyObject *obj;
+    PyObject *tzinfo;
 
     // day_first is only here for compatibility
     // It will be removed in the next major version
@@ -429,7 +430,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     int has_offset = 0;
     int i;
     int j;
-    char* error = (char*)malloc(100 * sizeof(char));
 
     if (!PyArg_ParseTuple(args, "si", &str, &day_first)) {
         PyErr_SetString(
@@ -656,10 +656,8 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     }
 
     if (day > DAYS_PER_MONTHS[leap][month]) {
-        sprintf(error, "Day %i is invalid for month %i", day, month);
-
         PyErr_SetString(
-            PyExc_ValueError, error
+            PyExc_ValueError, "Day is invalid for month"
         );
 
         return NULL;
@@ -668,10 +666,8 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     separators = 0;
     if (*c == 'T' || *c == ' ') {
         if (ambiguous_date) {
-            sprintf(error, "Invalid date string: %s", str);
-
             PyErr_SetString(
-                PyExc_ValueError, error
+                PyExc_ValueError, "Invalid date"
             );
 
             return NULL;
@@ -896,31 +892,51 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         }
     } else {
         if (!has_offset) {
-            obj = PyDateTimeAPI->DateTime_FromDateAndTime(
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                second,
-                subsecond / 1000,
-                Py_BuildValue(""),
-                PyDateTimeAPI->DateTimeType
-            );
+            tzinfo = Py_BuildValue("");
         } else {
-            obj = PyDateTimeAPI->DateTime_FromDateAndTime(
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                second,
-                subsecond / 1000,
-                new_fixed_offset(offset),
-                PyDateTimeAPI->DateTimeType
-            );
+            tzinfo = new_fixed_offset(offset);
         }
+
+        obj = PyDateTimeAPI->DateTime_FromDateAndTime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            subsecond / 1000,
+            tzinfo,
+            PyDateTimeAPI->DateTimeType
+        );
+
+        Py_DECREF(tzinfo);
     }
+
+    return obj;
+}
+
+PyObject* parse(PyObject *self, PyObject *args) {
+    char* str;
+    char* c;
+    int day_first;
+    int separators = 0;
+    PyObject *obj;
+
+    if (!PyArg_ParseTuple(args, "si", &str, &day_first)) {
+        PyErr_SetString(
+            PyExc_ValueError, "Invalid parameters"
+        );
+        return NULL;
+    }
+
+    c = str;
+    c++;
+    separators++;
+
+    obj = PyDateTimeAPI->Date_FromDate(
+                2017, 3, 21,
+                PyDateTimeAPI->DateType
+            );
 
     return obj;
 }
