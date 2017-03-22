@@ -375,10 +375,8 @@ class Parser(object):
             'hour': dt.hour,
             'minute': dt.minute,
             'second': dt.second,
-            'subsecond': dt.microsecond
+            'subsecond': dt.microsecond,
+            'offset': dt.tzinfo.offset if dt.tzinfo else None
         }
-
-        if dt.tzinfo is not None:
-            parsed['offset'] = dt.utcoffset().total_seconds()
 
         return parsed
