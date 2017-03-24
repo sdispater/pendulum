@@ -4,7 +4,7 @@ translations = {
     # Days
     'days': {
         0: 'igandea',
-        1: 'asteleehna',
+        1: 'astelehena',
         2: 'asteartea',
         3: 'asteazkena',
         4: 'osteguna',
