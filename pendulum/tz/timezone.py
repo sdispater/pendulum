@@ -74,7 +74,7 @@ class Timezone(tzinfo):
         returns it from the cache.
 
         :param name: The name of the timezone
-        :type name: str
+        :type name: str or int
 
         :rtype: Timezone
         """
@@ -450,6 +450,8 @@ class FixedTimezone(Timezone):
     A timezone that has a fixed offset to UTC.
     """
 
+    _cache = {}
+
     def __init__(self, offset, name=None, transition_type=None):
         """
         :param offset: offset to UTC in seconds.
@@ -479,6 +481,13 @@ class FixedTimezone(Timezone):
         )
         self._tzinfo = self._tzinfos[0]
 
+    @classmethod
+    def load(cls, name):
+        if name not in cls._cache:
+            cls._cache[name] = cls(name)
+
+        return cls._cache[name]
+
     def _normalize(self, dt, dst_rule=Timezone.POST_TRANSITION):
         return dt.replace(tzinfo=self._tzinfo)
 
@@ -486,7 +495,7 @@ class FixedTimezone(Timezone):
         if dt is None:
             return None
 
-        return self._tzinfo.utcoffset(dt)
+        return self._tzinfo.adjusted_offset
 
     def dst(self, dt):
         if dt is None:

@@ -3,8 +3,7 @@
 import pendulum
 from datetime import datetime, timedelta
 from pendulum import timezone
-from pendulum.tz import Timezone
-from pendulum.tz.timezone_info import TimezoneInfo
+from pendulum.tz import Timezone, FixedTimezone
 from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
 
 from .. import AbstractTestCase
@@ -304,3 +303,11 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(30, dt.minute)
         self.assertEqual(0, dt.second)
         self.assertEqual(0, dt.microsecond)
+
+    def test_fixed_timezone(self):
+        tz = FixedTimezone.load(19800)
+        tz2 = FixedTimezone.load(18000)
+        dt = datetime(2016, 11, 26, tzinfo=tz)
+
+        self.assertEqual(tz2.utcoffset(dt).total_seconds(), 18000)
+        self.assertIsNone(tz2.dst(dt))

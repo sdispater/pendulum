@@ -66,13 +66,13 @@ class Pendulum(Date, datetime.datetime):
         if isinstance(obj, (int, float)):
             timezone_offset = obj * 60 * 60
 
-            return FixedTimezone(timezone_offset)
+            return FixedTimezone.load(timezone_offset)
         elif isinstance(obj, datetime.tzinfo) and not isinstance(obj, Timezone):
             # pytz
             if hasattr(obj, 'localize'):
                 return cls._timezone(obj.zone)
 
-            return FixedTimezone(obj.utcoffset(None).total_seconds())
+            return FixedTimezone.load(obj.utcoffset(None).total_seconds())
 
         return cls._timezone(obj)
 
@@ -243,7 +243,7 @@ class Pendulum(Date, datetime.datetime):
         return cls(
             parsed['year'], parsed['month'], parsed['day'],
             parsed['hour'], parsed['minute'], parsed['second'],
-            parsed['subsecond'] // 1000,
+            parsed['subsecond'],
             tzinfo=tz
         )
 

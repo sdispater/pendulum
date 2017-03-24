@@ -48,7 +48,7 @@ class Parser(BaseParser):
         return Pendulum(
             parsed['year'], parsed['month'], parsed['day'],
             parsed['hour'], parsed['minute'], parsed['second'],
-            parsed['subsecond'] // 1000,
+            parsed['subsecond'],
             tzinfo=tz
         )
 
@@ -60,7 +60,7 @@ class Parser(BaseParser):
     def _create_time_object(self, parsed):
         return Time(
             parsed['hour'], parsed['minute'], parsed['second'],
-            parsed['subsecond'] // 1000
+            parsed['subsecond']
         )
 
 
