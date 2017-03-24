@@ -495,7 +495,7 @@ class FixedTimezone(Timezone):
         if dt is None:
             return None
 
-        return self._tzinfo.utcoffset(dt)
+        return self._tzinfo.adjusted_offset
 
     def dst(self, dt):
         if dt is None:
