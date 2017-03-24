@@ -13,6 +13,7 @@
 ### Fixed
 
 - Fixed parsing of ISO 8601 week dates.
+- Fixed `eu` and `sk` locales. (Thanks to [eumiro](https://github.com/eumiro))
 
 
 ## [1.1.1] - 2017-03-14
