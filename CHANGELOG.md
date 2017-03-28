@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- `Pendulum` class has been renamed to `DateTime`.
+
+
 ## [1.2.0] - 2017-03-24
 
 ### Added
@@ -356,7 +363,7 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.0...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...2.0
 [1.2.0]: https://github.com/sdispater/pendulum/releases/tag/1.2.0
 [1.1.1]: https://github.com/sdispater/pendulum/releases/tag/1.1.1
 [1.1.0]: https://github.com/sdispater/pendulum/releases/tag/1.1.0
