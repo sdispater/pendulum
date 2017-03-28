@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pendulum
-from pendulum import Pendulum
+from pendulum import DateTime
 
 
 class AbstractLocalizationTestCase(object):
@@ -15,7 +15,7 @@ class AbstractLocalizationTestCase(object):
         pendulum.set_locale('en')
 
     def test_diff_for_humans_localized(self):
-        with pendulum.test(Pendulum(2016, 8, 29)):
+        with pendulum.test(DateTime(2016, 8, 29)):
             self.diff_for_humans()
 
     def diff_for_humans(self):

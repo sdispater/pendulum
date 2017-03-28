@@ -101,10 +101,10 @@ class AlternativeFormatter(Formatter):
 
     def format(self, dt, fmt, locale=None):
         """
-        Formats a Pendulum instance with a given format and locale.
+        Formats a DateTime instance with a given format and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum
+        :type dt: pendulum.DateTime
 
         :param fmt: The format to use
         :type fmt: str
@@ -128,10 +128,10 @@ class AlternativeFormatter(Formatter):
 
     def _format_token(self, dt, token, locale):
         """
-        Formats a Pendulum instance with a given token and locale.
+        Formats a DateTime instance with a given token and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum
+        :type dt: pendulum.DateTime
 
         :param token: The token to use
         :type token: str
@@ -170,11 +170,11 @@ class AlternativeFormatter(Formatter):
 
     def _format_localizable_token(self, dt, token, locale):
         """
-        Formats a Pendulum instance
+        Formats a DateTime instance
         with a given localizable token and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum
+        :type dt: pendulum.DateTime
 
         :param token: The token to use
         :type token: str

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from pendulum.helpers import local_time
-from pendulum import Pendulum
+from pendulum import DateTime
 from .. import AbstractTestCase
 
 
 class LocalTimeTest(AbstractTestCase):
 
     def test_local_time_positive_integer(self):
-        d = Pendulum(2016, 8, 7, 12, 34, 56, 123456)
+        d = DateTime(2016, 8, 7, 12, 34, 56, 123456)
 
         t = local_time(d.int_timestamp, 0, d.microsecond)
         self.assertEqual(d.year, t[0])
@@ -20,7 +20,7 @@ class LocalTimeTest(AbstractTestCase):
         self.assertEqual(d.microsecond, t[6])
 
     def test_local_time_negative_integer(self):
-        d = Pendulum(1951, 8, 7, 12, 34, 56, 123456)
+        d = DateTime(1951, 8, 7, 12, 34, 56, 123456)
 
         t = local_time(d.int_timestamp, 0, d.microsecond)
         self.assertEqual(d.year, t[0])

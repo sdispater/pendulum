@@ -119,10 +119,10 @@ def precise_diff(d1, d2):
     Calculate a precise difference between two datetimes.
 
     :param d1: The first datetime
-    :type d1: pendulum.Pendulum or pendulum.Date
+    :type d1: pendulum.DateTime or pendulum.Date
 
     :param d2: The second datetime
-    :type d2: pendulum.Pendulum or pendulum.Date
+    :type d2: pendulum.DateTime or pendulum.Date
 
     :rtype: dict
     """

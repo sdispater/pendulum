@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 # Types
-from .pendulum import Pendulum
+from .datetime import DateTime
 from .date import Date
 from .time import Time
 from .interval import Interval
 from .period import Period
 
 # Mimicking standard library
-datetime = Pendulum
+datetime = DateTime
 date = Date
 time = Time
 
@@ -47,28 +47,28 @@ get_formatter = Global.get_formatter
 # Helpers
 from .parser import parse
 
-instance = Pendulum.instance
-now = Pendulum.now
-utcnow = Pendulum.utcnow
-today = Pendulum.today
-tomorrow = Pendulum.tomorrow
-yesterday = Pendulum.yesterday
-create = Pendulum.create
-from_format = Pendulum.create_from_format
-strptime = Pendulum.strptime
-from_timestamp = Pendulum.create_from_timestamp
-set_to_string_format = Pendulum.set_to_string_format
-reset_to_string_format = Pendulum.reset_to_string_format
-set_transition_rule = Pendulum.set_transition_rule
-get_transition_rule = Pendulum.get_transition_rule
+instance = DateTime.instance
+now = DateTime.now
+utcnow = DateTime.utcnow
+today = DateTime.today
+tomorrow = DateTime.tomorrow
+yesterday = DateTime.yesterday
+create = DateTime.create
+from_format = DateTime.create_from_format
+strptime = DateTime.strptime
+from_timestamp = DateTime.create_from_timestamp
+set_to_string_format = DateTime.set_to_string_format
+reset_to_string_format = DateTime.reset_to_string_format
+set_transition_rule = DateTime.set_transition_rule
+get_transition_rule = DateTime.get_transition_rule
 
 # Standard helpers
-min = Pendulum.min
-max = Pendulum.max
-fromtimestamp = Pendulum.fromtimestamp
-utcfromtimestamp = Pendulum.utcfromtimestamp
-fromordinal = Pendulum.fromordinal
-combine = Pendulum.combine
+min = DateTime.min
+max = DateTime.max
+fromtimestamp = DateTime.fromtimestamp
+utcfromtimestamp = DateTime.utcfromtimestamp
+fromordinal = DateTime.fromordinal
+combine = DateTime.combine
 
 # Interval
 interval = Interval

@@ -4,7 +4,7 @@ from __future__ import division
 
 from .parsing import Parser as BaseParser
 from .tz import UTC
-from .pendulum import Pendulum
+from .datetime import DateTime
 from .date import Date
 from .time import Time
 from ._global import Global
@@ -12,7 +12,7 @@ from ._global import Global
 
 class Parser(BaseParser):
     """
-    Parser that returns known types (Pendulum, Date, Time)
+    Parser that returns known types (DateTime, Date, Time)
     """
 
     @classmethod
@@ -28,26 +28,26 @@ class Parser(BaseParser):
         parsed = super(Parser, cls).parse(text, **options)
 
         if not options.get('strict'):
-            return cls._create_pendulum_object(parsed, **options)
+            return cls._create_datetime_object(parsed, **options)
 
         # Checking for date
         if 'year' in parsed:
             # Checking for time
             if 'hour' in parsed:
-                return cls._create_pendulum_object(parsed, **options)
+                return cls._create_datetime_object(parsed, **options)
             else:
                 return cls._create_date_object(parsed, **options)
 
         return cls._create_time_object(parsed, **options)
 
     @classmethod
-    def _create_pendulum_object(cls, parsed, **options):
+    def _create_datetime_object(cls, parsed, **options):
         if parsed['offset'] is None:
             tz = options.get('tz', UTC)
         else:
             tz = parsed['offset'] / 3600
 
-        return Pendulum(
+        return DateTime(
             parsed['year'], parsed['month'], parsed['day'],
             parsed['hour'], parsed['minute'], parsed['second'],
             parsed['subsecond'],

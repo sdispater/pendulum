@@ -250,9 +250,9 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
-        from .pendulum import Pendulum
+        from .datetime import DateTime
 
-        return Pendulum.EPOCH.at(
+        return DateTime.EPOCH.at(
             self._hour, self._minute, self._second, self._microsecond
         ).add(
             hours=hours,
@@ -279,9 +279,9 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
-        from .pendulum import Pendulum
+        from .datetime import DateTime
 
-        return Pendulum.EPOCH.at(
+        return DateTime.EPOCH.at(
             self._hour, self._minute, self._second, self._microsecond
         ).subtract(
             hours=hours,
@@ -464,14 +464,14 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         To clear the test instance call this method using the default
         parameter of None.
 
-        :type test_now: Date or Pendulum or None
+        :type test_now: Date or DateTime or None
         """
-        from .pendulum import Pendulum
+        from .datetime import DateTime
 
-        if test_now is not None and not isinstance(test_now, (Pendulum, Time)):
+        if test_now is not None and not isinstance(test_now, (DateTime, Time)):
             raise TypeError(
                 'Time.set_test_now() only accepts a Time instance, '
-                'a Pendulum instance or None.'
+                'a DateTime instance or None.'
             )
 
         cls._test_now = test_now

@@ -2,7 +2,7 @@
 
 import pendulum
 from pendulum import Date
-from pendulum.exceptions import PendulumException
+from pendulum.exceptions import DateTimeException
 
 from .. import AbstractTestCase
 
@@ -106,12 +106,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_nth_of_month_outside_scope(self):
         d = Date(1975, 12, 5)
 
-        self.assertRaises(PendulumException, d.nth_of, 'month', 6, pendulum.MONDAY)
+        self.assertRaises(DateTimeException, d.nth_of, 'month', 6, pendulum.MONDAY)
 
     def test_nth_of_month_outside_year(self):
         d = Date(1975, 12, 5)
 
-        self.assertRaises(PendulumException, d.nth_of, 'month', 55, pendulum.MONDAY)
+        self.assertRaises(DateTimeException, d.nth_of, 'month', 55, pendulum.MONDAY)
 
     def test_nth_of_month_first(self):
         d = Date(1975, 12, 5).nth_of('month', 1, pendulum.MONDAY)
@@ -163,12 +163,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_nth_of_quarter_outside_scope(self):
         d = Date(1975, 1, 5)
 
-        self.assertRaises(PendulumException, d.nth_of, 'quarter', 20, pendulum.MONDAY)
+        self.assertRaises(DateTimeException, d.nth_of, 'quarter', 20, pendulum.MONDAY)
 
     def test_nth_of_quarter_outside_year(self):
         d = Date(1975, 1, 5)
 
-        self.assertRaises(PendulumException, d.nth_of, 'quarter', 55, pendulum.MONDAY)
+        self.assertRaises(DateTimeException, d.nth_of, 'quarter', 55, pendulum.MONDAY)
 
     def test_nth_of_quarter_first(self):
         d = Date(1975, 12, 5).nth_of('quarter', 1, pendulum.MONDAY)
@@ -214,7 +214,7 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_nth_of_year_outside_scope(self):
         d = Date(1975, 1, 5)
 
-        self.assertRaises(PendulumException, d.nth_of, 'year', 55, pendulum.MONDAY)
+        self.assertRaises(DateTimeException, d.nth_of, 'year', 55, pendulum.MONDAY)
 
     def test_nth_of_year_first(self):
         d = Date(1975, 12, 5).nth_of('year', 1, pendulum.MONDAY)

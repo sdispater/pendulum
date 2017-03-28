@@ -16,10 +16,10 @@ class DifferenceFormatter(object):
         Get the difference in a human readable format.
 
         :param date: The datetime to start with.
-        :type date: pendulum.Date or pendulum.Pendulum
+        :type date: pendulum.Date or pendulum.DateTime
 
         :param other: The datetime to compare against (defaults to now).
-        :type other: pendulum.Date or pendulum.Pendulum or None
+        :type other: pendulum.Date or pendulum.DateTime or None
 
         :param absolute: Removes time difference modifiers ago, after, etc
         :type absolute: bool

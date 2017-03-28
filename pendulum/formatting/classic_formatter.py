@@ -13,10 +13,10 @@ class ClassicFormatter(Formatter):
 
     def format(self, dt, fmt, locale=None):
         """
-        Formats a Pendulum instance with a given format and locale.
+        Formats a DateTime instance with a given format and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum or pendulum.Date
+        :type dt: pendulum.DateTime or pendulum.Date
 
         :param fmt: The format to use
         :type fmt: str
@@ -48,7 +48,7 @@ class ClassicFormatter(Formatter):
         Localize a native strftime directive.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum
+        :type dt: pendulum.DateTime
 
         :param directive: The directive to localize
         :type directive: str
@@ -87,7 +87,7 @@ class ClassicFormatter(Formatter):
         Handles custom formatters in format string.
 
         :param dt: The instance to format
-        :type dt: pendulum.Pendulum
+        :type dt: pendulum.DateTime
 
         :return: str
         """

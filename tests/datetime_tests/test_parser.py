@@ -12,16 +12,16 @@ class ParserTestCase(AbstractTestCase):
 
         dt = pendulum.parse(text)
 
-        self.assertIsInstanceOfPendulum(dt)
-        self.assertPendulum(dt, 2016, 10, 16, 12, 34, 56, 123456)
+        self.assertIsInstanceOfDateTime(dt)
+        self.assertDateTime(dt, 2016, 10, 16, 12, 34, 56, 123456)
         self.assertEqual(5400, dt.offset)
 
         text = '2016-10-16'
 
         dt = pendulum.parse(text)
 
-        self.assertIsInstanceOfPendulum(dt)
-        self.assertPendulum(dt, 2016, 10, 16, 0, 0, 0, 0)
+        self.assertIsInstanceOfDateTime(dt)
+        self.assertDateTime(dt, 2016, 10, 16, 0, 0, 0, 0)
         self.assertEqual(0, dt.offset)
 
         with self.wrap_with_test_now(pendulum.create(2015, 11, 12)):
@@ -29,8 +29,8 @@ class ParserTestCase(AbstractTestCase):
 
             dt = pendulum.parse(text)
 
-            self.assertIsInstanceOfPendulum(dt)
-            self.assertPendulum(dt, 2015, 11, 12, 12, 34, 56, 123456)
+            self.assertIsInstanceOfDateTime(dt)
+            self.assertDateTime(dt, 2015, 11, 12, 12, 34, 56, 123456)
             self.assertEqual(0, dt.offset)
 
     def test_parse_strict(self):
@@ -38,8 +38,8 @@ class ParserTestCase(AbstractTestCase):
 
         dt = pendulum.parse(text, strict=True)
 
-        self.assertIsInstanceOfPendulum(dt)
-        self.assertPendulum(dt, 2016, 10, 16, 12, 34, 56, 123456)
+        self.assertIsInstanceOfDateTime(dt)
+        self.assertDateTime(dt, 2016, 10, 16, 12, 34, 56, 123456)
         self.assertEqual(5400, dt.offset)
 
         text = '2016-10-16'

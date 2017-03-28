@@ -8,10 +8,10 @@ class Formatter(object):
 
     def format(self, dt, fmt, locale=None):
         """
-        Formats a Pendulum instance with a given format and locale.
+        Formats a DateTime instance with a given format and locale.
 
         :param dt: The instance to format
-        :type dt: Pendulum
+        :type dt: DateTime
 
         :param fmt: The format to use
         :type fmt: str

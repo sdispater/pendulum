@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pendulum import Pendulum
+from pendulum import DateTime
 
 from .. import AbstractTestCase
 
@@ -19,15 +19,15 @@ class LocalizationTest(AbstractTestCase):
     ]
 
     def test_get_locale(self):
-        self.assertEqual('en', Pendulum.get_locale())
+        self.assertEqual('en', DateTime.get_locale())
 
     def test_set_locale(self):
-        Pendulum.set_locale('fr')
-        self.assertEqual('fr', Pendulum.get_locale())
-        Pendulum.set_locale('en')
+        DateTime.set_locale('fr')
+        self.assertEqual('fr', DateTime.get_locale())
+        DateTime.set_locale('en')
 
     def test_set_locale_malformed_locales(self):
         for locale in self.malformed_locales:
-            self.assertTrue(Pendulum.set_locale(locale))
+            self.assertTrue(DateTime.set_locale(locale))
 
-        Pendulum.set_locale('en')
+        DateTime.set_locale('en')

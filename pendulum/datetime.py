@@ -8,7 +8,7 @@ import datetime
 from .date import Date
 from .time import Time
 from .period import Period
-from .exceptions import PendulumException
+from .exceptions import DateTimeException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .parsing import parse
@@ -21,7 +21,7 @@ from .constants import (
 )
 
 
-class Pendulum(Date, datetime.datetime):
+class DateTime(Date, datetime.datetime):
 
     # Formats
     ATOM = '%Y-%m-%dT%H:%M:%S%_z'
@@ -112,7 +112,7 @@ class Pendulum(Date, datetime.datetime):
 
         :type year: int or str
         """
-        obj = super(Pendulum, cls).__new__(cls, year, month, day, hour, minute, second, microsecond, None)
+        obj = super(DateTime, cls).__new__(cls, year, month, day, hour, minute, second, microsecond, None)
 
         return obj
 
@@ -185,7 +185,7 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def instance(cls, dt, tz=UTC):
         """
-        Create a Pendulum instance from a datetime one.
+        Create a DateTime instance from a datetime one.
 
         :param dt: A datetime instance
         :type dt: datetime.datetime
@@ -193,7 +193,7 @@ class Pendulum(Date, datetime.datetime):
         :param tz: The timezone
         :type tz: Timezone or TimeZoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         tz = dt.tzinfo or tz
 
@@ -217,7 +217,7 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def parse(cls, time=None, tz=UTC, **options):
         """
-        Create a Pendulum instance from a string.
+        Create a DateTime instance from a string.
 
         :param time: The time string
         :type time: str
@@ -225,7 +225,7 @@ class Pendulum(Date, datetime.datetime):
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if time is None:
             return cls.now(tz)
@@ -250,12 +250,12 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def now(cls, tz=None):
         """
-        Get a Pendulum instance for the current date and time.
+        Get a DateTime instance for the current date and time.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         # If the class has a test now set and we are trying to create a now()
         # instance then override as required
@@ -281,48 +281,48 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def utcnow(cls):
         """
-        Get a Pendulum instance for the current date and time in UTC.
+        Get a DateTime instance for the current date and time in UTC.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return cls.now(UTC)
 
     @classmethod
     def today(cls, tz=None):
         """
-        Create a Pendulum instance for today.
+        Create a DateTime instance for today.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return cls.now(tz).start_of('day')
 
     @classmethod
     def tomorrow(cls, tz=None):
         """
-        Create a Pendulum instance for tomorrow.
+        Create a DateTime instance for tomorrow.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return cls.today(tz).add(days=1)
 
     @classmethod
     def yesterday(cls, tz=None):
         """
-        Create a Pendulum instance for yesterday.
+        Create a DateTime instance for yesterday.
 
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return cls.today(tz).subtract(days=1)
 
@@ -331,7 +331,7 @@ class Pendulum(Date, datetime.datetime):
                hour=0, minute=0, second=0, microsecond=0,
                tz=UTC):
         """
-        Create a new Pendulum instance from a specific date and time.
+        Create a new DateTime instance from a specific date and time.
 
         If any of year, month or day are set to None their now() values will
         be used.
@@ -345,7 +345,7 @@ class Pendulum(Date, datetime.datetime):
         :type microsecond: int
         :type tz: tzinfo or str or int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         tz = cls._safe_create_datetime_zone(tz)
 
@@ -374,7 +374,7 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def create_from_format(cls, time, fmt, tz=UTC):
         """
-        Create a Pendulum instance from a specific format.
+        Create a DateTime instance from a specific format.
 
         :param fmt: The format
         :type fmt: str
@@ -385,7 +385,7 @@ class Pendulum(Date, datetime.datetime):
         :param tz: The timezone
         :type tz: tzinfo or str or int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = datetime.datetime.strptime(time, fmt)
 
@@ -394,7 +394,7 @@ class Pendulum(Date, datetime.datetime):
     @classmethod
     def create_from_timestamp(cls, timestamp, tz=UTC):
         """
-        Create a Pendulum instance from a timestamp.
+        Create a DateTime instance from a timestamp.
 
         :param timestamp: The timestamp
         :type timestamp: int or float
@@ -402,7 +402,7 @@ class Pendulum(Date, datetime.datetime):
         :param tz: The timezone
         :type tz: Timezone or TimezoneInfo or str or int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = datetime.datetime.utcfromtimestamp(timestamp).replace(tzinfo=UTC)
         instance = cls(
@@ -424,7 +424,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Get a copy of the instance.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.instance(self._datetime)
 
@@ -580,7 +580,7 @@ class Pendulum(Date, datetime.datetime):
         :param day: The day
         :type day: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(
             year=int(year), month=int(month), day=int(day)
@@ -602,7 +602,7 @@ class Pendulum(Date, datetime.datetime):
         :param microsecond: The microsecond
         :type microsecond: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(
             hour=hour, minute=minute, second=second,
@@ -620,7 +620,7 @@ class Pendulum(Date, datetime.datetime):
         :type minute: int
         :type second: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(
             year=year, month=month, day=day,
@@ -635,7 +635,7 @@ class Pendulum(Date, datetime.datetime):
         :param time: The time string
         :type time: str
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         time = time.split(':')
 
@@ -652,7 +652,7 @@ class Pendulum(Date, datetime.datetime):
         :param value: The timezone
         :type value: Timezone or TimezoneInfo or str or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         tz = self._safe_create_datetime_zone(tz)
 
@@ -665,7 +665,7 @@ class Pendulum(Date, datetime.datetime):
         :param value: The timezone
         :type value: Timezone or TimezoneInfo or str or int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.in_timezone(tz)
 
@@ -675,7 +675,7 @@ class Pendulum(Date, datetime.datetime):
 
         :param timestamp: The timestamp
         :type timestamp: int or float
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = datetime.datetime.fromtimestamp(timestamp, UTC).astimezone(self._tz)
 
@@ -858,8 +858,8 @@ class Pendulum(Date, datetime.datetime):
         """
         Determines if the instance is between two others.
 
-        :type dt1: Pendulum or datetime or str or int
-        :type dt2: Pendulum or datetime or str or int
+        :type dt1: DateTime or datetime or str or int
+        :type dt2: DateTime or datetime or str or int
 
         :param equal: Indicates if a > and < comparison shoud be used or <= and >=
 
@@ -877,10 +877,10 @@ class Pendulum(Date, datetime.datetime):
         """
         Get the closest date from the instance.
 
-        :type dt1: Pendulum or datetime
-        :type dt2: Pendulum or datetime
+        :type dt1: DateTime or datetime
+        :type dt2: DateTime or datetime
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt1 = self._get_datetime(dt1, True)
         dt2 = self._get_datetime(dt2, True)
@@ -894,10 +894,10 @@ class Pendulum(Date, datetime.datetime):
         """
         Get the farthest date from the instance.
 
-        :type dt1: Pendulum or datetime
-        :type dt2: Pendulum or datetime
+        :type dt1: DateTime or datetime
+        :type dt2: DateTime or datetime
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt1 = self._get_datetime(dt1, True)
         dt2 = self._get_datetime(dt2, True)
@@ -912,12 +912,12 @@ class Pendulum(Date, datetime.datetime):
         Get the minimum instance between a given instance (default utcnow)
         and the current instance.
 
-        :type dt: Pendulum or datetime or str or int
+        :type dt: DateTime or datetime or str or int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if dt is None:
-            dt = Pendulum.now(self.timezone)
+            dt = DateTime.now(self.timezone)
 
         if self < dt:
             return self
@@ -929,9 +929,9 @@ class Pendulum(Date, datetime.datetime):
         Get the minimum instance between a given instance (default now)
         and the current instance.
 
-        :type dt: Pendulum or datetime or str or int
+        :type dt: DateTime or datetime or str or int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.min_(dt)
 
@@ -940,12 +940,12 @@ class Pendulum(Date, datetime.datetime):
         Get the maximum instance between a given instance (default now)
         and the current instance.
 
-        :type dt: Pendulum or datetime or str or int
+        :type dt: DateTime or datetime or str or int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if dt is None:
-            dt = Pendulum.now(self.timezone)
+            dt = DateTime.now(self.timezone)
 
         if self > dt:
             return self
@@ -957,9 +957,9 @@ class Pendulum(Date, datetime.datetime):
         Get the maximum instance between a given instance (default utcnow)
         and the current instance.
 
-        :type dt: Pendulum or datetime or str or int
+        :type dt: DateTime or datetime or str or int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.max_(dt)
 
@@ -1011,13 +1011,13 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
-        return Pendulum.create(self.year, 12, 28, 0, 0, 0, tz=self._tz).isocalendar()[1] == 53
+        return DateTime.create(self.year, 12, 28, 0, 0, 0, tz=self._tz).isocalendar()[1] == 53
 
     def is_same_day(self, dt):
         """
         Checks if the passed in date is the same day as the instance current day.
 
-        :type dt: Pendulum or datetime or str or int
+        :type dt: DateTime or datetime or str or int
 
         :rtype: bool
         """
@@ -1032,7 +1032,7 @@ class Pendulum(Date, datetime.datetime):
         :rtype: bool
         """
         if dt is None:
-            dt = Pendulum.now(self._tz)
+            dt = DateTime.now(self._tz)
 
         instance = self._get_datetime(dt, True)
 
@@ -1069,7 +1069,7 @@ class Pendulum(Date, datetime.datetime):
         :param microseconds: The number of microseconds
         :type microseconds: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = add_duration(
             self._datetime,
@@ -1122,7 +1122,7 @@ class Pendulum(Date, datetime.datetime):
         :param microseconds: The number of microseconds
         :type microseconds: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.add(
             years=-years, months=-months, weeks=-weeks, days=-days,
@@ -1137,7 +1137,7 @@ class Pendulum(Date, datetime.datetime):
         :param delta: The timedelta instance
         :type delta: datetime.timedelta
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
@@ -1149,7 +1149,7 @@ class Pendulum(Date, datetime.datetime):
         :param delta: The timedelta instance
         :type delta: datetime.timedelta
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.subtract(days=delta.days, seconds=delta.seconds,
                              microseconds=delta.microseconds)
@@ -1174,9 +1174,9 @@ class Pendulum(Date, datetime.datetime):
 
     def diff(self, dt=None, abs=True):
         """
-        Returns the difference between two Pendulum objects represented as a Interval.
+        Returns the difference between two DateTime objects represented as a Interval.
 
-        :type dt: Pendulum or None
+        :type dt: DateTime or None
 
         :param abs: Whether to return an absolute interval or not
         :type abs: bool
@@ -1207,7 +1207,7 @@ class Pendulum(Date, datetime.datetime):
         :param unit: The unit to reset to
         :type unit: str
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError('Invalid unit "{}" for start_of()'.format(unit))
@@ -1232,7 +1232,7 @@ class Pendulum(Date, datetime.datetime):
         :param unit: The unit to reset to
         :type unit: str
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError('Invalid unit "%s" for end_of()' % unit)
@@ -1243,7 +1243,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset microseconds to 0.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.microsecond_(0)
 
@@ -1251,7 +1251,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Set microseconds to 999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.microsecond_(999999)
 
@@ -1259,7 +1259,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset seconds and microseconds to 0.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(second=0, microsecond=0)
 
@@ -1267,7 +1267,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Set seconds to 59 and microseconds to 999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(second=59, microsecond=999999)
 
@@ -1275,7 +1275,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset minutes, seconds and microseconds to 0.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(minute=0, second=0, microsecond=0)
 
@@ -1283,7 +1283,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Set minutes and seconds to 59 and microseconds to 999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.replace(minute=59, second=59, microsecond=999999)
 
@@ -1291,7 +1291,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset the time to 00:00:00
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.at(0, 0, 0)
 
@@ -1299,7 +1299,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset the time to 23:59:59.999999
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.at(23, 59, 59, 999999)
 
@@ -1307,7 +1307,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset the date to the first day of the month and the time to 00:00:00.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.with_date_time(self.year, self.month, 1, 0, 0, 0)
 
@@ -1316,7 +1316,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the last day of the month
         and the time to 23:59:59.999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.with_date_time(
             self.year, self.month, self.days_in_month, 23, 59, 59, 999999
@@ -1326,7 +1326,7 @@ class Pendulum(Date, datetime.datetime):
         """
         Reset the date to the first day of the year and the time to 00:00:00.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.with_date_time(self.year, 1, 1, 0, 0, 0)
 
@@ -1335,7 +1335,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the last day of the year
         and the time to 23:59:59.999999
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.with_date_time(
             self.year, 12, 31, 23, 59, 59, 999999
@@ -1346,7 +1346,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the first day of the decade
         and the time to 00:00:00.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         year = self.year - self.year % YEARS_PER_DECADE
         return self.with_date_time(year, 1, 1, 0, 0, 0)
@@ -1356,7 +1356,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the last day of the decade
         and the time to 23:59:59.999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
@@ -1369,7 +1369,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the first day of the century
         and the time to 00:00:00.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
@@ -1380,7 +1380,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the last day of the century
         and the time to 23:59:59.999999.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
@@ -1393,7 +1393,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the first day of the week
         and the time to 00:00:00.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = self
 
@@ -1407,7 +1407,7 @@ class Pendulum(Date, datetime.datetime):
         Reset the date to the last day of the week
         and the time to 23:59:59.
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = self
 
@@ -1421,7 +1421,7 @@ class Pendulum(Date, datetime.datetime):
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
         of the current day of the week.  Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :param day_of_week: The next day of week to reset to.
         :type day_of_week: int or None
@@ -1429,7 +1429,7 @@ class Pendulum(Date, datetime.datetime):
         :param keep_time: Whether to keep the time information or not.
         :type keep_time: bool
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
@@ -1450,7 +1450,7 @@ class Pendulum(Date, datetime.datetime):
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
         of the current day of the week.  Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :param day_of_week: The previous day of week to reset to.
         :type day_of_week: int or None
@@ -1458,7 +1458,7 @@ class Pendulum(Date, datetime.datetime):
         :param keep_time: Whether to keep the time information or not.
         :type keep_time: bool
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
@@ -1479,7 +1479,7 @@ class Pendulum(Date, datetime.datetime):
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the first day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
 
@@ -1488,7 +1488,7 @@ class Pendulum(Date, datetime.datetime):
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if unit not in ['month', 'quarter', 'year']:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
@@ -1500,7 +1500,7 @@ class Pendulum(Date, datetime.datetime):
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the last day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
 
@@ -1509,7 +1509,7 @@ class Pendulum(Date, datetime.datetime):
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if unit not in ['month', 'quarter', 'year']:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
@@ -1522,7 +1522,7 @@ class Pendulum(Date, datetime.datetime):
         of a given day of the week in the current unit.
         If the calculated occurrence is outside the scope of the current unit,
         then raise an error. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
 
@@ -1533,14 +1533,14 @@ class Pendulum(Date, datetime.datetime):
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if unit not in ['month', 'quarter', 'year']:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
-            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
+            raise DateTimeException('Unable to find occurence {} of {} in {}'.format(
                                      nth, self._days[day_of_week], unit))
 
         return dt
@@ -1550,11 +1550,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
         modify to the first day of the month. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = self.start_of('day')
 
@@ -1577,11 +1577,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
         modify to the last day of the month. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         dt = self.start_of('day')
 
@@ -1605,13 +1605,13 @@ class Pendulum(Date, datetime.datetime):
         in the current month. If the calculated occurrence is outside,
         the scope of the current month, then return False and no
         modifications are made. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type nth: int
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if nth == 1:
             return self.first_of('month', day_of_week)
@@ -1631,11 +1631,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
         modify to the first day of the quarter. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.on(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
 
@@ -1644,11 +1644,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
         modify to the last day of the quarter. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.on(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
 
@@ -1658,13 +1658,13 @@ class Pendulum(Date, datetime.datetime):
         in the current quarter. If the calculated occurrence is outside,
         the scope of the current quarter, then return False and no
         modifications are made. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type nth: int
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if nth == 1:
             return self.first_of('quarter', day_of_week)
@@ -1686,11 +1686,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
         modify to the first day of the year. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.month_(1).first_of('month', day_of_week)
 
@@ -1699,11 +1699,11 @@ class Pendulum(Date, datetime.datetime):
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
         modify to the last day of the year. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         return self.month_(MONTHS_PER_YEAR).last_of('month', day_of_week)
 
@@ -1713,13 +1713,13 @@ class Pendulum(Date, datetime.datetime):
         in the current year. If the calculated occurrence is outside,
         the scope of the current year, then return False and no
         modifications are made. Use the supplied consts
-        to indicate the desired day_of_week, ex. Pendulum.MONDAY.
+        to indicate the desired day_of_week, ex. DateTime.MONDAY.
 
         :type nth: int
 
         :type day_of_week: int or None
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if nth == 1:
             return self.first_of('year', day_of_week)
@@ -1739,12 +1739,12 @@ class Pendulum(Date, datetime.datetime):
         Modify the current instance to the average
         of a given instance (default now) and the current instance.
 
-        :type dt: Pendulum or datetime
+        :type dt: DateTime or datetime
 
-        :rtype: Pendulum
+        :rtype: DateTime
         """
         if dt is None:
-            dt = Pendulum.now(self._tz)
+            dt = DateTime.now(self._tz)
 
         return self.add(seconds=int(self.diff(dt, False).in_seconds() / 2))
 
@@ -1753,24 +1753,24 @@ class Pendulum(Date, datetime.datetime):
         Gets a datetime from a given value.
 
         :param value: The value to get the datetime from.
-        :type value: Pendulum or datetime or int or float or str.
+        :type value: DateTime or datetime or int or float or str.
 
-        :param pendulum: Whether to return a Pendulum instance.
+        :param pendulum: Whether to return a DateTime instance.
         :type pendulum: bool
 
-        :rtype: datetime or Pendulum
+        :rtype: datetime or DateTime
         """
         if value is None:
             return None
 
-        if isinstance(value, Pendulum):
+        if isinstance(value, DateTime):
             return value._datetime if not pendulum else value
 
         if isinstance(value, datetime.datetime):
             if value.tzinfo is None:
                 value = self._tz.convert(value)
 
-            return value if not pendulum else Pendulum.instance(value)
+            return value if not pendulum else DateTime.instance(value)
 
         raise ValueError('Invalid datetime "{}"'.format(value))
 
@@ -1890,6 +1890,6 @@ class Pendulum(Date, datetime.datetime):
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
 
-Pendulum.min = Pendulum.instance(datetime.datetime.min.replace(tzinfo=UTC))
-Pendulum.max = Pendulum.instance(datetime.datetime.max.replace(tzinfo=UTC))
-Pendulum.EPOCH = Pendulum(1970, 1, 1)
+DateTime.min = DateTime.instance(datetime.datetime.min.replace(tzinfo=UTC))
+DateTime.max = DateTime.instance(datetime.datetime.max.replace(tzinfo=UTC))
+DateTime.EPOCH = DateTime(1970, 1, 1)

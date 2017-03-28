@@ -36,7 +36,7 @@ class LocalTimezone(object):
         """
         Context manager to temporarily set the local_timezone value.
 
-        :type mock: Pendulum or None
+        :type mock: DateTime or None
         """
         cls.set_local_timezone(mock)
 

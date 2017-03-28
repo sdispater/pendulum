@@ -7,7 +7,7 @@ import struct
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import Pendulum, Date, Time, Interval
+from pendulum import DateTime, Date, Time, Interval
 from pendulum.tz import LocalTimezone, timezone, Timezone
 
 PY36 = sys.version_info >= (3, 6)
@@ -25,12 +25,12 @@ class AbstractTestCase(TestCase):
         pendulum.set_formatter()
         pendulum.set_locale('en')
         LocalTimezone.set_local_timezone()
-        Pendulum.reset_to_string_format()
+        DateTime.reset_to_string_format()
         Date.reset_to_string_format()
         Time.reset_to_string_format()
-        Pendulum.set_transition_rule(Timezone.POST_TRANSITION)
+        DateTime.set_transition_rule(Timezone.POST_TRANSITION)
 
-    def assertPendulum(self, d, year, month, day,
+    def assertDateTime(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):
         self.assertEqual(year, d.year)
         self.assertEqual(month, d.month)
@@ -89,8 +89,8 @@ class AbstractTestCase(TestCase):
 
         self.assertEqual(expected, actual)
 
-    def assertIsInstanceOfPendulum(self, d):
-        self.assertIsInstance(d, Pendulum)
+    def assertIsInstanceOfDateTime(self, d):
+        self.assertIsInstance(d, DateTime)
 
     def assertIsInstanceOfDate(self, d):
         self.assertIsInstance(d, Date)
@@ -103,7 +103,7 @@ class AbstractTestCase(TestCase):
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):
-        pendulum.set_test_now(dt or Pendulum.now())
+        pendulum.set_test_now(dt or DateTime.now())
 
         yield
 

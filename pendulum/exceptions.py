@@ -3,6 +3,6 @@
 from .parsing.exceptions import ParserError
 
 
-class PendulumException(BaseException):
+class DateTimeException(BaseException):
 
     pass

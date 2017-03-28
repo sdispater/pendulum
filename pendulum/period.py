@@ -21,12 +21,12 @@ class Period(WordableIntervalMixin, BaseInterval):
         if absolute and start > end:
             end, start = start, end
 
-        if isinstance(start, pendulum.Pendulum):
+        if isinstance(start, pendulum.DateTime):
             start = start._datetime
         elif isinstance(start, pendulum.Date):
             start = date(start.year, start.month, start.day)
 
-        if isinstance(end, pendulum.Pendulum):
+        if isinstance(end, pendulum.DateTime):
             end = end._datetime
         elif isinstance(end, pendulum.Date):
             end = date(end.year, end.month, end.day)
@@ -42,26 +42,26 @@ class Period(WordableIntervalMixin, BaseInterval):
 
         if not isinstance(start, (pendulum.Date)):
             if isinstance(start, datetime):
-                start = pendulum.Pendulum.instance(start)
+                start = pendulum.DateTime.instance(start)
             else:
                 start = pendulum.Date.instance(start)
 
             _start = start
         else:
-            if isinstance(start, pendulum.Pendulum):
+            if isinstance(start, pendulum.DateTime):
                 _start = start._datetime
             else:
                 _start = date(start.year, start.month, start.day)
 
         if not isinstance(end, (pendulum.Date)):
             if isinstance(end, datetime):
-                end = pendulum.Pendulum.instance(end)
+                end = pendulum.DateTime.instance(end)
             else:
                 end = pendulum.Date.instance(end)
 
             _end = end
         else:
-            if isinstance(end, pendulum.Pendulum):
+            if isinstance(end, pendulum.DateTime):
                 _end = end._datetime
             else:
                 _end = date(end.year, end.month, end.day)
@@ -243,10 +243,10 @@ class Period(WordableIntervalMixin, BaseInterval):
         return self.xrange('days')
 
     def __contains__(self, item):
-        from .pendulum import Pendulum
+        from .datetime import DateTime
 
-        if not isinstance(item, Pendulum):
-            item = Pendulum.instance(item)
+        if not isinstance(item, DateTime):
+            item = DateTime.instance(item)
 
         return item.between(self.start, self.end)
 

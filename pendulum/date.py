@@ -15,7 +15,7 @@ from .constants import (
     MONTHS_PER_YEAR,
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 )
-from .exceptions import PendulumException
+from .exceptions import DateTimeException
 
 
 class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
@@ -941,7 +941,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
-            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
+            raise DateTimeException('Unable to find occurence {} of {} in {}'.format(
                                      nth, self._days[day_of_week], unit))
 
         return dt
@@ -1186,12 +1186,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         To clear the test instance call this method using the default
         parameter of None.
 
-        :type test_now: Date or Pendulum or None
+        :type test_now: Date or DateTime or None
         """
         if test_now is not None and not isinstance(test_now, Date):
             raise TypeError(
                 'Date.set_test_now() only accepts a Date instance, '
-                'a Pendulum instance or None.'
+                'a DateTime instance or None.'
             )
 
         cls._test_now = test_now

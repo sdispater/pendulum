@@ -3,7 +3,7 @@
 import pickle
 import pendulum
 from datetime import datetime, date, time, timedelta
-from pendulum import Pendulum, timezone
+from pendulum import DateTime, timezone
 from .. import AbstractTestCase
 
 
@@ -12,7 +12,7 @@ class BehaviorTest(AbstractTestCase):
     def setUp(self):
         super(BehaviorTest, self).setUp()
 
-        self.p = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
+        self.p = DateTime(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
         self.p1 = self.p.in_tz('America/New_York')
         self.tz = timezone('Europe/Paris')
         self.d = self.tz.convert(datetime(2016, 8, 27, 12, 34, 56, 123456))
@@ -78,22 +78,22 @@ class BehaviorTest(AbstractTestCase):
         )
 
     def test_hash(self):
-        dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
-        dt2 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
-        dt3 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 'America/Toronto')
+        dt1 = DateTime(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
+        dt2 = DateTime(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
+        dt3 = DateTime(2016, 8, 27, 12, 34, 56, 123456, 'America/Toronto')
 
         self.assertEqual(hash(dt1), hash(dt2))
         self.assertNotEqual(hash(dt1), hash(dt3))
 
     def test_pickle(self):
-        dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
+        dt1 = DateTime(2016, 8, 27, 12, 34, 56, 123456, 'Europe/Paris')
         s = pickle.dumps(dt1)
         dt2 = pickle.loads(s)
 
         self.assertEqual(dt1, dt2)
 
     def test_pickle_with_integer_tzinfo(self):
-        dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 0)
+        dt1 = DateTime(2016, 8, 27, 12, 34, 56, 123456, 0)
         s = pickle.dumps(dt1)
         dt2 = pickle.loads(s)
 

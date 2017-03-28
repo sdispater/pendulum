@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from pendulum import Period, Pendulum
+from pendulum import Period, DateTime
 
 from .. import AbstractTestCase
 
@@ -13,45 +13,45 @@ class ConstructTest(AbstractTestCase):
         dt2 = datetime(2000, 1, 31)
 
         p = Period(dt1, dt2)
-        self.assertIsInstanceOfPendulum(p.start)
-        self.assertIsInstanceOfPendulum(p.end)
-        self.assertPendulum(p.start, 2000, 1, 1)
-        self.assertPendulum(p.end, 2000, 1, 31)
+        self.assertIsInstanceOfDateTime(p.start)
+        self.assertIsInstanceOfDateTime(p.end)
+        self.assertDateTime(p.start, 2000, 1, 1)
+        self.assertDateTime(p.end, 2000, 1, 31)
 
     def test_with_pendulum(self):
-        dt1 = Pendulum(2000, 1, 1)
-        dt2 = Pendulum(2000, 1, 31)
+        dt1 = DateTime(2000, 1, 1)
+        dt2 = DateTime(2000, 1, 31)
 
         p = Period(dt1, dt2)
-        self.assertIsInstanceOfPendulum(p.start)
-        self.assertIsInstanceOfPendulum(p.end)
-        self.assertPendulum(p.start, 2000, 1, 1)
-        self.assertPendulum(p.end, 2000, 1, 31)
+        self.assertIsInstanceOfDateTime(p.start)
+        self.assertIsInstanceOfDateTime(p.end)
+        self.assertDateTime(p.start, 2000, 1, 1)
+        self.assertDateTime(p.end, 2000, 1, 31)
 
     def test_inverted(self):
-        dt1 = Pendulum(2000, 1, 1)
-        dt2 = Pendulum(2000, 1, 31)
+        dt1 = DateTime(2000, 1, 1)
+        dt2 = DateTime(2000, 1, 31)
 
         p = Period(dt2, dt1)
-        self.assertIsInstanceOfPendulum(p.start)
-        self.assertIsInstanceOfPendulum(p.end)
-        self.assertPendulum(p.start, 2000, 1, 31)
-        self.assertPendulum(p.end, 2000, 1, 1)
+        self.assertIsInstanceOfDateTime(p.start)
+        self.assertIsInstanceOfDateTime(p.end)
+        self.assertDateTime(p.start, 2000, 1, 31)
+        self.assertDateTime(p.end, 2000, 1, 1)
 
     def test_inverted_and_absolute(self):
-        dt1 = Pendulum(2000, 1, 1)
-        dt2 = Pendulum(2000, 1, 31)
+        dt1 = DateTime(2000, 1, 1)
+        dt2 = DateTime(2000, 1, 31)
 
         p = Period(dt2, dt1, True)
-        self.assertIsInstanceOfPendulum(p.start)
-        self.assertIsInstanceOfPendulum(p.end)
-        self.assertPendulum(p.start, 2000, 1, 1)
-        self.assertPendulum(p.end, 2000, 1, 31)
+        self.assertIsInstanceOfDateTime(p.start)
+        self.assertIsInstanceOfDateTime(p.end)
+        self.assertDateTime(p.start, 2000, 1, 1)
+        self.assertDateTime(p.end, 2000, 1, 31)
 
     def test_accuracy(self):
-        dt1 = Pendulum(2000, 11, 20)
-        dt2 = Pendulum(2000, 11, 25)
-        dt3 = Pendulum(2016, 11, 5)
+        dt1 = DateTime(2000, 11, 20)
+        dt2 = DateTime(2000, 11, 25)
+        dt3 = DateTime(2016, 11, 5)
 
         p1 = Period(dt1, dt3)
         p2 = Period(dt2, dt3)
@@ -73,9 +73,9 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(5824, p2.in_days())
 
     def test_timedelta_behavior(self):
-        dt1 = Pendulum(2000, 11, 20, 1)
-        dt2 = Pendulum(2000, 11, 25, 2)
-        dt3 = Pendulum(2016, 11, 5, 3)
+        dt1 = DateTime(2000, 11, 20, 1)
+        dt2 = DateTime(2000, 11, 25, 2)
+        dt3 = DateTime(2016, 11, 5, 3)
 
         p1 = Period(dt1, dt3)
         p2 = Period(dt2, dt3)

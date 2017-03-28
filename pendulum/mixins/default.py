@@ -174,7 +174,7 @@ class FormattableMixing(object):
 
 class TestableMixin(object):
 
-    # A test Pendulum instance to be returned when now instances are created.
+    # A test DateTime instance to be returned when now instances are created.
     _test_now = None
 
     @classmethod
@@ -183,7 +183,7 @@ class TestableMixin(object):
         """
         Context manager to temporarily set the test_now value.
 
-        :type mock: Pendulum or Date or Time or None
+        :type mock: DateTime or Date or Time or None
         """
         cls.set_test_now(mock)
 
@@ -194,12 +194,12 @@ class TestableMixin(object):
     @classmethod
     def set_test_now(cls, test_now=None):
         """
-        Set a Pendulum instance (real or mock) to be returned when a "now"
+        Set a DateTime instance (real or mock) to be returned when a "now"
         instance is created.  The provided instance will be returned
         specifically under the following conditions:
-            - A call to the classmethod now() method, ex. Pendulum.now()
-            - When nothing is passed to the constructor or parse(), ex. Pendulum()
-            - When the string "now" is passed to parse(), ex. Pendulum.parse('now')
+            - A call to the classmethod now() method, ex. DateTime.now()
+            - When nothing is passed to the constructor or parse(), ex. DateTime()
+            - When the string "now" is passed to parse(), ex. DateTime.parse('now')
 
         Note the timezone parameter was left out of the examples above and
         has no affect as the mock value will be returned regardless of its value.
@@ -207,17 +207,17 @@ class TestableMixin(object):
         To clear the test instance call this method using the default
         parameter of null.
 
-        :type test_now: Pendulum or None
+        :type test_now: DateTime or None
         """
         cls._test_now = test_now
 
     @classmethod
     def get_test_now(cls):
         """
-        Get the Pendulum instance (real or mock) to be returned when a "now"
+        Get the DateTime instance (real or mock) to be returned when a "now"
         instance is created.
 
-        :rtype: Pendulum or None
+        :rtype: DateTime or None
         """
         return cls._test_now
 

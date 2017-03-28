@@ -11,12 +11,12 @@ class GlobalTest(AbstractTestCase):
         pendulum.set_test_now(now)
 
         self.assertEqual(now, pendulum.get_test_now())
-        self.assertEqual(now, pendulum.Pendulum.get_test_now())
+        self.assertEqual(now, pendulum.DateTime.get_test_now())
         self.assertEqual(now.date(), pendulum.Date.get_test_now())
         self.assertEqual(now.time(), pendulum.Time.get_test_now())
 
-        self.assertPendulum(
-            pendulum.Pendulum.now(),
+        self.assertDateTime(
+            pendulum.DateTime.now(),
             2000, 11, 10, 12, 34, 56, 123456
         )
         self.assertDate(
@@ -33,17 +33,17 @@ class GlobalTest(AbstractTestCase):
         pendulum.set_test_now(now)
 
         dt = pendulum.create(2001, 12, 11, 1, 2, 3, 987654)
-        pendulum.Pendulum.set_test_now(dt)
+        pendulum.DateTime.set_test_now(dt)
         pendulum.Date.set_test_now(dt)
         pendulum.Time.set_test_now(dt)
 
         self.assertEqual(now, pendulum.get_test_now())
-        self.assertEqual(dt, pendulum.Pendulum.get_test_now())
+        self.assertEqual(dt, pendulum.DateTime.get_test_now())
         self.assertEqual(dt.date(), pendulum.Date.get_test_now())
         self.assertEqual(dt.time(), pendulum.Time.get_test_now())
 
-        self.assertPendulum(
-            pendulum.Pendulum.now(),
+        self.assertDateTime(
+            pendulum.DateTime.now(),
             2001, 12, 11, 1, 2, 3, 987654
         )
         self.assertDate(
@@ -59,7 +59,7 @@ class GlobalTest(AbstractTestCase):
         dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
         pendulum.set_formatter('alternative')
 
-        self.assertEqual(pendulum.Pendulum.get_formatter(), 'alternative')
+        self.assertEqual(pendulum.DateTime.get_formatter(), 'alternative')
         self.assertEqual(pendulum.Date.get_formatter(), 'alternative')
         self.assertEqual(pendulum.Time.get_formatter(), 'alternative')
 
@@ -80,11 +80,11 @@ class GlobalTest(AbstractTestCase):
         dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
         pendulum.set_formatter('alternative')
 
-        pendulum.Pendulum.set_formatter()
+        pendulum.DateTime.set_formatter()
         pendulum.Date.set_formatter()
         pendulum.Time.set_formatter()
 
-        self.assertEqual(pendulum.Pendulum.get_formatter(), 'classic')
+        self.assertEqual(pendulum.DateTime.get_formatter(), 'classic')
         self.assertEqual(pendulum.Date.get_formatter(), 'classic')
         self.assertEqual(pendulum.Time.get_formatter(), 'classic')
 
@@ -106,7 +106,7 @@ class GlobalTest(AbstractTestCase):
         pendulum.set_formatter('alternative')
         pendulum.set_locale('fr')
 
-        self.assertEqual(pendulum.Pendulum.get_locale(), 'fr')
+        self.assertEqual(pendulum.DateTime.get_locale(), 'fr')
         self.assertEqual(pendulum.Date.get_locale(), 'fr')
         self.assertEqual(pendulum.Time.get_locale(), 'fr')
 
@@ -125,11 +125,11 @@ class GlobalTest(AbstractTestCase):
         pendulum.set_formatter('alternative')
         pendulum.set_locale('fr')
 
-        pendulum.Pendulum.set_locale('en')
+        pendulum.DateTime.set_locale('en')
         pendulum.Date.set_locale('en')
         pendulum.Time.set_locale('en')
 
-        self.assertEqual(pendulum.Pendulum.get_locale(), 'en')
+        self.assertEqual(pendulum.DateTime.get_locale(), 'en')
         self.assertEqual(pendulum.Date.get_locale(), 'en')
         self.assertEqual(pendulum.Time.get_locale(), 'en')
 

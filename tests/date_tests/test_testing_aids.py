@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pendulum import Date, Pendulum, Time
+from pendulum import Date, DateTime, Time
 
 from .. import AbstractTestCase
 
@@ -41,7 +41,7 @@ class TestingAidsTest(AbstractTestCase):
         self.assertNotEqual(test_now, Date.today())
 
     def test_set_test_now_pendulum_instance(self):
-        test_now = Pendulum(2000, 11, 10, 12, 34, 56, 123456)
+        test_now = DateTime(2000, 11, 10, 12, 34, 56, 123456)
 
         Date.set_test_now(test_now)
 

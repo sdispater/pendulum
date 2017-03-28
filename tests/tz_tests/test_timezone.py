@@ -106,7 +106,7 @@ class TimezoneTest(AbstractTestCase):
     def test_pendulum_create_basic(self):
         dt = pendulum.create(2016, 6, 1, 12, 34, 56, 123456, 'Europe/Paris')
 
-        self.assertPendulum(dt, 2016, 6, 1, 12, 34, 56, 123456)
+        self.assertDateTime(dt, 2016, 6, 1, 12, 34, 56, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
         self.assertTrue(dt.is_dst)
@@ -114,7 +114,7 @@ class TimezoneTest(AbstractTestCase):
     def test_pendulum_create_skipped(self):
         dt = pendulum.create(2013, 3, 31, 2, 30, 45, 123456, 'Europe/Paris')
 
-        self.assertPendulum(dt, 2013, 3, 31, 3, 30, 45, 123456)
+        self.assertDateTime(dt, 2013, 3, 31, 3, 30, 45, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
         self.assertTrue(dt.is_dst)
@@ -122,7 +122,7 @@ class TimezoneTest(AbstractTestCase):
     def test_pendulum_create_repeated(self):
         dt = pendulum.create(2013, 10, 27, 2, 30, 45, 123456, 'Europe/Paris')
 
-        self.assertPendulum(dt, 2013, 10, 27, 2, 30, 45, 123456)
+        self.assertDateTime(dt, 2013, 10, 27, 2, 30, 45, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
         self.assertFalse(dt.is_dst)
@@ -132,8 +132,8 @@ class TimezoneTest(AbstractTestCase):
         tz = timezone('Europe/Paris')
         new = tz.convert(dt)
 
-        self.assertIsInstanceOfPendulum(new)
-        self.assertPendulum(new, 2016, 8, 7, 14, 53, 54)
+        self.assertIsInstanceOfDateTime(new)
+        self.assertDateTime(new, 2016, 8, 7, 14, 53, 54)
 
     def test_create_uses_transition_rule(self):
         pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
