@@ -15,7 +15,8 @@ class Parser(BaseParser):
     Parser that returns known types (Pendulum, Date, Time)
     """
 
-    def parse(self, text):
+    @classmethod
+    def parse(cls, text, **options):
         """
         Parses a string with the given options.
 
@@ -24,24 +25,25 @@ class Parser(BaseParser):
 
         :rtype: mixed
         """
-        parsed = super(Parser, self).parse(text)
+        parsed = super(Parser, cls).parse(text, **options)
 
-        if not self.is_strict():
-            return self._create_pendulum_object(parsed)
+        if not options.get('strict'):
+            return cls._create_pendulum_object(parsed, **options)
 
         # Checking for date
         if 'year' in parsed:
             # Checking for time
             if 'hour' in parsed:
-                return self._create_pendulum_object(parsed)
+                return cls._create_pendulum_object(parsed, **options)
             else:
-                return self._create_date_object(parsed)
+                return cls._create_date_object(parsed, **options)
 
-        return self._create_time_object(parsed)
+        return cls._create_time_object(parsed, **options)
 
-    def _create_pendulum_object(self, parsed):
+    @classmethod
+    def _create_pendulum_object(cls, parsed, **options):
         if parsed['offset'] is None:
-            tz = self._options.get('tz', UTC)
+            tz = options.get('tz', UTC)
         else:
             tz = parsed['offset'] / 3600
 
@@ -52,12 +54,14 @@ class Parser(BaseParser):
             tzinfo=tz
         )
 
-    def _create_date_object(self, parsed):
+    @classmethod
+    def _create_date_object(cls, parsed, **options):
         return Date(
             parsed['year'], parsed['month'], parsed['day']
         )
 
-    def _create_time_object(self, parsed):
+    @classmethod
+    def _create_time_object(cls, parsed, **options):
         return Time(
             parsed['hour'], parsed['minute'], parsed['second'],
             parsed['subsecond']
@@ -68,4 +72,4 @@ def parse(text, **options):
     # Use the mock now value if it exists
     options['now'] = options.get('now', Global.get_test_now())
 
-    return Parser(**options).parse(text)
+    return Parser.parse(text, **options)

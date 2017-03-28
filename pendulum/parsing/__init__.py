@@ -17,4 +17,4 @@ def parse(text, **options):
 
     :raises: ParserError
     """
-    return Parser(**options).parse(text)
+    return Parser.parse(text, **options)

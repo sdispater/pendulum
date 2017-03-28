@@ -62,17 +62,8 @@ class Parser(object):
         'now': None
     }
 
-    def __init__(self, **options):
-        self._options = copy.copy(self.DEFAULT_OPTIONS)
-        self._options.update(options)
-
-    def is_strict(self):
-        return self._options['strict']
-
-    def now(self):
-        return self._options['now'] or datetime.now()
-
-    def parse_common(self, text):
+    @classmethod
+    def _parse_common(cls, text, **options):
         """
         Tries to parse the string as a common datetime format.
 
@@ -81,7 +72,7 @@ class Parser(object):
 
         :rtype: dict or None
         """
-        m = self.COMMON.match(text)
+        m = cls.COMMON.match(text)
         parsed = {}
         ambiguous_date = False
         has_date = False
@@ -95,7 +86,7 @@ class Parser(object):
                     # We have a ISO 8601 string defined
                     # by week number
                     try:
-                        date = self._get_iso_8601_week(
+                        date = cls._get_iso_8601_week(
                             m.group('isoyear'),
                             m.group('isoweek'),
                             m.group('isoweekday')
@@ -127,7 +118,7 @@ class Parser(object):
                                 )
                                 month = dt.month
                                 day = dt.day
-                            elif self._options['day_first']:
+                            elif options['day_first']:
                                 month = int(m.group('day'))
                                 day = int(m.group('month'))
                             else:
@@ -225,7 +216,8 @@ class Parser(object):
 
             return parsed
 
-    def _get_iso_8601_week(self, year, week, weekday):
+    @classmethod
+    def _get_iso_8601_week(cls, year, week, weekday):
         if not weekday:
             weekday = 1
         else:
@@ -265,7 +257,8 @@ class Parser(object):
             'day': dt.day,
         }
 
-    def parse(self, text):
+    @classmethod
+    def parse(cls, text, **options):
         """
         Parses a string with the given options.
 
@@ -274,9 +267,13 @@ class Parser(object):
 
         :rtype: dict
         """
-        return self.normalize(self._parse(text))
+        _options = copy.copy(cls.DEFAULT_OPTIONS)
+        _options.update(options)
 
-    def normalize(self, parsed):
+        return cls._normalize(cls._parse(text, **_options), **_options)
+
+    @classmethod
+    def _normalize(self, parsed, **options):
         """
         Normalizes the parsed element.
 
@@ -285,11 +282,11 @@ class Parser(object):
 
         :rtype: dict
         """
-        if self.is_strict():
+        if options.get('strict'):
             return parsed
 
         if any(('year' not in parsed, 'month' not in parsed, 'day' not in parsed)):
-            now = self.now()
+            now = options['now'] or datetime.now()
             default = {
                 'year': now.year,
                 'month': now.month,
@@ -313,13 +310,15 @@ class Parser(object):
 
         return default
 
-    def _parse(self, text):
-        # Trying to parse ISO8601 with C extension
-        parsed = self._parse_iso8601(text)
-        if parsed:
-            return parsed
+    @classmethod
+    def _parse(cls, text, **options):
+        if not options['day_first']:
+            # Trying to parse ISO8601 with C extension
+            parsed = cls._parse_iso8601(text)
+            if parsed:
+                return parsed
 
-        parsed = self.parse_common(text)
+        parsed = cls._parse_common(text, **options)
         if parsed:
             return parsed
 
@@ -328,8 +327,8 @@ class Parser(object):
         try:
             dt = parser.parse(
                 text,
-                dayfirst=self._options['day_first'],
-                yearfirst=self._options['year_first']
+                dayfirst=options['day_first'],
+                yearfirst=options['year_first']
             )
         except ValueError:
             raise ParserError('Invalid date string: {}'.format(text))
@@ -345,12 +344,13 @@ class Parser(object):
             'offset': dt.utcoffset().total_seconds() if dt.tzinfo else None,
         }
 
-    def _parse_iso8601(self, text):
+    @classmethod
+    def _parse_iso8601(cls, text):
         if not parse_iso8601:
             return
 
         try:
-            dt = parse_iso8601(text, self._options['day_first'])
+            dt = parse_iso8601(text)
         except ValueError:
             return
 

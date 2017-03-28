@@ -6,10 +6,7 @@ from math import copysign
 from datetime import timedelta
 
 try:
-    from ._extensions._helpers import local_time, parse_iso8601 as _parse_iso8601
-
-    def parse_iso8601(text, day_first=False):
-        return _parse_iso8601(text, day_first)
+    from ._extensions._helpers import local_time, parse_iso8601
 
 except ImportError:
     from ._extensions.helpers import local_time

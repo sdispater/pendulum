@@ -13,10 +13,6 @@
     #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
 #endif
 
-#if PY_MAJOR_VERSION < 3
-    #define PyLong_FromLong PyInt_FromLong
-#endif
-
 /* ------------------------------------------------------------------------- */
 
 #define EPOCH_YEAR 1970
@@ -189,11 +185,7 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
         offset / SECS_PER_MIN % SECS_PER_MIN
     );
 
-#if PY_MAJOR_VERSION >= 3
     return PyUnicode_FromString(tzname);
-#else
-    return PyString_FromString(tzname);
-#endif
 }
 
 /*
@@ -222,7 +214,6 @@ static PyMethodDef FixedOffset_methods[] = {
     {NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
 static PyTypeObject FixedOffset_type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "rfc3339.FixedOffset_type",             /* tp_name */
@@ -246,33 +237,6 @@ static PyTypeObject FixedOffset_type = {
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags */
     "TZInfo with fixed offset",             /* tp_doc */
 };
-#else
-static PyTypeObject FixedOffset_type = {
-    PyObject_HEAD_INIT(NULL)
-    0,                         /*ob_size*/
-    "_helpers.FixedOffset_type", /*tp_name*/
-    sizeof(FixedOffset),       /*tp_basicsize*/
-    0,                         /*tp_itemsize*/
-    0,                         /*tp_dealloc*/
-    0,                         /*tp_print*/
-    0,                         /*tp_getattr*/
-    0,                         /*tp_setattr*/
-    0,                         /*tp_compare*/
-    (reprfunc)FixedOffset_repr,/*tp_repr*/
-    0,                         /*tp_as_number*/
-    0,                         /*tp_as_sequence*/
-    0,                         /*tp_as_mapping*/
-    0,                         /*tp_hash */
-    0,                         /*tp_call*/
-    (reprfunc)FixedOffset_repr,/*tp_str*/
-    0,                         /*tp_getattro*/
-    0,                         /*tp_setattro*/
-    0,                         /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT |
-    Py_TPFLAGS_BASETYPE,       /*tp_flags*/
-    "TZInfo with fixed offset",/* tp_doc */
-};
-#endif
 
 /*
  * Instantiate new FixedOffset_type object
@@ -403,11 +367,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     PyObject *obj;
     PyObject *tzinfo;
 
-    // day_first is only here for compatibility
-    // It will be removed in the next major version
-    // since it's not ISO 8601 compliant.
-    int day_first;
-
     int year = 0;
     int month = 1;
     int day = 1;
@@ -431,7 +390,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     int i;
     int j;
 
-    if (!PyArg_ParseTuple(args, "si", &str, &day_first)) {
+    if (!PyArg_ParseTuple(args, "s", &str)) {
         PyErr_SetString(
             PyExc_ValueError, "Invalid parameters"
         );
@@ -621,13 +580,9 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 break;
             case 4:
                 // Month and day
-                if (day_first) {
-                    month = monthday % 100;
-                    day = monthday / 100;
-                } else {
-                    month = monthday / 100;
-                    day = monthday % 100;
-                }
+                month = monthday / 100;
+                day = monthday % 100;
+
                 break;
             default:
                 PyErr_SetString(
@@ -915,32 +870,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     return obj;
 }
 
-PyObject* parse(PyObject *self, PyObject *args) {
-    char* str;
-    char* c;
-    int day_first;
-    int separators = 0;
-    PyObject *obj;
-
-    if (!PyArg_ParseTuple(args, "si", &str, &day_first)) {
-        PyErr_SetString(
-            PyExc_ValueError, "Invalid parameters"
-        );
-        return NULL;
-    }
-
-    c = str;
-    c++;
-    separators++;
-
-    obj = PyDateTimeAPI->Date_FromDate(
-                2017, 3, 21,
-                PyDateTimeAPI->DateType
-            );
-
-    return obj;
-}
-
 /* ------------------------------------------------------------------------- */
 
 static PyMethodDef helpers_methods[] = {
@@ -961,7 +890,6 @@ static PyMethodDef helpers_methods[] = {
 
 /* ------------------------------------------------------------------------- */
 
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "_helpers",
@@ -973,31 +901,18 @@ static struct PyModuleDef moduledef = {
     NULL,
     NULL,
 };
-#endif
 
 PyMODINIT_FUNC
-#if PY_MAJOR_VERSION >= 3
 PyInit__helpers(void)
-#else
-init_helpers(void)
-#endif
 {
     PyObject *module;
 
     PyDateTime_IMPORT;
 
-#if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
-#else
-    module = Py_InitModule3("_helpers", helpers_methods, NULL);
-#endif
 
     if (module == NULL)
-#if PY_MAJOR_VERSION >= 3
         return NULL;
-#else
-        return;
-#endif
 
     FixedOffset_type.tp_new = PyType_GenericNew;
     FixedOffset_type.tp_base = PyDateTimeAPI->TZInfoType;
@@ -1006,17 +921,12 @@ init_helpers(void)
     FixedOffset_type.tp_init = (initproc)FixedOffset_init;
 
     if (PyType_Ready(&FixedOffset_type) < 0)
-#if PY_MAJOR_VERSION >= 3
         return NULL;
-#else
-        return;
-#endif
 
     Py_INCREF(&FixedOffset_type);
 
     PyModule_AddObject(module, "TZFixedOffset", (PyObject *)&FixedOffset_type);
-#if PY_MAJOR_VERSION >= 3
+
     return module;
-#endif
 }
 #endif
