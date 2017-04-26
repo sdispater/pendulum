@@ -152,7 +152,7 @@ class TimezoneTest(AbstractTestCase):
 
     def test_utcoffset(self):
         tz = pendulum.timezone('Europe/Paris')
-        utcoffset = tz.utcoffset(pendulum.utcnow())
+        utcoffset = tz.utcoffset(pendulum.create(2017, 1, 1))
         self.assertEqual(utcoffset, timedelta(0, 3600))
 
     def test_dst(self):
