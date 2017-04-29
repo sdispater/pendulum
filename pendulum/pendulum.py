@@ -176,7 +176,7 @@ class Pendulum(Date, datetime.datetime):
             self._second = dt.second
             self._microsecond = dt.microsecond
             self._tzinfo = dt.tzinfo
-            self._fold = getattr(dt, 'fold', fold)
+            self._fold = fold
 
         self._timestamp = None
         self._int_timestamp = None
