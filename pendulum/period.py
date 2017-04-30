@@ -81,15 +81,15 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     @property
     def years(self):
-        return self._delta['years']
+        return self._delta.years
 
     @property
     def months(self):
-        return self._delta['months']
+        return self._delta.months
 
     @property
     def weeks(self):
-        return self._delta['days'] // 7
+        return self._delta.days // 7
 
     @property
     def days(self):
@@ -97,15 +97,15 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     @property
     def remaining_days(self):
-        return abs(self._delta['days']) % 7 * self._sign(self._days)
+        return abs(self._delta.days) % 7 * self._sign(self._days)
 
     @property
     def hours(self):
-        return self._delta['hours']
+        return self._delta.hours
 
     @property
     def minutes(self):
-        return self._delta['minutes']
+        return self._delta.minutes
 
     @property
     def start(self):

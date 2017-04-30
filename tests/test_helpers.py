@@ -2,7 +2,7 @@
 
 from datetime import datetime, date, time
 from pendulum.helpers import precise_diff, parse_iso8601
-from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import FixedTimezone, Timezone
 
 from . import AbstractTestCase
 
@@ -178,10 +178,10 @@ class HelpersTestCase(AbstractTestCase):
     def assert_diff(self, diff,
                     years=0, months=0, days=0,
                     hours=0, minutes=0, seconds=0, microseconds=0):
-        self.assertEqual(diff['years'], years)
-        self.assertEqual(diff['months'], months)
-        self.assertEqual(diff['days'], days)
-        self.assertEqual(diff['hours'], hours)
-        self.assertEqual(diff['minutes'], minutes)
-        self.assertEqual(diff['seconds'], seconds)
-        self.assertEqual(diff['microseconds'], microseconds)
+        self.assertEqual(diff.years, years)
+        self.assertEqual(diff.months, months)
+        self.assertEqual(diff.days, days)
+        self.assertEqual(diff.hours, hours)
+        self.assertEqual(diff.minutes, minutes)
+        self.assertEqual(diff.seconds, seconds)
+        self.assertEqual(diff.microseconds, microseconds)

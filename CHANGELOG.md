@@ -5,6 +5,7 @@
 ### Changed
 
 - `Pendulum` class has been renamed to `DateTime`.
+- Improved performances of the `precise_diff()` helper.
 
 
 ## [1.2.0] - 2017-03-24

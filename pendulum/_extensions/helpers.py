@@ -9,10 +9,67 @@ from ..constants import (
     SECS_PER_YEAR,
     SECS_PER_HOUR,
     SECS_PER_MIN,
+    DAYS_PER_MONTHS,
     MONTHS_OFFSETS,
     TM_DECEMBER,
     TM_JANUARY
 )
+
+
+class PreciseDiff:
+
+    def __init__(self, years, months, days,
+                 hours, minutes, seconds, microseconds):
+        self._years = years
+        self._months = months
+        self._days = days
+        self._hours = hours
+        self._minutes = minutes
+        self._seconds = seconds
+        self._microseconds = microseconds
+
+    @property
+    def years(self):
+        return self._years
+
+    @property
+    def months(self):
+        return self._months
+
+    @property
+    def days(self):
+        return self._days
+
+    @property
+    def hours(self):
+        return self._hours
+
+    @property
+    def minutes(self):
+        return self._minutes
+
+    @property
+    def seconds(self):
+        return self._seconds
+
+    @property
+    def microseconds(self):
+        return self._microseconds
+
+    def __repr__(self):
+        return (
+            f'{self._years} years '
+            f'{self._months} months '
+            f'{self._days} days '
+            f'{self._hours} hours '
+            f'{self._minutes} minutes '
+            f'{self._seconds} seconds '
+            f'{self._microseconds} microseconds '
+        )
+
+
+def is_leap(year):
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
 def local_time(unix_time, utc_offset, microseconds):
@@ -90,4 +147,105 @@ def local_time(unix_time, utc_offset, microseconds):
     return (
         year, month, day,
         hour, minute, second, microseconds
+    )
+
+
+def precise_diff(d1, d2):
+    """
+    Calculate a precise difference between two datetimes.
+
+    :param d1: The first datetime
+    :type d1: datetime.datetime or datetime.date
+
+    :param d2: The second datetime
+    :type d2: datetime.datetime or datetime.date
+
+    :rtype: PreciseDiff
+    """
+    sign = 1
+
+    if d1 == d2:
+        return PreciseDiff(
+            0, 0, 0, 0, 0, 0, 0
+        )
+
+    if d1 > d2:
+        d1, d2 = d2, d1
+        sign = -1
+
+    y_diff = d2.year - d1.year
+    m_diff = d2.month - d1.month
+    d_diff = d2.day - d1.day
+    hour_diff = 0
+    min_diff = 0
+    sec_diff = 0
+    mic_diff = 0
+
+    if hasattr(d2, 'hour'):
+        hour_diff = d2.hour - d1.hour
+        min_diff = d2.minute - d1.minute
+        sec_diff = d2.second - d1.second
+        mic_diff = d2.microsecond - d1.microsecond
+
+        if mic_diff < 0:
+            mic_diff += 1000000
+            sec_diff -= 1
+
+        if sec_diff < 0:
+            sec_diff += 60
+            min_diff -= 1
+
+        if min_diff < 0:
+            min_diff += 60
+            hour_diff -= 1
+
+        if hour_diff < 0:
+            hour_diff += 24
+            d_diff -= 1
+
+    if d_diff < 0:
+        year = d2.year
+        month = d2.month
+
+        if month == 1:
+            month = 12
+            year -= 1
+        else:
+            month -= 1
+
+        leap = int(is_leap(year))
+
+        days_in_last_month = DAYS_PER_MONTHS[leap][month]
+        days_in_month = DAYS_PER_MONTHS[int(is_leap(d2.year))][d2.month]
+
+        if d_diff < days_in_month - days_in_last_month:
+            # We don't have a full month, we calculate days
+            if days_in_last_month < d1.day:
+                d_diff += d1.day
+            else:
+                d_diff += days_in_last_month
+        elif d_diff == days_in_month - days_in_last_month:
+            # We have exactly a full month
+            # We remove the days difference
+            # and add one to the months difference
+            d_diff = 0
+            m_diff += 1
+        else:
+            # We have a full month
+            d_diff += days_in_last_month
+
+        m_diff -= 1
+
+    if m_diff < 0:
+        m_diff += 12
+        y_diff -= 1
+
+    return PreciseDiff(
+        sign * y_diff,
+        sign * m_diff,
+        sign * d_diff,
+        sign * hour_diff,
+        sign * min_diff,
+        sign * sec_diff,
+        sign * mic_diff
     )
