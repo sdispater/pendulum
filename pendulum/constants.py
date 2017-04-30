@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # The day constants
 SUNDAY = 0
 MONDAY = 1

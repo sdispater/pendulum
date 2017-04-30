@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import pytz
 from datetime import datetime, timedelta

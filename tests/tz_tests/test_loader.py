@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 from .. import AbstractTestCase
 from pendulum.tz.loader import Loader

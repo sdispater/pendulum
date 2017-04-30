@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pendulum
 from pendulum import Date
 from pendulum.exceptions import DateTimeException

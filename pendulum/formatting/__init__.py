@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .formatter import Formatter
 from .classic_formatter import ClassicFormatter
 from .alternative_formatter import AlternativeFormatter

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pendulum import Interval
 
 from .. import AbstractTestCase

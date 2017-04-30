@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 
 def meridian(hour, minute):
     hm = hour * 100 + minute

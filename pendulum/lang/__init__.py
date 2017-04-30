@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .af import translations as af_translations
 from .ar import translations as ar_translations
 from .az import translations as az_translations

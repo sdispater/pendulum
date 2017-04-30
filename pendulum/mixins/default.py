@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import locale as _locale
 from contextlib import contextmanager
 

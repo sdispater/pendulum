@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pendulum import Date, DateTime, Time
 
 from .. import AbstractTestCase

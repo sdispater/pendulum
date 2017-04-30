@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pendulum.helpers import local_time
 from pendulum import DateTime
 from .. import AbstractTestCase

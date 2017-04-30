@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pytz
 from pendulum import DateTime, timezone
 from .. import AbstractTestCase

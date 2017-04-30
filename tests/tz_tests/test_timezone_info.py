@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta
 from pendulum.tz import Timezone
 from pendulum.tz.timezone_info import TimezoneInfo, UTC

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pickle
 import pendulum
 from datetime import datetime, date, time, timedelta

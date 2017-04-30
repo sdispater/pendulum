@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Types
 from .datetime import DateTime
 from .date import Date

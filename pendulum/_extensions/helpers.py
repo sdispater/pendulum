@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ..constants import (
     EPOCH_YEAR,
     SECS_PER_DAY,

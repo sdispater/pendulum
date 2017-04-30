@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pytz
 from datetime import time
 from pendulum import Time

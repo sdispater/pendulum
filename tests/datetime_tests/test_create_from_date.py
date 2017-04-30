@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pendulum import DateTime, timezone
 from pendulum.tz.timezone_info import TimezoneInfo
 from .. import AbstractTestCase

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .mixins.default import (
     TestableMixin, FormattableMixing, TranslatableMixin
 )

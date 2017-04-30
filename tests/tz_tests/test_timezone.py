@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pendulum
 from datetime import datetime, timedelta
 from pendulum import timezone

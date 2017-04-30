@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import time, datetime, timedelta
 
 from .interval import Interval, AbsoluteInterval

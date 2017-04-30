@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import datetime, date, time
 from pendulum.helpers import precise_diff, parse_iso8601
 from pendulum.tz.timezone import FixedTimezone, Timezone

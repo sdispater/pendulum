@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pendulum
 from pendulum import Time
 from .. import AbstractTestCase

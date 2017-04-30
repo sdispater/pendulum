@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import timedelta
 from pendulum import Interval
 from pendulum.interval import AbsoluteInterval

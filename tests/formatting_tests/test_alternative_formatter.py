@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pendulum import DateTime
 from pendulum.formatting.alternative_formatter import AlternativeFormatter
 from pendulum.lang import TRANSLATIONS
