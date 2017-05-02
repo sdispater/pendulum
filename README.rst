@@ -173,6 +173,14 @@ a possible solution, if any:
             return '' if val is None else val.isoformat()
 
 
+Installation
+============
+You can install Pendeulum on Windows with Pip and Python using the following command:
+
+.. code-block:: python
+
+   pip install pendelum
+
 Resources
 =========
 
