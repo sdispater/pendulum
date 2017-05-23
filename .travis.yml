@@ -10,6 +10,10 @@ matrix:
 before_install:
   - pip install codecov
 
+install:
+  - pip install -r tests-requirements.txt
+  - python setup.py develop
+
 script: py.test --cov=pendulum --cov-config=.coveragerc tests/
 
 after_success:
