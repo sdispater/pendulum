@@ -562,7 +562,7 @@ class DiffTest(AbstractTestCase):
             self.assertEqual('1 year', DateTime.now().diff_for_humans(DateTime.now().add(years=1), True))
 
     def test_diff_for_humans_accuracy(self):
-        now = DateTime.now()
+        now = DateTime.now('utc')
 
         with self.wrap_with_test_now(now.add(microseconds=200)):
             self.assertEqual('1 year', now.add(years=1).diff_for_humans(absolute=True))

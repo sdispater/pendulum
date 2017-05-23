@@ -200,6 +200,8 @@ class ConstructTest(AbstractTestCase):
 
         d = DateTime(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=0)
         self.assertDateTime(d, 2013, 3, 31, 1, 30)
+        self.assertEqual(d.fold, 0)
 
         d = DateTime(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=1)
         self.assertDateTime(d, 2013, 3, 31, 3, 30)
+        self.assertEqual(d.fold, 1)
