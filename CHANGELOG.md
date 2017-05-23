@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.1] - 2017-05-23
+
+### Fixed
+
+- Fixed incorrect `fold` attribute on Python 3.6 when not passing a timezone. (Thanks to [neonquill](https://github.com/neonquill))
+
+
 ## [1.2.0] - 2017-03-24
 
 ### Added
@@ -356,7 +363,8 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.0...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.1...master
+[1.2.1]: https://github.com/sdispater/pendulum/releases/tag/1.2.1
 [1.2.0]: https://github.com/sdispater/pendulum/releases/tag/1.2.0
 [1.1.1]: https://github.com/sdispater/pendulum/releases/tag/1.1.1
 [1.1.0]: https://github.com/sdispater/pendulum/releases/tag/1.1.0
