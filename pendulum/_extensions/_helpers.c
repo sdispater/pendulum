@@ -1041,12 +1041,14 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     int dt2_total_seconds = 0;
     int dt1_offset = 0;
     int dt2_offset = 0;
+    int dt1_is_datetime = PyDateTime_Check(dt1);
+    int dt2_is_datetime = PyDateTime_Check(dt2);
     PyObject *offset;
     PyObject *tzinfo;
 
     // If we have datetimes (and not only dates) we get the information
     // we need
-    if (PyDateTime_Check(dt1)) {
+    if (dt1_is_datetime) {
         // Retrieving offset, if any
         if (((_PyDateTime_BaseTZInfo *)(dt1))->hastzinfo) {
             tzinfo = ((PyDateTime_DateTime *)(dt1))->tzinfo;
@@ -1101,7 +1103,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         );
     }
 
-    if (PyDateTime_Check(dt2)) {
+    if (dt2_is_datetime) {
         if (((_PyDateTime_BaseTZInfo *)(dt2))->hastzinfo) {
             tzinfo = ((PyDateTime_DateTime *)(dt2))->tzinfo;
             if (tzinfo != Py_None) {
@@ -1194,14 +1196,20 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         dt2_month = PyDateTime_GET_MONTH(dt2);
         dt1_day = PyDateTime_GET_DAY(dt1);
         dt2_day = PyDateTime_GET_DAY(dt2);
-        dt1_hour = PyDateTime_DATE_GET_HOUR(dt1);
-        dt1_minute = PyDateTime_DATE_GET_MINUTE(dt1);
-        dt1_second = PyDateTime_DATE_GET_SECOND(dt1);
-        dt1_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt1);
-        dt2_hour = PyDateTime_DATE_GET_HOUR(dt2);
-        dt2_minute = PyDateTime_DATE_GET_MINUTE(dt2);
-        dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
-        dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
+
+        if (dt2_is_datetime) {
+            dt1_hour = PyDateTime_DATE_GET_HOUR(dt1);
+            dt1_minute = PyDateTime_DATE_GET_MINUTE(dt1);
+            dt1_second = PyDateTime_DATE_GET_SECOND(dt1);
+            dt1_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt1);
+        }
+
+        if (dt1_is_datetime) {
+            dt2_hour = PyDateTime_DATE_GET_HOUR(dt2);
+            dt2_minute = PyDateTime_DATE_GET_MINUTE(dt2);
+            dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
+            dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
+        }
     }
 
     year_diff = dt2_year - dt1_year;

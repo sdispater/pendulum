@@ -94,7 +94,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         :rtype: Date
         """
         if cls.has_test_now():
-            return cls.get_test_now()
+            now = cls.get_test_now()
+
+            if hasattr(now, 'date'):
+                now = now.date()
+
+            return now
 
         return cls.create()
 

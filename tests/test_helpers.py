@@ -1,6 +1,6 @@
 from datetime import datetime, date, time
 from pendulum.helpers import precise_diff, parse_iso8601
-from pendulum.tz.timezone import FixedTimezone, Timezone
+from pendulum.tz.timezone import Timezone
 
 from . import AbstractTestCase
 
@@ -43,6 +43,17 @@ class HelpersTestCase(AbstractTestCase):
         self.assert_diff(
             diff,
             months=11, days=30, hours=23, minutes=59, seconds=59, microseconds=999800
+        )
+
+        # DST
+        tz = Timezone.load('America/Toronto')
+        dt1 = tz.datetime(2017, 3, 7)
+        dt2 = tz.datetime(2017, 3, 13)
+
+        diff = precise_diff(dt1, dt2)
+        self.assert_diff(
+            diff,
+            days=5, hours=23
         )
 
     def test_parse_iso8601(self):
