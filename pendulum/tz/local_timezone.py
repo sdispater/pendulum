@@ -8,25 +8,25 @@ from .timezone import Timezone
 from .loader import Loader
 
 
-class LocalTimezone(object):
+class LocalTimezone(Timezone):
 
-    _cache = None
+    _timezone = None
 
-    _local_timezone = None
+    _mock = None
 
     @classmethod
     def get(cls, force=False):
-        if cls._local_timezone is not None:
-            return cls._local_timezone
+        if cls._mock is not None:
+            return cls._mock
 
-        if cls._cache is None or force:
+        if cls._timezone is None or force:
             name = cls.get_local_tz_name()
             if isinstance(name, Timezone):
-                cls._cache = name
+                cls._timezone = name
             else:
-                cls._cache = Timezone.load(cls.get_local_tz_name())
+                cls._timezone = cls.load(cls.get_local_tz_name())
 
-        return cls._cache
+        return cls._timezone
 
     @classmethod
     @contextmanager
@@ -36,15 +36,15 @@ class LocalTimezone(object):
 
         :type mock: DateTime or None
         """
-        cls.set_local_timezone(mock)
+        cls.set(mock)
 
         yield
 
-        cls.set_local_timezone()
+        cls.set()
 
     @classmethod
-    def set_local_timezone(cls, local_timezone=None):
-        cls._local_timezone = local_timezone
+    def set(cls, timezone=None):
+        cls._mock = timezone
 
     @classmethod
     def get_local_tz_name(cls):

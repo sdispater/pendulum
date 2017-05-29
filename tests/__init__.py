@@ -6,7 +6,7 @@ from unittest import TestCase
 from contextlib import contextmanager
 
 from pendulum import DateTime, Date, Time, Interval
-from pendulum.tz import LocalTimezone, timezone, Timezone
+from pendulum.tz import timezone, Timezone
 
 PY36 = sys.version_info >= (3, 6)
 
@@ -14,7 +14,7 @@ PY36 = sys.version_info >= (3, 6)
 class AbstractTestCase(TestCase):
 
     def setUp(self):
-        LocalTimezone.set_local_timezone(timezone('America/Toronto'))
+        pendulum.set_local_timezone(timezone('America/Toronto'))
 
         super(AbstractTestCase, self).setUp()
 
@@ -22,7 +22,7 @@ class AbstractTestCase(TestCase):
         pendulum.set_test_now()
         pendulum.set_formatter()
         pendulum.set_locale('en')
-        LocalTimezone.set_local_timezone()
+        pendulum.set_local_timezone()
         DateTime.reset_to_string_format()
         Date.reset_to_string_format()
         Time.reset_to_string_format()

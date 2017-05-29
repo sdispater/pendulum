@@ -1,18 +1,17 @@
 import pytest
 import pendulum
-from pendulum.tz import LocalTimezone
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(autouse=True)
 def setup():
-    LocalTimezone.set_local_timezone(pendulum.timezone('America/Toronto'))
+    pendulum.set_local_timezone(pendulum.timezone('America/Toronto'))
 
     yield
 
     pendulum.set_test_now()
     pendulum.set_formatter()
     pendulum.set_locale('en')
-    LocalTimezone.set_local_timezone()
+    pendulum.set_local_timezone()
     pendulum.datetime.reset_to_string_format()
     pendulum.date.reset_to_string_format()
     pendulum.time.reset_to_string_format()

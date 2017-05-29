@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added the `test_local_timezone()` and `set_local_timezone()` helpers to ease testing.
+
 ### Changed
 
 - `Pendulum` class has been renamed to `DateTime`.

@@ -33,7 +33,7 @@ from .formatting import FORMATTERS
 _TEST_NOW = None
 _LOCALE = 'en'
 _DEFAULT_FORMATTER = FORMATTERS['classic']
-_FORMATTER = None
+_FORMATTER = _DEFAULT_FORMATTER
 _TRANSLATOR = Translator(_LOCALE)
 
 from .helpers import (
@@ -75,4 +75,8 @@ interval = Interval
 period = Period
 
 # Timezones
-from .tz import timezone, local_timezone, UTC
+from .tz import (
+    timezone,
+    local_timezone, test_local_timezone, set_local_timezone,
+    UTC
+)
