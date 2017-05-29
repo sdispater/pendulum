@@ -25,24 +25,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(7200, dt.tzinfo.offset)
         self.assertTrue(dt.tzinfo.is_dst)
 
-    def test_skipped_time(self):
-        self.skip_if_36()
-
-        dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
-        tz = timezone('Europe/Paris')
-        dt = tz.convert(dt)
-
-        self.assertEqual(2013, dt.year)
-        self.assertEqual(3, dt.month)
-        self.assertEqual(31, dt.day)
-        self.assertEqual(3, dt.hour)
-        self.assertEqual(30, dt.minute)
-        self.assertEqual(45, dt.second)
-        self.assertEqual(123456, dt.microsecond)
-        self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
-        self.assertEqual(7200, dt.tzinfo.offset)
-        self.assertTrue(dt.tzinfo.is_dst)
-
     def test_skipped_time_with_pre_rule(self):
         dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
         tz = timezone('Europe/Paris')
@@ -167,8 +149,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertTrue(len(tz.transitions) > 0)
 
     def test_convert_fold_attribute_is_honored(self):
-        self.skip_if_not_36()
-
         tz = pendulum.timezone('US/Eastern')
         dt = datetime(2014, 11, 2, 1, 30)
 
@@ -179,8 +159,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('-0500', new.strftime('%z'))
 
     def test_skipped_time_36_explicit_rule(self):
-        self.skip_if_not_36()
-
         dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
         tz = timezone('Europe/Paris')
         dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
@@ -197,8 +175,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertTrue(dt.tzinfo.is_dst)
 
     def test_repeated_time_36_explicit_rule(self):
-        self.skip_if_not_36()
-
         dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
         tz = timezone('Europe/Paris')
         dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
@@ -215,8 +191,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertFalse(dt.tzinfo.is_dst)
 
     def test_utcoffset_fold_attribute_is_honored(self):
-        self.skip_if_not_36()
-
         tz = pendulum.timezone('US/Eastern')
         dt = datetime(2014, 11, 2, 1, 30)
 
@@ -229,8 +203,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(-5 * 3600, offset.total_seconds())
 
     def test_dst_fold_attribute_is_honored(self):
-        self.skip_if_not_36()
-
         tz = pendulum.timezone('US/Eastern')
         dt = datetime(2014, 11, 2, 1, 30)
 
@@ -243,8 +215,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(-3600, offset.total_seconds())
 
     def test_tzname_fold_attribute_is_honored(self):
-        self.skip_if_not_36()
-
         tz = pendulum.timezone('US/Eastern')
         dt = datetime(2014, 11, 2, 1, 30)
 
@@ -257,8 +227,6 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual('EST', name)
 
     def test_constructor_fold_attribute_is_honored(self):
-        self.skip_if_not_36()
-
         tz = pendulum.timezone('US/Eastern')
         dt = datetime(2014, 11, 2, 1, 30, tzinfo=tz)
 

@@ -8,8 +8,6 @@ from contextlib import contextmanager
 from pendulum import DateTime, Date, Time, Duration
 from pendulum.tz import timezone, Timezone
 
-PY36 = sys.version_info >= (3, 6)
-
 
 class AbstractTestCase(TestCase):
 
@@ -106,14 +104,6 @@ class AbstractTestCase(TestCase):
         yield
 
         pendulum.set_test_now()
-
-    def skip_if_not_36(self):
-        if not PY36:
-            self.skipTest('Tests only available for Python 3.6')
-
-    def skip_if_36(self):
-        if PY36:
-            self.skipTest('Tests only available for Python <= 3.5')
 
     def skip_if_32bit(self):
         if struct.calcsize("P") * 8 == 32:
