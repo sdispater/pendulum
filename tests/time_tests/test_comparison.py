@@ -1,4 +1,5 @@
-import pytz
+import pendulum
+
 from datetime import time
 from pendulum import Time
 
@@ -196,7 +197,7 @@ class ComparisonTest(AbstractTestCase):
         self.assertIsInstanceOfTime(t.minimum(time(1, 2, 3)))
 
     def test_min_with_now(self):
-        with Time.test(Time(1, 2, 3)):
+        with pendulum.test(pendulum.today().at(1, 2, 3)):
             t = Time(1, 1, 1).min_()
             self.assertTime(t, 1, 1, 1)
             t = Time(1, 1, 1).minimum()
@@ -217,7 +218,7 @@ class ComparisonTest(AbstractTestCase):
         self.assertIsInstanceOfTime(t.maximum(Time(1, 2, 3)))
 
     def test_max_with_now(self):
-        with Time.test(Time(1, 2, 3)):
+        with pendulum.test(pendulum.today().at(1, 2, 3)):
             t = Time(12, 34, 56).max_()
             self.assertTime(t, 12, 34, 56)
             t = Time(12, 34, 56).maximum()

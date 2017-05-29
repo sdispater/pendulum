@@ -22,25 +22,25 @@ from .constants import (
 
 from .tz.timezone import Timezone
 
-from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
-
-from ._global import Global
-
 PRE_TRANSITION = Timezone.PRE_TRANSITION
 POST_TRANSITION = Timezone.POST_TRANSITION
 TRANSITION_ERROR = Timezone.TRANSITION_ERROR
 
 # Global helpers
-test = Global.test
-set_test_now = Global.set_test_now
-has_test_now = Global.has_test_now
-get_test_now = Global.get_test_now
-set_locale = Global.set_locale
-get_locale = Global.get_locale
-translator = Global.translator
-set_translator = Global.set_translator
-set_formatter = Global.set_formatter
-get_formatter = Global.get_formatter
+from .translator import Translator
+from .formatting import FORMATTERS
+
+_TEST_NOW = None
+_LOCALE = 'en'
+_DEFAULT_FORMATTER = FORMATTERS['classic']
+_FORMATTER = None
+_TRANSLATOR = Translator(_LOCALE)
+
+from .helpers import (
+    test, set_test_now, has_test_now, get_test_now,
+    set_locale, get_locale, translator,
+    set_formatter, get_formatter
+)
 
 # Helpers
 from .parser import parse

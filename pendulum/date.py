@@ -1,11 +1,13 @@
 import calendar
 import math
+import pendulum
+
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from .period import Period
 from .formatting.difference_formatter import DifferenceFormatter
-from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
+from .mixins.default import FormattableMixing
 from .constants import (
     DAYS_PER_WEEK, YEARS_PER_DECADE, YEARS_PER_CENTURY,
     MONTHS_PER_YEAR,
@@ -14,7 +16,7 @@ from .constants import (
 from .exceptions import DateTimeException
 
 
-class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
+class Date(FormattableMixing, date):
 
     # Names of days of the week
     _days = {
@@ -93,13 +95,10 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
-        if cls.has_test_now():
-            now = cls.get_test_now()
+        if pendulum.has_test_now():
+            now = pendulum.get_test_now()
 
-            if hasattr(now, 'date'):
-                now = now.date()
-
-            return now
+            return now.date()
 
         return cls.create()
 
@@ -621,7 +620,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         :rtype: DifferenceFormatter
         """
         if not self.__class__._diff_formatter:
-            self.__class__._diff_formatter = DifferenceFormatter(self.__class__.translator())
+            self.__class__._diff_formatter = DifferenceFormatter(pendulum.translator())
 
         return self.__class__._diff_formatter
 
@@ -1172,40 +1171,6 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
             return value if not as_date else Date.instance(value)
 
         raise ValueError('Invalid date "{}"'.format(value))
-
-    # Testing aids
-
-    @classmethod
-    def set_test_now(cls, test_now=None):
-        """
-        Set a Date instance (real or mock) to be returned when a "now"
-        instance is created.  The provided instance will be returned
-        specifically under the following conditions:
-            - A call to the classmethod today() method, ex.Date.now()
-            - When nothing is passed to create(), ex. Date.create()
-
-        To clear the test instance call this method using the default
-        parameter of None.
-
-        :type test_now: Date or DateTime or None
-        """
-        if test_now is not None and not isinstance(test_now, Date):
-            raise TypeError(
-                'Date.set_test_now() only accepts a Date instance, '
-                'a DateTime instance or None.'
-            )
-
-        cls._test_now = test_now
-
-    @classmethod
-    def get_test_now(cls):
-        if cls._test_now is None:
-            return None
-
-        if isinstance(cls._test_now, Date):
-            return cls._test_now
-
-        return cls._test_now.date()
 
     # Native methods override
 

@@ -1,3 +1,5 @@
+import pendulum
+
 from pendulum import DateTime, timezone
 
 from .. import AbstractTestCase
@@ -17,7 +19,7 @@ class CreateFromTimeTest(AbstractTestCase):
         self.assertEqual('UTC', d.timezone_name)
 
     def test_create_from_time_with_hour(self):
-        with DateTime.test(DateTime(2016, 8, 11, 12, 34, 56, 123456)):
+        with pendulum.test(DateTime(2016, 8, 11, 12, 34, 56, 123456)):
             d = DateTime.create(hour=23)
             self.assertEqual(23, d.hour)
             self.assertEqual(0, d.minute)

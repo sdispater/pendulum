@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import pendulum
 
 from .date import Date
 from .time import Time
@@ -255,8 +256,8 @@ class DateTime(Date, datetime.datetime):
         """
         # If the class has a test now set and we are trying to create a now()
         # instance then override as required
-        if cls.has_test_now():
-            test_instance = cls.get_test_now()
+        if pendulum.has_test_now():
+            test_instance = pendulum.get_test_now()
 
             if tz is not None and tz != test_instance.timezone:
                 test_instance = test_instance.in_timezone(tz)
@@ -346,8 +347,8 @@ class DateTime(Date, datetime.datetime):
         tz = cls._safe_create_datetime_zone(tz)
 
         if any([year is None, month is None, day is None]):
-            if cls.has_test_now():
-                now = cls.get_test_now().in_tz(tz)
+            if pendulum.has_test_now():
+                now = pendulum.get_test_now().in_tz(tz)
             else:
                 now = datetime.datetime.utcnow().replace(tzinfo=UTC)
                 now = tz.convert(now)

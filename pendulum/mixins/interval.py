@@ -1,7 +1,7 @@
-from .default import TranslatableMixin
+import pendulum
 
 
-class WordableIntervalMixin(TranslatableMixin):
+class WordableIntervalMixin:
 
     def in_words(self, locale=None, separator=' ', _periods=None):
         """
@@ -34,13 +34,13 @@ class WordableIntervalMixin(TranslatableMixin):
             unit, count = period
             if abs(count) > 0:
                 parts.append(
-                    self.translator().transchoice(
+                    pendulum.translator().transchoice(
                         unit, abs(count), {'count': count}, locale=locale
                     )
                 )
 
         if not parts and abs(self.microseconds) > 0:
-            translation = self.translator().transchoice(
+            translation = pendulum.translator().transchoice(
                 'second', 1,
                 {'count': '{:.2f}'.format(abs(self.microseconds) / 1e6)},
                 locale=locale

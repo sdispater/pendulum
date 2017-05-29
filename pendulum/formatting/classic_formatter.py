@@ -1,5 +1,6 @@
 import re
 import datetime
+import pendulum
 
 from .formatter import Formatter
 
@@ -25,7 +26,7 @@ class ClassicFormatter(Formatter):
         :rtype: str
         """
         if not locale:
-            locale = dt.get_locale()
+            locale = pendulum.get_locale()
 
         # Checking for custom formatters
         fmt = self._FORMATTERS_REGEX.sub(lambda m: self._strftime(dt, m, locale), fmt)
@@ -74,7 +75,7 @@ class ClassicFormatter(Formatter):
         else:
             raise ValueError('Unlocalizable directive [{}]'.format(directive))
 
-        translation = dt.translator().transchoice(id, number, locale=locale)
+        translation = pendulum.translator().transchoice(id, number, locale=locale)
         if translation == id:
             return ''
 
@@ -104,7 +105,7 @@ class ClassicFormatter(Formatter):
 
             return '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
         elif fmt == '_t':
-            translation = dt.translator().transchoice('ordinal', dt.day, locale=locale)
+            translation = pendulum.translator().transchoice('ordinal', dt.day, locale=locale)
             if translation == 'ordinal':
                 translation = ''
 

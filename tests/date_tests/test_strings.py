@@ -45,26 +45,6 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('jeudi 25e jour de décembre 1975',
                          d.format('%A %d%_t jour de %B %Y', locale='fr'))
 
-    def test_set_formatter_globally(self):
-        Date.set_formatter('alternative')
-        self.assertEqual('alternative', Date.get_formatter())
-
-        d = Date(1975, 12, 25)
-        self.assertEqual(
-            'Thursday 25th of December 1975',
-            d.format('dddd Do [of] MMMM YYYY')
-        )
-        Date.set_formatter()
-        self.assertEqual(
-            'dddd Do [of] MMMM YYYY',
-            d.format('dddd Do [of] MMMM YYYY')
-        )
-
-    def test_invalid_formatter(self):
-        d = Date(1975, 12, 25)
-        self.assertRaises(ValueError, d.format, '', formatter='invalid')
-        self.assertRaises(ValueError, Date.set_formatter, 'invalid')
-
     def test_strftime(self):
         d = Date(1975, 12, 25)
         self.assertEqual('25', d.strftime('%d'))

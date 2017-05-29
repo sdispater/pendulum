@@ -31,26 +31,6 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('02:15:16 ',
                          d.format('%I:%M:%S %p', locale='fr'))
 
-    def test_set_formatter_globally(self):
-        Time.set_formatter('alternative')
-        self.assertEqual('alternative', Time.get_formatter())
-
-        d = Time(14, 15, 16)
-        self.assertEqual(
-            '02:15:16 PM',
-            d.format('hh:mm:ss A')
-        )
-        Time.set_formatter()
-        self.assertEqual(
-            'hh:mm:ss A',
-            d.format('hh:mm:ss A')
-        )
-
-    def test_invalid_formatter(self):
-        d = Time(14, 15, 16)
-        self.assertRaises(ValueError, d.format, '', formatter='invalid')
-        self.assertRaises(ValueError, Time.set_formatter, 'invalid')
-
     def test_strftime(self):
         d = Time(14, 15, 16)
         self.assertEqual('14', d.strftime('%H'))

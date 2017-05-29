@@ -2,6 +2,7 @@ import pendulum
 
 from math import copysign
 from datetime import timedelta
+from contextlib import contextmanager
 
 try:
     from ._extensions._helpers import local_time, parse_iso8601, precise_diff
@@ -16,6 +17,8 @@ from ._extensions.helpers import is_leap
 from .constants import (
     DAYS_PER_MONTHS, DAY_OF_WEEK_TABLE, DAYS_PER_L_YEAR, DAYS_PER_N_YEAR
 )
+
+from .formatting import FORMATTERS
 
 
 def add_duration(dt, years=0, months=0, weeks=0, days=0,
@@ -131,3 +134,58 @@ def days_in_year(year):
 
 def _sign(x):
     return int(copysign(1, x))
+
+
+# Global helpers
+
+@contextmanager
+def test(mock):
+    set_test_now(mock)
+
+    yield
+
+    set_test_now()
+
+
+def set_test_now(test_now=None):
+    pendulum._TEST_NOW = test_now
+
+
+def get_test_now():
+    return pendulum._TEST_NOW
+
+
+def has_test_now():
+    return pendulum._TEST_NOW is not None
+
+
+def set_locale(locale):
+    if not pendulum._TRANSLATOR.has_translations(locale):
+        raise ValueError(f'Unsupported locale [{locale}]')
+
+    pendulum._LOCALE = locale
+    pendulum._TRANSLATOR.locale = locale
+
+
+def get_locale():
+    return pendulum._LOCALE
+
+
+def translator():
+    return pendulum._TRANSLATOR
+
+
+def set_formatter(formatter=None):
+    if isinstance(formatter, str):
+        if formatter not in FORMATTERS:
+            raise ValueError(f'Invalid formatter [{formatter}]')
+
+        formatter = FORMATTERS[formatter]
+    elif formatter is None:
+        formatter = pendulum._DEFAULT_FORMATTER
+
+    pendulum._FORMATTER = formatter
+
+
+def get_formatter():
+    return pendulum._FORMATTER

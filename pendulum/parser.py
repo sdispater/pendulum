@@ -1,11 +1,10 @@
-from __future__ import division
+import pendulum
 
 from .parsing import Parser as BaseParser
 from .tz import UTC
 from .datetime import DateTime
 from .date import Date
 from .time import Time
-from ._global import Global
 
 
 class Parser(BaseParser):
@@ -68,6 +67,6 @@ class Parser(BaseParser):
 
 def parse(text, **options):
     # Use the mock now value if it exists
-    options['now'] = options.get('now', Global.get_test_now())
+    options['now'] = options.get('now', pendulum.get_test_now())
 
     return Parser.parse(text, **options)

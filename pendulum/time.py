@@ -1,13 +1,15 @@
+import pendulum
+
 from datetime import time, datetime, timedelta
 
 from .interval import Interval, AbsoluteInterval
-from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
+from .mixins.default import FormattableMixing
 from .constants import (
     USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
 )
 
 
-class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
+class Time(FormattableMixing, time):
     """
     Represents a time instance as hour, minute, second, microsecond.
     """
@@ -78,11 +80,11 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
-        if cls.has_test_now():
+        if pendulum.has_test_now():
             if not with_microseconds:
-                return cls.get_test_now().replace(microsecond=0)
+                return pendulum.get_test_now().time().replace(microsecond=0)
 
-            return cls.get_test_now()
+            return pendulum.get_test_now().time()
 
         now = datetime.now()
 
@@ -425,7 +427,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         if count == 0:
             count = 1
 
-        time = self.translator().transchoice(unit, count, {'count': count}, locale=locale)
+        time = pendulum.translator().transchoice(unit, count, {'count': count}, locale=locale)
 
         if absolute:
             return time
@@ -439,50 +441,15 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         # Some langs have special pluralization for past and future tense
         try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self.translator().transchoice(try_key_exists, count, locale=locale):
-            time = self.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
+        if try_key_exists != pendulum.translator().transchoice(try_key_exists, count, locale=locale):
+            time = pendulum.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
 
-        return self.translator().trans(trans_id, {'time': time}, locale=locale)
+        return pendulum.translator().trans(trans_id, {'time': time}, locale=locale)
 
     # String formatting
 
     def isoformat(self):
         return self._time.isoformat()
-
-    # Testing aids
-
-    @classmethod
-    def set_test_now(cls, test_now=None):
-        """
-        Set a Time instance (real or mock) to be returned when a "now"
-        instance is created.  The provided instance will be returned
-        specifically under the following conditions:
-            - A call to the classmethod now() method, ex. Time.now()
-
-        To clear the test instance call this method using the default
-        parameter of None.
-
-        :type test_now: Date or DateTime or None
-        """
-        from .datetime import DateTime
-
-        if test_now is not None and not isinstance(test_now, (DateTime, Time)):
-            raise TypeError(
-                'Time.set_test_now() only accepts a Time instance, '
-                'a DateTime instance or None.'
-            )
-
-        cls._test_now = test_now
-
-    @classmethod
-    def get_test_now(cls):
-        if cls._test_now is None:
-            return None
-
-        if isinstance(cls._test_now, Time):
-            return cls._test_now
-
-        return cls._test_now.time()
 
     # Compatibility methods
 

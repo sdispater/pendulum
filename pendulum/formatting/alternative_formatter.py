@@ -1,5 +1,6 @@
 import re
 import datetime
+import pendulum
 
 from .formatter import Formatter
 
@@ -113,7 +114,7 @@ class AlternativeFormatter(Formatter):
         :rtype: str
         """
         if not locale:
-            locale = dt.get_locale()
+            locale = pendulum.get_locale()
 
         return self._FORMAT_RE.sub(
             lambda m: m.group(1)
@@ -140,7 +141,7 @@ class AlternativeFormatter(Formatter):
         :rtype: str
         """
         if token in self._DEFAULT_DATE_FORMATS:
-            fmt = dt.translator().transchoice('date_formats', token, locale=locale)
+            fmt = pendulum.translator().transchoice('date_formats', token, locale=locale)
             if fmt == 'date_formats':
                 fmt = self._DEFAULT_DATE_FORMATS[token]
 
@@ -219,7 +220,7 @@ class AlternativeFormatter(Formatter):
             count = (dt.hour, dt.minute)
             trans_id = 'meridian'
 
-        trans = dt.translator().transchoice(trans_id, count, locale=locale)
+        trans = pendulum.translator().transchoice(trans_id, count, locale=locale)
 
         if trans_id == 'ordinal':
             trans = '{:d}{}'.format(count, trans)

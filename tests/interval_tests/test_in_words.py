@@ -5,11 +5,6 @@ from .. import AbstractTestCase
 
 class ForHumansTest(AbstractTestCase):
 
-    def setUp(self):
-        super(ForHumansTest, self).setUp()
-
-        Interval.set_locale('en')
-
     def test_week(self):
         self.assertEqual('52 weeks', Interval(days=364).in_words())
         self.assertEqual('1 week', Interval(days=7).in_words())

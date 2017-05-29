@@ -1,3 +1,5 @@
+import pendulum
+
 from datetime import time
 from pendulum import Time, timezone
 
@@ -44,7 +46,7 @@ class ConstructTest(AbstractTestCase):
         self.assertIsInstanceOfTime(t)
 
     def test_now_microseconds(self):
-        with Time.test(Time(1, 2, 3, 123456)):
+        with pendulum.test(pendulum.today().at(1, 2, 3, 123456)):
             t = Time.now()
             self.assertTime(t, 1, 2, 3, 123456)
 
