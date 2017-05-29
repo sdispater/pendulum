@@ -1,13 +1,13 @@
 import pytest
 import pendulum
 
-from pendulum.parsing.parser import Parser, ParserError
+from pendulum.parsing import parse, ParserError
 
 
 def test_y():
     text = '2016'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -20,7 +20,7 @@ def test_y():
 def test_ym():
     text = '2016-10'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -33,7 +33,7 @@ def test_ym():
 def test_ymd():
     text = '2016-10-06'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -46,7 +46,7 @@ def test_ymd():
 def test_ymd_one_character():
     text = '2016-2-6'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 2 == parsed['month']
     assert 6 == parsed['day']
@@ -59,7 +59,7 @@ def test_ymd_one_character():
 def test_ymd_day_first():
     text = '2016-02-06'
 
-    parsed = Parser.parse(text, day_first=True)
+    parsed = parse(text, day_first=True)
     assert 2016 == parsed['year']
     assert 6 == parsed['month']
     assert 2 == parsed['day']
@@ -72,7 +72,7 @@ def test_ymd_day_first():
 def test_ymd_hms():
     text = '2016-10-06 12:34:56'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -84,7 +84,7 @@ def test_ymd_hms():
 
     text = '2016-10-06 12:34:56.123456'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -97,7 +97,7 @@ def test_ymd_hms():
 def test_rfc_3339():
     text = '2016-10-06T12:34:56+05:30'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -110,7 +110,7 @@ def test_rfc_3339():
 def test_rfc_3339_extended():
     text = '2016-10-06T12:34:56.123456+05:30'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -122,7 +122,7 @@ def test_rfc_3339_extended():
 
     text = '2016-10-06T12:34:56.000123+05:30'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -135,7 +135,7 @@ def test_rfc_3339_extended():
 def test_rfc_3339_extended_nanoseconds():
     text = '2016-10-06T12:34:56.123456789+05:30'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 6 == parsed['day']
@@ -148,7 +148,7 @@ def test_rfc_3339_extended_nanoseconds():
 def test_iso_8601_date():
     text = '2012'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -160,7 +160,7 @@ def test_iso_8601_date():
 
     text = '2012-05-03'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 5 == parsed['month']
     assert 3 == parsed['day']
@@ -172,7 +172,7 @@ def test_iso_8601_date():
 
     text = '20120503'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 5 == parsed['month']
     assert 3 == parsed['day']
@@ -184,7 +184,7 @@ def test_iso_8601_date():
 
     text = '2012-05'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 5 == parsed['month']
     assert 1 == parsed['day']
@@ -197,7 +197,7 @@ def test_iso_8601_date():
 def test_iso8601_datetime():
     text = '2016-10-01T14'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -209,7 +209,7 @@ def test_iso8601_datetime():
 
     text = '2016-10-01T14:30'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -221,7 +221,7 @@ def test_iso8601_datetime():
 
     text = '20161001T14'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -233,7 +233,7 @@ def test_iso8601_datetime():
 
     text = '20161001T1430'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -245,7 +245,7 @@ def test_iso8601_datetime():
 
     text = '20161001T1430+0530'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -257,7 +257,7 @@ def test_iso8601_datetime():
 
     text = '20161001T1430,4+0530'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2016 == parsed['year']
     assert 10 == parsed['month']
     assert 1 == parsed['day']
@@ -269,7 +269,7 @@ def test_iso8601_datetime():
 
     text = '2008-09-03T20:56:35.450686+01'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2008 == parsed['year']
     assert 9 == parsed['month']
     assert 3 == parsed['day']
@@ -282,7 +282,7 @@ def test_iso8601_datetime():
 def test_iso8601_week_number():
     text = '2012-W05'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 30 == parsed['day']
@@ -294,7 +294,7 @@ def test_iso8601_week_number():
 
     text = '2012W05'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 30 == parsed['day']
@@ -306,7 +306,7 @@ def test_iso8601_week_number():
 
     text = '2012-W05-5'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
     assert 3 == parsed['day']
@@ -318,7 +318,7 @@ def test_iso8601_week_number():
 
     text = '2012W055'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
     assert 3 == parsed['day']
@@ -329,7 +329,7 @@ def test_iso8601_week_number():
     assert None == parsed['offset']
 
     text = '2009-W53-7'
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2010 == parsed['year']
     assert 1 == parsed['month']
     assert 3 == parsed['day']
@@ -340,7 +340,7 @@ def test_iso8601_week_number():
     assert None == parsed['offset']
 
     text = '2009-W01-1'
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2008 == parsed['year']
     assert 12 == parsed['month']
     assert 29 == parsed['day']
@@ -353,7 +353,7 @@ def test_iso8601_week_number():
 def test_iso8601_week_number_with_time():
     text = '2012-W05T09'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 30 == parsed['day']
@@ -365,7 +365,7 @@ def test_iso8601_week_number_with_time():
 
     text = '2012W05T09'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 30 == parsed['day']
@@ -377,7 +377,7 @@ def test_iso8601_week_number_with_time():
 
     text = '2012-W05-5T09'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
     assert 3 == parsed['day']
@@ -389,7 +389,7 @@ def test_iso8601_week_number_with_time():
 
     text = '2012W055T09'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
     assert 3 == parsed['day']
@@ -402,7 +402,7 @@ def test_iso8601_week_number_with_time():
 def test_iso8601_ordinal():
     text = '2012-007'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 7 == parsed['day']
@@ -414,7 +414,7 @@ def test_iso8601_ordinal():
 
     text = '2012007'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
     assert 7 == parsed['day']
@@ -429,7 +429,7 @@ def test_iso8601_time():
 
     text = '201205'
 
-    parsed = Parser.parse(text, now=now)
+    parsed = parse(text, now=now)
     assert 2015 == parsed['year']
     assert 11 == parsed['month']
     assert 12 == parsed['day']
@@ -441,7 +441,7 @@ def test_iso8601_time():
 
     text = '20:12:05'
 
-    parsed = Parser.parse(text, now=now)
+    parsed = parse(text, now=now)
     assert 2015 == parsed['year']
     assert 11 == parsed['month']
     assert 12 == parsed['day']
@@ -453,7 +453,7 @@ def test_iso8601_time():
 
     text = '20:12:05.123456'
 
-    parsed = Parser.parse(text, now=now)
+    parsed = parse(text, now=now)
     assert 2015 == parsed['year']
     assert 11 == parsed['month']
     assert 12 == parsed['day']
@@ -467,12 +467,12 @@ def test_iso8601_ordinal_invalid():
     text = '2012-007-05'
 
     with pytest.raises(ParserError):
-        Parser.parse(text)
+        parse(text)
 
 def test_strict():
     text = '2012'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
@@ -480,7 +480,7 @@ def test_strict():
 
     text = '2012-03'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 3 == parsed['month']
@@ -488,7 +488,7 @@ def test_strict():
 
     text = '2012-03-13'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 3 == parsed['month']
@@ -496,7 +496,7 @@ def test_strict():
 
     text = '2012W055'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
@@ -504,7 +504,7 @@ def test_strict():
 
     text = '2012007'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
@@ -512,7 +512,7 @@ def test_strict():
 
     text = '20:12:05'
 
-    parsed = Parser.parse(text, strict=True)
+    parsed = parse(text, strict=True)
     assert len(parsed) == 5
     assert 20 == parsed['hour']
     assert 12 == parsed['minute']
@@ -522,7 +522,7 @@ def test_strict():
 def test_edge_cases():
     text = '2013-11-1'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2013 == parsed['year']
     assert 11 == parsed['month']
     assert 1 == parsed['day']
@@ -534,7 +534,7 @@ def test_edge_cases():
 
     text = '10-01-01'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2010 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -546,7 +546,7 @@ def test_edge_cases():
 
     text = '31-01-01'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2031 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -558,7 +558,7 @@ def test_edge_cases():
 
     text = '32-01-01'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
     assert 2032 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -572,22 +572,22 @@ def test_invalid():
     text = '201610T'
 
     with pytest.raises(ParserError):
-        Parser.parse(text)
+        parse(text)
 
     text = '2012-W54'
 
     with pytest.raises(ParserError):
-        Parser.parse(text)
+        parse(text)
 
     text = '2012-W13-8'
 
     with pytest.raises(ParserError):
-        Parser.parse(text)
+        parse(text)
 
 def test_exif_edge_case():
     text = '2016:12:26 15:45:28'
 
-    parsed = Parser.parse(text)
+    parsed = parse(text)
 
     assert 2016 == parsed['year']
     assert 12 == parsed['month']
