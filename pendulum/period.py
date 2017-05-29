@@ -3,15 +3,15 @@ import pendulum
 
 from datetime import datetime, date
 
-from .mixins.interval import WordableIntervalMixin
-from .interval import BaseInterval, Interval
+from .mixins.interval import WordableDurationMixin
+from .duration import BaseDuration, Duration
 from .constants import MONTHS_PER_YEAR
 from .helpers import precise_diff
 
 
-class Period(WordableIntervalMixin, BaseInterval):
+class Period(WordableDurationMixin, BaseDuration):
     """
-    Interval class that is aware of the datetimes that generated the
+    Duration class that is aware of the datetimes that generated the
     time difference.
     """
 
@@ -231,11 +231,11 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     def as_interval(self):
         """
-        Return the Period as an Interval.
+        Return the Period as an Duration.
 
-        :rtype: Interval
+        :rtype: Duration
         """
-        return Interval(seconds=self.total_seconds())
+        return Duration(seconds=self.total_seconds())
 
     def __iter__(self):
         return self.xrange('days')

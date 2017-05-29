@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from .mixins.interval import (
-    WordableIntervalMixin
+    WordableDurationMixin
 )
 
 from .constants import (
@@ -30,9 +30,9 @@ def _divide_and_round(a, b):
     return q
 
 
-class BaseInterval(timedelta):
+class BaseDuration(timedelta):
     """
-    Base class for all inherited interval classes.
+    Base class for all inherited duration classes.
     """
 
     _y = None
@@ -161,7 +161,7 @@ class BaseInterval(timedelta):
         return timedelta(seconds=self.total_seconds())
 
 
-class Interval(WordableIntervalMixin, BaseInterval):
+class Duration(WordableDurationMixin, BaseDuration):
     """
     Replacement for the standard timedelta class.
 
@@ -171,11 +171,11 @@ class Interval(WordableIntervalMixin, BaseInterval):
     @classmethod
     def instance(cls, delta):
         """
-        Creates a Interval from a timedelta
+        Creates a Duration from a timedelta
 
         :type delta: timedelta
 
-        :rtype: Interval
+        :rtype: Duration
         """
         return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
@@ -260,16 +260,16 @@ class Interval(WordableIntervalMixin, BaseInterval):
 
         return NotImplemented
 
-Interval.min = Interval(-999999999)
-Interval.max = Interval(days=999999999, hours=23,
+Duration.min = Duration(-999999999)
+Duration.max = Duration(days=999999999, hours=23,
                         minutes=59, seconds=59,
                         microseconds=999999)
-Interval.resolution = Interval(microseconds=1)
+Duration.resolution = Duration(microseconds=1)
 
 
-class AbsoluteInterval(Interval):
+class AbsoluteDuration(Duration):
     """
-    Interval that expresses a time difference in absolute values.
+    Duration that expresses a time difference in absolute values.
     """
 
     def __new__(cls, days=0, seconds=0, microseconds=0,

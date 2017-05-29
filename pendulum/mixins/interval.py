@@ -1,7 +1,7 @@
 import pendulum
 
 
-class WordableIntervalMixin:
+class WordableDurationMixin:
 
     def in_words(self, locale=None, separator=' ', _periods=None):
         """

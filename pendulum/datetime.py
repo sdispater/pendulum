@@ -1171,7 +1171,7 @@ class DateTime(Date, datetime.datetime):
 
     def diff(self, dt=None, abs=True):
         """
-        Returns the difference between two DateTime objects represented as a Interval.
+        Returns the difference between two DateTime objects represented as a Duration.
 
         :type dt: DateTime or None
 

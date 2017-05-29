@@ -5,7 +5,7 @@ import struct
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import DateTime, Date, Time, Interval
+from pendulum import DateTime, Date, Time, Duration
 from pendulum.tz import timezone, Timezone
 
 PY36 = sys.version_info >= (3, 6)
@@ -59,7 +59,7 @@ class AbstractTestCase(TestCase):
         if microsecond is not None:
             self.assertEqual(microsecond, t.microsecond)
 
-    def assertInterval(self, pi, weeks, days=None,
+    def assertDuration(self, pi, weeks, days=None,
                        hours=None, minutes=None, seconds=None,
                        microseconds=None):
         expected = {'weeks': pi.weeks}
@@ -96,8 +96,8 @@ class AbstractTestCase(TestCase):
     def assertIsInstanceOfTime(self, t):
         self.assertIsInstance(t, Time)
 
-    def assertIsInstanceOfInterval(self, d):
-        self.assertIsInstance(d, Interval)
+    def assertIsInstanceOfDuration(self, d):
+        self.assertIsInstance(d, Duration)
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):

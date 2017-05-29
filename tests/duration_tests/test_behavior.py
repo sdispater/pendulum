@@ -6,7 +6,7 @@ from .. import AbstractTestCase
 class BehaviorTest(AbstractTestCase):
 
     def test_pickle(self):
-        it = pendulum.interval(days=3, seconds=2456, microseconds=123456)
+        it = pendulum.duration(days=3, seconds=2456, microseconds=123456)
         s = pickle.dumps(it)
         it2 = pickle.loads(s)
 

@@ -2,7 +2,7 @@ import pendulum
 
 from datetime import time, datetime, timedelta
 
-from .interval import Interval, AbsoluteInterval
+from .duration import Duration, AbsoluteDuration
 from .mixins.default import FormattableMixing
 from .constants import (
     USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
@@ -361,14 +361,14 @@ class Time(FormattableMixing, time):
 
     def diff(self, dt=None, abs=True):
         """
-        Returns the difference between two Time objects as an Interval.
+        Returns the difference between two Time objects as an Duration.
 
         :type dt: Time or None
 
         :param abs: Whether to return an absolute interval or not
         :type abs: bool
 
-        :rtype: Interval
+        :rtype: Duration
         """
         if dt is None:
             dt = self.now()
@@ -387,9 +387,9 @@ class Time(FormattableMixing, time):
             + dt.second
         ) * USECS_PER_SEC
 
-        klass = Interval
+        klass = Duration
         if abs:
-            klass = AbsoluteInterval
+            klass = AbsoluteDuration
 
         return klass(microseconds=us2 - us1)
 
@@ -498,4 +498,4 @@ class Time(FormattableMixing, time):
 
 Time.min = Time(0, 0, 0)
 Time.max = Time(23, 59, 59, 999999)
-Time.resolution = Interval(microseconds=1)
+Time.resolution = Duration(microseconds=1)

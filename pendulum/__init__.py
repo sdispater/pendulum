@@ -2,7 +2,7 @@
 from .datetime import DateTime
 from .date import Date
 from .time import Time
-from .interval import Interval
+from .duration import Duration
 from .period import Period
 
 # Mimicking standard library
@@ -68,8 +68,8 @@ utcfromtimestamp = DateTime.utcfromtimestamp
 fromordinal = DateTime.fromordinal
 combine = DateTime.combine
 
-# Interval
-interval = Interval
+# Duration
+duration = Duration
 
 # Period
 period = Period

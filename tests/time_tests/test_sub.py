@@ -78,20 +78,20 @@ class SubTest(AbstractTestCase):
         t3 = time(1, 1, 1, tzinfo=pytz.timezone('Europe/Paris'))
 
         diff = t - t1
-        self.assertIsInstanceOfInterval(diff)
-        self.assertInterval(diff, 0, hours=11, minutes=33, seconds=55)
+        self.assertIsInstanceOfDuration(diff)
+        self.assertDuration(diff, 0, hours=11, minutes=33, seconds=55)
 
         diff = t1 - t
-        self.assertIsInstanceOfInterval(diff)
-        self.assertInterval(diff, 0, hours=-11, minutes=-33, seconds=-55)
+        self.assertIsInstanceOfDuration(diff)
+        self.assertDuration(diff, 0, hours=-11, minutes=-33, seconds=-55)
 
         diff = t - t2
-        self.assertIsInstanceOfInterval(diff)
-        self.assertInterval(diff, 0, hours=11, minutes=33, seconds=55)
+        self.assertIsInstanceOfDuration(diff)
+        self.assertDuration(diff, 0, hours=11, minutes=33, seconds=55)
 
         diff = t2 - t
-        self.assertIsInstanceOfInterval(diff)
-        self.assertInterval(diff, 0, hours=-11, minutes=-33, seconds=-55)
+        self.assertIsInstanceOfDuration(diff)
+        self.assertDuration(diff, 0, hours=-11, minutes=-33, seconds=-55)
 
         self.assertRaises(TypeError, t.__sub__, t3)
         self.assertRaises(TypeError, t.__rsub__, t3)
