@@ -578,10 +578,18 @@ class Date(FormattableMixing, date):
         Add timedelta duration to the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
+        :type delta: pendulum.Duration or datetime.timedelta
 
         :rtype: Date
         """
+        if isinstance(delta, pendulum.duration):
+            return self.add(
+                years=delta.years,
+                months=delta.months,
+                weeks=delta.weeks,
+                days=delta.remaining_days
+            )
+
         return self.add(days=delta.days)
 
     def subtract_timedelta(self, delta):
@@ -589,10 +597,18 @@ class Date(FormattableMixing, date):
         Remove timedelta duration from the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
+        :type delta: pendulum.Duration or datetime.timedelta
 
         :rtype: Date
         """
+        if isinstance(delta, pendulum.duration):
+            return self.subtract(
+                years=delta.years,
+                months=delta.months,
+                weeks=delta.weeks,
+                days=delta.remaining_days
+            )
+
         return self.subtract(days=delta.days)
 
     def __add__(self, other):

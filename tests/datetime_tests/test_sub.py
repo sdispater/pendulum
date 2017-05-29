@@ -88,6 +88,33 @@ class SubTest(AbstractTestCase):
         self.assertEqual(59, d.second)
         self.assertEqual(123456, d.microsecond)
 
+    def test_subtract_duration(self):
+        duration = pendulum.duration(
+            years=2, months=3,
+            days=6, seconds=16, microseconds=654321
+        )
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+
+        d = d.subtract_timedelta(duration)
+        assert 2012 == d.year
+        assert 12 == d.month
+        assert 8 == d.day
+        assert 3 == d.hour
+        assert 11 == d.minute
+        assert 59 == d.second
+        assert 123456 == d.microsecond
+
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+
+        d = d - duration
+        assert 2012 == d.year
+        assert 12 == d.month
+        assert 8 == d.day
+        assert 3 == d.hour
+        assert 11 == d.minute
+        assert 59 == d.second
+        assert 123456 == d.microsecond
+
     def test_subtract_time_to_new_transition_skipped(self):
         dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
 

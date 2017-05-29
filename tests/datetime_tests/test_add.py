@@ -91,6 +91,31 @@ class AddTest(AbstractTestCase):
         self.assertEqual(0, d.second)
         self.assertEqual(777777, d.microsecond)
 
+    def test_add_duration(self):
+        duration = pendulum.duration(
+            years=2, months=3, days=6, seconds=45, microseconds=123456
+        )
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
+
+        d = d.add_timedelta(duration)
+        assert 2017 == d.year
+        assert 6 == d.month
+        assert 20 == d.day
+        assert 3 == d.hour
+        assert 13 == d.minute
+        assert 0 == d.second
+        assert 777777 == d.microsecond
+
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
+        d = d + duration
+        assert 2017 == d.year
+        assert 6 == d.month
+        assert 20 == d.day
+        assert 3 == d.hour
+        assert 13 == d.minute
+        assert 0 == d.second
+        assert 777777 == d.microsecond
+
     def test_addition_invalid_type(self):
         d = DateTime.create(2015, 3, 14, 3, 12, 15, 654321)
 

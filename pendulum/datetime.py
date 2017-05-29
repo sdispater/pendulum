@@ -1132,10 +1132,20 @@ class DateTime(Date, datetime.datetime):
         Add timedelta duration to the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
+        :type delta: pendulum.Duration or datetime.timedelta
 
         :rtype: DateTime
         """
+        if isinstance(delta, pendulum.duration):
+            return self.add(
+                years=delta.years,
+                months=delta.months,
+                weeks=delta.weeks,
+                days=delta.remaining_days,
+                seconds=delta.seconds,
+                microseconds=delta.microseconds
+            )
+
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
 
@@ -1144,10 +1154,20 @@ class DateTime(Date, datetime.datetime):
         Remove timedelta duration from the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
+        :type delta: pendulum.Duration or datetime.timedelta
 
         :rtype: DateTime
         """
+        if isinstance(delta, pendulum.duration):
+            return self.subtract(
+                years=delta.years,
+                months=delta.months,
+                weeks=delta.weeks,
+                days=delta.remaining_days,
+                seconds=delta.seconds,
+                microseconds=delta.microseconds
+            )
+
         return self.subtract(days=delta.days, seconds=delta.seconds,
                              microseconds=delta.microseconds)
 

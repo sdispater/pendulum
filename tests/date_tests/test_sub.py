@@ -1,7 +1,10 @@
+import pendulum
+
 from datetime import timedelta
 from pendulum import Date
 
 from .. import AbstractTestCase
+from ..conftest import assert_date
 
 
 class SubTest(AbstractTestCase):
@@ -53,6 +56,16 @@ class SubTest(AbstractTestCase):
         new = d - delta
         self.assertIsInstanceOfDate(new)
         self.assertDate(new, 2015, 2, 24)
+
+    def test_subtract_duration(self):
+        delta = pendulum.duration(years=2, months=3, days=18)
+        d = pendulum.date(2015, 3, 14)
+
+        new = d.subtract_timedelta(delta)
+        assert_date(new, 2012, 11, 26)
+
+        new = d - delta
+        assert_date(new, 2012, 11, 26)
 
     def test_addition_invalid_type(self):
         d = Date.create(2015, 3, 14)
