@@ -22,7 +22,7 @@ def _parse(text, **options):
     """
     parsed = base_parse(text, **options)
 
-    if not options.get('strict'):
+    if not options.get('exact'):
         return _create_datetime_object(parsed, **options)
 
     # Checking for date

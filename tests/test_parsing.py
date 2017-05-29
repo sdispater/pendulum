@@ -30,10 +30,10 @@ def test_parse():
     assert 0 == dt.offset
 
 
-def test_parse_strict():
+def test_parse_exact():
     text = '2016-10-16T12:34:56.123456+01:30'
 
-    dt = pendulum.parse(text, strict=True)
+    dt = pendulum.parse(text, exact=True)
 
     assert isinstance(dt, pendulum.datetime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
@@ -41,14 +41,14 @@ def test_parse_strict():
 
     text = '2016-10-16'
 
-    dt = pendulum.parse(text, strict=True)
+    dt = pendulum.parse(text, exact=True)
 
     assert isinstance(dt, pendulum.date)
     assert_date(dt, 2016, 10, 16)
 
     text = '12:34:56.123456'
 
-    dt = pendulum.parse(text, strict=True)
+    dt = pendulum.parse(text, exact=True)
 
     assert isinstance(dt, pendulum.time)
     assert_time(dt, 12, 34, 56, 123456)

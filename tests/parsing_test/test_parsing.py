@@ -46,7 +46,7 @@ def test_ymd():
 def test_ymd_one_character():
     text = '2016-2-6'
 
-    parsed = parse(text)
+    parsed = parse(text, strict=False)
     assert 2016 == parsed['year']
     assert 2 == parsed['month']
     assert 6 == parsed['day']
@@ -469,10 +469,10 @@ def test_iso8601_ordinal_invalid():
     with pytest.raises(ParserError):
         parse(text)
 
-def test_strict():
+def test_exact():
     text = '2012'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
@@ -480,7 +480,7 @@ def test_strict():
 
     text = '2012-03'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 3 == parsed['month']
@@ -488,7 +488,7 @@ def test_strict():
 
     text = '2012-03-13'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 3 == parsed['month']
@@ -496,7 +496,7 @@ def test_strict():
 
     text = '2012W055'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 2 == parsed['month']
@@ -504,7 +504,7 @@ def test_strict():
 
     text = '2012007'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 3
     assert 2012 == parsed['year']
     assert 1 == parsed['month']
@@ -512,7 +512,7 @@ def test_strict():
 
     text = '20:12:05'
 
-    parsed = parse(text, strict=True)
+    parsed = parse(text, exact=True)
     assert len(parsed) == 5
     assert 20 == parsed['hour']
     assert 12 == parsed['minute']
@@ -522,7 +522,7 @@ def test_strict():
 def test_edge_cases():
     text = '2013-11-1'
 
-    parsed = parse(text)
+    parsed = parse(text, strict=False)
     assert 2013 == parsed['year']
     assert 11 == parsed['month']
     assert 1 == parsed['day']
@@ -534,7 +534,7 @@ def test_edge_cases():
 
     text = '10-01-01'
 
-    parsed = parse(text)
+    parsed = parse(text, strict=False)
     assert 2010 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -546,7 +546,7 @@ def test_edge_cases():
 
     text = '31-01-01'
 
-    parsed = parse(text)
+    parsed = parse(text, strict=False)
     assert 2031 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -558,7 +558,7 @@ def test_edge_cases():
 
     text = '32-01-01'
 
-    parsed = parse(text)
+    parsed = parse(text, strict=False)
     assert 2032 == parsed['year']
     assert 1 == parsed['month']
     assert 1 == parsed['day']
@@ -567,6 +567,24 @@ def test_edge_cases():
     assert 0 == parsed['second']
     assert 0 == parsed['subsecond']
     assert None == parsed['offset']
+
+
+def test_strict():
+    text = '4 Aug 2015 - 11:20 PM'
+
+    with pytest.raises(ParserError):
+        parse(text)
+
+    parsed = parse(text, strict=False)
+    assert 2015 == parsed['year']
+    assert 8 == parsed['month']
+    assert 4 == parsed['day']
+    assert 23 == parsed['hour']
+    assert 20 == parsed['minute']
+    assert 0 == parsed['second']
+    assert 0 == parsed['subsecond']
+    assert None == parsed['offset']
+
 
 def test_invalid():
     text = '201610T'

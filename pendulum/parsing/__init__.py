@@ -51,7 +51,8 @@ COMMON = re.compile(
 DEFAULT_OPTIONS = {
     'day_first': False,
     'year_first': True,
-    'strict': False,
+    'strict': True,
+    'exact': False,
     'now': None
 }
 
@@ -80,7 +81,7 @@ def _normalize(parsed, **options):
 
     :rtype: dict
     """
-    if options.get('strict'):
+    if options.get('exact'):
         return parsed
 
     if any(('year' not in parsed, 'month' not in parsed, 'day' not in parsed)):
@@ -111,7 +112,7 @@ def _normalize(parsed, **options):
 
 def _parse(text, **options):
     if not options['day_first']:
-        # Trying to parse ISO8601 with C extension
+        # Trying to parse ISO8601
         parsed = _parse_iso8601(text)
         if parsed:
             return parsed
@@ -122,6 +123,10 @@ def _parse(text, **options):
 
     # We couldn't parse the string
     # so we fallback on the dateutil parser
+    # If not strict
+    if options.get('strict', True):
+        raise ParserError(f'Unable to parse string [{text}]')
+
     try:
         dt = parser.parse(
             text,
