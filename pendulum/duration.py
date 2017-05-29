@@ -45,7 +45,7 @@ class BaseDuration(timedelta):
     _invert = None
 
     def __new__(cls, days=0, seconds=0, microseconds=0,
-                milliseconds=0, minutes=0, hours=0, weeks=0):
+                milliseconds=0, minutes=0, hours=0, weeks=0, years=0, months=0):
         self = timedelta.__new__(
             cls, days, seconds, microseconds,
             milliseconds, minutes, hours, weeks
@@ -60,7 +60,13 @@ class BaseDuration(timedelta):
 
         self._microseconds = abs(round(total % 1 * 1e6)) * m
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
-        self._days = abs(int(total)) // SECONDS_PER_DAY * m
+
+        days = abs(int(total)) // SECONDS_PER_DAY * m
+        self._days = days + (years * 365 + months * 30)
+        self._remaining_days = abs(days) % 7 * m
+        self._weeks = abs(days) // 7 * m
+        self._months = months
+        self._years = years
 
         return self
 
@@ -77,8 +83,16 @@ class BaseDuration(timedelta):
         return self.total_days() / 7
 
     @property
+    def years(self):
+        return self._years
+
+    @property
+    def months(self):
+        return self._months
+
+    @property
     def weeks(self):
-        return abs(self.days) // 7 * self._sign(self._days)
+        return self._weeks
 
     @property
     def days(self):
@@ -86,7 +100,7 @@ class BaseDuration(timedelta):
 
     @property
     def remaining_days(self):
-        return abs(self._days) % 7 * self._sign(self._days)
+        return self._remaining_days
 
     @property
     def hours(self):
@@ -194,7 +208,14 @@ class Duration(WordableDurationMixin, BaseDuration):
         return NotImplemented
 
     def __neg__(self):
-        return self.__class__(seconds=-self.total_seconds())
+        return self.__class__(
+            years=-self._years,
+            months=-self._months,
+            weeks=-self._weeks,
+            days=-self._remaining_days,
+            seconds=-self._seconds,
+            microseconds=-self._microseconds
+        )
 
     def _to_microseconds(self):
         return ((self._days * (24*3600) + self._seconds) * 1000000 +
@@ -260,7 +281,7 @@ class Duration(WordableDurationMixin, BaseDuration):
 
         return NotImplemented
 
-Duration.min = Duration(-999999999)
+Duration.min = Duration(days=-999999999)
 Duration.max = Duration(days=999999999, hours=23,
                         minutes=59, seconds=59,
                         microseconds=999999)
@@ -273,7 +294,10 @@ class AbsoluteDuration(Duration):
     """
 
     def __new__(cls, days=0, seconds=0, microseconds=0,
-                milliseconds=0, minutes=0, hours=0, weeks=0):
+                milliseconds=0, minutes=0, hours=0,
+                weeks=0, years=0, months=0):
+        days += years * 365 + months * 30
+
         self = timedelta.__new__(
             cls, days, seconds, microseconds,
             milliseconds, minutes, hours, weeks
@@ -292,7 +316,13 @@ class AbsoluteDuration(Duration):
 
         self._microseconds = round(total % 1 * 1e6)
         self._seconds = int(total) % SECONDS_PER_DAY
-        self._days = int(total) // SECONDS_PER_DAY
+
+        days = int(total) // SECONDS_PER_DAY
+        self._days = abs(days + years * 365 + months * 30)
+        self._remaining_days = days % 7
+        self._weeks = days // 7
+        self._months = abs(months)
+        self._years = abs(years)
 
         return self
 

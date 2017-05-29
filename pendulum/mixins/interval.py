@@ -22,6 +22,8 @@ class WordableDurationMixin:
         """
         if _periods is None:
             _periods = [
+                ('year', self.years),
+                ('month', self.months),
                 ('week', self.weeks),
                 ('day', self.remaining_days),
                 ('hour', self.hours),

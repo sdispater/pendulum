@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added years and months support to durations.
 - Added the `test_local_timezone()` and `set_local_timezone()` helpers to ease testing.
 
 ### Changed

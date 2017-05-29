@@ -17,27 +17,27 @@ class ForHumansTest(AbstractTestCase):
         self.assertEqual('52 weeks 1 day', Duration(days=365).in_words())
 
     def test_all(self):
-        pi = Duration(days=1177, seconds=7284, microseconds=1000000)
+        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
         self.assertEqual(
-            '168 weeks 1 day 2 hours 1 minute 25 seconds',
+            '2 years 3 months 168 weeks 1 day 2 hours 1 minute 25 seconds',
             pi.in_words()
         )
 
     def test_in_french(self):
-        pi = Duration(days=1177, seconds=7284, microseconds=1000000)
+        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
         self.assertEqual(
-            '168 semaines 1 jour 2 heures 1 minute 25 secondes',
+            '2 ans 3 mois 168 semaines 1 jour 2 heures 1 minute 25 secondes',
             pi.in_words(locale='fr')
         )
 
     def test_repr(self):
-        pi = Duration(days=1177, seconds=7284, microseconds=1000000)
+        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
         self.assertEqual(
-            '<Duration [168 weeks 1 day 2 hours 1 minute 25 seconds]>',
+            '<Duration [2 years 3 months 168 weeks 1 day 2 hours 1 minute 25 seconds]>',
             repr(pi)
         )
 
-    def test_singluar_negative_values(self):
+    def test_singular_negative_values(self):
         pi = Duration(days=-1)
         self.assertEqual(
             '-1 day',

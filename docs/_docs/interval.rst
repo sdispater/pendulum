@@ -1,7 +1,7 @@
-Interval
+Duration
 ========
 
-The ``Interval`` class is inherited from the native ``timedelta`` class.
+The ``Duration`` class is inherited from the native ``timedelta`` class.
 It has many improvements over the base class.
 
 .. note::
@@ -20,8 +20,8 @@ It has many improvements over the base class.
         delta.seconds
         75600
 
-        d1 = Pendulum(2012, 1, 1, 1, 2, 3)
-        d2 = Pendulum(2011, 12, 31, 22, 2, 3)
+        d1 = pendulum.create(2012, 1, 1, 1, 2, 3)
+        d2 = pendulum.create(2011, 12, 31, 22, 2, 3)
         delta = d2 - d1
         delta.days
         0
@@ -37,12 +37,33 @@ You can create an instance in the following ways:
 
     import pendulum
 
-    it = pendulum.Interval(days=1177, seconds=7284, microseconds=1234)
-    it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
+    it = pendulum.duration(days=1177, seconds=7284, microseconds=1234)
 
     # You can use an existing timedelta instance
     delta = timedelta(days=1177, seconds=7284, microseconds=1234)
-    it = pendulum.interval.instance(delta)
+    it = pendulum.duration.instance(delta)
+
+.. note::
+
+    Unlike the native ``timedelta`` class, durations support specifying
+    years and months.
+
+    .. code-block:: python
+
+        import pendulum
+
+        it = pendulum.duration(years=2, months=3)
+
+    However, to maintain compatibility, native methods and properties will
+    make approximations:
+
+    .. code-block:: python
+
+        it.days
+        820
+
+        it.total_seconds()
+        70848000.0
 
 Properties and Duration Methods
 -------------------------------
@@ -54,16 +75,29 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
 
     import pendulum
 
-    it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
+    it = pendulum.duration(
+        years=2, months=3,
+        days=1177, seconds=7284, microseconds=1234
+    )
 
-    # Both weeks and days are based on the total of days
+    it.years
+    2
+    it.months
+    3
+
+    # Weeks are based on the total of days
+    # It does not take into account years and months
     it.weeks
     168
+
+    # Days, just like in timedelta, represents the total of days
+    # in the duration. If years and/or months are specified
+    # it will use an approximation
     it.days
-    1117
+    1997
 
     # If you want the remaining days not included in full weeks
-    it.remaning_days
+    it.remaining_days
     1
 
     # The remaining number in each unit
@@ -86,7 +120,7 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
     it.microseconds
     1234
 
-If you want to get the total duration of the interval in each supported unit
+If you want to get the duration in each supported unit
 you can use the appropriate methods.
 
 .. code-block:: python
@@ -117,7 +151,7 @@ supported unit as a truncated integer.
     168
 
     it.in_days()
-    1177
+    1997
 
     it.in_hours()
     28250
@@ -128,16 +162,15 @@ supported unit as a truncated integer.
     it.in_seconds()
     101700084
 
-It also has a handy ``in_words()``, which determines the interval representation when printed.
+It also has a handy ``in_words()``, which determines the duration representation when printed.
 
 .. code-block:: python
 
     import pendulum
 
-    pendulum.interval.set_locale('fr')
-    # or pendulum.interval.set_locale('fr')
+    pendulum.set_locale('fr')
 
-    it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
+    it = pendulum.duration(days=1177, seconds=7284, microseconds=1234)
 
     it.in_words()
     '168 semaines 1 jour 2 heures 1 minute 24 secondes'
