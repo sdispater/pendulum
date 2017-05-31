@@ -256,8 +256,8 @@ def _parse_common(text, parsed, **options):
                 # We can "safely" assume that the ambiguous date
                 # was actually a time in the form hhmmss
                 hhmmss = '{}{:0>2}'.format(
-                    str(parsed['year']),
-                    str(parsed['month'])
+                    str(parsed.year),
+                    str(parsed.month)
                 )
 
                 parsed.hour = int(hhmmss[:2])
