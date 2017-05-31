@@ -1,3 +1,4 @@
+import pytest
 import pendulum
 
 from datetime import timedelta
@@ -89,3 +90,11 @@ def test_as_timedelta():
     assert isinstance(delta, timedelta)
     assert 3456.123456 == delta.total_seconds()
     assert 3456 == delta.seconds
+
+
+def test_float_years_and_months():
+    with pytest.raises(ValueError):
+        pendulum.duration(years=1.5)
+
+    with pytest.raises(ValueError):
+        pendulum.duration(months=1.5)

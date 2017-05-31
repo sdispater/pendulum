@@ -232,15 +232,15 @@ class DateTime(Date, datetime.datetime):
 
         parsed = parse(time, **options)
 
-        if parsed['offset'] is None:
+        if parsed.offset is None:
             tz = tz
         else:
-            tz = parsed['offset'] / 3600
+            tz = parsed.offset / 3600
 
         return cls(
-            parsed['year'], parsed['month'], parsed['day'],
-            parsed['hour'], parsed['minute'], parsed['second'],
-            parsed['subsecond'],
+            parsed.year, parsed.month, parsed.day,
+            parsed.hour, parsed.minute, parsed.second,
+            parsed.microsecond,
             tzinfo=tz
         )
 

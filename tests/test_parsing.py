@@ -1,6 +1,9 @@
 import pendulum
 
-from .conftest import assert_datetime, assert_date, assert_time
+from .conftest import (
+    assert_datetime, assert_date, assert_time,
+    assert_duration
+)
 
 
 def test_parse():
@@ -52,3 +55,12 @@ def test_parse_exact():
 
     assert isinstance(dt, pendulum.time)
     assert_time(dt, 12, 34, 56, 123456)
+
+
+def test_parse_duration():
+    text = 'P2Y3M4DT5H6M7S'
+
+    duration = pendulum.parse(text)
+
+    assert isinstance(duration, pendulum.duration)
+    assert_duration(duration, 2, 3, 0, 4, 5, 6, 7)

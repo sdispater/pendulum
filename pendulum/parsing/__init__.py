@@ -4,8 +4,10 @@ import copy
 from datetime import datetime, date, time
 from dateutil import parser
 
+from ..constants import HOURS_PER_DAY, MINUTES_PER_HOUR, SECONDS_PER_MINUTE
 from ..helpers import parse_iso8601, week_day, days_in_year
 from .exceptions import ParserError
+from .parsed import Parsed
 
 
 COMMON = re.compile(
@@ -48,6 +50,29 @@ COMMON = re.compile(
     re.VERBOSE
 )
 
+
+DURATION = re.compile(
+    '^P' # Duration P indicator
+    # Years, months and days (optional)
+    '(?P<w>'
+    '    (?P<weeks>\d+(?:[.,]\d+)?W)'
+    ')?'
+    '(?P<ymd>'
+    '    (?P<years>\d+(?:[.,]\d+)?Y)?'
+    '    (?P<months>\d+(?:[.,]\d+)?M)?'
+    '    (?P<days>\d+(?:[.,]\d+)?D)?'
+    ')?'
+    '(?P<hms>'
+    '    (?P<timesep>T)'  # Separator (T)
+    '    (?P<hours>\d+(?:[.,]\d+)?H)?'
+    '    (?P<minutes>\d+(?:[.,]\d+)?M)?'
+    '    (?P<seconds>\d+(?:[.,]\d+)?S)?'
+    ')?'
+    '$',
+    re.VERBOSE
+)
+
+
 DEFAULT_OPTIONS = {
     'day_first': False,
     'year_first': True,
@@ -64,7 +89,7 @@ def parse(text, **options):
     :param text: The string to parse.
     :type text: str
 
-    :rtype: dict
+    :rtype: Parsed
     """
     _options = copy.copy(DEFAULT_OPTIONS)
     _options.update(options)
@@ -77,48 +102,42 @@ def _normalize(parsed, **options):
     Normalizes the parsed element.
 
     :param parsed: The parsed elements.
-    :type parsed: dict
+    :type parsed: Parsed
 
-    :rtype: dict
+    :rtype: Parsed
     """
-    if options.get('exact'):
+    if options.get('exact') or parsed.is_duration or parsed.is_period:
         return parsed
 
-    if any(('year' not in parsed, 'month' not in parsed, 'day' not in parsed)):
+    if parsed.is_time:
         now = options['now'] or datetime.now()
-        default = {
-            'year': now.year,
-            'month': now.month,
-            'day': now.day,
-            'hour': 0,
-            'minute': 0,
-            'second': 0,
-            'subsecond': 0,
-            'offset': None
-        }
-    else:
-        default = {
-            'hour': 0,
-            'minute': 0,
-            'second': 0,
-            'subsecond': 0,
-            'offset': None
-        }
+        parsed.year = now.year
+        parsed.month = now.month
+        parsed.day = now.day
 
-    default.update(parsed)
+    parsed.is_datetime = True
+    parsed.is_time = False
+    parsed.is_date = False
 
-    return default
+    return parsed
 
 
 def _parse(text, **options):
+    parsed = Parsed()
+
     if not options['day_first']:
         # Trying to parse ISO8601
-        parsed = _parse_iso8601(text)
-        if parsed:
+        _parse_iso8601(text, parsed)
+
+        if parsed.is_valid():
             return parsed
 
-    parsed = _parse_common(text, **options)
-    if parsed:
+    _parse_duration(text, parsed, **options)
+    if parsed.is_valid():
+        return parsed
+
+    _parse_common(text, parsed, **options)
+    if parsed.is_valid():
         return parsed
 
     # We couldn't parse the string
@@ -136,19 +155,10 @@ def _parse(text, **options):
     except ValueError:
         raise ParserError('Invalid date string: {}'.format(text))
 
-    return {
-        'year': dt.year,
-        'month': dt.month,
-        'day': dt.day,
-        'hour': dt.hour,
-        'minute': dt.minute,
-        'second': dt.second,
-        'subsecond': dt.microsecond,
-        'offset': dt.utcoffset().total_seconds() if dt.tzinfo else None,
-    }
+    return parsed.from_datetime(dt)
 
 
-def _parse_iso8601(text):
+def _parse_iso8601(text, parsed):
     if not parse_iso8601:
         return
 
@@ -158,34 +168,14 @@ def _parse_iso8601(text):
         return
 
     if isinstance(dt, time):
-        return {
-            'hour': dt.hour,
-            'minute': dt.minute,
-            'second': dt.second,
-            'subsecond': dt.microsecond
-        }
+        return parsed.from_time(dt)
     elif isinstance(dt, date) and not isinstance(dt, datetime):
-        return {
-            'year': dt.year,
-            'month': dt.month,
-            'day': dt.day
-        }
+        return parsed.from_date(dt)
 
-    parsed = {
-        'year': dt.year,
-        'month': dt.month,
-        'day': dt.day,
-        'hour': dt.hour,
-        'minute': dt.minute,
-        'second': dt.second,
-        'subsecond': dt.microsecond,
-        'offset': dt.tzinfo.offset if dt.tzinfo else None
-    }
-
-    return parsed
+    return parsed.from_datetime(dt)
 
 
-def _parse_common(text, **options):
+def _parse_common(text, parsed, **options):
     """
     Tries to parse the string as a common datetime format.
 
@@ -195,14 +185,12 @@ def _parse_common(text, **options):
     :rtype: dict or None
     """
     m = COMMON.match(text)
-    parsed = {}
     ambiguous_date = False
-    has_date = False
 
     if m:
         if m.group('date'):
             # A date has been specified
-            has_date = True
+            parsed.is_date = True
 
             if m.group('isocalendar'):
                 # We have a ISO 8601 string defined
@@ -257,11 +245,10 @@ def _parse_common(text, **options):
                         month = int(m.group('month'))
                         day = 1
 
-            parsed.update({
-                'year': year,
-                'month': month,
-                'day': day,
-            })
+            parsed.year = year
+            parsed.month = month
+            parsed.day = day
+            parsed.is_date = True
 
         if not m.group('time'):
             # No time has been specified
@@ -273,44 +260,41 @@ def _parse_common(text, **options):
                     str(parsed['month'])
                 )
 
-                return {
-                    'hour': int(hhmmss[:2]),
-                    'minute': int(hhmmss[2:4]),
-                    'second': int(hhmmss[4:]),
-                    'subsecond': 0
-                }
+                parsed.hour = int(hhmmss[:2])
+                parsed.minute = int(hhmmss[2:4])
+                parsed.second = int(hhmmss[4:])
+                parsed.is_date = False
+                parsed.is_time = True
 
             return parsed
 
         if ambiguous_date:
             raise ParserError('Invalid date string: {}'.format(text))
 
-        if has_date and not m.group('timesep'):
+        if parsed.is_date and not m.group('timesep'):
             raise ParserError('Invalid date string: {}'.format(text))
 
-        parsed.update({
-            'hour': 0,
-            'minute': 0,
-            'second': 0,
-            'subsecond': 0,
-            'offset': None
-        })
+        if parsed.is_date:
+            parsed.is_datetime = True
+            parsed.is_date = False
+        else:
+            parsed.is_time = True
 
         # Grabbing hh:mm:ss
-        parsed['hour'] = int(m.group('hour'))
+        parsed.hour = int(m.group('hour'))
 
         if m.group('minute'):
-            parsed['minute'] = int(m.group('minute'))
+            parsed.minute = int(m.group('minute'))
 
         if m.group('second'):
-            parsed['second'] = int(m.group('second'))
+            parsed.second = int(m.group('second'))
 
         # Grabbing subseconds, if any
         if m.group('subsecondsection'):
             # Limiting to 6 chars
             subsecond = m.group('subsecond')[:6]
 
-            parsed['subsecond'] = int('{:0<6}'.format(subsecond))
+            parsed.microsecond = int('{:0<6}'.format(subsecond))
 
         # Grabbing timezone, if any
         tz = m.group('tz')
@@ -334,9 +318,152 @@ def _parse_common(text, **options):
                 if negative:
                     offset = -1 * offset
 
-            parsed['offset'] = offset
+            parsed.offset = offset
 
         return parsed
+
+
+def _parse_duration(text, parsed, **options):
+    m = DURATION.match(text)
+    if not m:
+        return parsed
+
+    parsed.is_duration = True
+    fractional = False
+
+    if m.group('w'):
+        # Weeks
+        if m.group('ymd') or m.group('hms'):
+            # Specifying anything more than weeks is not supported
+            raise ParserError('Invalid duration string')
+
+        weeks = m.group('weeks')
+        if not weeks:
+            raise ParserError('Invalid duration string')
+
+        weeks = weeks.replace(',', '.').replace('W', '')
+        if '.' in weeks:
+            weeks, portion = weeks.split('.')
+            parsed.weeks = int(weeks)
+            days = int(portion) / 10 * 7
+            days, hours = int(days // 1), days % 1 * HOURS_PER_DAY
+            parsed.days = days
+            parsed.hours = hours
+        else:
+            parsed.weeks = int(weeks)
+
+    if m.group('ymd'):
+        # Years, months and/or days
+        years = m.group('years')
+        months = m.group('months')
+        days = m.group('days')
+
+        # Checking order
+        years_start = m.start('years') if years else -3
+        months_start = m.start('months') if months else years_start + 1
+        days_start = m.start('days') if days else months_start + 1
+
+        # Check correct order
+        if not (years_start < months_start < days_start):
+            raise ParserError('Invalid duration')
+
+        if years:
+            years = years.replace(',', '.').replace('Y', '')
+            if '.' in years:
+                fractional = True
+
+                parsed.years = float(years)
+            else:
+                parsed.years = int(years)
+
+        if months:
+            if fractional:
+                raise ParserError('Invalid duration')
+
+            months = months.replace(',', '.').replace('M', '')
+            if '.' in months:
+                fractional = True
+
+                parsed.months = float(months)
+            else:
+                parsed.months = int(months)
+
+        if days:
+            if fractional:
+                raise ParserError('Invalid duration')
+
+            days = days.replace(',', '.').replace('D', '')
+
+            if '.' in days:
+                fractional = True
+
+                days, _hours = days.split('.')
+                parsed.days = int(days)
+                parsed.hours = int(_hours) / 10 * HOURS_PER_DAY
+            else:
+                parsed.days = int(days)
+
+    if m.group('hms'):
+        # Hours, minutes and/or seconds
+        hours = m.group('hours') or 0
+        minutes = m.group('minutes') or 0
+        seconds = m.group('seconds') or 0
+
+        # Checking order
+        hours_start = m.start('hours') if hours else -3
+        minutes_start = m.start('minutes') if minutes else hours_start + 1
+        seconds_start = m.start('seconds') if seconds else minutes_start + 1
+
+        # Check correct order
+        if not (hours_start < minutes_start < seconds_start):
+            raise ParserError('Invalid duration')
+
+        if hours:
+            if fractional:
+                raise ParserError('Invalid duration')
+
+            hours = hours.replace(',', '.').replace('H', '')
+
+            if '.' in hours:
+                fractional = True
+
+                hours, _minutes = hours.split('.')
+                parsed.hours += int(hours)
+                parsed.minutes += int(_minutes) / 10 * MINUTES_PER_HOUR
+            else:
+                parsed.hours += int(hours)
+
+        if minutes:
+            if fractional:
+                raise ParserError('Invalid duration')
+
+            minutes = minutes.replace(',', '.').replace('M', '')
+
+            if '.' in minutes:
+                fractional = True
+
+                minutes, _seconds = hours.split('.')
+                parsed.hours += int(hours)
+                seconds += int(_seconds) / 10 * SECONDS_PER_MINUTE
+            else:
+                parsed.minutes += int(minutes)
+
+        if seconds:
+            if fractional:
+                raise ParserError('Invalid duration')
+
+            seconds = seconds.replace(',', '.').replace('S', '')
+
+            if '.' in seconds:
+                fractional = True
+
+                seconds, microseconds = seconds.split('.')
+                parsed.seconds += int(seconds)
+                parsed.microseconds = int('{:0<6}'.format(microseconds[:6]))
+            else:
+                parsed.seconds += int(seconds)
+
+    return parsed
 
 
 def _get_iso_8601_week(year, week, weekday):

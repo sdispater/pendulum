@@ -46,6 +46,9 @@ class BaseDuration(timedelta):
 
     def __new__(cls, days=0, seconds=0, microseconds=0,
                 milliseconds=0, minutes=0, hours=0, weeks=0, years=0, months=0):
+        if not isinstance(years, int) or not isinstance(months, int):
+            raise ValueError('Float year and months are not supported')
+
         self = timedelta.__new__(
             cls, days, seconds, microseconds,
             milliseconds, minutes, hours, weeks
@@ -296,7 +299,8 @@ class AbsoluteDuration(Duration):
     def __new__(cls, days=0, seconds=0, microseconds=0,
                 milliseconds=0, minutes=0, hours=0,
                 weeks=0, years=0, months=0):
-        days += years * 365 + months * 30
+        if not isinstance(years, int) or not isinstance(months, int):
+            raise ValueError('Float year and months are not supported')
 
         self = timedelta.__new__(
             cls, days, seconds, microseconds,
