@@ -107,6 +107,28 @@ const int PARSER_INVALID_MINUTE = 11;
 const int PARSER_INVALID_SECOND = 12;
 const int PARSER_INVALID_SUBSECOND = 13;
 const int PARSER_INVALID_TZ_OFFSET = 14;
+const int PARSER_INVALID_DURATION = 15;
+const int PARSER_INVALID_DURATION_FLOAT_YEAR_MONTH_NOT_SUPPORTED = 16;
+
+const char PARSER_ERRORS[17][80] = {
+    "Invalid ISO 8601 string",
+    "Invalid date",
+    "Invalid time",
+    "Invalid week date",
+    "Invalid week number",
+    "Invalid weekday number",
+    "Invalid ordinal day for year",
+    "Invalid month and/or day",
+    "Invalid month",
+    "Invalid day for month",
+    "Invalid hour",
+    "Invalid minute",
+    "Invalid second",
+    "Invalid subsecond",
+    "Invalid timezone offset",
+    "Invalid duration",
+    "Float years and months are not supported"
+};
 
 /* ------------------------------------------------------------------------- */
 
@@ -398,6 +420,140 @@ static PyTypeObject Diff_type = {
 };
 
 #define new_diff(years, months, days, hours, minutes, seconds, microseconds) new_diff_ex(years, months, days, hours, minutes, seconds, microseconds, &Diff_type)
+
+
+/*
+ * class Duration():
+ */
+typedef struct {
+    PyObject_HEAD
+    int years;
+    int months;
+    int weeks;
+    int days;
+    int hours;
+    int minutes;
+    int seconds;
+    int microseconds;
+} Duration;
+
+/*
+ * def __init__(self, years, months, days, hours, minutes, seconds, microseconds):
+ *     self.years = years
+ *     # ...
+*/
+static int Duration_init(Duration *self, PyObject *args, PyObject *kwargs) {
+    int years;
+    int months;
+    int weeks;
+    int days;
+    int hours;
+    int minutes;
+    int seconds;
+    int microseconds;
+
+    if (!PyArg_ParseTuple(args, "iiiiiiii", &years, &months, &weeks, &days, &hours, &minutes, &seconds, &microseconds))
+        return -1;
+
+    self->years = years;
+    self->months = months;
+    self->weeks = weeks;
+    self->days = days;
+    self->hours = hours;
+    self->minutes = minutes;
+    self->seconds = seconds;
+    self->microseconds = microseconds;
+
+    return 0;
+}
+
+/*
+ * def __repr__(self):
+ *     return '{} years {} months {} days {} hours {} minutes {} seconds {} microseconds'.format(
+ *         self.years, self.months, self.days, self.minutes, self.hours, self.seconds, self.microseconds
+ *     )
+ */
+static PyObject *Duration_repr(Duration *self) {
+    char repr[82] = {0};
+
+    sprintf(
+        repr,
+        "%d years %d months %d weeks %d days %d hours %d minutes %d seconds %d microseconds",
+        self->years,
+        self->months,
+        self->weeks,
+        self->days,
+        self->hours,
+        self->minutes,
+        self->seconds,
+        self->microseconds
+    );
+
+    return PyUnicode_FromString(repr);
+}
+
+/*
+ * Instantiate new Duration_type object
+ * Skip overhead of calling PyObject_New and PyObject_Init.
+ * Directly allocate object.
+ */
+static PyObject *new_duration_ex(int years, int months, int weeks, int days, int hours, int minutes, int seconds, int microseconds, PyTypeObject *type) {
+    Duration *self = (Duration *) (type->tp_alloc(type, 0));
+
+    if (self != NULL) {
+        self->years = years;
+        self->months = months;
+        self->weeks = weeks;
+        self->days = days;
+        self->hours = hours;
+        self->minutes = minutes;
+        self->seconds = seconds;
+        self->microseconds = microseconds;
+    }
+
+    return (PyObject *) self;
+}
+
+/*
+ * Class member / class attributes
+ */
+static PyMemberDef Duration_members[] = {
+    {"years", T_INT, offsetof(Duration, years), 0, "years in duration"},
+    {"months", T_INT, offsetof(Duration, months), 0, "months in duration"},
+    {"weeks", T_INT, offsetof(Duration, weeks), 0, "weeks in duration"},
+    {"days", T_INT, offsetof(Duration, days), 0, "days in duration"},
+    {"hours", T_INT, offsetof(Duration, hours), 0, "hours in duration"},
+    {"minutes", T_INT, offsetof(Duration, minutes), 0, "minutes in duration"},
+    {"seconds", T_INT, offsetof(Duration, seconds), 0, "seconds in duration"},
+    {"microseconds", T_INT, offsetof(Duration, microseconds), 0, "microseconds in duration"},
+    {NULL}
+};
+
+static PyTypeObject Duration_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "Duration",                             /* tp_name */
+    sizeof(Duration),                       /* tp_basicsize */
+    0,                                      /* tp_itemsize */
+    0,                                      /* tp_dealloc */
+    0,                                      /* tp_print */
+    0,                                      /* tp_getattr */
+    0,                                      /* tp_setattr */
+    0,                                      /* tp_as_async */
+    (reprfunc)Duration_repr,                /* tp_repr */
+    0,                                      /* tp_as_number */
+    0,                                      /* tp_as_sequence */
+    0,                                      /* tp_as_mapping */
+    0,                                      /* tp_hash  */
+    0,                                      /* tp_call */
+    (reprfunc)Duration_repr,                /* tp_str */
+    0,                                      /* tp_getattro */
+    0,                                      /* tp_setattro */
+    0,                                      /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags */
+    "Duration",                             /* tp_doc */
+};
+
+#define new_duration(years, months, weeks, days, hours, minutes, seconds, microseconds) new_duration_ex(years, months, weeks, days, hours, minutes, seconds, microseconds, &Duration_type)
 
 
 /*
@@ -980,6 +1136,286 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
 }
 
 
+Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
+    char* c;
+    int value = 0;
+    int grabbed = 0;
+    int in_time = 0;
+    int in_fraction = 0;
+    int fraction_length = 0;
+    int has_fractional = 0;
+    int fraction = 0;
+    int has_ymd = 0;
+    int has_week = 0;
+    int has_year = 0;
+    int has_month = 0;
+    int has_day = 0;
+    int has_hour = 0;
+    int has_minute = 0;
+    int has_second = 0;
+
+    c = str;
+
+    // Removing P operator
+    c++;
+
+    parsed->is_duration = 1;
+
+    for (; *c != '\0'; c++) {
+        switch (*c) {
+            case 'Y':
+                if (!grabbed || in_time || has_week || has_ymd) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (fraction) {
+                    parsed->error = PARSER_INVALID_DURATION_FLOAT_YEAR_MONTH_NOT_SUPPORTED;
+
+                    return NULL;
+                }
+
+                parsed->years = value;
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+                has_ymd = 1;
+                has_year = 1;
+
+                break;
+            case 'M':
+                if (!grabbed || has_week) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (in_time) {
+                    if (has_second) {
+                        parsed->error = PARSER_INVALID_DURATION;
+
+                        return NULL;
+                    }
+
+                    if (has_fractional) {
+                        parsed->error = PARSER_INVALID_DURATION;
+
+                        return NULL;
+                    }
+
+                    parsed->minutes = value;
+                    if (fraction) {
+                        parsed->seconds = fraction * 6;
+                        has_fractional = 1;
+                    }
+
+                    has_minute = 1;
+                } else {
+                    if (fraction) {
+                        parsed->error = PARSER_INVALID_DURATION_FLOAT_YEAR_MONTH_NOT_SUPPORTED;
+
+                        return NULL;
+                    }
+
+                    if (has_month || has_day) {
+                        parsed->error = PARSER_INVALID_DURATION;
+
+                        return NULL;
+                    }
+
+                    parsed->months = value;
+                    has_ymd = 1;
+                    has_month = 1;
+                }
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+
+                break;
+            case 'D':
+                if (!grabbed || in_time || has_week) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (has_day) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                parsed->days = value;
+                if (fraction) {
+                    parsed->hours = fraction * 2.4;
+                    has_fractional = 1;
+                }
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+                has_ymd = 1;
+                has_day = 1;
+
+                break;
+            case 'T':
+                if (grabbed) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                in_time = 1;
+
+                break;
+            case 'H':
+                if (!grabbed || !in_time || has_week) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (has_hour || has_second || has_minute) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (has_fractional) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                parsed->hours = value;
+                if (fraction) {
+                    parsed->minutes = fraction * 6;
+                    has_fractional = 1;
+                }
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+                has_hour = 1;
+
+                break;
+            case 'S':
+                if (!grabbed || !in_time || has_week) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (has_second) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (has_fractional) {
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                if (fraction) {
+                    parsed->seconds = value;
+                    if (fraction_length > 6) {
+                        parsed->microseconds = fraction / pow(10, fraction_length - 6);
+                    } else {
+                        parsed->microseconds = fraction * pow(10, 6 - fraction_length);
+                    }
+                    has_fractional = 1;
+                } else {
+                    parsed->seconds = value;
+                }
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+                has_second = 1;
+
+                break;
+            case 'W':
+                if (!grabbed || in_time || has_ymd) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                parsed->weeks = value;
+                if (fraction) {
+                    float days;
+                    days = fraction * 0.7;
+                    parsed->hours = (int) ((days - (int) days) * 24);
+                    parsed->days = (int) days;
+                }
+
+                grabbed = 0;
+                value = 0;
+                fraction = 0;
+                in_fraction = 0;
+                has_week = 1;
+
+                break;
+            case '.':
+                if (!grabbed || has_fractional) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                in_fraction = 1;
+
+                break;
+            case ',':
+                if (!grabbed || has_fractional) {
+                    // No value grabbed
+                    parsed->error = PARSER_INVALID_DURATION;
+
+                    return NULL;
+                }
+
+                in_fraction = 1;
+
+                break;
+            default:
+                if (*c >= '1' && *c <='9') {
+                    if (in_fraction) {
+                        fraction = 10 * fraction + *c - '0';
+                        fraction_length++;
+                    } else {
+                        value = 10 * value + *c - '0';
+                        grabbed = 1;
+                    }
+                    break;
+                }
+
+                parsed->error = PARSER_INVALID_DURATION;
+
+                return NULL;
+        }
+    }
+
+    return parsed;
+}
+
+
 PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     char* str;
     PyObject *obj;
@@ -993,12 +1429,18 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    if (_parse_iso8601_datetime(str, parsed) == NULL) {
-        char error[80];
-        sprintf(error, "%i", parsed->error);
+    if (*str == 'P') {
+        // Duration (or interval)
+        if (_parse_iso8601_duration(str, parsed) == NULL) {
+            PyErr_SetString(
+                PyExc_ValueError, PARSER_ERRORS[parsed->error]
+            );
 
+            return NULL;
+        }
+    } else if (_parse_iso8601_datetime(str, parsed) == NULL) {
         PyErr_SetString(
-            PyExc_ValueError, error
+            PyExc_ValueError, PARSER_ERRORS[parsed->error]
         );
 
         return NULL;
@@ -1024,7 +1466,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 PyDateTimeAPI->DateType
             );
         }
-    } else {
+    } else if (parsed->is_datetime) {
         if (!parsed->has_offset) {
             tzinfo = Py_BuildValue("");
         } else {
@@ -1044,6 +1486,13 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         );
 
         Py_DECREF(tzinfo);
+    } else if (parsed->is_duration) {
+        obj = new_duration(
+            parsed->years, parsed->months, parsed->weeks, parsed->days,
+            parsed->hours, parsed->minutes, parsed->seconds, parsed->microseconds
+        );
+    } else {
+        return NULL;
     }
 
     free(parsed);
@@ -1416,11 +1865,21 @@ PyInit__helpers(void)
     if (PyType_Ready(&Diff_type) < 0)
         return NULL;
 
+    // Duration declaration
+    Duration_type.tp_new = PyType_GenericNew;
+    Duration_type.tp_members = Duration_members;
+    Duration_type.tp_init = (initproc)Duration_init;
+
+    if (PyType_Ready(&Duration_type) < 0)
+        return NULL;
+
     Py_INCREF(&FixedOffset_type);
     Py_INCREF(&Diff_type);
+    Py_INCREF(&Duration_type);
 
     PyModule_AddObject(module, "TZFixedOffset", (PyObject *)&FixedOffset_type);
     PyModule_AddObject(module, "PreciseDiff", (PyObject *)&Diff_type);
+    PyModule_AddObject(module, "Duration", (PyObject *)&Duration_type);
 
     return module;
 }

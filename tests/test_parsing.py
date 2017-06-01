@@ -64,3 +64,10 @@ def test_parse_duration():
 
     assert isinstance(duration, pendulum.duration)
     assert_duration(duration, 2, 3, 0, 4, 5, 6, 7)
+
+    text = 'P2W'
+
+    duration = pendulum.parse(text)
+
+    assert isinstance(duration, pendulum.duration)
+    assert_duration(duration, 0, 0, 2, 0, 0, 0, 0)

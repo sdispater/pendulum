@@ -171,8 +171,10 @@ def _parse_iso8601(text, parsed):
         return parsed.from_time(dt)
     elif isinstance(dt, date) and not isinstance(dt, datetime):
         return parsed.from_date(dt)
-
-    return parsed.from_datetime(dt)
+    elif isinstance(dt, datetime):
+        return parsed.from_datetime(dt)
+    else:
+        return parsed.from_duration(dt)
 
 
 def _parse_common(text, parsed, **options):
@@ -455,8 +457,6 @@ def _parse_duration(text, parsed, **options):
             seconds = seconds.replace(',', '.').replace('S', '')
 
             if '.' in seconds:
-                fractional = True
-
                 seconds, microseconds = seconds.split('.')
                 parsed.seconds += int(seconds)
                 parsed.microseconds = int('{:0<6}'.format(microseconds[:6]))

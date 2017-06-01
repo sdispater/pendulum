@@ -139,6 +139,7 @@ def test_parse_iso8601():
     # Week date wth time
     assert datetime(2008, 9, 27, 9, 0, 0, 0) == parse_iso8601('2008-W39-6T09')
 
+
 def test_parse_ios8601_invalid():
     if not parse_iso8601:
         pytest.skip('parse_iso8601 is only supported with C extensions.')
@@ -230,6 +231,295 @@ def assert_diff(diff,
     assert diff.seconds == seconds
     assert diff.microseconds == microseconds
 
+
+def test_parse_ios8601_duration():
+    if not parse_iso8601:
+        pytest.skip('parse_iso8601 is only supported with C extensions.')
+
+    text = 'P2Y3M4DT5H6M7S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 2
+    assert parsed.months == 3
+    assert parsed.weeks == 0
+    assert parsed.days == 4
+    assert parsed.hours == 5
+    assert parsed.minutes == 6
+    assert parsed.seconds == 7
+    assert parsed.microseconds == 0
+
+    text = 'P1Y2M3DT4H5M6.5S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 2
+    assert parsed.weeks == 0
+    assert parsed.days == 3
+    assert parsed.hours == 4
+    assert parsed.minutes == 5
+    assert parsed.seconds == 6
+    assert parsed.microseconds == 500000
+
+    text = 'P1Y2M3DT4H5M6,5S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 2
+    assert parsed.weeks == 0
+    assert parsed.days == 3
+    assert parsed.hours == 4
+    assert parsed.minutes == 5
+    assert parsed.seconds == 6
+    assert parsed.microseconds == 500000
+
+    text = 'P1Y2M3D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 2
+    assert parsed.weeks == 0
+    assert parsed.days == 3
+    assert parsed.hours == 0
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1Y2M3.5D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 2
+    assert parsed.weeks == 0
+    assert parsed.days == 3
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1Y2M3,5D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 2
+    assert parsed.weeks == 0
+    assert parsed.days == 3
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'PT4H54M6.5S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 4
+    assert parsed.minutes == 54
+    assert parsed.seconds == 6
+    assert parsed.microseconds == 500000
+
+    text = 'PT4H54M6,5S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 4
+    assert parsed.minutes == 54
+    assert parsed.seconds == 6
+    assert parsed.microseconds == 500000
+
+    text = 'P1Y'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 1
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 0
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1.5Y'
+    with pytest.raises(ValueError):
+        parse_iso8601(text)
+
+    text = 'P1,5Y'
+    with pytest.raises(ValueError):
+        parse_iso8601(text)
+
+    text = 'P1M'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 1
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 0
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1.5M'
+    with pytest.raises(ValueError):
+        parse_iso8601(text)
+
+    text = 'P1,5M'
+    with pytest.raises(ValueError):
+        parse_iso8601(text)
+
+    text = 'P1W'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 1
+    assert parsed.days == 0
+    assert parsed.hours == 0
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1.5W'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 1
+    assert parsed.days == 3
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1,5W'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 1
+    assert parsed.days == 3
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 1
+    assert parsed.hours == 0
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1.5D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 1
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'P1,5D'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 1
+    assert parsed.hours == 12
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'PT1H'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 1
+    assert parsed.minutes == 0
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'PT1.5H'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 1
+    assert parsed.minutes == 30
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    text = 'PT1,5H'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 0
+    assert parsed.months == 0
+    assert parsed.weeks == 0
+    assert parsed.days == 0
+    assert parsed.hours == 1
+    assert parsed.minutes == 30
+    assert parsed.seconds == 0
+    assert parsed.microseconds == 0
+
+    # No P operator
+    with pytest.raises(ValueError):
+        parse_iso8601('2Y3M4DT5H6M7S')
+
+    # Week and other units combined
+    with pytest.raises(ValueError):
+        parse_iso8601('P1Y2W')
+        
+    # Invalid units order
+    with pytest.raises(ValueError):
+        parse_iso8601('P1S')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('P1D1S')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('1Y2M3D1SPT1M')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('P1Y2M3D2MT1S')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('P2M3D1ST1Y1M')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('P1Y2M2MT3D1S')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('P1D1Y1M')
+
+    with pytest.raises(ValueError):
+        parse_iso8601('PT1S1H')
+
+    # Invalid
+    with pytest.raises(ValueError):
+        parse_iso8601('P1Dasdfasdf')
+
+    # Invalid fractional
+    with pytest.raises(ValueError):
+        parse_iso8601('P2Y3M4DT5.5H6M7S')
 
 def test_test_now():
     now = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)

@@ -82,3 +82,20 @@ class Parsed:
         self.is_datetime = True
 
         return self
+
+    def from_duration(self, duration):
+        self.years = duration.years
+        self.months = duration.months
+        self.days = duration.days
+        self.weeks = duration.weeks
+        self.hours = duration.hours
+        self.minutes = duration.minutes
+        self.seconds = duration.seconds
+        self.microseconds = duration.microseconds
+
+        self.is_date = False
+        self.is_time = False
+        self.is_datetime = False
+        self.is_duration = True
+
+        return self
