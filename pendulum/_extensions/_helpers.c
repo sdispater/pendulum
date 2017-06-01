@@ -91,6 +91,23 @@ const int DAY_OF_WEEK_TABLE[12] = {
 #define TM_NOVEMBER 10
 #define TM_DECEMBER 11
 
+// Parsing errors
+const int PARSER_INVALID_ISO8601 = 0;
+const int PARSER_INVALID_DATE = 1;
+const int PARSER_INVALID_TIME = 2;
+const int PARSER_INVALID_WEEK_DATE = 3;
+const int PARSER_INVALID_WEEK_NUMBER = 4;
+const int PARSER_INVALID_WEEKDAY_NUMBER = 5;
+const int PARSER_INVALID_ORDINAL_DAY_FOR_YEAR = 6;
+const int PARSER_INVALID_MONTH_OR_DAY = 7;
+const int PARSER_INVALID_MONTH = 8;
+const int PARSER_INVALID_DAY_FOR_MONTH = 9;
+const int PARSER_INVALID_HOUR = 10;
+const int PARSER_INVALID_MINUTE = 11;
+const int PARSER_INVALID_SECOND = 12;
+const int PARSER_INVALID_SUBSECOND = 13;
+const int PARSER_INVALID_TZ_OFFSET = 14;
+
 /* ------------------------------------------------------------------------- */
 
 int is_leap(int year) {
@@ -382,6 +399,74 @@ static PyTypeObject Diff_type = {
 
 #define new_diff(years, months, days, hours, minutes, seconds, microseconds) new_diff_ex(years, months, days, hours, minutes, seconds, microseconds, &Diff_type)
 
+
+/*
+ * class Parsed():
+ */
+typedef struct {
+    int is_date;
+    int is_time;
+    int is_datetime;
+    int is_duration;
+    int is_period;
+    int ambiguous;
+    int year;
+    int month;
+    int day;
+    int hour;
+    int minute;
+    int second;
+    int microsecond;
+    int offset;
+    int has_offset;
+    int years;
+    int months;
+    int weeks;
+    int days;
+    int hours;
+    int minutes;
+    int seconds;
+    int microseconds;
+    int error;
+} Parsed;
+
+
+Parsed* new_parsed() {
+    Parsed *parsed;
+
+    if((parsed = malloc(sizeof *parsed)) != NULL) {
+        parsed->is_date = 0;
+        parsed->is_time = 0;
+        parsed->is_datetime = 0;
+        parsed->is_duration = 0;
+        parsed->is_period = 0;
+
+        parsed->ambiguous = 0;
+        parsed->year = 0;
+        parsed->month = 1;
+        parsed->day = 1;
+        parsed->hour = 0;
+        parsed->minute = 0;
+        parsed->second = 0;
+        parsed->microsecond = 0;
+        parsed->offset = 0;
+        parsed->has_offset = 0;
+
+        parsed->years = 0;
+        parsed->months = 0;
+        parsed->weeks = 0;
+        parsed->days = 0;
+        parsed->hours = 0;
+        parsed->minutes = 0;
+        parsed->seconds = 0;
+        parsed->microseconds = 0;
+
+        parsed->error = -1;
+    }
+
+    return parsed;
+}
+
 /* -------------------------- Functions --------------------------*/
 
 PyObject* local_time(PyObject *self, PyObject *args) {
@@ -489,58 +574,36 @@ PyObject* local_time(PyObject *self, PyObject *args) {
 }
 
 
-PyObject* parse_iso8601(PyObject *self, PyObject *args) {
-    char* str;
+Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
     char* c;
-    PyObject *obj;
-    PyObject *tzinfo;
-
-    int year = 0;
-    int month = 1;
-    int day = 1;
-    int hour = 0;
-    int minute = 0;
-    int second = 0;
-    int subsecond = 0;
     int monthday = 0;
     int week = 0;
     int weekday = 1;
     int ordinal;
     int tz_sign = 0;
-    int offset = 0;
     int leap = 0;
-    int ambiguous_date = 0;
     int separators = 0;
     int time = 0;
-    int has_time = 0;
     int has_hour = 0;
-    int has_offset = 0;
     int i;
     int j;
 
-    if (!PyArg_ParseTuple(args, "s", &str)) {
-        PyErr_SetString(
-            PyExc_ValueError, "Invalid parameters"
-        );
-        return NULL;
-    }
+    // Assuming date only for now
+    parsed->is_date = 1;
 
     c = str;
 
-    // Year
     for (i = 0; i < 4; i++) {
         if (*c >= '0' && *c <= '9') {
-            year = 10 * year + *c++ - '0';
+            parsed->year = 10 * parsed->year + *c++ - '0';
         } else {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid ISO8601 string"
-            );
+            parsed->error = PARSER_INVALID_ISO8601;
 
             return NULL;
         }
     }
 
-    leap = is_leap(year);
+    leap = is_leap(parsed->year);
 
     // Optional separator
     if (*c == '-') {
@@ -573,9 +636,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 // Week with weekday
                 if (!(separators == 0 || separators == 2)) {
                     // We should have 2 or no separator
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid week date"
-                    );
+                    parsed->error = PARSER_INVALID_WEEK_DATE;
 
                     return NULL;
                 }
@@ -586,51 +647,45 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 break;
             default:
                 // Any other case is wrong
-                PyErr_SetString(
-                    PyExc_ValueError, "Invalid week date"
-                );
+                parsed->error = PARSER_INVALID_WEEK_DATE;
 
                 return NULL;
         }
 
         // Checks
         if (week > 53) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid week number"
-            );
+            parsed->error = PARSER_INVALID_WEEK_NUMBER;
 
             return NULL;
         }
 
         if (weekday > 7) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid weekday number"
-            );
+            parsed->error = PARSER_INVALID_WEEKDAY_NUMBER;
 
             return NULL;
         }
 
         // Calculating ordinal day
-        ordinal = week * 7 + weekday - (week_day(year, 1, 4) + 3);
+        ordinal = week * 7 + weekday - (week_day(parsed->year, 1, 4) + 3);
 
         if (ordinal < 1) {
             // Previous year
-            ordinal += days_in_year(year - 1);
-            year -= 1;
-            leap = is_leap(year);
+            ordinal += days_in_year(parsed->year - 1);
+            parsed->year -= 1;
+            leap = is_leap(parsed->year);
         }
 
-        if (ordinal > days_in_year(year)) {
+        if (ordinal > days_in_year(parsed->year)) {
             // Next year
-            ordinal -= days_in_year(year);
-            year += 1;
-            leap = is_leap(year);
+            ordinal -= days_in_year(parsed->year);
+            parsed->year += 1;
+            leap = is_leap(parsed->year);
         }
 
         for (j = 1; j < 14; j++) {
             if (ordinal <= MONTHS_OFFSETS[leap][j]) {
-                day = ordinal - MONTHS_OFFSETS[leap][j - 1];
-                month = j - 1;
+                parsed->day = ordinal - MONTHS_OFFSETS[leap][j - 1];
+                parsed->month = j - 1;
 
                 break;
             }
@@ -652,9 +707,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             }
 
             if (!(*c >= '0' && *c <='9')) {
-                PyErr_SetString(
-                    PyExc_ValueError, "Invalid date"
-                );
+                parsed->error = PARSER_INVALID_DATE;
 
                 return NULL;
             }
@@ -673,33 +726,29 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                     // The date looks like 201207
                     // which is invalid for a date
                     // But it might be a time in the form hhmmss
-                    ambiguous_date = 1;
+                    parsed->ambiguous = 1;
                 }
 
-                month = monthday;
+                parsed->month = monthday;
                 break;
             case 3:
                 // Ordinal day
                 if (separators > 1) {
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid date"
-                    );
+                    parsed->error = PARSER_INVALID_DATE;
 
                     return NULL;
                 }
 
                 if (monthday < 1 || monthday > MONTHS_OFFSETS[leap][13]) {
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid ordinal day for year"
-                    );
+                    parsed->error = PARSER_INVALID_ORDINAL_DAY_FOR_YEAR;
 
                     return NULL;
                 }
 
                 for (j = 1; j < 14; j++) {
                     if (monthday <= MONTHS_OFFSETS[leap][j]) {
-                        day = monthday - MONTHS_OFFSETS[leap][j - 1];
-                        month = j - 1;
+                        parsed->day = monthday - MONTHS_OFFSETS[leap][j - 1];
+                        parsed->month = j - 1;
 
                         break;
                     }
@@ -708,14 +757,12 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 break;
             case 4:
                 // Month and day
-                month = monthday / 100;
-                day = monthday % 100;
+                parsed->month = monthday / 100;
+                parsed->day = monthday % 100;
 
                 break;
             default:
-                PyErr_SetString(
-                    PyExc_ValueError, "Invalid month and/or day"
-                );
+                parsed->error = PARSER_INVALID_MONTH_OR_DAY;
 
                 return NULL;
         }
@@ -723,40 +770,35 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
 
     // Checks
     if (separators && !monthday && !week) {
-        PyErr_SetString(
-            PyExc_ValueError, "Invalid date"
-        );
+        parsed->error = PARSER_INVALID_DATE;
 
         return NULL;
     }
 
-    if (month > 12) {
-        PyErr_SetString(
-            PyExc_ValueError, "Invalid month"
-        );
+    if (parsed->month > 12) {
+        parsed->error = PARSER_INVALID_MONTH;
 
         return NULL;
     }
 
-    if (day > DAYS_PER_MONTHS[leap][month]) {
-        PyErr_SetString(
-            PyExc_ValueError, "Day is invalid for month"
-        );
+    if (parsed->day > DAYS_PER_MONTHS[leap][parsed->month]) {
+        parsed->error = PARSER_INVALID_DAY_FOR_MONTH;
 
         return NULL;
     }
 
     separators = 0;
     if (*c == 'T' || *c == ' ') {
-        if (ambiguous_date) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid date"
-            );
+        if (parsed->ambiguous) {
+            parsed->error = PARSER_INVALID_DATE;
 
             return NULL;
         }
 
-        has_time = 1;
+        // We have time so we have a datetime
+        parsed->is_datetime = 1;
+        parsed->is_date = 0;
+
         c++;
 
         // Grabbing time information
@@ -769,9 +811,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             }
 
             if (!(*c >= '0' && *c <='9')) {
-                PyErr_SetString(
-                    PyExc_ValueError, "Invalid time"
-                );
+                parsed->error = PARSER_INVALID_TIME;
 
                 return NULL;
             }
@@ -785,76 +825,63 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 // Hours only
                 if (separators > 0) {
                     // Extraneous separators
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid time"
-                    );
+                    parsed->error = PARSER_INVALID_TIME;
 
                     return NULL;
                 }
 
-                hour = time;
+                parsed->hour = time;
                 has_hour = 1;
                 break;
             case 4:
                 // Hours and minutes
                 if (separators > 1) {
                     // Extraneous separators
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid time"
-                    );
+                    parsed->error = PARSER_INVALID_TIME;
 
                     return NULL;
                 }
 
-                hour = time / 100;
-                minute = time % 100;
+                parsed->hour = time / 100;
+                parsed->minute = time % 100;
                 has_hour = 1;
                 break;
             case 6:
                 // Hours, minutes and seconds
                 if (!(separators == 0 || separators == 2)) {
                     // We should have either two separators or none
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid time"
-                    );
+                    parsed->error = PARSER_INVALID_TIME;
 
                     return NULL;
                 }
-                hour = time / 10000;
-                minute = time / 100 % 100;
-                second = time % 100;
+
+                parsed->hour = time / 10000;
+                parsed->minute = time / 100 % 100;
+                parsed->second = time % 100;
                 has_hour = 1;
                 break;
             default:
                 // Any other case is wrong
-                PyErr_SetString(
-                    PyExc_ValueError, "Invalid time"
-                );
+                parsed->error = PARSER_INVALID_TIME;
 
                 return NULL;
         }
 
         // Checks
-        if (hour > 23) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid hour"
-            );
+        if (parsed->hour > 23) {
+            parsed->error = PARSER_INVALID_HOUR;
 
             return NULL;
         }
 
-        if (minute > 59) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid minute"
-            );
+        if (parsed->minute > 59) {
+            parsed->error = PARSER_INVALID_MINUTE;
 
             return NULL;
         }
 
-        if (second > 59) {
-            PyErr_SetString(
-                PyExc_ValueError, "Invalid second"
-            );
+        if (parsed->second > 59) {
+            parsed->error = PARSER_INVALID_SECOND;
 
             return NULL;
         }
@@ -867,9 +894,8 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             i = 0;
             while (*c != '\0' && *c != 'Z' && *c != '+' && *c != '-') {
                 if (!(*c >= '0' && *c <='9')) {
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid subsecond"
-                    );
+                    parsed->error = PARSER_INVALID_SUBSECOND;
+
                     return NULL;
                 }
 
@@ -877,16 +903,17 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 i++;
             }
 
-            if (i > 9) {
-                subsecond = time / 1e9;
-            } else if (i <= 9) {
-                subsecond = time * pow(10, 9 - i);
+            // adjust to microseconds
+            if (i > 6) {
+                parsed->microsecond = time / pow(10, i - 6);
+            } else if (i <= 6) {
+                parsed->microsecond = time * pow(10, 6 - i);
             }
         }
 
         // Timezone
         if (*c == 'Z') {
-            has_offset = 1;
+            parsed->has_offset = 1;
             c++;
         } else if (*c == '+' || *c == '-') {
             tz_sign = 1;
@@ -894,7 +921,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 tz_sign = -1;
             }
 
-            has_offset = 1;
+            parsed->has_offset = 1;
             c++;
 
             i = 0;
@@ -908,9 +935,8 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 }
 
                 if (!(*c >= '0' && *c <= '9')) {
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid timezone offset"
-                    );
+                    parsed->error = PARSER_INVALID_TZ_OFFSET;
+
                     return NULL;
                 }
 
@@ -923,77 +949,104 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                     // hh Format
                     if (separators) {
                         // Extraneous separators
-                        PyErr_SetString(
-                            PyExc_ValueError, "Invalid timezone offset"
-                        );
+                        parsed->error = PARSER_INVALID_TZ_OFFSET;
+
                         return NULL;
                     }
 
-                    offset = tz_sign * (time * 3600);
+                    parsed->offset = tz_sign * (time * 3600);
                     break;
                 case 4:
                     // hhmm Format
                     if (separators > 1) {
                         // Extraneous separators
-                        PyErr_SetString(
-                            PyExc_ValueError, "Invalid timezone offset"
-                        );
+                        parsed->error = PARSER_INVALID_TZ_OFFSET;
+
                         return NULL;
                     }
 
-                    offset = tz_sign * ((time / 100 * 3600) + (time % 100 * 60));
+                    parsed->offset = tz_sign * ((time / 100 * 3600) + (time % 100 * 60));
                     break;
                 default:
                     // Wrong format
-                    PyErr_SetString(
-                        PyExc_ValueError, "Invalid timezone offset"
-                    );
+                    parsed->error = PARSER_INVALID_TZ_OFFSET;
+
                     return NULL;
             }
         }
     }
 
-    if (!has_time) {
+    return parsed;
+}
+
+
+PyObject* parse_iso8601(PyObject *self, PyObject *args) {
+    char* str;
+    PyObject *obj;
+    PyObject *tzinfo;
+    Parsed *parsed = new_parsed();
+
+    if (!PyArg_ParseTuple(args, "s", &str)) {
+        PyErr_SetString(
+            PyExc_ValueError, "Invalid parameters"
+        );
+        return NULL;
+    }
+
+    if (_parse_iso8601_datetime(str, parsed) == NULL) {
+        char error[80];
+        sprintf(error, "%i", parsed->error);
+
+        PyErr_SetString(
+            PyExc_ValueError, error
+        );
+
+        return NULL;
+    }
+
+    if (parsed->is_date) {
         // Date only
-        if (ambiguous_date) {
+        if (parsed->ambiguous) {
             // We can "safely" assume that the ambiguous
             // date was actually a time in the form hhmmss
-            hour = year / 100;
-            minute = year % 100;
-            second = month;
+            parsed->hour = parsed->year / 100;
+            parsed->minute = parsed->year % 100;
+            parsed->second = parsed->month;
 
             obj = PyDateTimeAPI->Time_FromTime(
-                hour, minute, second, subsecond / 1000,
+                parsed->hour, parsed->minute, parsed->second, parsed->microsecond,
                 Py_BuildValue(""),
                 PyDateTimeAPI->TimeType
             );
         } else {
             obj = PyDateTimeAPI->Date_FromDate(
-                year, month, day,
+                parsed->year, parsed->month, parsed->day,
                 PyDateTimeAPI->DateType
             );
         }
     } else {
-        if (!has_offset) {
+        if (!parsed->has_offset) {
             tzinfo = Py_BuildValue("");
         } else {
-            tzinfo = new_fixed_offset(offset);
+            tzinfo = new_fixed_offset(parsed->offset);
         }
 
         obj = PyDateTimeAPI->DateTime_FromDateAndTime(
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
-            subsecond / 1000,
+            parsed->year,
+            parsed->month,
+            parsed->day,
+            parsed->hour,
+            parsed->minute,
+            parsed->second,
+            parsed->microsecond,
             tzinfo,
             PyDateTimeAPI->DateTimeType
         );
 
         Py_DECREF(tzinfo);
     }
+
+    free(parsed);
 
     return obj;
 }
