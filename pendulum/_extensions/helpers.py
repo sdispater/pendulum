@@ -12,7 +12,10 @@ from ..constants import (
     DAYS_PER_MONTHS,
     MONTHS_OFFSETS,
     TM_DECEMBER,
-    TM_JANUARY
+    TM_JANUARY,
+    DAY_OF_WEEK_TABLE,
+    DAYS_PER_L_YEAR,
+    DAYS_PER_N_YEAR
 )
 
 
@@ -70,6 +73,25 @@ class PreciseDiff:
 
 def is_leap(year):
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
+def week_day(year, month, day):
+    if month < 3:
+        year -= 1
+
+    w = (year + year//4 - year//100 + year//400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7
+
+    if not w:
+        w = 7
+
+    return w
+
+
+def days_in_year(year):
+    if is_leap(year):
+        return DAYS_PER_L_YEAR
+
+    return DAYS_PER_N_YEAR
 
 
 def local_time(unix_time, utc_offset, microseconds):

@@ -36,8 +36,9 @@ extensions = []
 if with_extensions:
     extensions = [
         Extension('pendulum._extensions._helpers',
-                  ['pendulum/_extensions/_helpers.c'],
-                  extra_compile_args=['-Wno-unused-function']),
+                  ['pendulum/_extensions/_helpers.c']),
+        Extension('pendulum.parsing._extension',
+                  ['pendulum/parsing/_extension.c']),
     ]
 
 class BuildFailed(Exception):

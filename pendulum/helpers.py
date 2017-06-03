@@ -5,18 +5,17 @@ from datetime import timedelta
 from contextlib import contextmanager
 
 try:
-    from ._extensions._helpers import local_time, parse_iso8601, precise_diff
-
+    from ._extensions._helpers import (
+        local_time, precise_diff,
+        is_leap, week_day, days_in_year
+    )
 except ImportError:
-    from ._extensions.helpers import local_time, precise_diff
+    from ._extensions.helpers import (
+        local_time, precise_diff,
+        is_leap, week_day, days_in_year
+    )
 
-    parse_iso8601 = None
-
-from ._extensions.helpers import is_leap
-
-from .constants import (
-    DAYS_PER_MONTHS, DAY_OF_WEEK_TABLE, DAYS_PER_L_YEAR, DAYS_PER_N_YEAR
-)
+from .constants import DAYS_PER_MONTHS
 
 from .formatting import FORMATTERS
 
@@ -111,25 +110,6 @@ def add_duration(dt, years=0, months=0, weeks=0, days=0,
         seconds=seconds,
         microseconds=microseconds
     )
-
-
-def week_day(year, month, day):
-    if month < 3:
-        year -= 1
-
-    w = (year + year//4 - year//100 + year//400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7
-
-    if not w:
-        w = 7
-
-    return w
-
-
-def days_in_year(year):
-    if is_leap(year):
-        return DAYS_PER_L_YEAR
-
-    return DAYS_PER_N_YEAR
 
 
 def _sign(x):

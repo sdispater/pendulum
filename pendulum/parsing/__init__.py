@@ -5,9 +5,14 @@ from datetime import datetime, date, time
 from dateutil import parser
 
 from ..constants import HOURS_PER_DAY, MINUTES_PER_HOUR, SECONDS_PER_MINUTE
-from ..helpers import parse_iso8601, week_day, days_in_year
+from ..helpers import week_day, days_in_year
 from .exceptions import ParserError
 from .parsed import Parsed
+
+try:
+    from ._extension import parse_iso8601
+except ImportError:
+    parse_iso8601 = None
 
 
 COMMON = re.compile(
