@@ -583,7 +583,7 @@ class DateTime(Date, datetime.datetime):
             year=int(year), month=int(month), day=int(day)
         )
 
-    def at(self, hour, minute, second, microsecond=0):
+    def at(self, hour, minute=0, second=0, microsecond=0):
         """
         Returns a new instance with the current time to a different time.
 
