@@ -13,6 +13,7 @@
 - `Pendulum` class has been renamed to `DateTime`.
 - `Interval` class has been renamed to `Duration`.
 - `strict` keyword argument for `parse` has been renamed to `exact`.
+- `at()` now supports setting partial time.
 - Made the `strict` keyword argument for `parse` false by default, which means it will not fallback on the `dateutil` parser.
 - Improved performances of the `precise_diff()` helper.
 
