@@ -49,5 +49,4 @@ def test_sub_unsupported():
 
 def test_neg():
     p = pendulum.duration(days=23, seconds=32)
-    print(p)
     assert_duration(-p, 0, 0, -3, -2, 0, 0, -32)
