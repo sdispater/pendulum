@@ -815,6 +815,19 @@ class DateTime(Date, datetime.datetime):
         """
         return self.format(self.W3C, formatter='classic')
 
+    def __repr__(self):
+        us = ''
+        if self._microsecond:
+            us = f', {self._microsecond}'
+
+        return (
+            f"{self.__class__.__name__}("
+            f"{self._year}, {self._month}, {self._day}, "
+            f"{self._hour}, {self._minute}, {self._second}{us}, "
+            f"tz='{self._tz.name}'"
+            f")"
+        )
+
     # Comparisons
     def __eq__(self, other):
         try:

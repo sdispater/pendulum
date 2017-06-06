@@ -107,7 +107,10 @@ class StringsTest(AbstractTestCase):
 
     def test_repr(self):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
-        self.assertEqual('<DateTime [1975-12-25T14:15:16-05:00]>', repr(d))
+        self.assertEqual("DateTime(1975, 12, 25, 14, 15, 16, tz='America/Toronto')", repr(d))
+
+        d = DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo='local')
+        self.assertEqual("DateTime(1975, 12, 25, 14, 15, 16, 123456, tz='America/Toronto')", repr(d))
 
     def test_format_with_locale(self):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')

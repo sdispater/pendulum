@@ -98,16 +98,20 @@ class TimezoneInfo(tzinfo):
         return (dt + tzinfo.adjusted_offset).replace(tzinfo=tzinfo)
 
     def __repr__(self):
-        return '<TimezoneInfo [{}, {}, {}{}, {}]>'.format(
-            self.name,
-            self.abbrev,
+        offset = '{}{}'.format(
             '+' if self.offset >= 0 else '',
             '{:02d}:{:02d}:{:02d}'.format(
                 self.offset // 3600,
                 self.offset % 3600 // 60,
                 self.offset % 60
-            ),
-            'DST' if self.is_dst else 'STD',
+            )
+        )
+        dst = 'DST' if self.is_dst else 'STD'
+
+        return (
+            f"TimezoneInfo("
+            f"'{self.name}', '{self.abbrev}', '{offset}', '{dst}'"
+            f")"
         )
 
 

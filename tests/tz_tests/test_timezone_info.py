@@ -55,7 +55,7 @@ class TimezoneInfoTest(AbstractTestCase):
         tzinfo = TimezoneInfo(tz, 7200, True, timedelta(0, 3600), 'CEST')
 
         self.assertEqual(
-            '<TimezoneInfo [Europe/Paris, CEST, +02:00:00, DST]>',
+            "TimezoneInfo('Europe/Paris', 'CEST', '+02:00:00', 'DST')",
             repr(tzinfo)
         )
 

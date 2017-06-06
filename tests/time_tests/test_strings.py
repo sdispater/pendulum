@@ -24,7 +24,10 @@ class StringsTest(AbstractTestCase):
 
     def test_repr(self):
         d = Time(1, 2, 3)
-        self.assertEqual('<Time [01:02:03]>', repr(d))
+        self.assertEqual('Time(1, 2, 3)', repr(d))
+
+        d = Time(1, 2, 3, 123456)
+        self.assertEqual('Time(1, 2, 3, 123456)', repr(d))
 
     def test_format_with_locale(self):
         d = Time(14, 15, 16)

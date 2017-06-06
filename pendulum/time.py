@@ -116,6 +116,18 @@ class Time(FormattableMixing, time):
     def fold(self):
         return self._fold
 
+    # String formatting
+    def __repr__(self):
+        us = ''
+        if self._microsecond:
+            us = f', {self._microsecond}'
+
+        return (
+            f'{self.__class__.__name__}('
+            f'{self._hour}, {self._minute}, {self._second}{us}'
+            f')'
+        )
+
     # Comparisons
 
     def between(self, dt1, dt2, equal=True):

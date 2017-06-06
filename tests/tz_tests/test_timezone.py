@@ -277,3 +277,8 @@ class TimezoneTest(AbstractTestCase):
 
         self.assertEqual(tz2.utcoffset(dt).total_seconds(), 18000)
         self.assertIsNone(tz2.dst(dt))
+
+    def test_repr(self):
+        tz = timezone('Europe/Paris')
+
+        assert "Timezone('Europe/Paris')" == repr(tz)

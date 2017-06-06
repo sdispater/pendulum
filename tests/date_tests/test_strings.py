@@ -37,8 +37,8 @@ class StringsTest(AbstractTestCase):
 
     def test_repr(self):
         d = Date(1975, 12, 25)
-        self.assertEqual('<Date [1975-12-25]>', repr(d))
-        self.assertEqual('<Date [1975-12-25]>', d.__repr__())
+        self.assertEqual('Date(1975, 12, 25)', repr(d))
+        self.assertEqual('Date(1975, 12, 25)', d.__repr__())
 
     def test_format_with_locale(self):
         d = Date(1975, 12, 25)

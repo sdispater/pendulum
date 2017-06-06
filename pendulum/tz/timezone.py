@@ -440,7 +440,7 @@ class Timezone(tzinfo):
         return idx
 
     def __repr__(self):
-        return '<Timezone [{}]>'.format(self._name)
+        return f"Timezone('{self._name}')"
 
 
 class FixedTimezone(Timezone):

@@ -253,6 +253,13 @@ class Date(FormattableMixing, date):
         """
         return self.format('%b %d, %Y', formatter='classic')
 
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}('
+            f'{self.year}, {self.month}, {self.day}'
+            f')'
+        )
+
     # COMPARISONS
 
     def between(self, dt1, dt2, equal=True):
