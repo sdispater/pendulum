@@ -525,18 +525,6 @@ class DateTime(Date, datetime.datetime):
                 / MINUTES_PER_HOUR)
 
     @property
-    def local(self):
-        return self.offset == self.in_timezone(self._local_timezone()).offset
-
-    @property
-    def utc(self):
-        return self.offset == 0
-
-    @property
-    def is_dst(self):
-        return self.tzinfo.is_dst
-
-    @property
     def timezone(self):
         return self.get_timezone()
 
@@ -551,6 +539,19 @@ class DateTime(Date, datetime.datetime):
     @property
     def age(self):
         return self.date().diff(self.now(self._tz).date()).in_years()
+
+    def is_local(self):
+        """
+
+        :return:
+        """
+        return self.offset == self.in_timezone(self._local_timezone()).offset
+
+    def is_utc(self):
+        return self.offset == 0
+
+    def is_dst(self):
+        return self.tzinfo.is_dst()
 
     def get_timezone(self):
         return self._tz

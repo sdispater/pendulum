@@ -39,7 +39,6 @@ class TimezoneInfo(tzinfo):
     def offset(self):
         return self._utc_offset
 
-    @property
     def is_dst(self):
         return self._is_dst
 

@@ -23,7 +23,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(7200, dt.tzinfo.offset)
-        self.assertTrue(dt.tzinfo.is_dst)
+        self.assertTrue(dt.tzinfo.is_dst())
 
     def test_skipped_time_with_pre_rule(self):
         dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
@@ -39,7 +39,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(3600, dt.tzinfo.offset)
-        self.assertFalse(dt.tzinfo.is_dst)
+        self.assertFalse(dt.tzinfo.is_dst())
 
     def test_skipped_time_with_error(self):
         dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
@@ -60,7 +60,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(3600, dt.tzinfo.offset)
-        self.assertFalse(dt.tzinfo.is_dst)
+        self.assertFalse(dt.tzinfo.is_dst())
 
     def test_repeated_time_pre_rule(self):
         dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
@@ -76,7 +76,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(7200, dt.tzinfo.offset)
-        self.assertTrue(dt.tzinfo.is_dst)
+        self.assertTrue(dt.tzinfo.is_dst())
 
     def test_repeated_time_with_error(self):
         dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
@@ -89,7 +89,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertDateTime(dt, 2016, 6, 1, 12, 34, 56, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
     def test_pendulum_create_skipped(self):
         dt = pendulum.create(2013, 3, 31, 2, 30, 45, 123456, 'Europe/Paris')
@@ -97,7 +97,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 3, 31, 3, 30, 45, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
     def test_pendulum_create_repeated(self):
         dt = pendulum.create(2013, 10, 27, 2, 30, 45, 123456, 'Europe/Paris')
@@ -105,7 +105,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 10, 27, 2, 30, 45, 123456)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
     def test_convert_accept_pendulum_instance(self):
         dt = pendulum.create(2016, 8, 7, 12, 53, 54)
@@ -128,7 +128,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
     def test_utcoffset(self):
         tz = pendulum.timezone('America/Guayaquil')
@@ -172,7 +172,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(7200, dt.tzinfo.offset)
-        self.assertTrue(dt.tzinfo.is_dst)
+        self.assertTrue(dt.tzinfo.is_dst())
 
     def test_repeated_time_36_explicit_rule(self):
         dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
@@ -188,7 +188,7 @@ class TimezoneTest(AbstractTestCase):
         self.assertEqual(123456, dt.microsecond)
         self.assertEqual('Europe/Paris', dt.tzinfo.tz.name)
         self.assertEqual(3600, dt.tzinfo.offset)
-        self.assertFalse(dt.tzinfo.is_dst)
+        self.assertFalse(dt.tzinfo.is_dst())
 
     def test_utcoffset_fold_attribute_is_honored(self):
         tz = pendulum.timezone('US/Eastern')

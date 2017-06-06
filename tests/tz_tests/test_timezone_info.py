@@ -13,7 +13,7 @@ class TimezoneInfoTest(AbstractTestCase):
 
         self.assertEqual(7200, tzinfo.offset)
         self.assertEqual(timedelta(0, 7200), tzinfo.adjusted_offset)
-        self.assertEqual(True, tzinfo.is_dst)
+        self.assertEqual(True, tzinfo.is_dst())
         self.assertEqual(timedelta(0, 3600), tzinfo.dst_)
         self.assertEqual(tz, tzinfo.tz)
         self.assertEqual('Europe/Paris', tzinfo.name)
@@ -64,7 +64,7 @@ class TimezoneInfoTest(AbstractTestCase):
 
         self.assertEqual(0, tzinfo.offset)
         self.assertEqual(timedelta(), tzinfo.adjusted_offset)
-        self.assertEqual(False, tzinfo.is_dst)
+        self.assertEqual(False, tzinfo.is_dst())
         self.assertEqual(None, tzinfo.dst_)
         self.assertEqual('UTC', tzinfo.name)
         self.assertEqual('GMT', tzinfo.abbrev)

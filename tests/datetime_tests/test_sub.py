@@ -128,35 +128,35 @@ class SubTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 3, 31, 1, 59, 59, 999999)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
         dt = pendulum.create(2013, 3, 10, 3, 0, 0, 0, 'America/New_York')
 
         self.assertDateTime(dt, 2013, 3, 10, 3, 0, 0, 0)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
         dt = dt.subtract(microseconds=1)
 
         self.assertDateTime(dt, 2013, 3, 10, 1, 59, 59, 999999)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
         dt = pendulum.create(1957, 4, 28, 3, 0, 0, 0, 'America/New_York')
 
         self.assertDateTime(dt, 1957, 4, 28, 3, 0, 0, 0)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
         dt = dt.subtract(microseconds=1)
 
         self.assertDateTime(dt, 1957, 4, 28, 1, 59, 59, 999999)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
     def test_subtract_time_to_new_transition_skipped_big(self):
         dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
@@ -164,14 +164,14 @@ class SubTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 3, 31, 3, 0, 0, 0)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
         dt = dt.subtract(days=1)
 
         self.assertDateTime(dt, 2013, 3, 30, 3, 0, 0, 0)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
     def test_subtract_time_to_new_transition_repeated(self):
         dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
@@ -179,28 +179,28 @@ class SubTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 10, 27, 2, 0, 0, 0)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
         dt = dt.subtract(microseconds=1)
 
         self.assertDateTime(dt, 2013, 10, 27, 2, 59, 59, 999999)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
         dt = pendulum.create(2013, 11, 3, 1, 0, 0, 0, 'America/New_York')
 
         self.assertDateTime(dt, 2013, 11, 3, 1, 0, 0, 0)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
         dt = dt.subtract(microseconds=1)
 
         self.assertDateTime(dt, 2013, 11, 3, 1, 59, 59, 999999)
         self.assertEqual('America/New_York', dt.timezone_name)
         self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
     def test_subtract_time_to_new_transition_repeated_big(self):
         dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
@@ -208,14 +208,14 @@ class SubTest(AbstractTestCase):
         self.assertDateTime(dt, 2013, 10, 27, 2, 0, 0, 0)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst)
+        self.assertFalse(dt.is_dst())
 
         dt = dt.subtract(days=1)
 
         self.assertDateTime(dt, 2013, 10, 26, 2, 0, 0, 0)
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
+        self.assertTrue(dt.is_dst())
 
     def test_subtract_invalid_type(self):
         d = DateTime(1975, 5, 21, 0, 0, 0)

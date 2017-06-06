@@ -179,7 +179,7 @@ def test_replace_tzinfo_dst():
     new = d.replace(tzinfo='Europe/Paris')
 
     assert_datetime(new, 2013, 3, 31, 3, 30)
-    assert new.is_dst
+    assert new.is_dst()
     assert new.offset == 7200
     assert new.timezone_name == 'Europe/Paris'
 
@@ -189,7 +189,7 @@ def test_replace_tzinfo_dst_with_pre_transition_rule():
     new = d.replace(tzinfo='Europe/Paris')
 
     assert_datetime(new, 2013, 3, 31, 1, 30)
-    assert not new.is_dst
+    assert not new.is_dst()
     assert new.offset == 3600
     assert new.timezone_name == 'Europe/Paris'
 

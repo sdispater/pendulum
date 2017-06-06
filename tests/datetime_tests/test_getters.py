@@ -81,24 +81,24 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(1, d.add(years=1).age)
 
     def test_local(self):
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='America/Toronto').local)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='America/New_York').local)
-        self.assertFalse(DateTime.create(2012, 1, 1, tz='UTC').local)
-        self.assertFalse(DateTime.create(2012, 1, 1, tz='Europe/London').local)
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='America/Toronto').is_local())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='America/New_York').is_local())
+        self.assertFalse(DateTime.create(2012, 1, 1, tz='UTC').is_local())
+        self.assertFalse(DateTime.create(2012, 1, 1, tz='Europe/London').is_local())
 
     def test_utc(self):
-        self.assertFalse(DateTime.create(2012, 1, 1, tz='America/Toronto').utc)
-        self.assertFalse(DateTime.create(2012, 1, 1, tz='Europe/Paris').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='Atlantic/Reykjavik').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='Europe/Lisbon').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='Africa/Casablanca').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='Africa/Dakar').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='UTC').utc)
-        self.assertTrue(DateTime.create(2012, 1, 1, tz='GMT').utc)
+        self.assertFalse(DateTime.create(2012, 1, 1, tz='America/Toronto').is_utc())
+        self.assertFalse(DateTime.create(2012, 1, 1, tz='Europe/Paris').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='Atlantic/Reykjavik').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='Europe/Lisbon').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='Africa/Casablanca').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='Africa/Dakar').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='UTC').is_utc())
+        self.assertTrue(DateTime.create(2012, 1, 1, tz='GMT').is_utc())
 
     def test_is_dst(self):
-        self.assertFalse(DateTime.create(2012, 1, 1, tz='America/Toronto').is_dst)
-        self.assertTrue(DateTime.create(2012, 7, 1, tz='America/Toronto').is_dst)
+        self.assertFalse(DateTime.create(2012, 1, 1, tz='America/Toronto').is_dst())
+        self.assertTrue(DateTime.create(2012, 7, 1, tz='America/Toronto').is_dst())
 
     def test_offset_with_dst(self):
         self.assertEqual(-18000, DateTime.create(2012, 1, 1, tz='America/Toronto').offset)
