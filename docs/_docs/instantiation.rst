@@ -80,7 +80,7 @@ or simply a string timezone value.
 
 .. code-block:: python
 
-    pendulum.from_format(time, format, tz)
+    pendulum.from_format(time, fmt, tz)
 
 ``from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
 The difference being the addition the ``tz`` argument that can be a ``tzinfo`` instance or a string timezone value
