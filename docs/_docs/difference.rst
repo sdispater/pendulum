@@ -2,16 +2,16 @@ Difference
 ==========
 
 The ``diff()`` method returns a `Period`_ instance that represents the total duration
-between two ``Pendulum`` instances. This interval can be then expressed in various units.
+between two ``DateTime`` instances. This interval can be then expressed in various units.
 These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
 
-The ``diff()`` method has a default first parameter which is the ``Pendulum`` instance to compare to,
+The ``diff()`` method has a default first parameter which is the ``DateTime`` instance to compare to,
 or ``None`` if you want to use ``now()``.
 The 2nd parameter is optional and indicates if you want the return value to be the absolute value
 or a relative value that might have a ``-`` (negative) sign if the passed in date
 is less than the current instance.
-This will default to ``True``, return the absolute value. The comparisons are done in UTC.
+This will default to ``True``, return the absolute value.
 
 .. code-block:: python
 

@@ -58,29 +58,29 @@ Pendulum gives access to more attributes and properties than the default ``datet
     pendulum.from_timestamp(0, 'Australia/Adelaide').offset_hours
     9.5
 
-    # Indicates if day light savings time is on
-    pendulum.create(2012, 1, 1, tz='America/Toronto').is_dst
-    False
-    pendulum.create(2012, 9, 1, tz='America/Toronto').is_dst
-    True
-
-    # Indicates if the instance is in the same timezone as the local timezone
-    pendulum.now().local
-    True
-    pendulum.now('Europe/London').local
-    False
-
-    # Indicates if the instance is in the UTC timezone
-    pendulum.now().utc
-    False
-    pendulum.now('Europe/London').local
-    False
-    pendulum.utcnow().utc
-    True
-
     # Gets the timezone instance
     pendulum.now().timezone
     pendulum.now().tz
 
     # Gets the timezone name
     pendulum.now().timezone_name
+
+    # Indicates if daylight savings time is on
+    pendulum.create(2012, 1, 1, tz='America/Toronto').is_dst()
+    False
+    pendulum.create(2012, 9, 1, tz='America/Toronto').is_dst()
+    True
+
+    # Indicates if the instance is in the same timezone as the local timezone
+    pendulum.now().is_local()
+    True
+    pendulum.now('Europe/London').is_local()
+    False
+
+    # Indicates if the instance is in the UTC timezone
+    pendulum.now().is_utc()
+    False
+    pendulum.now('Europe/London').is_local()
+    False
+    pendulum.utcnow().is_utc()
+    True

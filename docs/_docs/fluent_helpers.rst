@@ -10,7 +10,6 @@ setting the timestamp will not set the corresponding timezone to UTC.
 .. code-block:: python
 
     import pendulum
-    from datetime import time, date
 
     dt = pendulum.now()
 
@@ -20,8 +19,23 @@ setting the timestamp will not set the corresponding timezone to UTC.
     dt.hour_(22).minute_(32).second_(5).to_datetime_string()
     '2016-11-16 22:32:05'
 
+You can also use the ``on()`` and ``at()`` methods to change the date and the time
+respectively
+
+.. code-block:: python
+
     dt.on(1975, 5, 21).at(22, 32, 5).to_datetime_string()
     '1975-05-21 22:32:05'
+
+    dt.at(10).to_datetime_string()
+    '2016-11-16 10:00:00'
+
+    dt.at(10, 30).to_datetime_string()
+    '2016-11-16 10:30:00'
+
+You can also modify the timezone by using either ``timezone_()`` or ``tz_()``
+
+.. code-block:: python
 
     dt.timestamp_(169957925).timezone_('Europe/London')
 
@@ -30,5 +44,25 @@ setting the timestamp will not set the corresponding timezone to UTC.
 .. note::
 
     ``timezone_()`` and ``tz_()`` just modify the timezone information without
-    making any conversion while ``in_timezone()`` converts the time in the
+    making any conversion while ``in_timezone()`` (or ``in_tz()``) converts the time in the
     appropriate timezone.
+
+    .. code-block:: python
+
+        import pendulum
+
+        dt = pendulum.create(2013, 3, 31, 2, 30)
+        print(dt)
+        '2013-03-31T02:30:00+00:00'
+
+        dt.tz_('Europe/Paris')
+        '2013-03-31T03:30:00+02:00'
+
+        dt.in_tz('Europe/Paris')
+        '2013-03-31T04:30:00+02:00'
+
+        dt.tz_('Europe/Paris').tz_('UTC')
+        '2013-03-31T03:30:00+00:00'
+
+        dt.in_tz('Europe/Paris').in_tz('UTC')
+        '2013-03-31T02:30:00+00:00'

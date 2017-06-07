@@ -9,6 +9,7 @@
 .. include:: _docs/installation.rst
 .. include:: _docs/introduction.rst
 .. include:: _docs/instantiation.rst
+.. include:: _docs/parsing.rst
 .. include:: _docs/localization.rst
 .. include:: _docs/attributes_properties.rst
 .. include:: _docs/fluent_helpers.rst

@@ -2,7 +2,7 @@ Timezones
 =========
 
 
-Timezones are an important part of every datetime library and ``Pendulum``
+Timezones are an important part of every datetime library and ``pendulum``
 tries to provide an easy and accurate system to handle them properly.
 
 .. note::

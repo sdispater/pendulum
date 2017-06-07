@@ -3,15 +3,15 @@ String Formatting
 
 All the ``to_xxx_string()`` methods rely on the native ``datetime.strftime()`` with additional
 directives available.
-The ``__str__`` magic method is defined which allows ``Pendulum`` instances to be printed
+The ``__str__`` magic method is defined which allows ``DateTime`` instances to be printed
 as a pretty date string when used in a string context.
 The default string representation is the same as the one returned by the ``isoformat()`` method.
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    dt = Pendulum(1975, 12, 25, 14, 15, 16)
+    dt = pendulum.create(1975, 12, 25, 14, 15, 16)
 
     print(dt)
     '1975-12-25T14:15:16+00:00'
@@ -32,7 +32,7 @@ The default string representation is the same as the one returned by the ``isofo
     'Thu, Dec 25, 1975 2:15 PM'
 
     # You can also use the format() method
-    dt.format('%A %-d%t of %B %Y %I:%M:%S %p')
+    dt.format('dddd Do [of] MMMM YYYY HH:mm:ss A')
     'Thursday 25th of December 1975 02:15:16 PM'
 
     # Of course, the strftime method is still available
@@ -79,7 +79,7 @@ Directive    Meaning                                                            
 Common Formats
 --------------
 
-The following are methods to display a ``Pendulum`` instance as a common format:
+The following are methods to display a ``DateTime`` instance as a common format:
 
 .. code-block:: python
 
@@ -133,7 +133,7 @@ or globally by using ``pendulum.set_formatter()``.
 
     import pendulum
 
-    dt = pendulum.Pendulum(1975, 12, 25, 14, 15, 16)
+    dt = pendulum.create(1975, 12, 25, 14, 15, 16)
     dt.format('YYYY-MM-DD HH:mm:ss', formatter='alternative')
     '1975-12-25 14:15:16'
 

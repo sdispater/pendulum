@@ -3,7 +3,7 @@ Addition and Subtraction
 
 To easily adding and subtracting time, you can use the ``add()`` and ``subtract()``
 methods.
-Each method returns a new ``Pendulum`` instance.
+Each method returns a new ``DateTime`` instance.
 
 .. code-block:: python
 
