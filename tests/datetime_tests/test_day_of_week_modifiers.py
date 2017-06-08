@@ -1,3 +1,5 @@
+import pytest
+
 import pendulum
 from pendulum import DateTime
 from pendulum.exceptions import DateTimeException
@@ -81,6 +83,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         d = DateTime.create(1975, 5, 21, 12).next(keep_time=True)
         self.assertDateTime(d, 1975, 5, 28, 12, 0, 0)
 
+    def test_next_invalid(self):
+        dt = pendulum.create(1975, 5, 21, 12)
+
+        with pytest.raises(ValueError):
+            dt.next(7)
+
     def test_previous(self):
         d = DateTime.create(1975, 5, 21).previous()
         self.assertDateTime(d, 1975, 5, 14, 0, 0, 0)
@@ -99,6 +107,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
 
         d = DateTime.create(1975, 5, 21, 12).previous(keep_time=True)
         self.assertDateTime(d, 1975, 5, 14, 12, 0, 0)
+
+    def test_previous_invalid(self):
+        dt = pendulum.create(1975, 5, 21, 12)
+
+        with pytest.raises(ValueError):
+            dt.previous(7)
 
     def test_first_day_of_month(self):
         d = DateTime.create(1975, 11, 21).first_of('month', )
