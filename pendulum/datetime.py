@@ -14,7 +14,8 @@ from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
-    SECONDS_PER_DAY
+    SECONDS_PER_DAY,
+    SUNDAY, SATURDAY
 )
 
 
@@ -1465,6 +1466,9 @@ class DateTime(Date, datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
+        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+            raise ValueError('Invalid day of week')
+
         if keep_time:
             dt = self
         else:
@@ -1493,6 +1497,9 @@ class DateTime(Date, datetime.datetime):
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
+
+        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+            raise ValueError('Invalid day of week')
 
         if keep_time:
             dt = self
