@@ -213,39 +213,6 @@ class DateTime(Date, datetime.datetime):
         )
 
     @classmethod
-    def parse(cls, time=None, tz=UTC, **options):
-        """
-        Create a DateTime instance from a string.
-
-        :param time: The time string
-        :type time: str
-
-        :param tz: The timezone
-        :type tz: Timezone or TimezoneInfo or str or None
-
-        :rtype: DateTime
-        """
-        if time is None:
-            return cls.now(tz)
-
-        if time == 'now':
-            return cls.now(None)
-
-        parsed = parse(time, **options)
-
-        if parsed.offset is None:
-            tz = tz
-        else:
-            tz = parsed.offset / 3600
-
-        return cls(
-            parsed.year, parsed.month, parsed.day,
-            parsed.hour, parsed.minute, parsed.second,
-            parsed.microsecond,
-            tzinfo=tz
-        )
-
-    @classmethod
     def now(cls, tz=None):
         """
         Get a DateTime instance for the current date and time.

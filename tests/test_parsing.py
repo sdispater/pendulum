@@ -13,6 +13,7 @@ def test_parse():
 
     assert isinstance(dt, pendulum.datetime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
+    assert '+01:30' == dt.tz.name
     assert 5400 == dt.offset
 
     text = '2016-10-16'
@@ -31,6 +32,15 @@ def test_parse():
     assert isinstance(dt, pendulum.datetime)
     assert_datetime(dt, 2015, 11, 12, 12, 34, 56, 123456)
     assert 0 == dt.offset
+
+
+def test_parse_with_timezone():
+    text = '2016-10-16T12:34:56.123456'
+
+    dt = pendulum.parse(text, tz='Europe/Paris')
+    assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
+    assert 'Europe/Paris' == dt.tz.name
+    assert 7200 == dt.offset
 
 
 def test_parse_exact():

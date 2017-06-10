@@ -395,9 +395,11 @@ static PyMemberDef Duration_members[] = {
     {"months", T_INT, offsetof(Duration, months), 0, "months in duration"},
     {"weeks", T_INT, offsetof(Duration, weeks), 0, "weeks in duration"},
     {"days", T_INT, offsetof(Duration, days), 0, "days in duration"},
+    {"remaining_days", T_INT, offsetof(Duration, days), 0, "days in duration"},
     {"hours", T_INT, offsetof(Duration, hours), 0, "hours in duration"},
     {"minutes", T_INT, offsetof(Duration, minutes), 0, "minutes in duration"},
     {"seconds", T_INT, offsetof(Duration, seconds), 0, "seconds in duration"},
+    {"remaining_seconds", T_INT, offsetof(Duration, seconds), 0, "seconds in duration"},
     {"microseconds", T_INT, offsetof(Duration, microseconds), 0, "microseconds in duration"},
     {NULL}
 };
@@ -1283,7 +1285,7 @@ static PyMethodDef helpers_methods[] = {
 
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "_extension",
+    "_iso8601",
     NULL,
     -1,
     helpers_methods,
@@ -1294,7 +1296,7 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit__extension(void)
+PyInit__iso8601(void)
 {
     PyObject *module;
 

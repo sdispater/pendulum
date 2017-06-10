@@ -37,8 +37,8 @@ if with_extensions:
     extensions = [
         Extension('pendulum._extensions._helpers',
                   ['pendulum/_extensions/_helpers.c']),
-        Extension('pendulum.parsing._extension',
-                  ['pendulum/parsing/_extension.c']),
+        Extension('pendulum.parsing._iso8601',
+                  ['pendulum/parsing/_iso8601.c']),
     ]
 
 class BuildFailed(Exception):

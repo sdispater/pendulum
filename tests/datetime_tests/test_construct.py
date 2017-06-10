@@ -24,30 +24,6 @@ class ConstructTest(AbstractTestCase):
 
         self.assertDateTime(p, now.year, now.month, now.day, now.hour, now.minute, now.second)
 
-    def test_parse_creates_an_instance_default_to_utcnow(self):
-        p = DateTime.parse()
-        now = DateTime.utcnow()
-        self.assertIsInstanceOfDateTime(p)
-        self.assertEqual(p.timezone_name, p.timezone_name)
-
-        self.assertDateTime(p, now.year, now.month, now.day, now.hour, now.minute, now.second)
-
-    def test_parse_with_default_timezone(self):
-        p = DateTime.parse('now')
-        self.assertEqual('America/Toronto', p.timezone_name)
-
-    def test_parse_with_offset_in_string(self):
-        p = DateTime.parse('2016-04-15T18:21:08.7454873-05:00')
-        self.assertDateTime(p, 2016, 4, 15, 18, 21, 8)
-        self.assertEqual('-05:00', p.timezone_name)
-        self.assertEqual(-18000, p.offset)
-
-    def test_parse_with_partial_offset_in_string(self):
-        p = DateTime.parse('2016-04-15T18:21:08.7454873-00:30')
-        self.assertDateTime(p, 2016, 4, 15, 18, 21, 8)
-        self.assertEqual('-00:30', p.timezone_name)
-        self.assertEqual(-1800, p.offset)
-
     def test_setting_timezone(self):
         tz = 'Europe/London'
         dtz = timezone(tz)
@@ -55,16 +31,6 @@ class ConstructTest(AbstractTestCase):
         offset = dtz.convert(dt).tzinfo.offset / 3600
 
         p = DateTime(dt.year, dt.month, dt.day, tzinfo=dtz)
-        self.assertEqual(tz, p.timezone_name)
-        self.assertEqual(int(offset), p.offset_hours)
-
-    def test_parse_setting_timezone(self):
-        tz = 'Europe/London'
-        dtz = timezone(tz)
-        dt = datetime.utcnow()
-        offset = dtz.convert(dt).tzinfo.offset / 3600
-
-        p = DateTime.parse(tz=dtz)
         self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
 
@@ -77,26 +43,6 @@ class ConstructTest(AbstractTestCase):
         p = DateTime(dt.year, dt.month, dt.day, tzinfo=tz)
         self.assertEqual(tz, p.timezone_name)
         self.assertEqual(int(offset), p.offset_hours)
-
-    def test_parse_setting_timezone_with_string(self):
-        tz = 'Europe/London'
-        dtz = timezone(tz)
-        dt = datetime.utcnow()
-        offset = dtz.convert(dt).tzinfo.offset / 3600
-
-        p = DateTime.parse(tz=tz)
-        self.assertEqual(tz, p.timezone_name)
-        self.assertEqual(int(offset), p.offset_hours)
-
-    def test_parse_with_options(self):
-        p = DateTime.parse('2016-04-11T18:21:08.7454873-05:00', day_first=True)
-
-        self.assertDateTime(p, 2016, 11, 4, 18, 21, 8, 745487)
-        self.assertEqual('-05:00', p.timezone_name)
-        self.assertEqual(p.offset, -18000)
-
-    def test_parse_with_invalid_string(self):
-        self.assertRaises(ValueError, DateTime.parse, 'Invalid_string')
 
     def test_today(self):
         today = DateTime.today()

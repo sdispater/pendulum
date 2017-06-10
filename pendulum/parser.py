@@ -1,6 +1,13 @@
 import pendulum
+import datetime
 
-from .parsing import parse as base_parse, ParserError
+from .parsing import parse as base_parse
+
+try:
+    from .parsing._iso8601 import Duration as CDuration
+except ImportError:
+    CDuration = None
+
 from .tz import UTC
 
 
@@ -22,51 +29,20 @@ def _parse(text, **options):
     """
     parsed = base_parse(text, **options)
 
-    if parsed.is_duration:
+    if isinstance(parsed, datetime.datetime):
+        return pendulum.instance(parsed, tz=options.get('tz', UTC))
+
+    if isinstance(parsed, datetime.date):
+        return pendulum.date.instance(parsed)
+
+    if isinstance(parsed, datetime.time):
+        return pendulum.time.instance(parsed)
+
+    if CDuration and isinstance(parsed, CDuration):
         return pendulum.duration(
-            years=parsed.years, months=parsed.months, weeks=parsed.weeks,
-            days=parsed.days, hours=parsed.hours, minutes=parsed.minutes,
-            seconds=parsed.seconds, microseconds=parsed.microseconds
+            years=parsed.years, months=parsed.months, weeks=parsed.weeks, days=parsed.days,
+            hours=parsed.hours, minutes=parsed.minutes, seconds=parsed.seconds,
+            microseconds=parsed.microseconds
         )
 
-    if not options.get('exact'):
-        return _create_datetime_object(parsed, **options)
-
-    # Checking for date
-    if parsed.is_datetime:
-        return _create_datetime_object(parsed, **options)
-
-    if parsed.is_date:
-        return _create_date_object(parsed, **options)
-
-    if parsed.is_time:
-        return _create_time_object(parsed, **options)
-
-    raise ParserError(f'Unable to parse [{text}] to a known type')
-
-
-def _create_datetime_object(parsed, **options):
-    if parsed.offset is None:
-        tz = options.get('tz', UTC)
-    else:
-        tz = parsed.offset / 3600
-
-    return pendulum.datetime(
-        parsed.year, parsed.month, parsed.day,
-        parsed.hour, parsed.minute, parsed.second,
-        parsed.microsecond,
-        tzinfo=tz
-    )
-
-
-def _create_date_object(parsed, **options):
-    return pendulum.date(
-        parsed.year, parsed.month, parsed.day
-    )
-
-
-def _create_time_object(parsed, **options):
-    return pendulum.time(
-        parsed.hour, parsed.minute, parsed.second,
-        parsed.microsecond
-    )
+    return parsed

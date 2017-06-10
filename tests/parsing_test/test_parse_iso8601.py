@@ -3,13 +3,13 @@ import pytest
 from datetime import date, time, datetime
 from pendulum.parsing import parse_iso8601
 
+try:
+    from pendulum.parsing._extension import TZFixedOffset as FixedTimezone
+except ImportError:
+    from pendulum.tz.timezone import FixedTimezone
+
 
 def test_parse_iso8601():
-    if not parse_iso8601:
-        pytest.skip('parse_iso8601 is only supported with C extensions.')
-
-    from pendulum.parsing._extension import TZFixedOffset
-
     # Date
     assert date(2016, 1, 1) == parse_iso8601('2016')
     assert date(2016, 10, 1) == parse_iso8601('2016-10')
@@ -31,42 +31,42 @@ def test_parse_iso8601():
 
     # Datetime with offset
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(19800))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456+05:30')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(19800))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456+0530')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(-19800))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456-05:30')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(-19800))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456-0530')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(18000))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(18000))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456+05')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(-18000))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456-05')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(-18000))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000))
         ==
         parse_iso8601('20161006T123456,123456-05')
     )
     assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, TZFixedOffset(+19800))
+        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(+19800))
         ==
         parse_iso8601('2016-10-06T12:34:56.123456789+05:30')
     )
@@ -87,9 +87,6 @@ def test_parse_iso8601():
 
 
 def test_parse_ios8601_invalid():
-    if not parse_iso8601:
-        pytest.skip('parse_iso8601 is only supported with C extensions.')
-
     # Invalid month
     with pytest.raises(ValueError):
         parse_iso8601('20161306T123456')
@@ -168,19 +165,16 @@ def test_parse_ios8601_invalid():
 
 
 def test_parse_ios8601_duration():
-    if not parse_iso8601:
-        pytest.skip('parse_iso8601 is only supported with C extensions.')
-
     text = 'P2Y3M4DT5H6M7S'
     parsed = parse_iso8601(text)
 
     assert parsed.years == 2
     assert parsed.months == 3
     assert parsed.weeks == 0
-    assert parsed.days == 4
+    assert parsed.remaining_days == 4
     assert parsed.hours == 5
     assert parsed.minutes == 6
-    assert parsed.seconds == 7
+    assert parsed.remaining_seconds == 7
     assert parsed.microseconds == 0
 
     text = 'P1Y2M3DT4H5M6.5S'
@@ -189,10 +183,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 2
     assert parsed.weeks == 0
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 4
     assert parsed.minutes == 5
-    assert parsed.seconds == 6
+    assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
     text = 'P1Y2M3DT4H5M6,5S'
@@ -201,10 +195,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 2
     assert parsed.weeks == 0
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 4
     assert parsed.minutes == 5
-    assert parsed.seconds == 6
+    assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
     text = 'P1Y2M3D'
@@ -213,10 +207,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 2
     assert parsed.weeks == 0
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 0
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1Y2M3.5D'
@@ -225,10 +219,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 2
     assert parsed.weeks == 0
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1Y2M3,5D'
@@ -237,10 +231,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 2
     assert parsed.weeks == 0
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'PT4H54M6.5S'
@@ -249,10 +243,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 4
     assert parsed.minutes == 54
-    assert parsed.seconds == 6
+    assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
     text = 'PT4H54M6,5S'
@@ -261,10 +255,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 4
     assert parsed.minutes == 54
-    assert parsed.seconds == 6
+    assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
     text = 'P1Y'
@@ -273,10 +267,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 1
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 0
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1.5Y'
@@ -293,10 +287,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 1
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 0
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1.5M'
@@ -313,10 +307,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 1
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 0
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1.5W'
@@ -325,10 +319,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 1
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1,5W'
@@ -337,10 +331,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 1
-    assert parsed.days == 3
+    assert parsed.remaining_days == 3
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1D'
@@ -349,10 +343,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 1
+    assert parsed.remaining_days == 1
     assert parsed.hours == 0
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1.5D'
@@ -361,10 +355,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 1
+    assert parsed.remaining_days == 1
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'P1,5D'
@@ -373,10 +367,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 1
+    assert parsed.remaining_days == 1
     assert parsed.hours == 12
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'PT1H'
@@ -385,10 +379,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 1
     assert parsed.minutes == 0
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'PT1.5H'
@@ -397,10 +391,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 1
     assert parsed.minutes == 30
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     text = 'PT1,5H'
@@ -409,10 +403,10 @@ def test_parse_ios8601_duration():
     assert parsed.years == 0
     assert parsed.months == 0
     assert parsed.weeks == 0
-    assert parsed.days == 0
+    assert parsed.remaining_days == 0
     assert parsed.hours == 1
     assert parsed.minutes == 30
-    assert parsed.seconds == 0
+    assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
     # No P operator
