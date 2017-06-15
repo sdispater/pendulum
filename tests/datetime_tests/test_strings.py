@@ -12,7 +12,7 @@ class StringsTest(AbstractTestCase):
         self.assertEqual(DateTime.create(microsecond=123456).to_iso8601_string(True), str(d))
 
     def test_set_to_string_format(self):
-        DateTime.set_to_string_format('%a, %d %b %y %H:%M:%S %z')
+        DateTime.set_to_string_format('ddd, DD MMM YY HH:mm:ss Z')
         d = DateTime(2016, 6, 27, 15, 39, 30)
         self.assertEqual('Mon, 27 Jun 16 15:39:30 +0000', str(d))
 
@@ -102,7 +102,7 @@ class StringsTest(AbstractTestCase):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
         self.assertEqual(
             'Thursday 25th of December 1975 02:15:16 PM -05:00',
-            d.format('%A %d%_t of %B %Y %I:%M:%S %p %_z')
+            d.format('%A %d%_t of %B %Y %I:%M:%S %p %_z', formatter='classic')
         )
 
     def test_repr(self):
@@ -114,8 +114,10 @@ class StringsTest(AbstractTestCase):
 
     def test_format_with_locale(self):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16 PM -05:00',
+                         d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A ZZ', locale='fr'))
         self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
-                         d.format('%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr'))
+                         d.format('%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr', formatter='classic'))
 
     def test_strftime(self):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
@@ -128,12 +130,12 @@ class StringsTest(AbstractTestCase):
     def test_format(self):
         d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
         self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
-        self.assertEqual('1975', '{:%Y}'.format(d))
-
-    def test_format_alternative_formatter(self):
-        pendulum.set_formatter('alternative')
-        d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
-
-        self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
         self.assertEqual('1975', '{:YYYY}'.format(d))
         self.assertEqual('%1975', '{:%Y}'.format(d))
+
+    def test_format_alternative_formatter(self):
+        pendulum.set_formatter('classic')
+
+        d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
+        self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
+        self.assertEqual('1975', '{:%Y}'.format(d))

@@ -10,7 +10,7 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('2016-10-16', str(d))
 
     def test_set_to_string_format(self):
-        Date.set_to_string_format('%a, %d %b %y')
+        Date.set_to_string_format('ddd, DD MMM YY')
         d = Date(2016, 6, 27)
         self.assertEqual('Mon, 27 Jun 16', str(d))
 
@@ -32,7 +32,7 @@ class StringsTest(AbstractTestCase):
         d = Date(1975, 12, 25)
         self.assertEqual(
             'Thursday 25th of December 1975',
-            d.format('%A %d%_t of %B %Y')
+            d.format('%A %d%_t of %B %Y', formatter='classic')
         )
 
     def test_repr(self):
@@ -43,7 +43,9 @@ class StringsTest(AbstractTestCase):
     def test_format_with_locale(self):
         d = Date(1975, 12, 25)
         self.assertEqual('jeudi 25e jour de décembre 1975',
-                         d.format('%A %d%_t jour de %B %Y', locale='fr'))
+                         d.format('dddd Do [jour de] MMMM YYYY', locale='fr'))
+        self.assertEqual('jeudi 25e jour de décembre 1975',
+                         d.format('%A %d%_t jour de %B %Y', locale='fr', formatter='classic'))
 
     def test_strftime(self):
         d = Date(1975, 12, 25)
@@ -56,12 +58,13 @@ class StringsTest(AbstractTestCase):
     def test_format(self):
         d = Date(1975, 12, 25)
         self.assertEqual('1975-12-25', '{}'.format(d))
-        self.assertEqual('1975', '{:%Y}'.format(d))
+        self.assertEqual('1975', '{:YYYY}'.format(d))
+        self.assertEqual('%1975', '{:%Y}'.format(d))
 
-    def test_format_alternative_formatter(self):
-        pendulum.set_formatter('alternative')
+    def test_format_classic_formatter(self):
+        pendulum.set_formatter('classic')
 
         d = Date(1975, 12, 25)
         self.assertEqual('1975-12-25', '{}'.format(d))
-        self.assertEqual('1975', '{:YYYY}'.format(d))
-        self.assertEqual('%1975', '{:%Y}'.format(d))
+        self.assertEqual('1975', '{:%Y}'.format(d))
+        self.assertEqual('1975', '{:%Y}'.format(d))

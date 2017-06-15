@@ -12,7 +12,7 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('01:02:03.123456', str(d))
 
     def test_set_to_string_format(self):
-        Time.set_to_string_format('%H %M %S')
+        Time.set_to_string_format('HH mm ss')
         d = Time(1, 2, 3)
         self.assertEqual('01 02 03', str(d))
 
@@ -31,8 +31,8 @@ class StringsTest(AbstractTestCase):
 
     def test_format_with_locale(self):
         d = Time(14, 15, 16)
-        self.assertEqual('02:15:16 ',
-                         d.format('%I:%M:%S %p', locale='fr'))
+        self.assertEqual('02:15:16 PM',
+                         d.format('hh:mm:ss A', locale='fr'))
 
     def test_strftime(self):
         d = Time(14, 15, 16)
@@ -45,4 +45,4 @@ class StringsTest(AbstractTestCase):
     def test_format(self):
         d = Time(14, 15, 16)
         self.assertEqual('14:15:16', '{}'.format(d))
-        self.assertEqual('15', '{:%M}'.format(d))
+        self.assertEqual('15', '{:mm}'.format(d))

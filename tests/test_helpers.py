@@ -110,27 +110,7 @@ def test_test_now():
 
 def test_formatter():
     dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
-    pendulum.set_formatter('alternative')
-
-    assert pendulum.get_formatter() is pendulum.FORMATTERS['alternative']
-
-    assert (
-        dt.format('YYYY-MM-DD HH:mm:ss.SSSSSSZZ')
-        ==
-        '2000-11-10 12:34:56.123456+00:00'
-    )
-    assert (
-        dt.date().format('YYYY-MM-DD')
-        ==
-        '2000-11-10'
-    )
-    assert(
-        dt.time().format('HH:mm:ss.SSSSSS')
-        ==
-        '12:34:56.123456'
-    )
-
-    pendulum.set_formatter()
+    pendulum.set_formatter('classic')
 
     assert pendulum.get_formatter() is pendulum.FORMATTERS['classic']
 
@@ -148,6 +128,26 @@ def test_formatter():
         dt.time().format('HH:mm:ss.SSSSSS')
         ==
         'HH:mm:ss.SSSSSS'
+    )
+
+    pendulum.set_formatter()
+
+    assert pendulum.get_formatter() is pendulum.FORMATTERS['alternative']
+
+    assert (
+        dt.format('YYYY-MM-DD HH:mm:ss.SSSSSSZZ')
+        ==
+        '2000-11-10 12:34:56.123456+00:00'
+    )
+    assert (
+        dt.date().format('YYYY-MM-DD')
+        ==
+        '2000-11-10'
+    )
+    assert(
+        dt.time().format('HH:mm:ss.SSSSSS')
+        ==
+        '12:34:56.123456'
     )
 
 

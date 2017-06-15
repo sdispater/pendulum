@@ -18,6 +18,7 @@
 - Changed the `repr` of most common objects.
 - Made the `strict` keyword argument for `parse` false by default, which means it will not fallback on the `dateutil` parser.
 - Improved performances of the `precise_diff()` helper.
+- The `alternative` formatter is now the default one.
 
 
 ## [1.2.2] - 2017-06-15

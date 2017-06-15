@@ -1047,11 +1047,11 @@ class Date(FormattableMixing, date):
             return self.first_of('month', day_of_week)
 
         dt = self.first_of('month')
-        check = dt.format('%Y-%m')
+        check = dt.format('YYYY-MM')
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
-        if dt.format('%Y-%m') == check:
+        if dt.format('YYYY-MM') == check:
             return self.day_(dt.day)
 
         return False

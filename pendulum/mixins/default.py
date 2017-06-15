@@ -83,7 +83,7 @@ class FormattableMixing(object):
         if self._to_string_format is None:
             return self.isoformat()
 
-        return self.format(self._to_string_format, formatter='classic')
+        return self.format(self._to_string_format)
 
     def __repr__(self):
         return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))

@@ -22,19 +22,19 @@ from .constants import (
 class DateTime(Date, datetime.datetime):
 
     # Formats
-    ATOM = '%Y-%m-%dT%H:%M:%S%_z'
-    COOKIE = '%A, %d-%b-%Y %H:%M:%S %Z'
-    ISO8601 = '%Y-%m-%dT%H:%M:%S%_z'
-    ISO8601_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-    RFC822 = '%a, %d %b %y %H:%M:%S %z'
-    RFC850 = '%A, %d-%b-%y %H:%M:%S %Z'
-    RFC1036 = '%a, %d %b %y %H:%M:%S %z'
-    RFC1123 = '%a, %d %b %Y %H:%M:%S %z'
-    RFC2822 = '%a, %d %b %Y %H:%M:%S %z'
-    RFC3339 = '%Y-%m-%dT%H:%M:%S%_z'
-    RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-    RSS = '%a, %d %b %Y %H:%M:%S %z'
-    W3C = '%Y-%m-%dT%H:%M:%S%_z'
+    ATOM = 'YYYY-MM-DDTHH:mm:ssZZ'
+    COOKIE = 'dddd, DD-MMM-YYYY HH:mm:ss z'
+    ISO8601 = 'YYYY-MM-DDTHH:mm:ssZZ'
+    ISO8601_EXTENDED = 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ'
+    RFC822 = 'ddd, DD MMM YY HH:mm:ss Z'
+    RFC850 = 'dddd, DD-MMM-YY HH:mm:ss z'
+    RFC1036 = 'ddd, DD MMM YY HH:mm:ss Z'
+    RFC1123 = 'ddd, DD MMM YYYY HH:mm:ss Z'
+    RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss Z'
+    RFC3339 = ISO8601
+    RFC3339_EXTENDED = ISO8601_EXTENDED
+    RSS = 'ddd, DD MMM YYYY HH:mm:ss Z'
+    W3C = ISO8601
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
@@ -693,7 +693,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.ATOM, formatter='classic')
+        return self.format(self.ATOM)
 
     def to_cookie_string(self):
         """
@@ -701,7 +701,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.COOKIE, formatter='classic')
+        return self.format(self.COOKIE)
 
     def to_iso8601_string(self, extended=False):
         """
@@ -713,7 +713,7 @@ class DateTime(Date, datetime.datetime):
         if extended:
             fmt = self.ISO8601_EXTENDED
 
-        return self.format(fmt, formatter='classic')
+        return self.format(fmt)
 
     def to_rfc822_string(self):
         """
@@ -721,7 +721,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RFC822, formatter='classic')
+        return self.format(self.RFC822)
 
     def to_rfc850_string(self):
         """
@@ -729,7 +729,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RFC850, formatter='classic')
+        return self.format(self.RFC850)
 
     def to_rfc1036_string(self):
         """
@@ -737,7 +737,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RFC1036, formatter='classic')
+        return self.format(self.RFC1036)
 
     def to_rfc1123_string(self):
         """
@@ -745,7 +745,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RFC1123, formatter='classic')
+        return self.format(self.RFC1123)
 
     def to_rfc2822_string(self):
         """
@@ -753,7 +753,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RFC2822, formatter='classic')
+        return self.format(self.RFC2822)
 
     def to_rfc3339_string(self, extended=False):
         """
@@ -765,7 +765,7 @@ class DateTime(Date, datetime.datetime):
         if extended:
             fmt = self.RFC3339_EXTENDED
 
-        return self.format(fmt, formatter='classic')
+        return self.format(fmt)
 
     def to_rss_string(self):
         """
@@ -773,7 +773,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.RSS, formatter='classic')
+        return self.format(self.RSS)
 
     def to_w3c_string(self):
         """
@@ -781,7 +781,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: str
         """
-        return self.format(self.W3C, formatter='classic')
+        return self.format(self.W3C)
 
     def __repr__(self):
         us = ''

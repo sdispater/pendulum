@@ -1,3 +1,5 @@
+import pendulum
+
 from pendulum import DateTime
 
 from .. import AbstractTestCase
@@ -64,6 +66,24 @@ class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
         self.assertEqual('2 secondes', d2.diff_for_humans(d.add(seconds=1), True))
 
     def format(self):
+        d = DateTime(2016, 8, 28, 7, 3, 6, 123456)
+        self.assertEqual('dimanche', d.format('dddd'))
+        self.assertEqual('dim', d.format('ddd'))
+        self.assertEqual('août', d.format('MMMM'))
+        self.assertEqual('août', d.format('MMM'))
+        self.assertEqual('AM', d.format('A'))
+        self.assertEqual('28e', d.format('Do'))
+
+        self.assertEqual('07:03', d.format('LT'))
+        self.assertEqual('07:03:06', d.format('LTS'))
+        self.assertEqual('28/08/2016', d.format('L'))
+        self.assertEqual('28 août 2016', d.format('LL'))
+        self.assertEqual('28 août 2016 07:03', d.format('LLL'))
+        self.assertEqual('dimanche 28 août 2016 07:03', d.format('LLLL'))
+
+    def format_classic(self):
+        pendulum.set_formatter('classic')
+
         d = DateTime(2000, 1, 1, 12, 45, 31)
         self.assertEqual('samedi', d.format('%A'))
         self.assertEqual('sam', d.format('%a'))
@@ -72,19 +92,3 @@ class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
         self.assertEqual('', d.format('%p'))
         self.assertEqual('er', d.format('%_t'))
         self.assertEqual('e', d.add(days=1).format('%_t'))
-
-    def format_alternative(self):
-        d = DateTime(2016, 8, 28, 7, 3, 6, 123456)
-        self.assertEqual('dimanche', d.format('dddd', formatter='alternative'))
-        self.assertEqual('dim', d.format('ddd', formatter='alternative'))
-        self.assertEqual('août', d.format('MMMM', formatter='alternative'))
-        self.assertEqual('août', d.format('MMM', formatter='alternative'))
-        self.assertEqual('AM', d.format('A', formatter='alternative'))
-        self.assertEqual('28e', d.format('Do', formatter='alternative'))
-
-        self.assertEqual('07:03', d.format('LT', formatter='alternative'))
-        self.assertEqual('07:03:06', d.format('LTS', formatter='alternative'))
-        self.assertEqual('28/08/2016', d.format('L', formatter='alternative'))
-        self.assertEqual('28 août 2016', d.format('LL', formatter='alternative'))
-        self.assertEqual('28 août 2016 07:03', d.format('LLL', formatter='alternative'))
-        self.assertEqual('dimanche 28 août 2016 07:03', d.format('LLLL', formatter='alternative'))

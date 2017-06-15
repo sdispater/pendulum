@@ -32,7 +32,7 @@ from .formatting import FORMATTERS
 
 _TEST_NOW = None
 _LOCALE = 'en'
-_DEFAULT_FORMATTER = FORMATTERS['classic']
+_DEFAULT_FORMATTER = FORMATTERS['alternative']
 _FORMATTER = _DEFAULT_FORMATTER
 _TRANSLATOR = Translator(_LOCALE)
 
