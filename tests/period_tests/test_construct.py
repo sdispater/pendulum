@@ -1,3 +1,4 @@
+import pendulum
 from datetime import datetime
 from pendulum import Period, DateTime
 
@@ -69,6 +70,18 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(5824, p2.days)
         self.assertEqual(4, p2.remaining_days)
         self.assertEqual(5824, p2.in_days())
+
+    def test_dst_transition(self):
+        start = pendulum.create(2017, 3, 7, tz='America/Toronto')
+        end = start.add(days=6)
+        period = end - start
+
+        assert period.days == 5
+        assert period.seconds == 82800
+
+        assert period.remaining_days == 6
+        assert period.hours == 0
+        assert period.remaining_seconds == 0
 
     def test_timedelta_behavior(self):
         dt1 = DateTime(2000, 11, 20, 1)

@@ -20,6 +20,14 @@
 - Improved performances of the `precise_diff()` helper.
 
 
+## [1.2.2] - 2017-06-15
+
+### Fixed
+
+- Fixed `next()` and `previous()` hanging when passed an invalid input.
+- Fixed wrong result when adding/subtracting a Period if a DST transition occurs.
+
+
 ## [1.2.1] - 2017-05-23
 
 ### Fixed
@@ -384,6 +392,7 @@ Initial release
 
 
 [Unreleased]: https://github.com/sdispater/pendulum/compare/master...2.0
+[1.2.2]: https://github.com/sdispater/pendulum/releases/tag/1.2.2
 [1.2.1]: https://github.com/sdispater/pendulum/releases/tag/1.2.1
 [1.2.0]: https://github.com/sdispater/pendulum/releases/tag/1.2.0
 [1.1.1]: https://github.com/sdispater/pendulum/releases/tag/1.1.1
