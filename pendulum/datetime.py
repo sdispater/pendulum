@@ -36,6 +36,20 @@ class DateTime(Date, datetime.datetime):
     RSS = 'ddd, DD MMM YYYY HH:mm:ss Z'
     W3C = ISO8601
 
+    _FORMATS = {
+        'atom': ATOM,
+        'cookie': COOKIE,
+        'iso8601': lambda dt: dt.isoformat(),
+        'rfc822': RFC822,
+        'rfc850': RFC850,
+        'rfc1036': RFC1036,
+        'rfc1123': RFC1123,
+        'rfc2822': RFC2822,
+        'rfc3339': lambda dt: dt.isoformat(),
+        'rss': RSS,
+        'w3c': W3C
+    }
+
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
     _TRANSITION_RULE = Timezone.POST_TRANSITION
@@ -663,125 +677,28 @@ class DateTime(Date, datetime.datetime):
 
     # STRING FORMATTING
 
-    def to_time_string(self):
+    def to_string(self, fmt):
         """
-        Format the instance as time.
+        Format the instance to a common string format.
+
+        >>> import pendulum
+        >>> dt = pendulum.now()
+        >>> dt.to_string('iso8601')
+        >>> dt.to_string('w3c')
+
+        :param fmt: The name of the string format
+        :type fmt: string
 
         :rtype: str
         """
-        return self.format('%H:%M:%S', formatter='classic')
+        if fmt not in self._FORMATS:
+            raise ValueError('Format [{}] is not supported'.format(fmt))
 
-    def to_datetime_string(self):
-        """
-        Format the instance as date and time.
-
-        :rtype: str
-        """
-        return self.format('%Y-%m-%d %H:%M:%S', formatter='classic')
-
-    def to_day_datetime_string(self):
-        """
-        Format the instance as day, date and time.
-
-        :rtype: str
-        """
-        return self.format('ddd, MMM D, YYYY h:mm A', formatter='alternative')
-
-    def to_atom_string(self):
-        """
-        Format the instance as ATOM.
-
-        :rtype: str
-        """
-        return self.format(self.ATOM)
-
-    def to_cookie_string(self):
-        """
-        Format the instance as COOKIE.
-
-        :rtype: str
-        """
-        return self.format(self.COOKIE)
-
-    def to_iso8601_string(self, extended=False):
-        """
-        Format the instance as ISO8601.
-
-        :rtype: str
-        """
-        fmt = self.ISO8601
-        if extended:
-            fmt = self.ISO8601_EXTENDED
+        fmt = self._FORMATS[fmt]
+        if callable(fmt):
+            return fmt(self)
 
         return self.format(fmt)
-
-    def to_rfc822_string(self):
-        """
-        Format the instance as RFC822.
-
-        :rtype: str
-        """
-        return self.format(self.RFC822)
-
-    def to_rfc850_string(self):
-        """
-        Format the instance as RFC850.
-
-        :rtype: str
-        """
-        return self.format(self.RFC850)
-
-    def to_rfc1036_string(self):
-        """
-        Format the instance as RFC1036.
-
-        :rtype: str
-        """
-        return self.format(self.RFC1036)
-
-    def to_rfc1123_string(self):
-        """
-        Format the instance as RFC1123.
-
-        :rtype: str
-        """
-        return self.format(self.RFC1123)
-
-    def to_rfc2822_string(self):
-        """
-        Format the instance as RFC2822.
-
-        :rtype: str
-        """
-        return self.format(self.RFC2822)
-
-    def to_rfc3339_string(self, extended=False):
-        """
-        Format the instance as RFC3339.
-
-        :rtype: str
-        """
-        fmt = self.RFC3339
-        if extended:
-            fmt = self.RFC3339_EXTENDED
-
-        return self.format(fmt)
-
-    def to_rss_string(self):
-        """
-        Format the instance as RSS.
-
-        :rtype: str
-        """
-        return self.format(self.RSS)
-
-    def to_w3c_string(self):
-        """
-        Format the instance as W3C.
-
-        :rtype: str
-        """
-        return self.format(self.W3C)
 
     def __repr__(self):
         us = ''
