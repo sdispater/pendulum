@@ -66,7 +66,7 @@ def test_precise_diff():
     diff = precise_diff(dt1, dt2)
     assert_diff(
         diff,
-        days=5, hours=23
+        days=6, hours=0
     )
 
 

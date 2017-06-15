@@ -1118,13 +1118,15 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
-        if isinstance(delta, pendulum.duration):
+        if isinstance(delta, (pendulum.duration, pendulum.period)):
             return self.add(
                 years=delta.years,
                 months=delta.months,
                 weeks=delta.weeks,
                 days=delta.remaining_days,
-                seconds=delta.seconds,
+                hours=delta.hours,
+                minutes=delta.minutes,
+                seconds=delta.remaining_seconds,
                 microseconds=delta.microseconds
             )
 
@@ -1140,13 +1142,15 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
-        if isinstance(delta, pendulum.duration):
+        if isinstance(delta, (pendulum.duration, pendulum.period)):
             return self.subtract(
                 years=delta.years,
                 months=delta.months,
                 weeks=delta.weeks,
                 days=delta.remaining_days,
-                seconds=delta.seconds,
+                hours=delta.hours,
+                minutes=delta.minutes,
+                seconds=delta.remaining_seconds,
                 microseconds=delta.microseconds
             )
 

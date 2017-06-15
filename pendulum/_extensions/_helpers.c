@@ -450,62 +450,16 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     int dt2_microsecond = 0;
     int dt1_total_seconds = 0;
     int dt2_total_seconds = 0;
-    int dt1_offset = 0;
-    int dt2_offset = 0;
     int dt1_is_datetime = PyDateTime_Check(dt1);
     int dt2_is_datetime = PyDateTime_Check(dt2);
-    PyObject *offset;
-    PyObject *tzinfo;
 
     // If we have datetimes (and not only dates) we get the information
     // we need
     if (dt1_is_datetime) {
-        // Retrieving offset, if any
-        if (((_PyDateTime_BaseTZInfo *)(dt1))->hastzinfo) {
-            tzinfo = ((PyDateTime_DateTime *)(dt1))->tzinfo;
-            if (tzinfo != Py_None) {
-                offset = PyObject_CallMethod(tzinfo, "utcoffset", "O", dt1);
-                dt1_offset = PyDateTime_DELTA_GET_SECONDS(offset);
-            }
-        }
-
         dt1_hour = PyDateTime_DATE_GET_HOUR(dt1);
         dt1_minute = PyDateTime_DATE_GET_MINUTE(dt1);
         dt1_second = PyDateTime_DATE_GET_SECOND(dt1);
         dt1_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt1);
-
-        // Adjusting if offset
-        if (dt1_offset) {
-            dt1_hour -= dt1_offset / SECS_PER_HOUR;
-            dt1_offset %= SECS_PER_HOUR;
-            dt1_minute -= dt1_offset / SECS_PER_MIN;
-            dt1_offset %= SECS_PER_MIN;
-            dt1_second -= dt1_offset;
-
-            if (dt1_second < 0) {
-                dt1_second += 60;
-                dt1_minute -= 1;
-            } else if (dt1_second > 60) {
-                dt1_second -= 60;
-                dt1_minute += 1;
-            }
-
-            if (dt1_minute < 0) {
-                dt1_minute += 60;
-                dt1_hour -= 1;
-            } else if (dt1_minute > 60) {
-                dt1_minute -= 60;
-                dt1_hour += 1;
-            }
-
-            if (dt1_hour < 0) {
-                dt1_hour += 24;
-                dt1_day -= 1;
-            } else if (dt1_hour > 24) {
-                dt1_hour -= 24;
-                dt1_day += 1;
-            }
-        }
         
         dt1_total_seconds = (
             dt1_hour * SECS_PER_HOUR
@@ -515,51 +469,10 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     }
 
     if (dt2_is_datetime) {
-        if (((_PyDateTime_BaseTZInfo *)(dt2))->hastzinfo) {
-            tzinfo = ((PyDateTime_DateTime *)(dt2))->tzinfo;
-            if (tzinfo != Py_None) {
-                offset = PyObject_CallMethod(tzinfo, "utcoffset", "O", dt2);
-                dt2_offset = PyDateTime_DELTA_GET_SECONDS(offset);
-            }
-        }
-
         dt2_hour = PyDateTime_DATE_GET_HOUR(dt2);
         dt2_minute = PyDateTime_DATE_GET_MINUTE(dt2);
         dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
         dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
-
-        // Adjusting if offset
-        if (dt2_offset) {
-            dt2_hour -= dt2_offset / SECS_PER_HOUR;
-            dt2_offset %= SECS_PER_HOUR;
-            dt2_minute -= dt2_offset / SECS_PER_MIN;
-            dt2_offset %= SECS_PER_MIN;
-            dt2_second -= dt2_offset;
-
-            if (dt2_second < 0) {
-                dt2_second += 60;
-                dt2_minute -= 1;
-            } else if (dt2_second > 60) {
-                dt2_second -= 60;
-                dt2_minute += 1;
-            }
-
-            if (dt2_minute < 0) {
-                dt2_minute += 60;
-                dt2_hour -= 1;
-            } else if (dt2_minute > 60) {
-                dt2_minute -= 60;
-                dt2_hour += 1;
-            }
-
-            if (dt2_hour < 0) {
-                dt2_hour += 24;
-                dt2_day -= 1;
-            } else if (dt2_hour > 24) {
-                dt2_hour -= 24;
-                dt2_day += 1;
-            }
-        }
 
         dt2_total_seconds = (
             dt2_hour * SECS_PER_HOUR

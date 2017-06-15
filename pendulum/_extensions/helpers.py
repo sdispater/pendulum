@@ -203,18 +203,7 @@ def precise_diff(d1, d2):
     sec_diff = 0
     mic_diff = 0
 
-    if isinstance(d1, datetime.datetime):
-        offset = d1.utcoffset()
-
-        if offset:
-            d1 = d1 - offset
-
     if isinstance(d2, datetime.datetime):
-        offset = d2.utcoffset()
-
-        if offset:
-            d2 = d2 - offset
-
         if isinstance(d1, datetime.datetime):
             hour_diff = d2.hour - d1.hour
             min_diff = d2.minute - d1.minute
