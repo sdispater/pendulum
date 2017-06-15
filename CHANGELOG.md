@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `next()` and `previous()` hanging when passed an invalid input.
+- Fixed wrong result when adding/subtracting a Period if a DST transition occurs.
+
+
 ## [1.2.1] - 2017-05-23
 
 ### Fixed

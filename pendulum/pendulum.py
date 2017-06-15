@@ -1140,6 +1140,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        if isinstance(delta, Period):
+            return self.add(
+                years=delta.years, months=delta.months,
+                weeks=delta.weeks, days=delta.remaining_days,
+                hours=delta.hours, minutes=delta.minutes,
+                seconds=delta.remaining_seconds, microseconds=delta.microseconds
+            )
+
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
 
@@ -1152,6 +1160,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        if isinstance(delta, Period):
+            return self.subtract(
+                years=delta.years, months=delta.months,
+                weeks=delta.weeks, days=delta.remaining_days,
+                hours=delta.hours, minutes=delta.minutes,
+                seconds=delta.remaining_seconds, microseconds=delta.microseconds
+            )
+
         return self.subtract(days=delta.days, seconds=delta.seconds,
                              microseconds=delta.microseconds)
 
