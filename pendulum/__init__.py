@@ -55,8 +55,6 @@ create = DateTime.create
 from_format = DateTime.create_from_format
 strptime = DateTime.strptime
 from_timestamp = DateTime.create_from_timestamp
-set_to_string_format = DateTime.set_to_string_format
-reset_to_string_format = DateTime.reset_to_string_format
 set_transition_rule = DateTime.set_transition_rule
 get_transition_rule = DateTime.get_transition_rule
 

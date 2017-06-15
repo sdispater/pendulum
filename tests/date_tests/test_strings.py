@@ -9,17 +9,6 @@ class StringsTest(AbstractTestCase):
         d = Date(2016, 10, 16)
         self.assertEqual('2016-10-16', str(d))
 
-    def test_set_to_string_format(self):
-        Date.set_to_string_format('ddd, DD MMM YY')
-        d = Date(2016, 6, 27)
-        self.assertEqual('Mon, 27 Jun 16', str(d))
-
-    def test_reset_to_string_format(self):
-        d = Date(2016, 10, 16)
-        Date.set_to_string_format('123')
-        Date.reset_to_string_format()
-        self.assertEqual('2016-10-16', str(d))
-
     def test_to_date_string(self):
         d = Date(1975, 12, 25)
         self.assertEqual('1975-12-25', d.to_date_string())

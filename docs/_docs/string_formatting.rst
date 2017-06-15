@@ -39,29 +39,9 @@ The default string representation is the same as the one returned by the ``isofo
     dt.strftime('%A %-d%t of %B %Y %I:%M:%S %p')
     'Thursday 25th of December 1975 02:15:16 PM'
 
-You can also set the default ``__str__`` format.
-
-.. code-block:: python
-
-    import pendulum
-
-    pendulum.set_to_string_format('%-d%t of %B, %Y %-I:%M:%S %p')
-
-    print(dt)
-    '25th of December, 1975 2:15:16 PM'
-
-    pendulum.reset_to_string_format()
-    print(dt)
-    '25th of December, 1975 2:15:16 PM'
-
 .. note::
 
     For localization support see the `Localization`_ section.
-
-.. warning::
-
-    Even if you have set the default formatter to the alternative one (See `Alternative Formatter`_),
-    the ``__str__`` format must still be in the default format (ie the standard Python format).
 
 Custom Directives
 -----------------

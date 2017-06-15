@@ -12,9 +12,6 @@ def setup():
     pendulum.set_formatter()
     pendulum.set_locale('en')
     pendulum.set_local_timezone()
-    pendulum.datetime.reset_to_string_format()
-    pendulum.date.reset_to_string_format()
-    pendulum.time.reset_to_string_format()
     pendulum.datetime.set_transition_rule(pendulum.POST_TRANSITION)
 
 

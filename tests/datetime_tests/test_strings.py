@@ -11,17 +11,6 @@ class StringsTest(AbstractTestCase):
         d = DateTime.create(microsecond=123456)
         self.assertEqual(DateTime.create(microsecond=123456).to_iso8601_string(True), str(d))
 
-    def test_set_to_string_format(self):
-        DateTime.set_to_string_format('ddd, DD MMM YY HH:mm:ss Z')
-        d = DateTime(2016, 6, 27, 15, 39, 30)
-        self.assertEqual('Mon, 27 Jun 16 15:39:30 +0000', str(d))
-
-    def test_reset_to_string_format(self):
-        d = DateTime.create(microsecond=0)
-        DateTime.set_to_string_format('123')
-        DateTime.reset_to_string_format()
-        self.assertEqual(d.to_iso8601_string(), str(d))
-
     def test_to_date_string(self):
         d = DateTime(1975, 12, 25, 14, 15, 16)
         self.assertEqual('1975-12-25', d.to_date_string())

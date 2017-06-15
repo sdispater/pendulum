@@ -7,29 +7,6 @@ from ..formatting import FORMATTERS
 
 class FormattableMixing(object):
 
-    # Default format to use for __str__ method when type juggling occurs.
-    DEFAULT_TO_STRING_FORMAT = None
-
-    _to_string_format = DEFAULT_TO_STRING_FORMAT
-
-    @classmethod
-    def reset_to_string_format(cls):
-        """
-        Reset the format used to the default
-        when type juggling a Date instance to a string.
-        """
-        cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
-
-    @classmethod
-    def set_to_string_format(cls, fmt):
-        """
-        Set the default format used
-        when type juggling a Date instance to a string
-
-        :type fmt: str
-        """
-        cls._to_string_format = fmt
-
     def format(self, fmt, locale=None, formatter=None):
         """
         Formats the instance using the given format.
@@ -80,10 +57,4 @@ class FormattableMixing(object):
         return str(self)
 
     def __str__(self):
-        if self._to_string_format is None:
-            return self.isoformat()
-
-        return self.format(self._to_string_format)
-
-    def __repr__(self):
-        return '<{0} [{1}]>'.format(self.__class__.__name__, str(self))
+        return self.isoformat()

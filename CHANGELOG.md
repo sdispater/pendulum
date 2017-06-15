@@ -19,6 +19,7 @@
 - Made the `strict` keyword argument for `parse` false by default, which means it will not fallback on the `dateutil` parser.
 - Improved performances of the `precise_diff()` helper.
 - The `alternative` formatter is now the default one.
+- `set_to_string_format()/reset_to_string_format()` methods have been removed.
 
 
 ## [1.2.2] - 2017-06-15
