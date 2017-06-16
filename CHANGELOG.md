@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed behavior of some short timezones (like EST, MST or HST).
+
+
 ## [1.2.2] - 2017-06-15
 
 ### Fixed

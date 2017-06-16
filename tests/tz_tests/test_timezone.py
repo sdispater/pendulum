@@ -168,6 +168,65 @@ class TimezoneTest(AbstractTestCase):
         tz = pendulum.timezone('EET')
         self.assertTrue(len(tz.transitions) > 0)
 
+    def test_short_timezones_should_not_modify_time(self):
+        tz = pendulum.timezone('EST')
+        dt = tz.datetime(2017, 6, 15, 14, 0, 0)
+
+        assert dt.year == 2017
+        assert dt.month == 6
+        assert dt.day == 15
+        assert dt.hour == 14
+        assert dt.minute == 0
+        assert dt.second == 0
+
+        tz = pendulum.timezone('HST')
+        dt = tz.datetime(2017, 6, 15, 14, 0, 0)
+
+        assert dt.year == 2017
+        assert dt.month == 6
+        assert dt.day == 15
+        assert dt.hour == 14
+        assert dt.minute == 0
+        assert dt.second == 0
+
+    def test_after_last_transition(self):
+        tz = pendulum.timezone('Europe/Paris')
+        dt = tz.datetime(2135, 6, 15, 14, 0, 0)
+
+        assert dt.year == 2135
+        assert dt.month == 6
+        assert dt.day == 15
+        assert dt.hour == 14
+        assert dt.minute == 0
+        assert dt.second == 0
+        assert dt.microsecond == 0
+
+    def test_on_last_transition(self):
+        tz = pendulum.timezone('Europe/Paris')
+        dt = datetime(2037, 10, 25, 3, 0, 0)
+        dt = tz.convert(dt, dst_rule=tz.POST_TRANSITION)
+
+        assert dt.year == 2037
+        assert dt.month == 10
+        assert dt.day == 25
+        assert dt.hour == 3
+        assert dt.minute == 0
+        assert dt.second == 0
+        assert dt.microsecond == 0
+        assert dt.utcoffset().total_seconds() == 3600
+
+        dt = datetime(2037, 10, 25, 3, 0, 0)
+        dt = tz.convert(dt, dst_rule=tz.PRE_TRANSITION)
+
+        assert dt.year == 2037
+        assert dt.month == 10
+        assert dt.day == 25
+        assert dt.hour == 3
+        assert dt.minute == 0
+        assert dt.second == 0
+        assert dt.microsecond == 0
+        assert dt.utcoffset().total_seconds() == 7200
+
     def test_convert_fold_attribute_is_honored(self):
         self.skip_if_not_36()
 
