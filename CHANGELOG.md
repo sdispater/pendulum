@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed behavior of some short timezones (like EST, MST or HST).
+- Fixed warning when building C extensions.
 
 
 ## [1.2.2] - 2017-06-15
