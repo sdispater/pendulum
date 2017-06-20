@@ -81,3 +81,14 @@ def test_parse_duration():
 
     assert isinstance(duration, pendulum.duration)
     assert_duration(duration, 0, 0, 2, 0, 0, 0, 0)
+
+
+def test_parse_now():
+    dt = pendulum.parse('now')
+
+    assert dt.timezone_name == 'America/Toronto'
+
+    mock_now = pendulum.yesterday()
+
+    with pendulum.test(mock_now):
+        assert pendulum.parse('now') == mock_now
