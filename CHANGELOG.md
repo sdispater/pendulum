@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed parsing of `now` string.
+
+
 ## [1.2.3] - 2017-06-18
 
 ### Fixed

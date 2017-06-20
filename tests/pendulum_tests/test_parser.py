@@ -55,3 +55,13 @@ class ParserTestCase(AbstractTestCase):
 
         self.assertIsInstanceOfTime(dt)
         self.assertTime(dt, 12, 34, 56, 123456)
+
+    def test_parse_now(self):
+        dt = pendulum.parse('now')
+
+        assert dt.timezone_name == 'America/Toronto'
+
+        mock_now = pendulum.yesterday()
+
+        with pendulum.test(mock_now):
+            assert pendulum.parse('now') == mock_now
