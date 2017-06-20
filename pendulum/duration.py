@@ -226,7 +226,11 @@ class Duration(WordableDurationMixin, BaseDuration):
 
     def __mul__(self, other):
         if isinstance(other, int):
-            return self.__class__(seconds=self.total_seconds() * other)
+            return self.__class__(
+                years=self._years * other,
+                months=self._months * other,
+                seconds=self.total_seconds() * other
+            )
 
         if isinstance(other, float):
             usec = self._to_microseconds()
@@ -246,8 +250,15 @@ class Duration(WordableDurationMixin, BaseDuration):
         if isinstance(other, timedelta):
             return usec // other._to_microseconds()
 
+        # Removing years/months approximation
+        usec -= (self._years * 365 + self._months * 30) * SECONDS_PER_DAY * 1e6
+
         if isinstance(other, int):
-            return self.__class__(0, 0, usec // other)
+            return self.__class__(
+                0, 0, usec // other,
+                years=self._years // other,
+                months=self._months // other
+            )
 
     def __truediv__(self, other):
         if not isinstance(other, (int, float, timedelta)):
@@ -257,13 +268,24 @@ class Duration(WordableDurationMixin, BaseDuration):
         if isinstance(other, timedelta):
             return usec / other._to_microseconds()
 
+        # Removing years/months approximation
+        usec -= (self._years * 365 + self._months * 30) * SECONDS_PER_DAY * 1e6
+
         if isinstance(other, int):
-            return self.__class__(0, 0, _divide_and_round(usec, other))
+            return self.__class__(
+                0, 0, _divide_and_round(usec, other),
+                years=_divide_and_round(self._years, other),
+                months=_divide_and_round(self._months, other)
+            )
 
         if isinstance(other, float):
             a, b = other.as_integer_ratio()
 
-            return self.__class__(0, 0, _divide_and_round(b * usec, a))
+            return self.__class__(
+                0, 0, _divide_and_round(b * usec, a),
+                years=_divide_and_round(self._years * b, a),
+                months=_divide_and_round(self._months, other)
+            )
 
     __div__ = __floordiv__
 
