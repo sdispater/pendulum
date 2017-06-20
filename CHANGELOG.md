@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fixed parsing of `now` string.
+- Fixed parsing of the `now` string.
 
 
 ## [1.2.3] - 2017-06-18
