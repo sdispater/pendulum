@@ -27,6 +27,10 @@ def _parse(text, **options):
 
     :rtype: mixed
     """
+    # Handling special cases
+    if text == 'now':
+        return pendulum.now()
+
     parsed = base_parse(text, **options)
 
     if isinstance(parsed, datetime.datetime):

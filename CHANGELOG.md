@@ -23,6 +23,21 @@
 - The `to_xxx_string()` methods have been removed in favor of a unique `to_string()` method
 
 
+## [1.2.4] - 2017-06-20
+
+### Fixed
+
+- Fixed parsing of the `now` string.
+
+
+## [1.2.3] - 2017-06-18
+
+### Fixed
+
+- Fixed behavior of some short timezones (like EST, MST or HST).
+- Fixed warning when building C extensions.
+
+
 ## [1.2.2] - 2017-06-15
 
 ### Fixed
@@ -395,6 +410,8 @@ Initial release
 
 
 [Unreleased]: https://github.com/sdispater/pendulum/compare/master...2.0
+[1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
+[1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3
 [1.2.2]: https://github.com/sdispater/pendulum/releases/tag/1.2.2
 [1.2.1]: https://github.com/sdispater/pendulum/releases/tag/1.2.1
 [1.2.0]: https://github.com/sdispater/pendulum/releases/tag/1.2.0

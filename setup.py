@@ -62,6 +62,9 @@ class ve_build_ext(build_ext):
                 DistutilsPlatformError, ValueError):
             raise BuildFailed()
 
+packages = ['pendulum']
+for pkg in find_packages('pendulum'):
+    packages.append('pendulum.' + pkg)
 
 kwargs = dict(
     name='pendulum',
@@ -73,7 +76,7 @@ kwargs = dict(
     author_email='sebastien@eustace.io',
     url='https://github.com/sdispater/pendulum',
     download_url='https://github.com/sdispater/pendulum/archive/%s.tar.gz' % __version__,
-    packages=find_packages(exclude=['tests']),
+    packages=packages,
     install_requires=[
         'tzlocal',
         'python-dateutil',
