@@ -57,58 +57,27 @@ given timezone to properly handle any transition that might have occurred.
     Note that it only affects instances at creation time. Shifting time around
     transition times still behaves the same.
 
-.. note::
-
-    As of version **0.7.0**, and to be consistent with the standard library (Python 3.6+),
-    the ``Pendulum`` class accepts a ``fold`` keyword argument which will be used, when set explicitely,
-    to determine the rule to apply on ambiguous or non-existing times.
-    Be aware that when it is not set explicitely, the previous behavior remains,
-    i.e. the configured transition rule or the default one will be used.
-
-    .. code-block:: python
-
-        from pendulum import Pendulum
-
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
-        dt.isoformat()
-        '2013-03-31T03:30:00+02:00'
-
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=0)
-        dt.isoformat()
-        '2013-03-31T01:30:00+01:00'
-
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=1)
-        dt.isoformat()
-        '2013-03-31T03:30:00+02:00'
-
-        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=0)
-        dt.isoformat()
-        '2013-10-27T02:30:00+02:00'
-
-        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=1)
-        dt.isoformat()
-        '2013-10-27T02:30:00+01:00'
 
 Shifting time to transition
 ---------------------------
 
 So, what happens when you add time to a ``Pendulum`` instance and stumble upon
 a transition time?
-Well ``Pendulum``, provided with the context of the previous instance, will
+Well ``pendulum``, provided with the context of the previous instance, will
 adopt the proper behavior and apply the transition accordingly.
 
 .. code-block:: python
 
     import pendulum
 
-    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
     '2013-03-31T01:59:59.999999+01:00'
     dt = dt.add(microseconds=1)
     '2013-03-31T03:00:00+02:00'
     dt.subtract(microseconds=1)
     '2013-03-31T01:59:59.999998+01:00'
 
-    dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, tz='Europe/Paris')
     dt = dt.add(hours=1)
     # We can't just do
     # pendulum.create(2013, 10, 27, 2, 59, 59, 999999, 'Europe/Paris')
@@ -147,9 +116,8 @@ when adding and subtracting time around transition times.
 
 .. warning::
 
-    By default in **Python 3.6+**, the value of the ``fold`` attribute will be used
-    to determine the transition rule. So the behavior will be slightly different
-    compared to previous versions.
+    The value of the ``fold`` attribute will be used by default
+    to determine the transition rule.
 
     .. code-block:: python
 

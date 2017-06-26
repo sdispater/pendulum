@@ -2,7 +2,7 @@ Period
 ======
 
 When you subtract a ``Pendulum`` instance to another, or use the ``diff()`` method, it will return a ``Period`` instance.
-it inherits from the `Interval`_ class with the added benefit that it is aware of the
+it inherits from the `Duration`_ class with the added benefit that it is aware of the
 instances that generated it, so that it can give access to more methods and properties:
 
 .. code-block:: python

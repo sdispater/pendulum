@@ -1,10 +1,11 @@
 Instantiation
 =============
 
-There are several different methods available to create a new instance of Pendulum.
+There are several different methods available to create a new instances.
 
 First there is the ``create()`` helper.
-It allows you to provide as many or as few arguments as you want and will provide default values for all others.
+It allows you to provide as many or as few arguments as you want
+and will provide default values for all others.
 
 .. code-block:: python
 
@@ -13,8 +14,6 @@ It allows you to provide as many or as few arguments as you want and will provid
     dt = pendulum.create(2015, 2, 5, tz='America/Vancouver')
     isinstance(dt, datetime)
     True
-
-    dt = Pendulum.now(-5)
 
 ``create()`` will default any null parameter to the current date for the date part
 and to ``00:00:00`` for time. The ``tz`` defaults to the ``UTC`` timezone
@@ -46,7 +45,7 @@ This is again shown in the next example which also introduces the ``now()`` func
     print(pendulum.now(1).timezone_name)
     '+01:00'
 
-To accompany ``now()``, a few other static instantiation helpers exist to create widely known instances.
+To accompany ``now()``, a few other static instantiation helpers exist to create known instances.
 The only thing to really notice here is that ``today()``, ``tomorrow()`` and ``yesterday()``,
 besides behaving as expected, all accept a timezone parameter
 and each has their time value set to ``00:00:00``.
@@ -69,18 +68,35 @@ and each has their time value set to ``00:00:00``.
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
+The next helper, ``from_format()``, is similar to the native ``datetime.strptime()`` function
+but uses custom tokens to create a ``DateTime`` instance.
+
+.. note::
+
+    To see all the available tokens, you can check the `Formatter`_ section.
+
 The next helper, ``from_format()``, is mostly a wrapper for the base Python function ``datetime.strptime()``.
 The difference being the addition of the ``tz`` argument
 that can be a ``tzinfo`` instance or a string timezone value (defaults to ``UTC``).
 
 .. code-block:: python
 
-    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H').to_datetime_string()
-    '1975-05-21 22:00:00'
-    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', 'Europe/London').isoformat()
+    dt = pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH')
+    print(dt)
+    '1975-05-21T22:00:00+00:00'
+
+It also accepts a ``tz`` keyword argument to specify the timezone:
+
+.. code-block:: python
+
+    dt = pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH', tz='Europe/London')
     '1975-05-21T22:00:00+01:00'
 
-    # Using strptime is also possible (the timezone will be UTC)
+Note that ``strptime`` can still be used:
+
+.. code-block:: python
+
+    # The timezone will be UTC
     pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
 
 The final helper is for working with unix timestamps.
@@ -89,15 +105,13 @@ and will set the timezone as well or default it to ``UTC``.
 
 .. code-block:: python
 
-    pendulum.from_timestamp(-1).to_datetime_string()
-    '1969-12-31 23:59:59'
+    dt = pendulum.from_timestamp(-1)
+    print(dt)
+    '1969-12-31T23:59:59+00:00'
 
-    pendulum.from_timestamp(-1, 'Europe/London').to_datetime_string()
-    '1970-01-01 00:59:59'
-
-    # Using the standard fromtimestamp is also possible
-    pendulum.fromtimestamp(-1).to_datetime_string()
-    '1969-12-31 23:59:59'
+    dt  = pendulum.from_timestamp(-1, tz='Europe/London')
+    print(dt)
+    '1970-01-01T00:59:59+01:00'
 
 Finally, if you find yourself inheriting a ``datetime`` instance,
 you can create a ``DateTime`` instance via the ``instance()`` function.
@@ -106,126 +120,5 @@ you can create a ``DateTime`` instance via the ``instance()`` function.
 
     dt = datetime(2008, 1, 1)
     p = pendulum.instance(dt)
-    print(p.to_datetime_string())
-    '2008-01-01 00:00:00'
-
-Parsing
--------
-
-You can also instantiate ``DateTime`` instances by passing a string to the ``parse()`` method.
-
-.. code-block:: python
-
-    import pendulum
-
-    dt = pendulum.parse('1975-05-21 22:00:00')
-    print(dt)
-    '1975-05-21T22:00:00+00:00
-
-    # You can pass a tz keyword to specify the timezone
-    dt = pendulum.parse('1975-05-21 22:00:00', tz='Europe/Paris')
-    print(dt)
-    '1975-05-21T22:00:00+01:00'
-
-The library natively supports the RFC 3339 format, most ISO 8601 formats and some other common formats.
-If you pass a non-standard or more complicated string, the library will fallback on the
-`dateutil <https://dateutil.readthedocs.io>`_ parser.
-
-RFC 3339
-~~~~~~~~
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|1996-12-19T16:39:57-08:00          |1996-12-19T16:39:57-08:00                  |
-+-----------------------------------+-------------------------------------------+
-|1990-12-31T23:59:59Z               |1990-12-31T23:59:59+00:00                  |
-+-----------------------------------+-------------------------------------------+
-
-ISO 8601
-~~~~~~~~
-
-Datetime
-++++++++
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|20161001T143028+0530               |2016-10-01T14:30:28+05:30                  |
-+-----------------------------------+-------------------------------------------+
-|20161001T14                        |2016-10-01T14:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-
-Date
-++++
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|2012                               |2012-01-01T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012-05-03                         |2012-05-03T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|20120503                           |2012-05-03T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012-05                            |2012-05-01T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-
-Ordinal day
-+++++++++++
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|2012-007                           |2012-01-07T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012007                            |2012-01-07T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-
-Week number
-+++++++++++
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|2012-W05                           |2012-01-30T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012W05                            |2012-01-30T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012-W05-5                         |2012-02-03T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|2012W055                           |2012-02-03T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-
-Time
-++++
-
-When passing only time information the date will default to today.
-
-+-----------------------------------+-------------------------------------------+
-|String                             |Output                                     |
-+===================================+===========================================+
-|00:00                              |2016-12-17T00:00:00+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|12:04:23                           |2016-12-17T12:04:23+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|120423                             |2016-12-17T12:04:23+00:00                  |
-+-----------------------------------+-------------------------------------------+
-|12:04:23.45                        |2016-12-17T12:04:23.450000+00:00           |
-+-----------------------------------+-------------------------------------------+
-
-
-.. note::
-
-    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact type
-    that the string represents:
-
-    .. code-block:: python
-
-        import pendulum
-
-        pendulum.parse('2012-05-03', strict=True)
-        # <Date [2012-05-03]>
-
-        pendulum.parse('12:04:23', strict=True)
-        # <Time [12:04:23]>
+    print(p)
+    '2008-01-01T00:00:00+00:00'

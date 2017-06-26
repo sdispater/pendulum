@@ -7,7 +7,7 @@ Pendulum gives access to more attributes and properties than the default ``datet
 
     import pendulum
 
-    dt = pendulum.parse('2012-9-5 23:26:11.123789')
+    dt = pendulum.parse('2012-09-05T23:26:11.123789')
 
     # These properties specifically return integers
     dt.year

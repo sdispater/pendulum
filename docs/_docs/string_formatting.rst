@@ -1,10 +1,9 @@
 String Formatting
 =================
 
-All the ``to_xxx_string()`` methods rely on the native ``datetime.strftime()`` with additional
-directives available.
 The ``__str__`` magic method is defined which allows ``DateTime`` instances to be printed
 as a pretty date string when used in a string context.
+
 The default string representation is the same as the one returned by the ``isoformat()`` method.
 
 .. code-block:: python
@@ -85,14 +84,13 @@ The following are methods to display a ``DateTime`` instance as a common format:
     dt.to_string('w3c')
     '1975-12-25T14:15:16-05:00'
 
-Alternative formatter
----------------------
+Formatter
+---------
 
-Pendulum supports an alternative format when using the ``format()`` method.
-This format is more intuitive to use than the default one and supports more
-directives.
-You can use this format either locally when calling the ``format()`` method
-or globally by using ``pendulum.set_formatter()``.
+Pendulum uses its own formatter when using the ``format()`` method.
+
+This format is more intuitive to use than the one used with ``strftime()``
+and supports more directives.
 
 .. code-block:: python
 
@@ -220,5 +218,7 @@ To escape characters in format strings, you can wrap the characters in square br
 
     import pendulum
 
-    pendulum.now().format('[today] dddd', formatter='alternative')
+    dt = pendulum.now()
+
+    dt.format('[today] dddd', formatter='alternative')
     'today Sunday'
