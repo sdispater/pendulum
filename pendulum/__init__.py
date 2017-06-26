@@ -1,3 +1,5 @@
+from .__version__ import __version__
+
 # Types
 from .datetime import DateTime
 from .date import Date
