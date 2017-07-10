@@ -24,10 +24,10 @@ class Timezone(tzinfo):
     POST_TRANSITION = 'post'
     TRANSITION_ERROR = 'error'
 
-    def __init__(self, name, transitions,
-                 tzinfos,
-                 default_tzinfo_index,
-                 utc_transition_times):
+    def __init__(self, name=None, transitions=(),
+                 tzinfos=(),
+                 default_tzinfo_index=0,
+                 utc_transition_times=[]):
         """
         Constructor.
 
@@ -457,7 +457,7 @@ class FixedTimezone(Timezone):
 
     _cache = {}
 
-    def __init__(self, offset, name=None, transition_type=None):
+    def __init__(self, offset=0, name=None, transition_type=None):
         """
         :param offset: offset to UTC in seconds.
         :type offset: int

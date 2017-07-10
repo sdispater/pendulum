@@ -5,7 +5,7 @@ from datetime import tzinfo, timedelta
 
 class TimezoneInfo(tzinfo):
 
-    def __init__(self, tz, utc_offset, is_dst, dst, abbrev):
+    def __init__(self, tz=None, utc_offset=0, is_dst=False, dst=None, abbrev='GMT'):
         """
         :param tz: The parent timezone.
         :type tz: Timezone
