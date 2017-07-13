@@ -8,33 +8,21 @@ from .period import Period
 from .exceptions import DateTimeException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
-from .parsing import parse
 from .helpers import add_duration
+from .formatting import FORMATTERS
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
     SECONDS_PER_DAY,
-    SUNDAY, SATURDAY
+    SUNDAY, SATURDAY,
+    ATOM, COOKIE, RFC822, RFC850, RFC1036, RFC1123, RFC2822, RSS, W3C
 )
 
 
 class DateTime(Date, datetime.datetime):
 
     # Formats
-    ATOM = 'YYYY-MM-DDTHH:mm:ssZZ'
-    COOKIE = 'dddd, DD-MMM-YYYY HH:mm:ss z'
-    ISO8601 = 'YYYY-MM-DDTHH:mm:ssZZ'
-    ISO8601_EXTENDED = 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ'
-    RFC822 = 'ddd, DD MMM YY HH:mm:ss Z'
-    RFC850 = 'dddd, DD-MMM-YY HH:mm:ss z'
-    RFC1036 = 'ddd, DD MMM YY HH:mm:ss Z'
-    RFC1123 = 'ddd, DD MMM YYYY HH:mm:ss Z'
-    RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss Z'
-    RFC3339 = ISO8601
-    RFC3339_EXTENDED = ISO8601_EXTENDED
-    RSS = 'ddd, DD MMM YYYY HH:mm:ss Z'
-    W3C = ISO8601
 
     _FORMATS = {
         'atom': ATOM,
@@ -351,7 +339,7 @@ class DateTime(Date, datetime.datetime):
         return cls.instance(dt, tz)
 
     @classmethod
-    def create_from_format(cls, time, fmt, tz=UTC):
+    def from_format(cls, time, fmt, tz=UTC):
         """
         Create a DateTime instance from a specific format.
 
@@ -366,9 +354,67 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
-        dt = datetime.datetime.strptime(time, fmt)
+        formatter = FORMATTERS['alternative']
 
-        return cls.instance(dt, tz)
+        parts = formatter.parse(time, fmt)
+        actual_parts = {}
+
+        # If timestamp has been specified
+        # we use it and don't go any further
+        if parts['timestamp'] is not None:
+            return cls.create_from_timestamp(parts['timestamp'])
+
+        if parts['quarter'] is not None:
+            dt = pendulum.now().start_of('year')
+
+            while dt.quarter != parts['quarter']:
+                dt = dt.add(months=3)
+
+            actual_parts['year'] = dt.year
+            actual_parts['month'] = dt.month
+            actual_parts['day'] = dt.day
+
+        # If the date part has not been specified
+        # we default to today
+        if all([parts['year'] is None, parts['month'] is None, parts['day'] is None]):
+            now = pendulum.now()
+
+            parts['year'] = actual_parts['year'] = now.year
+            parts['month'] = actual_parts['month'] = now.month
+            parts['day'] = actual_parts['day'] = now.day
+
+        # We replace any not set month/day value
+        # with the first of each unit
+        if any([parts['month'] is None, parts['day'] is None]):
+            for part in ['month', 'day']:
+                if parts[part] is None and actual_parts.get(part) is None:
+                    actual_parts[part] = 1
+
+        for part in ['year', 'month', 'day']:
+            if parts[part] is not None:
+                actual_parts[part] = parts[part]
+
+        # If any of hour/minute/second/microsecond is not set
+        # We assume start of corresponding value
+        for part in ['hour', 'minute', 'second', 'microsecond']:
+            if parts[part] is None:
+                actual_parts[part] = 0
+            else:
+                actual_parts[part] = parts[part]
+
+        if parts['day_of_year'] is not None:
+            dt = pendulum.parse(f"{actual_parts['year']}-{parts['day_of_year']}")
+
+            actual_parts['month'] = dt.month
+            actual_parts['day'] = dt.day
+
+        # Meridiem
+        if parts['meridiem'] is not None:
+            pass
+
+        actual_parts['tz'] = parts['tz'] or tz
+
+        return cls.create(**actual_parts)
 
     @classmethod
     def create_from_timestamp(cls, timestamp, tz=UTC):
@@ -397,7 +443,7 @@ class DateTime(Date, datetime.datetime):
 
     @classmethod
     def strptime(cls, time, fmt):
-        return cls.create_from_format(time, fmt)
+        return cls.instance(datetime.datetime.strptime(time, fmt))
 
     def copy(self):
         """

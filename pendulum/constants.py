@@ -20,19 +20,19 @@ SECONDS_PER_HOUR = MINUTES_PER_HOUR * SECONDS_PER_MINUTE
 SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR
 
 # Formats
-ATOM = '%Y-%m-%dT%H:%M:%S%_z'
-COOKIE = '%A, %d-%b-%Y %H:%M:%S %Z'
-ISO8601 = '%Y-%m-%dT%H:%M:%S%_z'
-ISO8601_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-RFC822 = '%a, %d %b %y %H:%M:%S %z'
-RFC850 = '%A, %d-%b-%y %H:%M:%S %Z'
-RFC1036 = '%a, %d %b %y %H:%M:%S %z'
-RFC1123 = '%a, %d %b %Y %H:%M:%S %z'
-RFC2822 = '%a, %d %b %Y %H:%M:%S %z'
-RFC3339 = '%Y-%m-%dT%H:%M:%S%_z'
-RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-RSS = '%a, %d %b %Y %H:%M:%S %z'
-W3C = '%Y-%m-%dT%H:%M:%S%_z'
+ATOM = 'YYYY-MM-DDTHH:mm:ssZZ'
+COOKIE = 'dddd, DD-MMM-YYYY HH:mm:ss z'
+ISO8601 = 'YYYY-MM-DDTHH:mm:ssZZ'
+ISO8601_EXTENDED = 'YYYY-MM-DDTHH:mm:ss.SSSSSSZZ'
+RFC822 = 'ddd, DD MMM YY HH:mm:ss Z'
+RFC850 = 'dddd, DD-MMM-YY HH:mm:ss z'
+RFC1036 = 'ddd, DD MMM YY HH:mm:ss Z'
+RFC1123 = 'ddd, DD MMM YYYY HH:mm:ss Z'
+RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss Z'
+RFC3339 = ISO8601
+RFC3339_EXTENDED = ISO8601_EXTENDED
+RSS = 'ddd, DD MMM YYYY HH:mm:ss Z'
+W3C = ISO8601
 
 
 EPOCH_YEAR = 1970
