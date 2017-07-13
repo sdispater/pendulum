@@ -20,7 +20,8 @@
 - Improved performances of the `precise_diff()` helper.
 - The `alternative` formatter is now the default one.
 - `set_to_string_format()/reset_to_string_format()` methods have been removed.
-- The `to_xxx_string()` methods have been removed in favor of a unique `to_string()` method
+- The `to_xxx_string()` methods have been removed in favor of a unique `to_string()` method.
+- `from_format()` now uses the alternative formatter tokens.
 
 
 ## [1.2.4] - 2017-06-20
