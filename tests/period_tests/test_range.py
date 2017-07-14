@@ -11,7 +11,7 @@ class RangeTest(AbstractTestCase):
         dt2 = DateTime(2000, 1, 31, 12, 45, 37)
 
         p = Period(dt1, dt2)
-        r = p.range('days')
+        r = list(p.range('days'))
         self.assertEqual(31, len(r))
         self.assertDateTime(r[0], 2000, 1, 1, 12, 45, 37)
         self.assertDateTime(r[-1], 2000, 1, 31, 12, 45, 37)
@@ -21,7 +21,7 @@ class RangeTest(AbstractTestCase):
         dt2 = DateTime(2000, 1, 31, 11, 45, 37)
 
         p = Period(dt1, dt2)
-        r = p.range('days')
+        r = list(p.range('days'))
         self.assertEqual(30, len(r))
         self.assertDateTime(r[0], 2000, 1, 1, 12, 45, 37)
         self.assertDateTime(r[-1], 2000, 1, 30, 12, 45, 37)
@@ -31,7 +31,7 @@ class RangeTest(AbstractTestCase):
         dt2 = DateTime(2000, 1, 31, 12, 45, 37)
 
         p = Period(dt2, dt1)
-        r = p.range('days')
+        r = list(p.range('days'))
         self.assertEqual(31, len(r))
         self.assertDateTime(r[-1], 2000, 1, 1, 12, 45, 37)
         self.assertDateTime(r[0], 2000, 1, 31, 12, 45, 37)
@@ -77,7 +77,7 @@ class RangeTest(AbstractTestCase):
         dt2 = dt1.add(months=4)
 
         p = Period(dt1, dt2)
-        r = p.range('months')
+        r = list(p.range('months'))
         self.assertDateTime(r[0], 2016, 1, 30, 0, 0, 0)
         self.assertDateTime(r[-1], 2016, 5, 30, 0, 0, 0)
 
@@ -86,7 +86,7 @@ class RangeTest(AbstractTestCase):
         dt2 = dt1.add(weeks=1)
 
         p = Period(dt1, dt2)
-        r = p.range('days')
+        r = list(p.range('days'))
         self.assertDateTime(r[0], 2016, 10, 14, 0, 0, 0)
         self.assertDateTime(r[2], 2016, 10, 16, 1, 0, 0)
         self.assertDateTime(r[-1], 2016, 10, 21, 0, 0, 0)
@@ -96,7 +96,7 @@ class RangeTest(AbstractTestCase):
         dt2 = dt1.add(weeks=1)
 
         p = Period(dt1, dt2)
-        r = p.range('days', 2)
+        r = list(p.range('days', 2))
 
         self.assertEqual(len(r), 4)
         self.assertDateTime(r[0], 2016, 10, 14, 0, 0, 0)
