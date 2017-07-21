@@ -1162,7 +1162,7 @@ Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
 
                 break;
             default:
-                if (*c >= '1' && *c <='9') {
+                if (*c >= '0' && *c <='9') {
                     if (in_fraction) {
                         fraction = 10 * fraction + *c - '0';
                         fraction_length++;

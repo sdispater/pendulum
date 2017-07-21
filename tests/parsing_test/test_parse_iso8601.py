@@ -409,6 +409,19 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
+    # Double digit with 0
+    text = 'P2Y30M4DT5H6M7S'
+    parsed = parse_iso8601(text)
+
+    assert parsed.years == 2
+    assert parsed.months == 30
+    assert parsed.weeks == 0
+    assert parsed.remaining_days == 4
+    assert parsed.hours == 5
+    assert parsed.minutes == 6
+    assert parsed.remaining_seconds == 7
+    assert parsed.microseconds == 0
+
     # No P operator
     with pytest.raises(ValueError):
         parse_iso8601('2Y3M4DT5H6M7S')
