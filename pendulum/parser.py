@@ -1,7 +1,7 @@
 import pendulum
 import datetime
 
-from .parsing import parse as base_parse
+from .parsing import parse as base_parse, _Interval
 
 try:
     from .parsing._iso8601 import Duration as CDuration
@@ -41,6 +41,39 @@ def _parse(text, **options):
 
     if isinstance(parsed, datetime.time):
         return pendulum.time.instance(parsed)
+
+    if isinstance(parsed, _Interval):
+        if parsed.duration is not None:
+            duration = parsed.duration
+
+            if parsed.start is not None:
+                dt = pendulum.instance(parsed.start, tz=options.get('tz', UTC))
+
+                return pendulum.period(
+                    dt, dt.add(
+                        years=duration.years, months=duration.months,
+                        weeks=duration.weeks, days=duration.days,
+                        hours=duration.hours, minutes=duration.minutes,
+                        seconds=duration.seconds, microseconds=duration.microseconds
+                    )
+                )
+
+            dt = pendulum.instance(parsed.end, tz=options.get('tz', UTC))
+
+            return pendulum.period(
+                dt.subtract(
+                    years=duration.years, months=duration.months,
+                    weeks=duration.weeks, days=duration.days,
+                    hours=duration.hours, minutes=duration.minutes,
+                    seconds=duration.seconds, microseconds=duration.microseconds
+                ),
+                dt
+            )
+
+        return pendulum.period(
+            pendulum.instance(parsed.start, tz=options.get('tz', UTC)),
+            pendulum.instance(parsed.end, tz=options.get('tz', UTC))
+        )
 
     if CDuration and isinstance(parsed, CDuration):
         return pendulum.duration(

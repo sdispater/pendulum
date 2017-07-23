@@ -899,6 +899,14 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
         }
     }
 
+    // At this point we should be at the end of the string
+    // If not, the string is invalid
+    if (*c != '\0') {
+        parsed->error = PARSER_INVALID_ISO8601;
+
+        return NULL;
+    }
+
     return parsed;
 }
 

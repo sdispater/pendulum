@@ -100,6 +100,11 @@ def _parse(text, **options):
         pass
 
     try:
+        return _parse_iso8601_interval(text)
+    except ValueError:
+        pass
+
+    try:
         return _parse_common(text, **options)
     except ParserError:
         pass
@@ -180,3 +185,37 @@ def _parse_common(text, **options):
         return datetime(year, month, day, hour, minute, second, microsecond)
 
     return time(hour, minute, second, microsecond)
+
+
+class _Interval:
+    """
+    Special class to handle ISO 8601 intervals
+    """
+
+    def __init__(self, start=None, end=None, duration=None):
+        self.start = start
+        self.end = end
+        self.duration = duration
+
+
+def _parse_iso8601_interval(text):
+    if '/' not in text:
+        raise ParserError('Invalid interval')
+
+    first, last = text.split('/')
+    start = end = duration = None
+
+    if first[0] == 'P':
+        # duration/end
+        duration = parse_iso8601(first)
+        end = parse_iso8601(last)
+    elif last[0] == 'P':
+        # start/duration
+        start = parse_iso8601(first)
+        duration = parse_iso8601(last)
+    else:
+        # start/end
+        start = parse_iso8601(first)
+        end = parse_iso8601(last)
+
+    return _Interval(start, end, duration)
