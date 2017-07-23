@@ -52,9 +52,10 @@ def _parse(text, **options):
                 return pendulum.period(
                     dt, dt.add(
                         years=duration.years, months=duration.months,
-                        weeks=duration.weeks, days=duration.days,
+                        weeks=duration.weeks, days=duration.remaining_days,
                         hours=duration.hours, minutes=duration.minutes,
-                        seconds=duration.seconds, microseconds=duration.microseconds
+                        seconds=duration.remaining_seconds,
+                        microseconds=duration.microseconds
                     )
                 )
 
@@ -63,9 +64,10 @@ def _parse(text, **options):
             return pendulum.period(
                 dt.subtract(
                     years=duration.years, months=duration.months,
-                    weeks=duration.weeks, days=duration.days,
+                    weeks=duration.weeks, days=duration.remaining_days,
                     hours=duration.hours, minutes=duration.minutes,
-                    seconds=duration.seconds, microseconds=duration.microseconds
+                    seconds=duration.remaining_seconds,
+                    microseconds=duration.microseconds
                 ),
                 dt
             )
