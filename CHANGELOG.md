@@ -7,6 +7,7 @@
 - Added years and months support to durations.
 - Added the `test_local_timezone()` and `set_local_timezone()` helpers to ease testing.
 - Added support of ISO 8601 duration parsing.
+- Added support of ISO 8601 interval parsing.
 
 ### Changed
 
