@@ -283,6 +283,9 @@ class Period(WordableDurationMixin, BaseDuration):
             self._start, self._end
         )
 
+    def __str__(self):
+        return self.__repr__()
+
     def _getstate(self, protocol=3):
         start, end = self.start, self.end
 
