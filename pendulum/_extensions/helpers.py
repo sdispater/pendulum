@@ -191,6 +191,15 @@ def precise_diff(d1, d2):
             0, 0, 0, 0, 0, 0, 0
         )
 
+    tzinfo1 = d1.tzinfo if isinstance(d1, datetime.datetime) else None
+    tzinfo2 = d2.tzinfo if isinstance(d2, datetime.datetime) else None
+
+    if (tzinfo1 is None and tzinfo2 is not None
+        or tzinfo2 is None and tzinfo1 is not None):
+        raise ValueError(
+            'Comparison between naive and aware datetimes is not supported'
+        )
+
     if d1 > d2:
         d1, d2 = d2, d1
         sign = -1
@@ -202,9 +211,41 @@ def precise_diff(d1, d2):
     min_diff = 0
     sec_diff = 0
     mic_diff = 0
+    in_same_tz = False
+    tz1 = None
+    tz2 = None
+
+    # Trying to figure out the timezone names
+    # If we can't find them, we assume different timezones
+    if tzinfo1 and tzinfo2:
+        if hasattr(tzinfo1, 'name'):
+            # Pendulum timezone
+            tz1 = tzinfo1.name
+        elif hasattr(tzinfo1, 'zone'):
+            # pytz timezone
+            tz1 = tzinfo1.zone
+
+        if hasattr(tzinfo2, 'name'):
+            tz2 = tzinfo2.name
+        elif hasattr(tzinfo2, 'zone'):
+            tz2 = tzinfo2.zone
+
+        in_same_tz = tz1 == tz2 and tz1 is not None
 
     if isinstance(d2, datetime.datetime):
         if isinstance(d1, datetime.datetime):
+            # If we are not in the same timezone
+            # we need to adjust
+            if not in_same_tz:
+                offset1 = d1.utcoffset()
+                offset2 = d2.utcoffset()
+
+                if offset1:
+                    d1 = d1 - offset1
+
+                if offset2:
+                    d2 = d2 - offset2
+
             hour_diff = d2.hour - d1.hour
             min_diff = d2.minute - d1.minute
             sec_diff = d2.second - d1.second

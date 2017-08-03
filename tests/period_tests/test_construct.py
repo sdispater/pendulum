@@ -101,3 +101,18 @@ class ConstructTest(AbstractTestCase):
         self.assertEqual(p2.seconds, it2.seconds)
         self.assertEqual(p1.microseconds, it1.microseconds)
         self.assertEqual(p2.microseconds, it2.microseconds)
+
+    def test_different_timezones_same_time(self):
+        dt1 = pendulum.create(2013, 3, 31, 1, 30, tz='Europe/Paris')
+        dt2 = pendulum.create(2013, 4, 1, 1, 30, tz='Europe/Paris')
+        period = dt2 - dt1
+
+        assert period.in_words() == '1 day'
+        assert period.in_hours() == 23
+
+        dt1 = pendulum.create(2013, 3, 31, 1, 30, tz='Europe/Paris')
+        dt2 = pendulum.create(2013, 4, 1, 1, 30, tz='America/Toronto')
+        period = dt2 - dt1
+
+        assert period.in_words() == '1 day 5 hours'
+        assert period.in_hours() == 29

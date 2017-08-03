@@ -1,5 +1,6 @@
 import pytest
 import pendulum
+import pytz
 
 from datetime import datetime
 from pendulum.helpers import precise_diff, week_day, days_in_year
@@ -67,6 +68,49 @@ def test_precise_diff():
     assert_diff(
         diff,
         days=6, hours=0
+    )
+
+
+def test_precise_diff_timezone():
+    paris = pendulum.timezone('Europe/Paris')
+    toronto = pendulum.timezone('America/Toronto')
+
+    dt1 = paris.datetime(2013, 3, 31, 1, 30)
+    dt2 = paris.datetime(2013, 4, 1, 1, 30)
+
+    diff = precise_diff(dt1, dt2)
+    assert_diff(
+        diff,
+        days=1, hours=0
+    )
+
+    dt2 = toronto.datetime(2013, 4, 1, 1, 30)
+
+    diff = precise_diff(dt1, dt2)
+    assert_diff(
+        diff,
+        days=1, hours=5
+    )
+
+    # pytz
+    paris = pytz.timezone('Europe/Paris')
+    toronto = pytz.timezone('America/Toronto')
+
+    dt1 = paris.localize(datetime(2013, 3, 31, 1, 30))
+    dt2 = paris.localize(datetime(2013, 4, 1, 1, 30))
+
+    diff = precise_diff(dt1, dt2)
+    assert_diff(
+        diff,
+        days=1, hours=0
+    )
+
+    dt2 = toronto.localize(datetime(2013, 4, 1, 1, 30))
+
+    diff = precise_diff(dt1, dt2)
+    assert_diff(
+        diff,
+        days=1, hours=5
     )
 
 

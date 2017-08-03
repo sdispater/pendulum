@@ -120,6 +120,50 @@ int _days_in_year(int year) {
     return DAYS_PER_N_YEAR;
 }
 
+int _get_offset(PyObject *dt) {
+    PyObject *tzinfo;
+    PyObject *offset;
+
+    tzinfo = ((PyDateTime_DateTime *)(dt))->tzinfo;
+
+    if (tzinfo != Py_None) {
+        offset = PyObject_CallMethod(tzinfo, "utcoffset", "O", dt);
+
+        return
+            PyDateTime_DELTA_GET_DAYS(offset) * 86400
+            + PyDateTime_DELTA_GET_SECONDS(offset);
+    }
+
+    return 0;
+}
+
+int _has_tzinfo(PyObject *dt) {
+    return ((_PyDateTime_BaseTZInfo *)(dt))->hastzinfo;
+}
+
+char* _get_tz_name(PyObject *dt) {
+    PyObject *tzinfo;
+    char *tz = "";
+
+    tzinfo = ((PyDateTime_DateTime *)(dt))->tzinfo;
+
+    if (tzinfo != Py_None) {
+        if (PyObject_HasAttrString(tzinfo, "name")) {
+            // Pendulum timezone
+            tz = PyUnicode_AsUTF8(
+                PyObject_GetAttrString(tzinfo, "name")
+            );
+        } else if (PyObject_HasAttrString(tzinfo, "zone")) {
+            // pytz timezone
+            tz = PyUnicode_AsUTF8(
+                PyObject_GetAttrString(tzinfo, "zone")
+            );
+        }
+    }
+
+    return tz;
+}
+
 /* ------------------------ Custom Types ------------------------------- */
 
 #if defined(PY_MAJOR_VERSION)
@@ -450,8 +494,29 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     int dt2_microsecond = 0;
     int dt1_total_seconds = 0;
     int dt2_total_seconds = 0;
+    int dt1_offset = 0;
+    int dt2_offset = 0;
     int dt1_is_datetime = PyDateTime_Check(dt1);
     int dt2_is_datetime = PyDateTime_Check(dt2);
+    char *tz1 = "";
+    char *tz2 = "";
+    int in_same_tz = 0;
+
+    // If both dates are datetimes, we check
+    // If we are in the same timezone
+    if (dt1_is_datetime && dt2_is_datetime) {
+        if (_has_tzinfo(dt1)) {
+            tz1 = _get_tz_name(dt1);
+            dt1_offset = _get_offset(dt1);
+        }
+
+        if (_has_tzinfo(dt2)) {
+            tz2 = _get_tz_name(dt2);
+            dt2_offset = _get_offset(dt2);
+        }
+
+        in_same_tz = tz1 == tz2 && strncmp(tz1, "", 1);
+    }
 
     // If we have datetimes (and not only dates) we get the information
     // we need
@@ -460,6 +525,38 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         dt1_minute = PyDateTime_DATE_GET_MINUTE(dt1);
         dt1_second = PyDateTime_DATE_GET_SECOND(dt1);
         dt1_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt1);
+
+        if (!in_same_tz && dt1_offset != 0) {
+            dt1_hour -= dt1_offset / SECS_PER_HOUR;
+            dt1_offset %= SECS_PER_HOUR;
+            dt1_minute -= dt1_offset / SECS_PER_MIN;
+            dt1_offset %= SECS_PER_MIN;
+            dt1_second -= dt1_offset;
+            
+            if (dt1_second < 0) {
+                dt1_second += 60;
+                dt1_minute -= 1;
+            } else if (dt1_second > 60) {
+                dt1_second -= 60;
+                dt1_minute += 1;
+            }
+
+            if (dt1_minute < 0) {
+                dt1_minute += 60;
+                dt1_hour -= 1;
+            } else if (dt1_minute > 60) {
+                dt1_minute -= 60;
+                dt1_hour += 1;
+            }
+
+            if (dt1_hour < 0) {
+                dt1_hour += 24;
+                dt1_day -= 1;
+            } else if (dt1_hour > 24) {
+                dt1_hour -= 24;
+                dt1_day += 1;
+            }
+        }
         
         dt1_total_seconds = (
             dt1_hour * SECS_PER_HOUR
@@ -473,6 +570,38 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         dt2_minute = PyDateTime_DATE_GET_MINUTE(dt2);
         dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
         dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
+
+        if (!in_same_tz && dt2_offset != 0) {
+            dt2_hour -= dt2_offset / SECS_PER_HOUR;
+            dt2_offset %= SECS_PER_HOUR;
+            dt2_minute -= dt2_offset / SECS_PER_MIN;
+            dt2_offset %= SECS_PER_MIN;
+            dt2_second -= dt2_offset;
+
+            if (dt2_second < 0) {
+                dt2_second += 60;
+                dt2_minute -= 1;
+            } else if (dt2_second > 60) {
+                dt2_second -= 60;
+                dt2_minute += 1;
+            }
+
+            if (dt2_minute < 0) {
+                dt2_minute += 60;
+                dt2_hour -= 1;
+            } else if (dt2_minute > 60) {
+                dt2_minute -= 60;
+                dt2_hour += 1;
+            }
+
+            if (dt2_hour < 0) {
+                dt2_hour += 24;
+                dt2_day -= 1;
+            } else if (dt2_hour > 24) {
+                dt2_hour -= 24;
+                dt2_day += 1;
+            }
+        }
 
         dt2_total_seconds = (
             dt2_hour * SECS_PER_HOUR
