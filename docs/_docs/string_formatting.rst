@@ -15,6 +15,21 @@ The default string representation is the same as the one returned by the ``isofo
     print(dt)
     '1975-12-25T14:15:16+00:00'
 
+    dt.to_date_string()
+    '1975-12-25'
+
+    dt.to_formatted_date_string()
+    'Dec 25, 1975'
+
+    dt.to_time_string()
+    '14:15:16'
+
+    dt.to_datetime_string()
+    '1975-12-25 14:15:16'
+
+    dt.to_day_datetime_string()
+    'Thu, Dec 25, 1975 2:15 PM'
+
     # You can also use the format() method
     dt.format('dddd Do [of] MMMM YYYY HH:mm:ss A')
     'Thursday 25th of December 1975 02:15:16 PM'
@@ -51,37 +66,37 @@ The following are methods to display a ``DateTime`` instance as a common format:
 
     dt = pendulum.now()
 
-    dt.to_string('atom')
+    dt.to_atom_string()
     '1975-12-25T14:15:16-05:00'
 
-    dt.to_string('cookie')
+    dt.to_cookie_string()
     'Thursday, 25-Dec-1975 14:15:16 EST'
 
-    dt.to_string('iso8601')
+    dt.to_iso8601_string()
     '1975-12-25T14:15:16-0500'
 
-    dt.to_string('rfc822')
+    dt.to_rfc822_string()
     'Thu, 25 Dec 75 14:15:16 -0500'
 
-    dt.to_string('rfc850')
+    dt.to_rfc850_string()
     'Thursday, 25-Dec-75 14:15:16 EST'
 
-    dt.to_string('rfc1036')
+    dt.to_rfc1036_string()
     'Thu, 25 Dec 75 14:15:16 -0500'
 
-    dt.to_string('rfc1123')
+    dt.to_rfc1123_string()
     'Thu, 25 Dec 1975 14:15:16 -0500'
 
-    dt.to_string('rfc2822')
+    dt.to_rfc2822_string()
     'Thu, 25 Dec 1975 14:15:16 -0500'
 
-    dt.to_string('rfc3339')
+    dt.to_rfc3339_string()
     '1975-12-25T14:15:16-05:00'
 
-    dt.to_string('rss')
+    dt.to_rss_string()
     'Thu, 25 Dec 1975 14:15:16 -0500'
 
-    dt.to_string('w3c')
+    dt.to_w3c_string()
     '1975-12-25T14:15:16-05:00'
 
 Formatter

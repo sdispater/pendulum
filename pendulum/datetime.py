@@ -723,17 +723,127 @@ class DateTime(Date, datetime.datetime):
 
     # STRING FORMATTING
 
-    def to_string(self, fmt):
+    def to_time_string(self):
+        """
+        Format the instance as time.
+
+        :rtype: str
+        """
+        return self.format('HH:mm:ss')
+
+    def to_datetime_string(self):
+        """
+        Format the instance as date and time.
+
+        :rtype: str
+        """
+        return self.format('YYYY-MM-DD HH:mm:ss')
+
+    def to_day_datetime_string(self):
+        """
+        Format the instance as day, date and time (in english).
+
+        :rtype: str
+        """
+        return self.format('ddd, MMM D, YYYY h:mm A', locale='en')
+
+    def to_atom_string(self):
+        """
+        Format the instance as ATOM.
+
+        :rtype: str
+        """
+        return self._to_string('atom')
+
+    def to_cookie_string(self):
+        """
+        Format the instance as COOKIE.
+
+        :rtype: str
+        """
+        return self._to_string('cookie', locale='en')
+
+    def to_iso8601_string(self):
+        """
+        Format the instance as ISO 8601.
+
+        :rtype: str
+        """
+        return self._to_string('iso8601')
+
+    def to_rfc822_string(self):
+        """
+        Format the instance as RFC 822.
+
+        :rtype: str
+        """
+        return self._to_string('rfc822')
+
+    def to_rfc850_string(self):
+        """
+        Format the instance as RFC 850.
+
+        :rtype: str
+        """
+        return self._to_string('rfc850')
+
+    def to_rfc1036_string(self):
+        """
+        Format the instance as RFC 1036.
+
+        :rtype: str
+        """
+        return self._to_string('rfc1036')
+
+    def to_rfc1123_string(self):
+        """
+        Format the instance as RFC 1123.
+
+        :rtype: str
+        """
+        return self._to_string('rfc1123')
+
+    def to_rfc2822_string(self):
+        """
+        Format the instance as RFC 2822.
+
+        :rtype: str
+        """
+        return self._to_string('rfc2822')
+
+    def to_rfc3339_string(self):
+        """
+        Format the instance as RFC 3339.
+
+        :rtype: str
+        """
+        return self._to_string('rfc3339')
+
+    def to_rss_string(self):
+        """
+        Format the instance as RSS.
+
+        :rtype: str
+        """
+        return self._to_string('rss')
+
+    def to_w3c_string(self):
+        """
+        Format the instance as W3C.
+
+        :rtype: str
+        """
+        return self._to_string('w3c')
+
+    def _to_string(self, fmt, locale=None):
         """
         Format the instance to a common string format.
 
-        >>> import pendulum
-        >>> dt = pendulum.now()
-        >>> dt.to_string('iso8601')
-        >>> dt.to_string('w3c')
-
         :param fmt: The name of the string format
         :type fmt: string
+
+        :param locale: The locale to use
+        :type locale: str or None
 
         :rtype: str
         """
@@ -744,7 +854,7 @@ class DateTime(Date, datetime.datetime):
         if callable(fmt):
             return fmt(self)
 
-        return self.format(fmt)
+        return self.format(fmt, locale=locale)
 
     def __repr__(self):
         us = ''
