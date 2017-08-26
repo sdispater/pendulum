@@ -6,7 +6,7 @@ from struct import unpack, calcsize
 from pytzdata import tz_file
 from pytzdata.exceptions import TimezoneNotFound
 
-from .. import _compat, _compat.FileNotFoundError as FileNotFoundError
+from .. import _compat
 from ..helpers import local_time
 from .transition import Transition
 from .transition_type import TransitionType
@@ -40,7 +40,7 @@ class Loader(object):
         try:
             with open(filepath, 'rb') as f:
                 return cls._load(f)
-        except FileNotFoundError:
+        except _compat.FileNotFoundError:
             raise ValueError('Unable to load file [{}]'.format(filepath))
 
     @classmethod
