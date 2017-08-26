@@ -6,7 +6,7 @@ from struct import unpack, calcsize
 from pytzdata import tz_file
 from pytzdata.exceptions import TimezoneNotFound
 
-from .. import _compat
+from .. import _compat, _compat.FileNotFoundError as FileNotFoundError
 from ..helpers import local_time
 from .transition import Transition
 from .transition_type import TransitionType
