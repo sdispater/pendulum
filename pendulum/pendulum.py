@@ -378,7 +378,7 @@ class Pendulum(Date, datetime.datetime):
         Create a Pendulum instance from a specific format.
 
         :param fmt: The format
-        :type fmt: str
+        :type fmt: str or [str...]
 
         :param time: The time string
         :type time: str
@@ -388,7 +388,21 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
-        dt = datetime.datetime.strptime(time, fmt)
+
+        dt = None
+
+        # if fmt is a string, we convert it to a single-item list
+        format_list = fmt if isinstance(fmt, list) else [ fmt ]
+        
+        # try every format in the list until we find one that works
+        for format in format_list:
+            try:
+                dt = datetime.datetime.strptime(time, format)
+                break
+            except ValueError as ve:
+                # only raise an error if we're at the end of the list
+                if format == format_list[-1]:
+                    raise(ve)
 
         return cls.instance(dt, tz)
 
