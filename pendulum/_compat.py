@@ -17,7 +17,7 @@ except NameError:  # Python 3
     basestring = str
 
 try:               # Python >= 3.3
-    FileNotFoundError
+    FileNotFoundError = FileNotFoundError
 except NameError:  # Python < 3.3
     FileNotFoundError = IOError  # cf PEP-3151 
 
