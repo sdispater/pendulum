@@ -40,7 +40,7 @@ class Loader(object):
         try:
             with open(filepath, 'rb') as f:
                 return cls._load(f)
-        except _compat.FileNotFoundError:
+        except FileNotFoundError:
             raise ValueError('Unable to load file [{}]'.format(filepath))
 
     @classmethod
