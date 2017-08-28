@@ -16,7 +16,7 @@ Pendulum
 
 Python datetimes made easy.
 
-Supports Python **2.7+**, **3.2+** and **PyPy**.
+Supports Python **3.6+**.
 
 
 .. code-block:: python
@@ -34,10 +34,6 @@ Supports Python **2.7+**, **3.2+** and **PyPy**.
    >>> tomorrow = pendulum.now().add(days=1)
    >>> last_week = pendulum.now().subtract(weeks=1)
 
-   >>> if pendulum.now().is_weekend():
-   ...     print('Party!')
-   'Party!'
-
    >>> past = pendulum.now().subtract(minutes=2)
    >>> past.diff_for_humans()
    >>> '2 minutes ago'
@@ -49,11 +45,11 @@ Supports Python **2.7+**, **3.2+** and **PyPy**.
    '6 days 23 hours 58 minutes'
 
    # Proper handling of datetime normalization
-   >>> pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+   >>> pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris')
    '2013-03-31T03:30:00+02:00' # 2:30 does not exist (Skipped time)
 
    # Proper handling of dst transitions
-   >>> just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+   >>> just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
    '2013-03-31T01:59:59.999999+01:00'
    >>> just_before.add(microseconds=1)
    '2013-03-31T03:00:00+02:00'
@@ -137,10 +133,10 @@ a possible solution, if any:
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    from pendulum import DateTime
     from sqlite3 import register_adapter
 
-    register_adapter(Pendulum, lambda val: val.isoformat(' '))
+    register_adapter(DateTime, lambda val: val.isoformat(' '))
 
 * ``mysqlclient`` (former ``MySQLdb``) and ``PyMySQL`` will use the the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
 
@@ -149,17 +145,17 @@ a possible solution, if any:
     import MySQLdb.converters
     import pymysql.converters
 
-    from pendulum import Pendulum
+    from pendulum import DateTime
 
-    MySQLdb.converters.conversions[Pendulum] = MySQLdb.converters.DateTime2literal
-    pymysql.converters.conversions[Pendulum] = pymysql.converters.escape_datetime
+    MySQLdb.converters.conversions[DateTime] = MySQLdb.converters.DateTime2literal
+    pymysql.converters.conversions[DateTime] = pymysql.converters.escape_datetime
 
 * ``django`` will use the ``isoformat()`` method to store datetimes in the database. However since ``pendulum`` is always timezone aware the offset information will always be returned by ``isoformat()`` raising an error, at least for MySQL databases. To work around it you can either create your own ``DateTimeField`` or use the previous workaround for ``MySQLdb``:
 
 .. code-block:: python
 
     from django.db.models import DateTimeField as BaseDateTimeField
-    from pendulum import Pendulum
+    from pendulum import DateTime
 
 
     class DateTimeField(BaseDateTimeField):
@@ -167,7 +163,7 @@ a possible solution, if any:
         def value_to_string(self, obj):
             val = self.value_from_object(obj)
 
-            if isinstance(value, Pendulum):
+            if isinstance(value, DateTime):
                 return value.to_datetime_string()
 
             return '' if val is None else val.isoformat()
