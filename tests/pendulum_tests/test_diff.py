@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
+
 from datetime import datetime
 from contextlib import contextmanager
 from pendulum import Pendulum
@@ -593,3 +595,13 @@ class DiffTest(AbstractTestCase):
 
         self.assertEqual(3600, (future - d).total_seconds())
         self.assertEqual(3600, (future_dt - d).total_seconds())
+
+    def test_normalization(self):
+        d1 = pendulum.create(2012, 1, 1, 1, 2, 3, 123456)
+        d2 = pendulum.create(2011, 12, 31, 22, 2, 3)
+        delta = d2 - d1
+
+        assert delta.days == 0
+        assert delta.seconds == -10800
+        assert delta.microseconds == -123456
+        assert d1 + delta == d2
