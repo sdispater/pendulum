@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pendulum import Pendulum
+from itertools import product, tee
 
+from pendulum import Pendulum
 from .. import AbstractTestCase
 
 
@@ -208,19 +209,70 @@ class StartEndOfTest(AbstractTestCase):
         self.assertIsInstanceOfPendulum(d)
 
     def test_average_from_same(self):
-        d1 = Pendulum.create(2000, 1, 31, 2, 3, 4)
-        d2 = Pendulum.create(2000, 1, 31, 2, 3, 4).average(d1)
-        self.assertPendulum(d2, 2000, 1, 31, 2, 3, 4)
+        d1 = Pendulum.create(2000, 1, 31, 2, 3, 4, 5)
+        d2 = Pendulum.create(2000, 1, 31, 2, 3, 4, 5).average(d1)
+        self.assertPendulum(d2, 2000, 1, 31, 2, 3, 4, 5)
 
     def test_average_from_greater(self):
-        d1 = Pendulum.create(2000, 1, 1, 1, 1, 1, tz='local')
-        d2 = Pendulum.create(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
-        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30)
+        d1 = Pendulum.create(2000, 1, 1, 1, 1, 1, 1, tz='local')
+        d2 = Pendulum.create(2009, 12, 31, 23, 59, 59, 999999, tz='local').average(d1)
+        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30, 500000)
 
     def test_average_from_lower(self):
-        d1 = Pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
-        d2 = Pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
-        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30)
+        d1 = Pendulum.create(2009, 12, 31, 23, 59, 59, 999999, tz='local')
+        d2 = Pendulum.create(2000, 1, 1, 1, 1, 1, 1, tz='local').average(d1)
+        self.assertPendulum(d2, 2004, 12, 31, 12, 30, 30, 500000)
+
+    def test_average_with_microseconds(self):
+        for d1, d2, expected_average in [
+            # 3ms and 5ms should average to 4
+            ((1982, 12, 4, 17, 13, 0, 3), (1982, 12, 4, 17, 13, 0, 5), (1982, 12, 4, 17, 13, 0, 4)),
+            # 999999ms and subsequent 1ms should average to 0
+            ((1982, 12, 4, 0, 0, 0, 999999), (1982, 12, 4, 0, 0, 1, 1), (1982, 12, 4, 0, 0, 1, 0)),
+            # 1.000002 should average to 0.500001
+            ((2000, 1, 1, 0, 0, 0, 0), (2000, 1, 1, 0, 0, 1, 2), (2000, 1, 1, 0, 0, 0, 500001)),
+        ]:
+            d1 = Pendulum.create(*d1)
+            d2 = Pendulum.create(*d2)
+            a1 = d1.average(d2)
+            a2 = d2.average(d1)
+            self.assertPendulum(a1, *expected_average)
+            self.assertPendulum(a2, *expected_average)
+
+    def test_average_commutative(self):
+        for d1, d2 in product(*tee([
+            Pendulum.create(1981, 10,  9,  1,  2,  3,  4),
+            Pendulum.create(1982, 12,  4,  5,  6,  7,  8),
+            Pendulum.create(2013,  4, 13,  9, 10, 11, 12),
+            Pendulum.create(1982,  9, 24, 13, 14, 15, 16),
+        ])):
+            a1 = d1.average(d2)
+            a2 = d2.average(d1)
+            self.assertEqual(a1, a2)
+
+    def test_bisect_creates_all_times(self):
+
+        def bisect(start, end):
+            # should generate, in order, all microseconds between start and end
+            mid = start.average(end)
+            if mid == start or mid == end:
+                return
+            for d in bisect(start, mid):
+                yield d
+            yield mid
+            for d in bisect(mid, end):
+                yield d
+
+        start = Pendulum.now()
+        end = start.add(microseconds=1000)
+        d_next = start.copy()
+        n_values = 0
+        for d in bisect(start, end):
+            n_values += 1
+            d_next = d_next.add(microseconds=1)
+            self.assertEqual(d, d_next)
+
+        self.assertEqual(n_values, 999)
 
     def start_of_with_invalid_unit(self):
         self.assertRaises(ValueError, Pendulum.now().start_of('invalid'))
