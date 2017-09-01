@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed normalization of microseconds in durations.
+- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich)) 
+
+
 ## [1.2.4] - 2017-06-20
 
 ### Fixed
@@ -26,8 +34,8 @@
 ## [1.2.1] - 2017-05-23
 
 ### Fixed
-
 - Fixed incorrect `fold` attribute on Python 3.6 when not passing a timezone. (Thanks to [neonquill](https://github.com/neonquill))
+
 
 
 ## [1.2.0] - 2017-03-24
