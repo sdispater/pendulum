@@ -4,23 +4,22 @@ import sys
 
 PY2 = sys.version_info[0] == 2
 PY3K = sys.version_info[0] >= 3
-PY33 = sys.version_info >= (3, 3)
 PY36 = sys.version_info >= (3, 6)
 
 
-if PY2:
-    long = long
-    unicode = unicode
-    basestring = basestring
-else:
+try:               # Python 2
+    long
+    unicode
+    basestring
+except NameError:  # Python 3
     long = int
     unicode = str
     basestring = str
 
-if PY33:
+try:               # Python >= 3.3
     FileNotFoundError = FileNotFoundError
-else:
-    FileNotFoundError = IOError # cf PEP-3151 
+except NameError:  # Python < 3.3
+    FileNotFoundError = IOError  # cf PEP-3151 
 
 def decode(string, encodings=None):
     if not PY2 and not isinstance(string, bytes):
@@ -29,8 +28,7 @@ def decode(string, encodings=None):
     if PY2 and isinstance(string, unicode):
         return string
 
-    if encodings is None:
-        encodings = ['utf-8', 'latin1', 'ascii']
+    encodings = encodings or ['utf-8', 'latin1', 'ascii']
 
     for encoding in encodings:
         try:
@@ -48,8 +46,7 @@ def encode(string, encodings=None):
     if PY2 and isinstance(string, str):
         return string
 
-    if encodings is None:
-        encodings = ['utf-8', 'latin1', 'ascii']
+    encodings = encodings or ['utf-8', 'latin1', 'ascii']
 
     for encoding in encodings:
         try:
