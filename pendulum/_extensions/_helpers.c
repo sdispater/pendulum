@@ -426,7 +426,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
     int separators = 0;
     int time = 0;
     int has_time = 0;
-    int has_hour = 0;
     int has_offset = 0;
     int i;
     int j;
@@ -710,7 +709,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 }
 
                 hour = time;
-                has_hour = 1;
                 break;
             case 4:
                 // Hours and minutes
@@ -725,7 +723,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
 
                 hour = time / 100;
                 minute = time % 100;
-                has_hour = 1;
                 break;
             case 6:
                 // Hours, minutes and seconds
@@ -740,7 +737,6 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 hour = time / 10000;
                 minute = time / 100 % 100;
                 second = time % 100;
-                has_hour = 1;
                 break;
             default:
                 // Any other case is wrong

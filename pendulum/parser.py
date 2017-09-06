@@ -24,6 +24,10 @@ class Parser(BaseParser):
 
         :rtype: mixed
         """
+        # Handling special cases
+        if text == 'now':
+            return Pendulum.now()
+
         parsed = super(Parser, self).parse(text)
 
         if not self.is_strict():

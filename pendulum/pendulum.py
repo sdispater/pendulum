@@ -17,7 +17,8 @@ from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
     MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
-    SECONDS_PER_DAY
+    SECONDS_PER_DAY,
+    SUNDAY, SATURDAY
 )
 
 
@@ -176,7 +177,7 @@ class Pendulum(Date, datetime.datetime):
             self._second = dt.second
             self._microsecond = dt.microsecond
             self._tzinfo = dt.tzinfo
-            self._fold = getattr(dt, 'fold', fold)
+            self._fold = fold
 
         self._timestamp = None
         self._int_timestamp = None
@@ -1139,6 +1140,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        if isinstance(delta, Period):
+            return self.add(
+                years=delta.years, months=delta.months,
+                weeks=delta.weeks, days=delta.remaining_days,
+                hours=delta.hours, minutes=delta.minutes,
+                seconds=delta.remaining_seconds, microseconds=delta.microseconds
+            )
+
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
 
@@ -1151,6 +1160,14 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        if isinstance(delta, Period):
+            return self.subtract(
+                years=delta.years, months=delta.months,
+                weeks=delta.weeks, days=delta.remaining_days,
+                hours=delta.hours, minutes=delta.minutes,
+                seconds=delta.remaining_seconds, microseconds=delta.microseconds
+            )
+
         return self.subtract(days=delta.days, seconds=delta.seconds,
                              microseconds=delta.microseconds)
 
@@ -1434,6 +1451,9 @@ class Pendulum(Date, datetime.datetime):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
+        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+            raise ValueError('Invalid day of week')
+
         if keep_time:
             dt = self
         else:
@@ -1462,6 +1482,9 @@ class Pendulum(Date, datetime.datetime):
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
+
+        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+            raise ValueError('Invalid day of week')
 
         if keep_time:
             dt = self
@@ -1746,7 +1769,8 @@ class Pendulum(Date, datetime.datetime):
         if dt is None:
             dt = Pendulum.now(self._tz)
 
-        return self.add(seconds=int(self.diff(dt, False).in_seconds() / 2))
+        diff = self.diff(dt, False)
+        return self.add(microseconds=(diff.in_seconds() * 1000000 + diff.microseconds) // 2)
 
     def _get_datetime(self, value, pendulum=False):
         """

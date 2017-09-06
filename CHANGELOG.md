@@ -1,6 +1,44 @@
 # Change Log
 
-## [Unreleased]
+## [1.2.5] - 2017-09-04
+
+### Fixed
+
+- Fixed normalization of microseconds in durations.
+- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich)) 
+
+
+## [1.2.4] - 2017-06-20
+
+### Fixed
+
+- Fixed parsing of the `now` string.
+
+
+## [1.2.3] - 2017-06-18
+
+### Fixed
+
+- Fixed behavior of some short timezones (like EST, MST or HST).
+- Fixed warning when building C extensions.
+
+
+## [1.2.2] - 2017-06-15
+
+### Fixed
+
+- Fixed `next()` and `previous()` hanging when passed an invalid input.
+- Fixed wrong result when adding/subtracting a Period if a DST transition occurs.
+
+
+## [1.2.1] - 2017-05-23
+
+### Fixed
+- Fixed incorrect `fold` attribute on Python 3.6 when not passing a timezone. (Thanks to [neonquill](https://github.com/neonquill))
+
+
+
+## [1.2.0] - 2017-03-24
 
 ### Added
 
@@ -356,7 +394,13 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.5...master
+[1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
+[1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
+[1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3
+[1.2.2]: https://github.com/sdispater/pendulum/releases/tag/1.2.2
+[1.2.1]: https://github.com/sdispater/pendulum/releases/tag/1.2.1
+[1.2.0]: https://github.com/sdispater/pendulum/releases/tag/1.2.0
 [1.1.1]: https://github.com/sdispater/pendulum/releases/tag/1.1.1
 [1.1.0]: https://github.com/sdispater/pendulum/releases/tag/1.1.0
 [1.0.2]: https://github.com/sdispater/pendulum/releases/tag/1.0.2

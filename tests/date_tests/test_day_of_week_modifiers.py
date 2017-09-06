@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import pytest
+
 import pendulum
 from pendulum import Date
 from pendulum.exceptions import PendulumException
@@ -67,6 +69,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
         d = Date(1975, 5, 21).next(6)
         self.assertDate(d, 1975, 5, 24)
 
+    def test_next_invalid(self):
+        dt = pendulum.date(1975, 5, 21)
+
+        with pytest.raises(ValueError):
+            dt.next(7)
+
     def test_previous(self):
         d = Date(1975, 5, 21).previous()
         self.assertDate(d, 1975, 5, 14)
@@ -78,6 +86,12 @@ class DayOfWeekModifiersTest(AbstractTestCase):
     def test_previous_saturday(self):
         d = Date(1975, 5, 21).previous(6)
         self.assertDate(d, 1975, 5, 17)
+
+    def test_previous_invalid(self):
+        dt = pendulum.date(1975, 5, 21)
+
+        with pytest.raises(ValueError):
+            dt.previous(7)
 
     def test_first_day_of_month(self):
         d = Date(1975, 11, 21).first_of('month', )

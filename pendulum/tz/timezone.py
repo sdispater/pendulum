@@ -187,7 +187,7 @@ class Timezone(tzinfo):
 
         if dt < begin.time:
             tr = begin
-        elif not dt < end.time:
+        elif dt >= end.time:
             tr = end
         else:
             idx = self._find_transition_index(dt)
@@ -202,7 +202,7 @@ class Timezone(tzinfo):
 
         tzinfo_index = tr._tzinfo_index
         if tr is begin:
-            if not tr.pre_time < dt:
+            if tr.pre_time >= dt:
                 # Before first transition, so use the default offset.
                 offset = self._tzinfos[self._default_tzinfo_index].offset
                 unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
@@ -212,16 +212,21 @@ class Timezone(tzinfo):
                     fold
                 )
             else:
-                # tr.pre_time < dt < tr.time
-                # Skipped time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise NonExistingTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
+                if begin is end:
+                    # We only have one transition
+                    offset = self._tzinfos[tzinfo_index].offset
+                    unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
                 else:
-                    unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
+                    # tr.pre_time < dt < tr.time
+                    # Skipped time
+                    if dst_rule == self.TRANSITION_ERROR:
+                        raise NonExistingTime(dt)
+                    elif dst_rule == self.PRE_TRANSITION:
+                        # We do not apply the transition
+                        (unix_time,
+                         tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
+                    else:
+                        unix_time = tr.unix_time - (tr.time - dt).total_seconds()
         elif tr is end:
             if tr.pre_time < dt:
                 # After the last transition.

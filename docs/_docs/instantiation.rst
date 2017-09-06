@@ -18,6 +18,12 @@ You'll notice above that the timezone (2nd) parameter was passed as a string and
 rather than a ``tzinfo`` instance. All timezone parameters have been augmented
 so you can pass a ``tzinfo`` instance, string or integer offset to GMT
 and the timezone will be created for you.
+
+.. note::
+
+    Supported strings for timezones are the one provided by the `IANA time zone database <https://www.iana.org/time-zones>`_.
+    The special ``local`` string is also supported and will return your current timezone.
+
 This is again shown in the next example which also introduces the ``now()`` function.
 
 .. code-block:: python
@@ -74,7 +80,7 @@ or simply a string timezone value.
 
 .. code-block:: python
 
-    pendulum.from_format(time, format, tz)
+    pendulum.from_format(time, fmt, tz)
 
 ``from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
 The difference being the addition the ``tz`` argument that can be a ``tzinfo`` instance or a string timezone value

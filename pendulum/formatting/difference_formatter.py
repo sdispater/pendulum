@@ -55,7 +55,7 @@ class DifferenceFormatter(object):
             unit = 'month'
             count = diff.months
 
-            if (diff.weeks * 7 + diff.remaining_days) > 28:
+            if (diff.weeks * 7 + diff.remaining_days) >= 27:
                 count += 1
         elif diff.weeks > 0:
             unit = 'week'
