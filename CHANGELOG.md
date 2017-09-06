@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added a `timezones` module attribute to expose available timezones.
+
+
 ## [1.2.5] - 2017-09-04
 
 ### Fixed
@@ -394,7 +401,7 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.5...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
 [1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
 [1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
 [1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3
