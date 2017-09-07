@@ -110,11 +110,24 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
 
     pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H').to_datetime_string()
     '1975-05-21 22:00:00'
-    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', 'Europe/London').isoformat()
+    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', tz='Europe/London').isoformat()
     '1975-05-21T22:00:00+01:00'
 
     # Using strptime is also possible (the timezone will be UTC)
     pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
+
+ .. note::
+
+    ``from_format()`` also accepts a ``formatter`` keyword argument to use the
+    `Alternative Formatter`_'s tokens.
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH', formatter='alternative')
+
+    Note that it will be the only one supported in the next major version.
 
 The final ``create`` function is for working with unix timestamps.
 ``from_timestamp()`` will create a ``Pendulum`` instance equal to the given timestamp

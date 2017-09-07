@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added support for the alternative formatter's tokens in `from_format()`
 - Added a `timezones` module attribute to expose available timezones.
 
 
