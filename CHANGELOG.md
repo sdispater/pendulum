@@ -9,7 +9,7 @@
 
 ### Changed
 
-- Dopped support for Python 3.2 and 3.3.
+- Dropped support for Python 3.2 and 3.3.
 
 
 ## [1.2.5] - 2017-09-04
