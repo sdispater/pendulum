@@ -4,6 +4,7 @@ from __future__ import division
 
 import calendar
 import datetime
+import warnings
 
 import pendulum
 
@@ -398,6 +399,13 @@ class Pendulum(Date, datetime.datetime):
             raise ValueError('Invalid formatter [{}]'.format(formatter))
 
         if formatter == 'classic':
+            warnings.warn(
+                'Using the classic formatter in from_format() '
+                'is deprecated and will no longer be possible '
+                'in version 2.0. Use the alternative formatter instead.',
+                DeprecationWarning,
+                stacklevel=2
+            )
             dt = datetime.datetime.strptime(time, fmt)
 
             return cls.instance(dt, tz)
@@ -494,7 +502,9 @@ class Pendulum(Date, datetime.datetime):
 
     @classmethod
     def strptime(cls, time, fmt):
-        return cls.create_from_format(time, fmt, formatter='classic')
+        dt = datetime.datetime.strptime(time, fmt)
+
+        return cls.instance(dt)
 
     def copy(self):
         """
