@@ -274,15 +274,15 @@ When passing only time information the date will default to today.
 
 .. note::
 
-    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact type
+    You can pass the ``exact`` keyword argument to ``parse()`` to get the exact type
     that the string represents:
 
     .. code-block:: python
 
         import pendulum
 
-        pendulum.parse('2012-05-03', strict=True)
+        pendulum.parse('2012-05-03', exact=True)
         # <Date [2012-05-03]>
 
-        pendulum.parse('12:04:23', strict=True)
+        pendulum.parse('12:04:23', exact=True)
         # <Time [12:04:23]>

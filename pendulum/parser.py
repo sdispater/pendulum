@@ -30,7 +30,7 @@ class Parser(BaseParser):
 
         parsed = super(Parser, self).parse(text)
 
-        if not self.is_strict():
+        if not self.is_exact():
             return self._create_pendulum_object(parsed)
 
         # Checking for date

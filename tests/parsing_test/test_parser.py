@@ -472,10 +472,10 @@ class ParserTest(AbstractTestCase):
 
         self.assertRaises(ParserError, Parser().parse, text)
 
-    def test_strict(self):
+    def test_exact(self):
         text = '2012'
 
-        parsed = Parser(strict=True).parse(text)
+        parsed = Parser(exact=True).parse(text)
         self.assertEqual(len(parsed), 3)
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(1, parsed['month'])
@@ -483,7 +483,7 @@ class ParserTest(AbstractTestCase):
 
         text = '2012-03'
 
-        parsed = Parser(strict=True).parse(text)
+        parsed = Parser(exact=True).parse(text)
         self.assertEqual(len(parsed), 3)
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(3, parsed['month'])
@@ -491,7 +491,7 @@ class ParserTest(AbstractTestCase):
 
         text = '2012-03-13'
 
-        parsed = Parser(strict=True).parse(text)
+        parsed = Parser(exact=True).parse(text)
         self.assertEqual(len(parsed), 3)
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(3, parsed['month'])
@@ -499,7 +499,7 @@ class ParserTest(AbstractTestCase):
 
         text = '2012W055'
 
-        parsed = Parser(strict=True).parse(text)
+        parsed = Parser(exact=True).parse(text)
         self.assertEqual(len(parsed), 3)
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(2, parsed['month'])
@@ -507,11 +507,29 @@ class ParserTest(AbstractTestCase):
 
         text = '2012007'
 
-        parsed = Parser(strict=True).parse(text)
+        parsed = Parser(exact=True).parse(text)
         self.assertEqual(len(parsed), 3)
         self.assertEqual(2012, parsed['year'])
         self.assertEqual(1, parsed['month'])
         self.assertEqual(7, parsed['day'])
+
+        text = '20:12:05'
+
+        parsed = Parser(exact=True).parse(text)
+        self.assertEqual(len(parsed), 5)
+        self.assertEqual(20, parsed['hour'])
+        self.assertEqual(12, parsed['minute'])
+        self.assertEqual(5, parsed['second'])
+        self.assertEqual(0, parsed['subsecond'])
+
+    def test_strict_is_still_supported(self):
+        text = '2012'
+
+        parsed = Parser(strict=True).parse(text)
+        self.assertEqual(len(parsed), 3)
+        self.assertEqual(2012, parsed['year'])
+        self.assertEqual(1, parsed['month'])
+        self.assertEqual(1, parsed['day'])
 
         text = '20:12:05'
 
