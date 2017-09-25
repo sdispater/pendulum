@@ -4,12 +4,14 @@
 
 ### Added
 
-- Added support for the alternative formatter's tokens in `from_format()`
+- Added support for the alternative formatter's tokens in `from_format()`.
 - Added a `timezones` module attribute to expose available timezones.
+- Added the `exact` keyword to `parse()` which behaves exactly like `strict`.
 
 ### Changed
 
 - Dropped support for Python 3.2 and 3.3.
+- The `classic` formatter in `from_format()` is now deprecated.
 
 ### Fixed
 
