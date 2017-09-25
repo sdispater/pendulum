@@ -11,6 +11,10 @@
 
 - Dropped support for Python 3.2 and 3.3.
 
+### Fixed
+
+- Fixed `th` locale. (Thanks to [idxn](https://github.com/idxn))
+
 
 ## [1.2.5] - 2017-09-04
 
