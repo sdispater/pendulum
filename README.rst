@@ -16,7 +16,7 @@ Pendulum
 
 Python datetimes made easy.
 
-Supports Python **2.7+**, **3.2+** and **PyPy**.
+Supports Python **2.7+**, **3.4+** and **PyPy**.
 
 
 .. code-block:: python

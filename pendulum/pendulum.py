@@ -4,6 +4,9 @@ from __future__ import division
 
 import calendar
 import datetime
+import warnings
+
+import pendulum
 
 from .date import Date
 from .time import Time
@@ -13,6 +16,7 @@ from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .parsing import parse
 from .helpers import add_duration
+from .formatting import FORMATTERS
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
@@ -373,7 +377,7 @@ class Pendulum(Date, datetime.datetime):
         return cls.instance(dt, tz)
 
     @classmethod
-    def create_from_format(cls, time, fmt, tz=UTC):
+    def create_from_format(cls, time, fmt, tz=UTC, formatter='classic'):
         """
         Create a Pendulum instance from a specific format.
 
@@ -386,11 +390,90 @@ class Pendulum(Date, datetime.datetime):
         :param tz: The timezone
         :type tz: tzinfo or str or int or None
 
+        :param formatter: The formatter to use. Default "classic"
+        :type formatter: str
+
         :rtype: Pendulum
         """
-        dt = datetime.datetime.strptime(time, fmt)
+        if formatter not in FORMATTERS:
+            raise ValueError('Invalid formatter [{}]'.format(formatter))
 
-        return cls.instance(dt, tz)
+        if formatter == 'classic':
+            warnings.warn(
+                'Using the classic formatter in from_format() '
+                'is deprecated and will no longer be possible '
+                'in version 2.0. Use the alternative formatter instead.',
+                DeprecationWarning,
+                stacklevel=2
+            )
+            dt = datetime.datetime.strptime(time, fmt)
+
+            return cls.instance(dt, tz)
+
+        formatter = FORMATTERS['alternative']
+
+        parts = formatter.parse(time, fmt)
+        actual_parts = {}
+
+        # If timestamp has been specified
+        # we use it and don't go any further
+        if parts['timestamp'] is not None:
+            return cls.create_from_timestamp(parts['timestamp'])
+
+        if parts['quarter'] is not None:
+            dt = cls.now().start_of('year')
+
+            while dt.quarter != parts['quarter']:
+                dt = dt.add(months=3)
+
+            actual_parts['year'] = dt.year
+            actual_parts['month'] = dt.month
+            actual_parts['day'] = dt.day
+
+        # If the date part has not been specified
+        # we default to today
+        if all([parts['year'] is None, parts['month'] is None, parts['day'] is None]):
+            now = cls.now()
+
+            parts['year'] = actual_parts['year'] = now.year
+            parts['month'] = actual_parts['month'] = now.month
+            parts['day'] = actual_parts['day'] = now.day
+
+        # We replace any not set month/day value
+        # with the first of each unit
+        if any([parts['month'] is None, parts['day'] is None]):
+            for part in ['month', 'day']:
+                if parts[part] is None and actual_parts.get(part) is None:
+                    actual_parts[part] = 1
+
+        for part in ['year', 'month', 'day']:
+            if parts[part] is not None:
+                actual_parts[part] = parts[part]
+
+        # If any of hour/minute/second/microsecond is not set
+        # We assume start of corresponding value
+        for part in ['hour', 'minute', 'second', 'microsecond']:
+            if parts[part] is None:
+                actual_parts[part] = 0
+            else:
+                actual_parts[part] = parts[part]
+
+        if parts['day_of_year'] is not None:
+            text = '{}-{}'.format(
+                actual_parts['year'], parts['day_of_year']
+            )
+            dt = parse(text)
+
+            actual_parts['month'] = dt['month']
+            actual_parts['day'] = dt['day']
+
+        # Meridiem
+        if parts['meridiem'] is not None:
+            pass
+
+        actual_parts['tz'] = parts['tz'] or tz
+
+        return cls.create(**actual_parts)
 
     @classmethod
     def create_from_timestamp(cls, timestamp, tz=UTC):
@@ -419,7 +502,9 @@ class Pendulum(Date, datetime.datetime):
 
     @classmethod
     def strptime(cls, time, fmt):
-        return cls.create_from_format(time, fmt)
+        dt = datetime.datetime.strptime(time, fmt)
+
+        return cls.instance(dt)
 
     def copy(self):
         """

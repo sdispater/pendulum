@@ -2,6 +2,7 @@
 
 import re
 import copy
+import warnings
 
 from datetime import datetime, date, time
 from dateutil import parser
@@ -58,16 +59,35 @@ class Parser(object):
     DEFAULT_OPTIONS = {
         'day_first': False,
         'year_first': True,
-        'strict': False,
+        'exact': False,
         'now': None
     }
 
     def __init__(self, **options):
+        if 'strict' in options:
+            warnings.warn(
+                'The "strict" keyword when parsing will have '
+                'another meaning in version 2.0. Use "exact" instead.',
+                DeprecationWarning,
+                stacklevel=2
+            )
+
+            options['exact'] = options['strict']
+
         self._options = copy.copy(self.DEFAULT_OPTIONS)
         self._options.update(options)
 
     def is_strict(self):
-        return self._options['strict']
+        warnings.warn(
+            'is_strict() is deprecated. Use is_exact() instead.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.is_exact()
+
+    def is_exact(self):
+        return self._options['exact']
 
     def now(self):
         return self._options['now'] or datetime.now()

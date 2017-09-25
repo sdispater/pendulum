@@ -1,5 +1,23 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added support for the alternative formatter's tokens in `from_format()`.
+- Added a `timezones` module attribute to expose available timezones.
+- Added the `exact` keyword to `parse()` which behaves exactly like `strict`.
+
+### Changed
+
+- Dropped support for Python 3.2 and 3.3.
+- The `classic` formatter in `from_format()` is now deprecated.
+
+### Fixed
+
+- Fixed `th` locale. (Thanks to [idxn](https://github.com/idxn))
+
+
 ## [1.2.5] - 2017-09-04
 
 ### Fixed
@@ -394,7 +412,7 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.2.5...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
 [1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
 [1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
 [1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3

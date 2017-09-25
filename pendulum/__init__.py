@@ -77,4 +77,4 @@ interval = Interval
 period = Period
 
 # Timezones
-from .tz import timezone, local_timezone, UTC
+from .tz import timezone, timezones, local_timezone, UTC

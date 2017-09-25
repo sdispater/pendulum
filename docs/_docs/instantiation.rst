@@ -24,6 +24,26 @@ and the timezone will be created for you.
     Supported strings for timezones are the one provided by the `IANA time zone database <https://www.iana.org/time-zones>`_.
     The special ``local`` string is also supported and will return your current timezone.
 
+    As of release 1.3.0, available timezones are exposed via the ``timezones`` attribute.
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.timezones
+        ('CET',
+         'CST6CDT',
+         'Cuba',
+         'EET',
+         'Egypt',
+         'Eire',
+         ...,
+         'US/Michigan',
+         'US/Mountain',
+         'US/Pacific',
+         'US/Pacific-New',
+         'US/Samoa')
+
 This is again shown in the next example which also introduces the ``now()`` function.
 
 .. code-block:: python
@@ -90,11 +110,24 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
 
     pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H').to_datetime_string()
     '1975-05-21 22:00:00'
-    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', 'Europe/London').isoformat()
+    pendulum.from_format('1975-05-21 22', '%Y-%m-%d %H', tz='Europe/London').isoformat()
     '1975-05-21T22:00:00+01:00'
 
     # Using strptime is also possible (the timezone will be UTC)
     pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
+
+ .. note::
+
+    ``from_format()`` also accepts a ``formatter`` keyword argument to use the
+    `Alternative Formatter`_'s tokens.
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH', formatter='alternative')
+
+    Note that it will be the only one supported in the next major version.
 
 The final ``create`` function is for working with unix timestamps.
 ``from_timestamp()`` will create a ``Pendulum`` instance equal to the given timestamp
@@ -241,15 +274,15 @@ When passing only time information the date will default to today.
 
 .. note::
 
-    You can pass the ``strict`` keyword argument to ``parse()`` to get the exact type
+    You can pass the ``exact`` keyword argument to ``parse()`` to get the exact type
     that the string represents:
 
     .. code-block:: python
 
         import pendulum
 
-        pendulum.parse('2012-05-03', strict=True)
+        pendulum.parse('2012-05-03', exact=True)
         # <Date [2012-05-03]>
 
-        pendulum.parse('12:04:23', strict=True)
+        pendulum.parse('12:04:23', exact=True)
         # <Time [12:04:23]>
