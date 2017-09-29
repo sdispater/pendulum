@@ -1,5 +1,10 @@
+import pytzdata
+
 from .timezone import Timezone, FixedTimezone, UTC
 from .local_timezone import LocalTimezone
+
+
+timezones = pytzdata.timezones
 
 
 def timezone(name):

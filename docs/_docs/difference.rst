@@ -83,7 +83,7 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     # The most typical usage is for comments
     # The instance is the date the comment was created
     # and its being compared to default now()
-    pendulum.now().subtract(dayss=1).diff_for_humans()
+    pendulum.now().subtract(days=1).diff_for_humans()
     '5 days ago'
 
     pendulum.now().diff_for_humans(Pendulum.now().subtract(years=1))

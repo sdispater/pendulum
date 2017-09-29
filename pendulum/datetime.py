@@ -1828,7 +1828,8 @@ class DateTime(Date, datetime.datetime):
         if dt is None:
             dt = DateTime.now(self._tz)
 
-        return self.add(seconds=int(self.diff(dt, False).in_seconds() / 2))
+        diff = self.diff(dt, False)
+        return self.add(microseconds=(diff.in_seconds() * 1000000 + diff.microseconds) // 2)
 
     def _get_datetime(self, value, pendulum=False):
         """

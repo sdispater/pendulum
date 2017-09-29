@@ -76,7 +76,7 @@ period = Period
 
 # Timezones
 from .tz import (
-    timezone,
+    timezone, timezones,
     local_timezone, test_local_timezone, set_local_timezone,
     UTC
 )

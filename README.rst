@@ -10,7 +10,7 @@ Pendulum
 .. image:: https://img.shields.io/codecov/c/github/sdispater/pendulum/master.svg
     :target: https://codecov.io/gh/sdispater/pendulum/branch/master
 
-.. image:: https://travis-ci.org/sdispater/pendulum.png
+.. image:: https://travis-ci.org/sdispater/pendulum.svg
     :alt: Pendulum Build status
     :target: https://travis-ci.org/sdispater/pendulum
 

@@ -24,6 +24,26 @@ and otherwise can be a ``Timezone`` instance or simply a string timezone value.
     Supported strings for timezones are the one provided by the `IANA time zone database <https://www.iana.org/time-zones>`_.
     The special ``local`` string is also supported and will return your current timezone.
 
+    As of release 1.3.0, available timezones are exposed via the ``timezones`` attribute.
+
+    .. code-block:: python
+
+        import pendulum
+
+        pendulum.timezones
+        ('CET',
+         'CST6CDT',
+         'Cuba',
+         'EET',
+         'Egypt',
+         'Eire',
+         ...,
+         'US/Michigan',
+         'US/Mountain',
+         'US/Pacific',
+         'US/Pacific-New',
+         'US/Samoa')
+
 This is again shown in the next example which also introduces the ``now()`` function.
 
 .. code-block:: python

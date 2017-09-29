@@ -25,6 +25,32 @@
 - Removed `xrange()` method of the `Period` class and made `range()` a generator.
 
 
+## [1.3.0] - 2017-09-25
+
+### Added
+
+- Added support for the alternative formatter's tokens in `from_format()`.
+- Added a `timezones` module attribute to expose available timezones.
+- Added the `exact` keyword to `parse()` which behaves exactly like `strict`.
+
+### Changed
+
+- Dropped support for Python 3.2 and 3.3.
+- The `classic` formatter in `from_format()` is now deprecated.
+
+### Fixed
+
+- Fixed `th` locale. (Thanks to [idxn](https://github.com/idxn))
+
+
+## [1.2.5] - 2017-09-04
+
+### Fixed
+
+- Fixed normalization of microseconds in durations.
+- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich)) 
+
+
 ## [1.2.4] - 2017-06-20
 
 ### Fixed
@@ -51,8 +77,8 @@
 ## [1.2.1] - 2017-05-23
 
 ### Fixed
-
 - Fixed incorrect `fold` attribute on Python 3.6 when not passing a timezone. (Thanks to [neonquill](https://github.com/neonquill))
+
 
 
 ## [1.2.0] - 2017-03-24
@@ -412,6 +438,8 @@ Initial release
 
 
 [Unreleased]: https://github.com/sdispater/pendulum/compare/master...2.0
+[1.3.0]: https://github.com/sdispater/pendulum/releases/tag/1.3.0
+[1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
 [1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
 [1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3
 [1.2.2]: https://github.com/sdispater/pendulum/releases/tag/1.2.2

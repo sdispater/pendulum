@@ -61,7 +61,7 @@ class BaseDuration(timedelta):
         if total < 0:
             m = -1
 
-        self._microseconds = abs(round(total % 1 * 1e6)) * m
+        self._microseconds = round(total % m * 1e6)
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
 
         days = abs(int(total)) // SECONDS_PER_DAY * m
