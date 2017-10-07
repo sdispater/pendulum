@@ -95,9 +95,8 @@ but uses custom tokens to create a ``DateTime`` instance.
 
     To see all the available tokens, you can check the `Formatter`_ section.
 
-The next helper, ``from_format()``, is mostly a wrapper for the base Python function ``datetime.strptime()``.
-The difference being the addition of the ``tz`` argument
-that can be a ``tzinfo`` instance or a string timezone value (defaults to ``UTC``).
+The next helper, ``from_format()``, allows the creation of datetime instances
+from predefined string formats.
 
 .. code-block:: python
 
