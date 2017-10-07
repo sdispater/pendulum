@@ -130,7 +130,7 @@ int _get_offset(PyObject *dt) {
         offset = PyObject_CallMethod(tzinfo, "utcoffset", "O", dt);
 
         return
-            PyDateTime_DELTA_GET_DAYS(offset) * 86400
+            PyDateTime_DELTA_GET_DAYS(offset) * SECS_PER_DAY
             + PyDateTime_DELTA_GET_SECONDS(offset);
     }
 
@@ -165,8 +165,6 @@ char* _get_tz_name(PyObject *dt) {
 }
 
 /* ------------------------ Custom Types ------------------------------- */
-
-#if defined(PY_MAJOR_VERSION)
 
 /*
  * class Diff():
@@ -518,8 +516,8 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         in_same_tz = tz1 == tz2 && strncmp(tz1, "", 1);
     }
 
-    // If we have datetimes (and not only dates) we get the information
-    // we need
+    // If we have datetimes (and not only dates)
+    // we get the information we need
     if (dt1_is_datetime) {
         dt1_hour = PyDateTime_DATE_GET_HOUR(dt1);
         dt1_minute = PyDateTime_DATE_GET_MINUTE(dt1);
@@ -822,4 +820,3 @@ PyInit__helpers(void)
 
     return module;
 }
-#endif
