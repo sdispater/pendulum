@@ -133,7 +133,7 @@ Even though the ``Pendulum`` class is a subclass of ``datetime`` there are some 
 it can't replace the native class directly. Here is a list (non-exhaustive) of the reported cases with
 a possible solution, if any:
 
-* ``sqlite3`` will use the the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
+* ``sqlite3`` will use the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
 
 .. code-block:: python
 
@@ -142,7 +142,7 @@ a possible solution, if any:
 
     register_adapter(Pendulum, lambda val: val.isoformat(' '))
 
-* ``mysqlclient`` (former ``MySQLdb``) and ``PyMySQL`` will use the the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
+* ``mysqlclient`` (former ``MySQLdb``) and ``PyMySQL`` will use the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
 
 .. code-block:: python
 
