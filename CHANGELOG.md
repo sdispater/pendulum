@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed inaccuracy of `in_days()` method on DST transitions.
+
+
 ## [1.3.0] - 2017-09-25
 
 ### Added
@@ -23,7 +30,7 @@
 ### Fixed
 
 - Fixed normalization of microseconds in durations.
-- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich)) 
+- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich))
 
 
 ## [1.2.4] - 2017-06-20
@@ -296,7 +303,7 @@
 
 ### Changed
 
-- Makes `.offset_hours` return a float. 
+- Makes `.offset_hours` return a float.
 
 ### Fixed
 
