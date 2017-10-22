@@ -1,6 +1,14 @@
 # Change Log
 
-## [Unreleased]
+## [1.3.1] - 2017-10-22
+
+### Fixed
+
+- Fixed inaccuracy of `in_days()` method on DST transitions.
+- Fixed seconds inaccuracy for past datetimes.
+
+
+## [1.3.0] - 2017-09-25
 
 ### Added
 
@@ -23,7 +31,7 @@
 ### Fixed
 
 - Fixed normalization of microseconds in durations.
-- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich)) 
+- Fixed microseconds not being included in `average()`. (Thanks to [ericfrederich](https://github.com/ericfrederich))
 
 
 ## [1.2.4] - 2017-06-20
@@ -296,7 +304,7 @@
 
 ### Changed
 
-- Makes `.offset_hours` return a float. 
+- Makes `.offset_hours` return a float.
 
 ### Fixed
 
@@ -412,7 +420,9 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/master...develop
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.3.1...master
+[1.3.1]: https://github.com/sdispater/pendulum/releases/tag/1.3.1
+[1.3.0]: https://github.com/sdispater/pendulum/releases/tag/1.3.0
 [1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
 [1.2.4]: https://github.com/sdispater/pendulum/releases/tag/1.2.4
 [1.2.3]: https://github.com/sdispater/pendulum/releases/tag/1.2.3
