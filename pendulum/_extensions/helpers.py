@@ -28,7 +28,7 @@ def local_time(unix_time, utc_offset, microseconds):
     :rtype: tuple
     """
     year = EPOCH_YEAR
-    seconds = math.floor(unix_time)
+    seconds = int(math.floor(unix_time))
 
     # Shift to a base year that is 400-year aligned.
     if seconds >= 0:
