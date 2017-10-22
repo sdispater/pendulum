@@ -2,6 +2,9 @@
 
 import os
 import pytz
+
+import pendulum
+
 from datetime import datetime, timedelta
 from dateutil import tz
 from pendulum import Pendulum, PRE_TRANSITION, POST_TRANSITION
@@ -207,3 +210,8 @@ class ConstructTest(AbstractTestCase):
         d = Pendulum(2013, 3, 31, 2, 30, tzinfo='Europe/Paris', fold=1)
         self.assertPendulum(d, 2013, 3, 31, 3, 30)
         self.assertEqual(d.fold, 1)
+
+    def test_second_inaccuracy_on_past_datetimes(self):
+        dt = pendulum.create(1901, 12, 13, 0, 0, 0, 555555, tz='US/Central')
+
+        self.assertPendulum(dt, 1901, 12, 13, 0, 0, 0, 555555)

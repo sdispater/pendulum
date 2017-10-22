@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed inaccuracy of `in_days()` method on DST transitions.
+- Fixed seconds inaccuracy for past datetimes.
 
 
 ## [1.3.0] - 2017-09-25
