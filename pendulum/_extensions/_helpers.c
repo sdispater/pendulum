@@ -317,7 +317,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     }
 
     year = EPOCH_YEAR;
-    seconds = (int64_t) unix_time;
+    seconds = (int64_t) floor(unix_time);
 
     // Shift to a base year that is 400-year aligned.
     if (seconds >= 0) {
