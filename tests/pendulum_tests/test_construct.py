@@ -135,6 +135,25 @@ class ConstructTest(AbstractTestCase):
         )
         self.assertEqual('Europe/Paris', now.timezone_name)
 
+    def test_instance_timezone_aware_datetime_pytz_offset(self):
+        # Impossible timezone of +21 (won't accidentally match the local offset)
+        fixed_offset = pytz.FixedOffset(21 * 60)
+
+        now = Pendulum.instance(
+            datetime.now(fixed_offset)
+        )
+        self.assertEqual(21, now.offset_hours)
+
+        now = Pendulum.instance(
+            datetime.now(), fixed_offset
+        )
+        self.assertEqual(21, now.offset_hours)
+
+        now = Pendulum.instance(
+            datetime.now(fixed_offset), pytz.timezone('Europe/Paris')
+        )
+        self.assertEqual(21, now.offset_hours)
+
     def test_instance_timezone_aware_datetime_any_tzinfo(self):
         dt = datetime(2016, 8, 7, 12, 34, 56, tzinfo=tz.gettz('Europe/Paris'))
         now = Pendulum.instance(dt)
