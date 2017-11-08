@@ -305,7 +305,7 @@ class Parser(object):
 
         :rtype: dict
         """
-        if self.is_strict():
+        if self.is_exact():
             return parsed
 
         if any(('year' not in parsed, 'month' not in parsed, 'day' not in parsed)):
