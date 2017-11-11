@@ -2,6 +2,7 @@
 
 import pickle
 import pendulum
+from copy import deepcopy
 from datetime import datetime, date, time, timedelta
 from pendulum import Pendulum, timezone
 from .. import AbstractTestCase
@@ -103,3 +104,14 @@ class BehaviorTest(AbstractTestCase):
         dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
 
         self.assertEqual(timedelta(0, 6000), dt.dst())
+
+    def test_deepcopy(self):
+        dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
+
+        self.assertEqual(dt, deepcopy(dt))
+
+
+    def test_deepcopy_datetime(self):
+        dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
+
+        self.assertEqual(dt._datetime, deepcopy(dt._datetime))
