@@ -113,6 +113,8 @@ class TimezoneInfo(tzinfo):
             'DST' if self.is_dst else 'STD',
         )
 
+    def __getinitargs__(self):
+        return self._tz, self._utc_offset, self._is_dst, self._dst, self._abbrev
 
 class _UTC(TimezoneInfo):
 
