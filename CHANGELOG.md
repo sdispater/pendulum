@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `instance()` behaviour with `pytz` offsets. (Thanks to [pR0Ps](https://github.com/pR0Ps))
+- Fixed deepcopy / pickle compatibility for `TimezoneInfo`. (Thanks to [bolkedebruin](https://github.com/bolkedebruin))
+
+
 ## [1.3.1] - 2017-10-22
 
 ### Fixed
