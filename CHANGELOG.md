@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.3.2] - 2017-11-16
 
 ### Fixed
 
@@ -428,7 +428,8 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.3.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.3.2...master
+[1.3.2]: https://github.com/sdispater/pendulum/releases/tag/1.3.2
 [1.3.1]: https://github.com/sdispater/pendulum/releases/tag/1.3.1
 [1.3.0]: https://github.com/sdispater/pendulum/releases/tag/1.3.0
 [1.2.5]: https://github.com/sdispater/pendulum/releases/tag/1.2.5
