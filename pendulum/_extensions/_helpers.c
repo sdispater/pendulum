@@ -120,6 +120,18 @@ int _days_in_year(int year) {
     return DAYS_PER_N_YEAR;
 }
 
+int _day_number(int year, int month, int day) {
+    month = (month + 9) % 12;
+    year = year - month / 10;
+
+    return (
+        365 * year
+        + year / 4 - year / 100 + year / 400
+        + (month * 306 + 5) / 10
+        + (day - 1)
+    );
+}
+
 int _get_offset(PyObject *dt) {
     PyObject *tzinfo;
     PyObject *offset;
@@ -178,10 +190,11 @@ typedef struct {
     int minutes;
     int seconds;
     int microseconds;
+    int total_days;
 } Diff;
 
 /*
- * def __init__(self, years, months, days, hours, minutes, seconds, microseconds):
+ * def __init__(self, years, months, days, hours, minutes, seconds, microseconds, total_days):
  *     self.years = years
  *     # ...
 */
@@ -193,8 +206,9 @@ static int Diff_init(Diff *self, PyObject *args, PyObject *kwargs) {
     int minutes;
     int seconds;
     int microseconds;
+    int total_days;
 
-    if (!PyArg_ParseTuple(args, "iiiiiii", &years, &months, &days, &hours, &minutes, &seconds, &microseconds))
+    if (!PyArg_ParseTuple(args, "iiiiiii", &years, &months, &days, &hours, &minutes, &seconds, &microseconds, &total_days))
         return -1;
 
     self->years = years;
@@ -204,6 +218,7 @@ static int Diff_init(Diff *self, PyObject *args, PyObject *kwargs) {
     self->minutes = minutes;
     self->seconds = seconds;
     self->microseconds = microseconds;
+    self->total_days = total_days;
 
     return 0;
 }
@@ -237,7 +252,7 @@ static PyObject *Diff_repr(Diff *self) {
  * Skip overhead of calling PyObject_New and PyObject_Init.
  * Directly allocate object.
  */
-static PyObject *new_diff_ex(int years, int months, int days, int hours, int minutes, int seconds, int microseconds, PyTypeObject *type) {
+static PyObject *new_diff_ex(int years, int months, int days, int hours, int minutes, int seconds, int microseconds, int total_days, PyTypeObject *type) {
     Diff *self = (Diff *) (type->tp_alloc(type, 0));
 
     if (self != NULL) {
@@ -248,6 +263,7 @@ static PyObject *new_diff_ex(int years, int months, int days, int hours, int min
         self->minutes = minutes;
         self->seconds = seconds;
         self->microseconds = microseconds;
+        self->total_days = total_days;
     }
 
     return (PyObject *) self;
@@ -264,6 +280,7 @@ static PyMemberDef Diff_members[] = {
     {"minutes", T_INT, offsetof(Diff, minutes), 0, "minutes in diff"},
     {"seconds", T_INT, offsetof(Diff, seconds), 0, "seconds in diff"},
     {"microseconds", T_INT, offsetof(Diff, microseconds), 0, "microseconds in diff"},
+    {"total_days", T_INT, offsetof(Diff, total_days), 0, "total days in diff"},
     {NULL}
 };
 
@@ -291,7 +308,7 @@ static PyTypeObject Diff_type = {
     "Precise difference between two datetime objects",             /* tp_doc */
 };
 
-#define new_diff(years, months, days, hours, minutes, seconds, microseconds) new_diff_ex(years, months, days, hours, minutes, seconds, microseconds, &Diff_type)
+#define new_diff(years, months, days, hours, minutes, seconds, microseconds, total_days) new_diff_ex(years, months, days, hours, minutes, seconds, microseconds, total_days, &Diff_type)
 
 
 /* -------------------------- Functions --------------------------*/
@@ -371,7 +388,7 @@ PyObject* local_time(PyObject *self, PyObject *args) {
     }
 
     year = EPOCH_YEAR;
-    seconds = (int64_t) unix_time;
+    seconds = (int64_t) floor(unix_time);
 
     // Shift to a base year that is 400-year aligned.
     if (seconds >= 0) {
@@ -499,6 +516,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     char *tz1 = "";
     char *tz2 = "";
     int in_same_tz = 0;
+    int total_days = 0;
 
     // If both dates are datetimes, we check
     // If we are in the same timezone
@@ -670,6 +688,10 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     minute_diff = dt2_minute - dt1_minute;
     second_diff = dt2_second - dt1_second;
     microsecond_diff = dt2_microsecond - dt1_microsecond;
+    total_days = (
+        _day_number(dt2_year, dt2_month, dt2_day)
+        - _day_number(dt1_year, dt1_month, dt1_day)
+    );
 
     if (microsecond_diff < 0) {
         microsecond_diff += 1e6;
@@ -742,7 +764,8 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         hour_diff * sign,
         minute_diff * sign,
         second_diff * sign,
-        microsecond_diff * sign
+        microsecond_diff * sign,
+        total_days * sign
     );
 }
 

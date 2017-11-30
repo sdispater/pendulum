@@ -129,6 +129,18 @@ class Period(WordableDurationMixin, BaseDuration):
         """
         return self.years * MONTHS_PER_YEAR + self.months
 
+    def in_weeks(self):
+        days = self.in_days()
+        sign = 1
+
+        if days < 0:
+            sign = -1
+
+        return sign * (abs(days) // 7)
+
+    def in_days(self):
+        return self._delta.total_days
+
     def in_weekdays(self):
         start, end = self.start.start_of('day'), self.end.start_of('day')
         if not self._absolute and self.invert:

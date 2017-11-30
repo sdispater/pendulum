@@ -1,4 +1,5 @@
 import datetime
+import math
 
 from ..constants import (
     EPOCH_YEAR,
@@ -22,7 +23,8 @@ from ..constants import (
 class PreciseDiff:
 
     def __init__(self, years, months, days,
-                 hours, minutes, seconds, microseconds):
+                 hours, minutes, seconds, microseconds,
+                 total_days):
         self._years = years
         self._months = months
         self._days = days
@@ -30,6 +32,7 @@ class PreciseDiff:
         self._minutes = minutes
         self._seconds = seconds
         self._microseconds = microseconds
+        self._total_days = total_days
 
     @property
     def years(self):
@@ -58,6 +61,10 @@ class PreciseDiff:
     @property
     def microseconds(self):
         return self._microseconds
+
+    @property
+    def total_days(self):
+        return self._total_days
 
     def __repr__(self):
         return (
@@ -106,7 +113,7 @@ def local_time(unix_time, utc_offset, microseconds):
     :rtype: tuple
     """
     year = EPOCH_YEAR
-    seconds = int(unix_time)
+    seconds = int(math.floor(unix_time))
 
     # Shift to a base year that is 400-year aligned.
     if seconds >= 0:
@@ -188,7 +195,7 @@ def precise_diff(d1, d2):
 
     if d1 == d2:
         return PreciseDiff(
-            0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0
         )
 
     tzinfo1 = d1.tzinfo if isinstance(d1, datetime.datetime) else None
@@ -211,6 +218,10 @@ def precise_diff(d1, d2):
     min_diff = 0
     sec_diff = 0
     mic_diff = 0
+    total_days = (
+        _day_number(d2.year, d2.month, d2.day)
+        - _day_number(d1.year, d1.month, d1.day)
+    )
     in_same_tz = False
     tz1 = None
     tz2 = None
@@ -316,5 +327,18 @@ def precise_diff(d1, d2):
         sign * hour_diff,
         sign * min_diff,
         sign * sec_diff,
-        sign * mic_diff
+        sign * mic_diff,
+        sign * total_days
+    )
+
+
+def _day_number(year, month, day):
+    month = (month + 9) % 12
+    year = year - month // 10
+
+    return (
+        365 * year
+        + year // 4 - year // 100 + year // 400
+        + (month * 306 + 5) // 10
+        + (day - 1)
     )

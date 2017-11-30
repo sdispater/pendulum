@@ -46,6 +46,7 @@ class Timezone(tzinfo):
         """
         self._name = name
         self._transitions = transitions
+        self.__tzinfos = tzinfos
         self._tzinfos = tuple(
             map(lambda tzinfo: TimezoneInfo(self, *tzinfo), tzinfos)
         )
@@ -447,6 +448,11 @@ class Timezone(tzinfo):
     def __repr__(self):
         return f"Timezone('{self._name}')"
 
+    def __getinitargs__(self):
+        return (self._name, self._transitions,
+                self.__tzinfos, self._default_tzinfo_index,
+                self._utc_transition_times)
+
 
 class FixedTimezone(Timezone):
     """
@@ -484,6 +490,8 @@ class FixedTimezone(Timezone):
         )
         self._tzinfo = self._tzinfos[0]
 
+        self._offset = offset
+
     @classmethod
     def load(cls, name):
         if name not in cls._cache:
@@ -511,6 +519,9 @@ class FixedTimezone(Timezone):
 
         return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
 
+    def __getinitargs__(self):
+        return self._offset
+
 
 class _UTC(FixedTimezone):
 
@@ -521,5 +532,9 @@ class _UTC(FixedTimezone):
 
     def fromutc(self, dt):
         return dt.replace(tzinfo=UTC)
+
+    def __getinitargs__(self):
+        return ()
+
 
 UTCTimezone = _UTC()

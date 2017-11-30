@@ -200,13 +200,13 @@ class DateTime(Date, datetime.datetime):
         # Checking for pytz/tzinfo
         if isinstance(tz, datetime.tzinfo) and not isinstance(tz, (Timezone, TimezoneInfo)):
             # pytz
-            if hasattr(tz, 'localize'):
+            if hasattr(tz, 'localize') and tz.zone:
                 tz = tz.zone
             else:
                 # We have no sure way to figure out
                 # the timezone name, we fallback
                 # on a fixed offset
-                tz = dt.utcoffset().total_seconds() / 3600
+                tz = tz.utcoffset(dt).total_seconds() / 3600
 
         return cls(
             dt.year, dt.month, dt.day,

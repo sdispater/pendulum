@@ -83,6 +83,9 @@ class ConstructTest(AbstractTestCase):
         assert period.hours == 0
         assert period.remaining_seconds == 0
 
+        assert period.in_days() == 6
+        assert period.in_hours() == 5 * 24 + 23
+
     def test_timedelta_behavior(self):
         dt1 = DateTime(2000, 11, 20, 1)
         dt2 = DateTime(2000, 11, 25, 2)
