@@ -222,7 +222,7 @@ class DateTime(datetime.datetime, Date):
     @classmethod
     def create(cls, year=None, month=None, day=None,
                hour=0, minute=0, second=0, microsecond=0,
-               tz=UTC):
+               tz=UTC, *, dst_rule=Timezone.POST_TRANSITION):
         """
         Create a new DateTime instance from a specific date and time.
 
@@ -237,6 +237,7 @@ class DateTime(datetime.datetime, Date):
         :type second: int
         :type microsecond: int
         :type tz: tzinfo or str or int or None
+        :type dst_rule: str
 
         :rtype: DateTime
         """
@@ -262,11 +263,10 @@ class DateTime(datetime.datetime, Date):
 
         dt = datetime.datetime(
             year, month, day,
-            hour, minute, second, microsecond,
-            fold=1
+            hour, minute, second, microsecond
         )
         if tz is not None:
-            dt = tz.convert(dt)
+            dt = tz.convert(dt, dst_rule=dst_rule)
 
         return cls(
             dt.year, dt.month, dt.day,

@@ -97,7 +97,7 @@ class Timezone(tzinfo):
 
         return cls._cache[name]
 
-    def convert(self, dt, *, with_errors=False):
+    def convert(self, dt, *, dst_rule=None):
         """
         Converts or normalizes a datetime.
 
@@ -108,7 +108,7 @@ class Timezone(tzinfo):
         """
         if dt.tzinfo is None:
             # we assume local time
-            converted = self._normalize(dt, with_errors=with_errors)
+            converted = self._normalize(dt, dst_rule=dst_rule)
         else:
             converted = self._convert(dt)
 
@@ -152,7 +152,7 @@ class Timezone(tzinfo):
 
         return self.convert(dt)
 
-    def _normalize(self, dt, *, with_errors=False):
+    def _normalize(self, dt, *, dst_rule=None):
         # if tzinfo is set, something wrong happened
         if dt.tzinfo is not None:
             raise ValueError(
@@ -162,13 +162,12 @@ class Timezone(tzinfo):
 
         # fold attribute (Python 3.6)?
         # We use it to determine the DST rule if none has been specified.
-        fold = None
-        dst_rule = self.PRE_TRANSITION
-        if dt.fold == 1:
-            dst_rule = self.POST_TRANSITION
-
-        if with_errors:
-            dst_rule = self.TRANSITION_ERROR
+        fold = 0
+        if dst_rule is None:
+            dst_rule = self.PRE_TRANSITION
+            if dt.fold == 1:
+                dst_rule = self.POST_TRANSITION
+                fold = 1
 
         if not self._transitions:
             # Use the default offset
@@ -503,7 +502,7 @@ class FixedTimezone(Timezone):
     def offset(self):
         return self._offset
 
-    def _normalize(self, dt, *, with_errors=False):
+    def _normalize(self, dt, *, dst_rule=None):
         return dt.replace(tzinfo=self._tzinfo)
 
     def utcoffset(self, dt):

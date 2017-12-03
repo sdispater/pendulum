@@ -1,7 +1,6 @@
 Timezones
 =========
 
-
 Timezones are an important part of every datetime library and ``pendulum``
 tries to provide an easy and accurate system to handle them properly.
 
@@ -21,47 +20,43 @@ given timezone to properly handle any transition that might have occurred.
 
     import pendulum
 
-    pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+    pendulum.create(2013, 3, 31, 2, 30, tz='Europe/Paris')
     # 2:30 for the 31th of March 2013 does not exist
     # so pendulum will return the actual time which is 3:30+02:00
     '2013-03-31T03:30:00+02:00'
 
-    pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+    pendulum.create(2013, 10, 27, 2, 30, tz='Europe/Paris')
     # Here, 2:30 exists twice in the day so pendulum will
     # assume that the transition already occurred
     '2013-10-27T02:30:00+01:00'
 
+You can, however, control the normalization behavior:
 
-.. note::
+.. code-block:: python
 
-    You can control the normalization behavior:
+    import pendulum
 
-    .. code-block:: python
+    pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris',
+                    dst_rule=pendulum.PRE_TRANSITION)
+    '2013-03-31T01:30:00+01:00'
+    pendulum.create(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
+                    dst_rule=pendulum.PRE_TRANSITION)
+    '2013-10-27T02:30:00+02:00'
 
-        import pendulum
+    pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris'
+                    dst_rule=pendulum.TRANSITION_ERROR)
+    # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
+    pendulum.create(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
+                    dst_rule=pendulum.TRANSITION_ERROR)
+    # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
 
-        pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
-
-        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
-        '2013-03-31T01:30:00+01:00'
-        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
-        '2013-10-27T02:30:00+02:00'
-
-        pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
-
-        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
-        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
-        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
-        # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
-
-    Note that it only affects instances at creation time. Shifting time around
-    transition times still behaves the same.
-
+Note that it only affects instances at creation time. Shifting time around
+transition times still behaves the same.
 
 Shifting time to transition
 ---------------------------
 
-So, what happens when you add time to a ``Pendulum`` instance and stumble upon
+So, what happens when you add time to a ``DateTime`` instance and stumble upon
 a transition time?
 Well ``pendulum``, provided with the context of the previous instance, will
 adopt the proper behavior and apply the transition accordingly.
@@ -77,11 +72,8 @@ adopt the proper behavior and apply the transition accordingly.
     dt.subtract(microseconds=1)
     '2013-03-31T01:59:59.999998+01:00'
 
-    dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, tz='Europe/Paris')
-    dt = dt.add(hours=1)
-    # We can't just do
-    # pendulum.create(2013, 10, 27, 2, 59, 59, 999999, 'Europe/Paris')
-    # because of the default normalization
+    dt = pendulum.create(2013, 10, 27, 2, 59, 59, 999999, tz='Europe/Paris'
+                         dst_rule=pendulum.PRE_TRANSITION)
     '2013-10-27T02:59:59.999999+02:00'
     dt = dt.add(microseconds=1)
     '2013-10-27T02:00:00+01:00'
@@ -114,57 +106,54 @@ Like said in the introduction, you can use the timezone library
 directly with standard ``datetime`` objects but with limitations, especially
 when adding and subtracting time around transition times.
 
-.. warning::
+The value of the ``fold`` attribute will be used
+by default to determine the transition rule.
 
-    The value of the ``fold`` attribute will be used by default
-    to determine the transition rule.
+.. code-block:: python
 
-    .. code-block:: python
+    from datetime import datetime
+    from pendulum import timezone
 
-        from datetime import datetime
-        from pendulum import timezone
+    paris = timezone('Europe/Paris')
+    dt = datetime(2013, 3, 31, 2, 30)
+    # By default, fold is set to 0
+    dt = paris.convert(dt)
+    dt.isoformat()
+    '2013-03-31T01:30:00+01:00'
 
-        paris = timezone('Europe/Paris')
-        dt = datetime(2013, 3, 31, 2, 30)
-        # By default, fold is set to 0
-        dt = paris.convert(dt)
-        dt.isoformat()
-        '2013-03-31T01:30:00+01:00'
+    dt = datetime(2013, 3, 31, 2, 30, fold=1)
+    dt = paris.convert(dt)
+    dt.isoformat()
+    '2013-03-31T03:30:00+02:00'
 
-        dt = datetime(2013, 3, 31, 2, 30, fold=1)
-        dt = paris.convert(dt)
-        dt.isoformat()
-        '2013-03-31T03:30:00+02:00'
+Instead of relying on the `fold` attribute, you can use the `dst_rule`
+keyword argument, this is especially useful if you want to raise errors
+on non-existing and ambiguous times.
 
-    You can override this behavior by explicitely passing the
-    transition rule to ``convert()``.
+.. code-block:: python
 
-    .. code-block:: python
+    import pendulum
 
-        paris = timezone('Europe/Paris')
-        dt = datetime(2013, 3, 31, 2, 30)
-        # By default, fold is set to 0
-        dt = paris.convert(dt, dst_rule=paris.POST_TRANSITION)
-        dt.isoformat()
-        '2013-03-31T03:30:00+02:00'
+    dt = datetime(2013, 3, 31, 2, 30)
+    # By default, fold is set to 0
+    dt = paris.convert(dt, dst_rule=pendulum.PRE_TRANSITION)
+    dt.isoformat()
+    '2013-03-31T01:30:00+01:00'
 
+    dt = paris.convert(dt, dst_rule=pendulum.POST_TRANSITION)
+    dt.isoformat()
+    '2013-03-31T03:30:00+02:00'
+
+    paris.convert(dt, dst_rule=pendulum.TRANSITION_ERROR)
+    # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
+
+This works as expected. However, whenever we add or subtract a `timedelta`
+object, things get tricky.
 
 .. code-block:: python
 
     from datetime import datetime, timedelta
     from pendulum import timezone
-
-    paris = timezone('Europe/Paris')
-    dt = datetime(2013, 3, 31, 2, 30)
-    dt = paris.convert(dt)
-    dt.isoformat()
-    '2013-03-31T03:30:00+02:00'
-    # Normalization works as expected
-
-    new_york = timezone('America/New_York')
-    new_york.convert(dt).isoformat()
-    '2013-03-30T21:30:00-04:00'
-    # Timezone switching works as expected
 
     dt = datetime(2013, 3, 31, 1, 59, 59, 999999)
     dt = paris.convert(dt)
@@ -173,36 +162,19 @@ when adding and subtracting time around transition times.
     dt = dt + timedelta(microseconds=1)
     dt.isoformat()
     '2013-03-31T02:00:00+01:00'
-    # This does not work as expected.
-    # This is a limitation of datetime objects
-    # that can't switch around transition times.
-    # However, you can use convert()
-    # to retrieve the proper datetime.
+
+This is not what we expect, it should be ``2013-03-31T03:00:00+02:00``.
+This is actually easy to retrieve the proper datetime by using ``convert()``
+again.
+
+.. code-block:: python
+
     dt = tz.convert(dt)
     dt.isoformat()
     '2013-03-31T03:00:00+02:00'
 
-
-.. note::
-
-    You can control the normalization behavior:
-
-    .. code-block:: python
-
-        from datetime import datetime
-        from pendulum import timezone
-
-        tz = timezone('Europe/Paris')
-
-        dt = datetime(2013, 3, 31, 2, 30)
-        dt = tz.convert(dt, dst_rule=tz.PRE_TRANSITION)
-        dt.isoformat()
-        '2013-03-31T01:30:00+01:00'
-        tz.convert(dt, dst_rule=tz.TRANSITION_ERROR)
-        # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist.
-
-
-You can also get a normalized ``datetime`` object from a ``Timezone`` by using the ``datetime()`` method:
+You can also get a normalized ``datetime`` object
+from a ``Timezone`` by using the ``datetime()`` method:
 
 .. code-block:: python
 
