@@ -1,64 +1,64 @@
-from pendulum import DateTime
-
-from .. import AbstractTestCase
-from . import AbstractLocalizationTestCase
+import pendulum
 
 
+locale = 'de'
 
-class DeTest(AbstractLocalizationTestCase, AbstractTestCase):
 
-    locale = 'de'
+def test_diff_for_humans():
+    with pendulum.test(pendulum.create(2016, 8, 29)):
+        diff_for_humans()
 
-    def diff_for_humans(self):
-        d = DateTime.now().subtract(seconds=1)
-        self.assertEqual('vor 1 Sekunde', d.diff_for_humans())
 
-        d = DateTime.now().subtract(seconds=2)
-        self.assertEqual('vor 2 Sekunden', d.diff_for_humans())
+def diff_for_humans():
+    d = pendulum.now().subtract(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Sekunde'
 
-        d = DateTime.now().subtract(minutes=1)
-        self.assertEqual('vor 1 Minute', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Sekunden'
 
-        d = DateTime.now().subtract(minutes=2)
-        self.assertEqual('vor 2 Minuten', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Minute'
 
-        d = DateTime.now().subtract(hours=1)
-        self.assertEqual('vor 1 Stunde', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Minuten'
 
-        d = DateTime.now().subtract(hours=2)
-        self.assertEqual('vor 2 Stunden', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Stunde'
 
-        d = DateTime.now().subtract(days=1)
-        self.assertEqual('vor 1 Tag', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Stunden'
 
-        d = DateTime.now().subtract(days=2)
-        self.assertEqual('vor 2 Tagen', d.diff_for_humans())
+    d = pendulum.now().subtract(days=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Tag'
 
-        d = DateTime.now().subtract(weeks=1)
-        self.assertEqual('vor 1 Woche', d.diff_for_humans())
+    d = pendulum.now().subtract(days=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Tagen'
 
-        d = DateTime.now().subtract(weeks=2)
-        self.assertEqual('vor 2 Wochen', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Woche'
 
-        d = DateTime.now().subtract(months=1)
-        self.assertEqual('vor 1 Monat', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Wochen'
 
-        d = DateTime.now().subtract(months=2)
-        self.assertEqual('vor 2 Monaten', d.diff_for_humans())
+    d = pendulum.now().subtract(months=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Monat'
 
-        d = DateTime.now().subtract(years=1)
-        self.assertEqual('vor 1 Jahr', d.diff_for_humans())
+    d = pendulum.now().subtract(months=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Monaten'
 
-        d = DateTime.now().subtract(years=2)
-        self.assertEqual('vor 2 Jahren', d.diff_for_humans())
+    d = pendulum.now().subtract(years=1)
+    assert d.diff_for_humans(locale=locale) == 'vor 1 Jahr'
 
-        d = DateTime.now().add(seconds=1)
-        self.assertEqual('in 1 Sekunde', d.diff_for_humans())
+    d = pendulum.now().subtract(years=2)
+    assert d.diff_for_humans(locale=locale) == 'vor 2 Jahren'
 
-        d = DateTime.now().add(seconds=1)
-        d2 = DateTime.now()
-        self.assertEqual('1 Sekunde später', d.diff_for_humans(d2))
-        self.assertEqual('1 Sekunde zuvor', d2.diff_for_humans(d))
+    d = pendulum.now().add(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'in 1 Sekunde'
 
-        self.assertEqual('1 Sekunde', d.diff_for_humans(d2, True))
-        self.assertEqual('2 Sekunden', d2.diff_for_humans(d.add(seconds=1), True))
+    d = pendulum.now().add(seconds=1)
+    d2 = pendulum.now()
+    assert d.diff_for_humans(d2, locale=locale) == '1 Sekunde später'
+    assert d2.diff_for_humans(d, locale=locale) == '1 Sekunde zuvor'
+
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 Sekunde'
+    assert d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == '2 Sekunden'

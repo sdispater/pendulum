@@ -1,64 +1,64 @@
-from pendulum import DateTime
-
-from .. import AbstractTestCase
-from . import AbstractLocalizationTestCase
+import pendulum
 
 
+locale = 'da'
 
-class DaTest(AbstractLocalizationTestCase, AbstractTestCase):
 
-    locale = 'da'
+def test_diff_for_humans():
+    with pendulum.test(pendulum.create(2016, 8, 29)):
+        diff_for_humans()
 
-    def diff_for_humans(self):
-        d = DateTime.now().subtract(seconds=1)
-        self.assertEqual('1 sekund siden', d.diff_for_humans())
 
-        d = DateTime.now().subtract(seconds=2)
-        self.assertEqual('2 sekunder siden', d.diff_for_humans())
+def diff_for_humans():
+    d = pendulum.now().subtract(seconds=1)
+    assert d.diff_for_humans(locale=locale) == '1 sekund siden'
 
-        d = DateTime.now().subtract(minutes=1)
-        self.assertEqual('1 minut siden', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=2)
+    assert d.diff_for_humans(locale=locale) == '2 sekunder siden'
 
-        d = DateTime.now().subtract(minutes=2)
-        self.assertEqual('2 minutter siden', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=1)
+    assert d.diff_for_humans(locale=locale) == '1 minut siden'
 
-        d = DateTime.now().subtract(hours=1)
-        self.assertEqual('1 time siden', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=2)
+    assert d.diff_for_humans(locale=locale) == '2 minutter siden'
 
-        d = DateTime.now().subtract(hours=2)
-        self.assertEqual('2 timer siden', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=1)
+    assert d.diff_for_humans(locale=locale) == '1 time siden'
 
-        d = DateTime.now().subtract(days=1)
-        self.assertEqual('1 dag siden', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=2)
+    assert d.diff_for_humans(locale=locale) == '2 timer siden'
 
-        d = DateTime.now().subtract(days=2)
-        self.assertEqual('2 dage siden', d.diff_for_humans())
+    d = pendulum.now().subtract(days=1)
+    assert d.diff_for_humans(locale=locale) == '1 dag siden'
 
-        d = DateTime.now().subtract(weeks=1)
-        self.assertEqual('1 uge siden', d.diff_for_humans())
+    d = pendulum.now().subtract(days=2)
+    assert d.diff_for_humans(locale=locale) == '2 dage siden'
 
-        d = DateTime.now().subtract(weeks=2)
-        self.assertEqual('2 uger siden', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=1)
+    assert d.diff_for_humans(locale=locale) == '1 uge siden'
 
-        d = DateTime.now().subtract(months=1)
-        self.assertEqual('1 måned siden', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=2)
+    assert d.diff_for_humans(locale=locale) == '2 uger siden'
 
-        d = DateTime.now().subtract(months=2)
-        self.assertEqual('2 måneder siden', d.diff_for_humans())
+    d = pendulum.now().subtract(months=1)
+    assert d.diff_for_humans(locale=locale) == '1 måned siden'
 
-        d = DateTime.now().subtract(years=1)
-        self.assertEqual('1 år siden', d.diff_for_humans())
+    d = pendulum.now().subtract(months=2)
+    assert d.diff_for_humans(locale=locale) == '2 måneder siden'
 
-        d = DateTime.now().subtract(years=2)
-        self.assertEqual('2 år siden', d.diff_for_humans())
+    d = pendulum.now().subtract(years=1)
+    assert d.diff_for_humans(locale=locale) == '1 år siden'
 
-        d = DateTime.now().add(seconds=1)
-        self.assertEqual('om 1 sekund', d.diff_for_humans())
+    d = pendulum.now().subtract(years=2)
+    assert d.diff_for_humans(locale=locale) == '2 år siden'
 
-        d = DateTime.now().add(seconds=1)
-        d2 = DateTime.now()
-        self.assertEqual('1 sekund efter', d.diff_for_humans(d2))
-        self.assertEqual('1 sekund før', d2.diff_for_humans(d))
+    d = pendulum.now().add(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'om 1 sekund'
 
-        self.assertEqual('1 sekund', d.diff_for_humans(d2, True))
-        self.assertEqual('2 sekunder', d2.diff_for_humans(d.add(seconds=1), True))
+    d = pendulum.now().add(seconds=1)
+    d2 = pendulum.now()
+    assert d.diff_for_humans(d2, locale=locale) == '1 sekund efter'
+    assert d2.diff_for_humans(d, locale=locale) == '1 sekund før'
+
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 sekund'
+    assert d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == '2 sekunder'

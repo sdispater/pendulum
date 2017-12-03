@@ -1,67 +1,68 @@
-from pendulum import DateTime
-
-from .. import AbstractTestCase
-from . import AbstractLocalizationTestCase
+import pendulum
 
 
+locale = 'lt'
 
-class LtTest(AbstractLocalizationTestCase, AbstractTestCase):
 
-    locale = 'lt'
+def test_diff_for_humans():
+    with pendulum.test(pendulum.create(2016, 8, 29)):
+        diff_for_humans()
 
-    def diff_for_humans(self):
-        d = DateTime.now().subtract(seconds=1)
-        self.assertEqual('prieš 1 sekundę', d.diff_for_humans())
 
-        d = DateTime.now().subtract(seconds=2)
-        self.assertEqual('prieš 2 sekundes', d.diff_for_humans())
+def diff_for_humans():
+    d = pendulum.now().subtract(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 sekundę'
 
-        d = DateTime.now().subtract(seconds=21)
-        self.assertEqual('prieš 21 sekundę', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 sekundes'
 
-        d = DateTime.now().subtract(minutes=1)
-        self.assertEqual('prieš 1 minutę', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=21)
+    assert d.diff_for_humans(locale=locale) == 'prieš 21 sekundę'
 
-        d = DateTime.now().subtract(minutes=2)
-        self.assertEqual('prieš 2 minutes', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 minutę'
 
-        d = DateTime.now().subtract(hours=1)
-        self.assertEqual('prieš 1 valandą', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 minutes'
 
-        d = DateTime.now().subtract(hours=2)
-        self.assertEqual('prieš 2 valandas', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 valandą'
 
-        d = DateTime.now().subtract(days=1)
-        self.assertEqual('prieš 1 dieną', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 valandas'
 
-        d = DateTime.now().subtract(days=2)
-        self.assertEqual('prieš 2 dienas', d.diff_for_humans())
+    d = pendulum.now().subtract(days=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 dieną'
 
-        d = DateTime.now().subtract(weeks=1)
-        self.assertEqual('prieš 1 savaitę', d.diff_for_humans())
+    d = pendulum.now().subtract(days=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 dienas'
 
-        d = DateTime.now().subtract(weeks=2)
-        self.assertEqual('prieš 2 savaites', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 savaitę'
 
-        d = DateTime.now().subtract(months=1)
-        self.assertEqual('prieš 1 mėnesį', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 savaites'
 
-        d = DateTime.now().subtract(months=2)
-        self.assertEqual('prieš 2 mėnesius', d.diff_for_humans())
+    d = pendulum.now().subtract(months=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 mėnesį'
 
-        d = DateTime.now().subtract(years=1)
-        self.assertEqual('prieš 1 metus', d.diff_for_humans())
+    d = pendulum.now().subtract(months=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 mėnesius'
 
-        d = DateTime.now().subtract(years=2)
-        self.assertEqual('prieš 2 metus', d.diff_for_humans())
+    d = pendulum.now().subtract(years=1)
+    assert d.diff_for_humans(locale=locale) == 'prieš 1 metus'
 
-        d = DateTime.now().add(seconds=1)
-        self.assertEqual('už 1 sekundės', d.diff_for_humans())
+    d = pendulum.now().subtract(years=2)
+    assert d.diff_for_humans(locale=locale) == 'prieš 2 metus'
 
-        d = DateTime.now().add(seconds=1)
-        d2 = DateTime.now()
-        self.assertEqual('po 1 sekundę', d.diff_for_humans(d2))
-        self.assertEqual('1 sekundę nuo dabar', d2.diff_for_humans(d))
+    d = pendulum.now().add(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'už 1 sekundės'
 
-        self.assertEqual('1 sekundę', d.diff_for_humans(d2, True))
-        self.assertEqual('2 sekundes', d2.diff_for_humans(d.add(seconds=1), True))
+    d = pendulum.now().add(seconds=1)
+    d2 = pendulum.now()
+    assert d.diff_for_humans(d2, locale=locale) == 'po 1 sekundę'
+    assert d2.diff_for_humans(d, locale=locale) == '1 sekundę nuo dabar'
+
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 sekundę'
+    assert d2.diff_for_humans(d.add(seconds=1), True,
+                              locale=locale) == '2 sekundes'

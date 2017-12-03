@@ -21,7 +21,6 @@ class AbstractTestCase(TestCase):
         pendulum.set_formatter()
         pendulum.set_locale('en')
         pendulum.set_local_timezone()
-        DateTime.set_transition_rule(Timezone.POST_TRANSITION)
 
     def assertDateTime(self, d, year, month, day,
                        hour=None, minute=None, second=None, microsecond=None):

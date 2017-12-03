@@ -1,5 +1,6 @@
 import re
-from pendulum import DateTime, Date
+
+import pendulum
 from pendulum.formatting.classic_formatter import ClassicFormatter
 from .. import AbstractTestCase
 
@@ -7,7 +8,7 @@ from .. import AbstractTestCase
 class ClassicFormatterTest(AbstractTestCase):
 
     def test_custom_formatters(self):
-        d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
         f = ClassicFormatter()
         self.assertEqual(
             'Thursday 25th of December 1975 02:15:16 PM -05:00',
@@ -15,7 +16,7 @@ class ClassicFormatterTest(AbstractTestCase):
         )
 
     def test_format_with_locale(self):
-        d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
+        d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='Europe/Paris')
         f = ClassicFormatter()
         self.assertEqual(
             'jeudi 25e jour de décembre 1975 02:15:16  +01:00',
@@ -23,13 +24,13 @@ class ClassicFormatterTest(AbstractTestCase):
         )
 
     def test_unlocalizable_directive(self):
-        d = DateTime(1975, 12, 25, 14, 15, 16, tzinfo='local')
+        d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
         f = ClassicFormatter()
         self.assertRaises(ValueError, f._localize_directive, d, '%8', 'en')
 
     def test_day_of_week(self):
         f = ClassicFormatter()
-        d = DateTime(2016, 8, 28)
+        d = pendulum.create(2016, 8, 28)
 
         self.assertEqual('Sun', f.format(d, '%a'))
         self.assertEqual('Sunday', f.format(d, '%A'))
@@ -39,7 +40,7 @@ class ClassicFormatterTest(AbstractTestCase):
 
     def test_month(self):
         f = ClassicFormatter()
-        d = DateTime(2016, 8, 28)
+        d = pendulum.create(2016, 8, 28)
 
         self.assertEqual('Aug', f.format(d, '%b'))
         self.assertEqual('August', f.format(d, '%B'))
@@ -49,13 +50,13 @@ class ClassicFormatterTest(AbstractTestCase):
 
     def test_strftime(self):
         f = ClassicFormatter()
-        d = DateTime(2016, 8, 28)
+        d = pendulum.create(2016, 8, 28)
         m = re.match('(.*)', '%_TTT')
 
         self.assertRaises(ValueError, f._strftime, d, m, 'fr')
 
     def test_accepts_dates(self):
-        d = Date(1975, 12, 25)
+        d = pendulum.date(1975, 12, 25)
         f = ClassicFormatter()
         self.assertEqual(
             'Thursday 25th of December 1975',

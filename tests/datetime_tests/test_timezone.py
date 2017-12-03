@@ -1,49 +1,47 @@
 import sys
-from pendulum import DateTime
+from datetime import timedelta, timezone
 
-from .. import AbstractTestCase
+import pendulum
 
-if sys.version_info >= (3, 2):
-    from datetime import timedelta, timezone
+from ..conftest import assert_datetime
 
 
-class TimezoneTest(AbstractTestCase):
+def test_in_timezone():
+    d = pendulum.create(2015, 1, 15, 18, 15, 34)
+    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    assert d.timezone_name == 'UTC'
+    assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 
-    def test_in_timezone(self):
-        d = DateTime(2015, 1, 15, 18, 15, 34)
-        now = DateTime(2015, 1, 15, 18, 15, 34)
-        self.assertEqual('UTC', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour, now.minute)
+    d = d.in_timezone('Europe/Paris')
+    assert d.timezone_name == 'Europe/Paris'
+    assert_datetime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
-        d = d.in_timezone('Europe/Paris')
-        self.assertEqual('Europe/Paris', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
-    def test_in_tz(self):
-        d = DateTime(2015, 1, 15, 18, 15, 34)
-        now = DateTime(2015, 1, 15, 18, 15, 34)
-        self.assertEqual('UTC', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour, now.minute)
+def test_in_tz():
+    d = pendulum.create(2015, 1, 15, 18, 15, 34)
+    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    assert d.timezone_name == 'UTC'
+    assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 
-        d = d.in_tz('Europe/Paris')
-        self.assertEqual('Europe/Paris', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
+    d = d.in_tz('Europe/Paris')
+    assert d.timezone_name == 'Europe/Paris'
+    assert_datetime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
-    def test_astimezone(self):
-        d = DateTime(2015, 1, 15, 18, 15, 34)
-        now = DateTime(2015, 1, 15, 18, 15, 34)
-        self.assertEqual('UTC', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour, now.minute)
 
-        d = d.astimezone('Europe/Paris')
-        self.assertEqual('Europe/Paris', d.timezone_name)
-        self.assertDateTime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
+def test_astimezone():
+    d = pendulum.create(2015, 1, 15, 18, 15, 34)
+    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    assert d.timezone_name == 'UTC'
+    assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 
-        if sys.version_info >= (3, 2):
-            d = d.astimezone(timezone.utc)
-            self.assertEqual('+00:00', d.timezone_name)
-            self.assertDateTime(d, now.year, now.month, now.day, now.hour, now.minute)
+    d = d.astimezone(pendulum.timezone('Europe/Paris'))
+    assert d.timezone_name == 'Europe/Paris'
+    assert_datetime(d, now.year, now.month, now.day, now.hour + 1, now.minute)
 
-            d = d.astimezone(timezone(timedelta(hours=-8)))
-            self.assertEqual('-08:00', d.timezone_name)
-            self.assertDateTime(d, now.year, now.month, now.day, now.hour - 8, now.minute)
+    d = d.astimezone(timezone.utc)
+    assert d.timezone_name == '+00:00'
+    assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
+
+    d = d.astimezone(timezone(timedelta(hours=-8)))
+    assert d.timezone_name == '-08:00'
+    assert_datetime(d, now.year, now.month, now.day, now.hour - 8, now.minute)

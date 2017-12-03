@@ -31,17 +31,6 @@ class FormattableMixing(object):
 
         return formatter.format(self, fmt, locale)
 
-    def strftime(self, fmt):
-        """
-        Formats the instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :rtype: str
-        """
-        return self.format(fmt, _locale.getlocale()[0], 'classic')
-
     def for_json(self):
         """
         Methods for automatic json serialization by simplejson

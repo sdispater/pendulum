@@ -20,7 +20,7 @@ from .constants import (
 )
 
 
-class DateTime(Date, datetime.datetime):
+class DateTime(datetime.datetime, Date):
 
     # Formats
 
@@ -72,7 +72,12 @@ class DateTime(Date, datetime.datetime):
             if hasattr(obj, 'localize'):
                 return cls._timezone(obj.zone)
 
-            return FixedTimezone.load(obj.utcoffset(None).total_seconds())
+            offset = obj.utcoffset(None)
+
+            if offset is None:
+                offset = datetime.timedelta(0)
+
+            return FixedTimezone.load(offset.total_seconds())
 
         return cls._timezone(obj)
 
@@ -101,87 +106,6 @@ class DateTime(Date, datetime.datetime):
 
         return Timezone.load(zone)
 
-    def __new__(cls, year, month, day,
-                hour=0, minute=0, second=0, microsecond=0,
-                tzinfo=None, fold=None):
-        """
-        Constructor.
-
-        This will just create a dummy datetime. The heavy lifting will be done
-        in __init__().
-
-        :type year: int or str
-        """
-        obj = super(DateTime, cls).__new__(cls, year, month, day, hour, minute, second, microsecond, None)
-
-        return obj
-
-    def __init__(self, year, month, day,
-                 hour=0, minute=0, second=0, microsecond=0,
-                 tzinfo=UTC, fold=None):
-        # If a TimezoneInfo is passed we do not convert
-        if isinstance(tzinfo, TimezoneInfo):
-            self._tz = tzinfo.tz
-
-            self._year = year
-            self._month = month
-            self._day = day
-            self._hour = hour
-            self._minute = minute
-            self._second = second
-            self._microsecond = microsecond
-            self._tzinfo = tzinfo
-
-            if fold is None:
-                # Converting rule to fold value
-                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
-                    fold = 1
-                else:
-                    fold = 0
-
-            self._fold = fold
-
-            dt = datetime.datetime(
-                year, month, day,
-                hour, minute, second, microsecond,
-                tzinfo
-            )
-        else:
-            self._tz = self._safe_create_datetime_zone(tzinfo)
-
-            # Support for explicit fold attribute
-            if fold is None:
-                transition_rule = self._TRANSITION_RULE
-
-                # Converting rule to fold value
-                if self._TRANSITION_RULE == Timezone.POST_TRANSITION:
-                    fold = 1
-                else:
-                    fold = 0
-            elif fold == 1:
-                transition_rule = Timezone.POST_TRANSITION
-            else:
-                transition_rule = Timezone.PRE_TRANSITION
-
-            dt = self._tz.convert(datetime.datetime(
-                year, month, day,
-                hour, minute, second, microsecond
-            ), dst_rule=transition_rule)
-
-            self._year = dt.year
-            self._month = dt.month
-            self._day = dt.day
-            self._hour = dt.hour
-            self._minute = dt.minute
-            self._second = dt.second
-            self._microsecond = dt.microsecond
-            self._tzinfo = dt.tzinfo
-            self._fold = fold
-
-        self._timestamp = None
-        self._int_timestamp = None
-        self._datetime = dt
-
     @classmethod
     def instance(cls, dt, tz=UTC):
         """
@@ -198,7 +122,8 @@ class DateTime(Date, datetime.datetime):
         tz = dt.tzinfo or tz
 
         # Checking for pytz/tzinfo
-        if isinstance(tz, datetime.tzinfo) and not isinstance(tz, (Timezone, TimezoneInfo)):
+        if (isinstance(tz, datetime.tzinfo)
+            and not isinstance(tz, (Timezone, TimezoneInfo))):
             # pytz
             if hasattr(tz, 'localize') and tz.zone:
                 tz = tz.zone
@@ -208,10 +133,10 @@ class DateTime(Date, datetime.datetime):
                 # on a fixed offset
                 tz = tz.utcoffset(dt).total_seconds() / 3600
 
-        return cls(
+        return cls.create(
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute, dt.second, dt.microsecond,
-            tzinfo=tz
+            tz=tz
         )
 
     @classmethod
@@ -236,11 +161,12 @@ class DateTime(Date, datetime.datetime):
 
         if tz is None or tz == 'local':
             dt = datetime.datetime.now()
+            tz = cls._local_timezone()
         elif tz is UTC or tz == 'UTC':
             dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
         else:
-            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
             tz = cls._safe_create_datetime_zone(tz)
+            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
             dt = tz.convert(dt)
 
         return cls.instance(dt, tz)
@@ -314,14 +240,16 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
-        tz = cls._safe_create_datetime_zone(tz)
+        if tz is not None:
+            tz = cls._safe_create_datetime_zone(tz)
 
         if any([year is None, month is None, day is None]):
-            if pendulum.has_test_now():
-                now = pendulum.get_test_now().in_tz(tz)
-            else:
-                now = datetime.datetime.utcnow().replace(tzinfo=UTC)
-                now = tz.convert(now)
+            if tz is not None:
+                if pendulum.has_test_now():
+                    now = pendulum.get_test_now().in_tz(tz)
+                else:
+                    now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+                    now = tz.convert(now)
 
             if year is None:
                 year = now.year
@@ -333,10 +261,18 @@ class DateTime(Date, datetime.datetime):
                 day = now.day
 
         dt = datetime.datetime(
-            year, month, day, hour, minute, second, microsecond
+            year, month, day,
+            hour, minute, second, microsecond,
+            fold=1
         )
+        if tz is not None:
+            dt = tz.convert(dt)
 
-        return cls.instance(dt, tz)
+        return cls(
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute, dt.second, dt.microsecond,
+            tzinfo=dt.tzinfo
+        )
 
     @classmethod
     def from_format(cls, time, fmt, tz=UTC):
@@ -445,14 +381,6 @@ class DateTime(Date, datetime.datetime):
     def strptime(cls, time, fmt):
         return cls.instance(datetime.datetime.strptime(time, fmt))
 
-    def copy(self):
-        """
-        Get a copy of the instance.
-
-        :rtype: DateTime
-        """
-        return self.instance(self._datetime)
-
     # Getters/Setters
 
     def hour_(self, hour):
@@ -470,13 +398,13 @@ class DateTime(Date, datetime.datetime):
     def _setter(self, **kwargs):
         kwargs['tzinfo'] = True
 
-        return self._tz.convert(self.replace(**kwargs))
+        return self.tzinfo.tz.convert(self.replace(**kwargs))
 
     def timezone_(self, tz):
-        return self.__class__(
+        return self.create(
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            tz
+            tz=tz
         )
 
     def tz_(self, tz):
@@ -486,61 +414,22 @@ class DateTime(Date, datetime.datetime):
         return self.create_from_timestamp(timestamp, tz)
 
     @property
-    def year(self):
-        return self._year
-
-    @property
-    def month(self):
-        return self._month
-
-    @property
-    def day(self):
-        return self._day
-
-    @property
-    def hour(self):
-        return self._hour
-
-    @property
-    def minute(self):
-        return self._minute
-
-    @property
-    def second(self):
-        return self._second
-
-    @property
-    def microsecond(self):
-        return self._microsecond
-
-    @property
-    def tzinfo(self):
-        return self._tzinfo
-
-    @property
-    def fold(self):
-        return self._fold
-
-    def timestamp(self):
-        if self._timestamp is None:
-            delta = self._datetime - self._EPOCH
-
-            self._timestamp = delta.total_seconds()
-
-        return self._timestamp
-
-    @property
     def float_timestamp(self):
         return self.timestamp()
 
     @property
     def int_timestamp(self):
-        if self._int_timestamp is None:
-            delta = self._datetime - self._EPOCH
+        # Workaround needed to avoid inaccuracy
+        # for far into the future datetimes
+        dt = datetime.datetime(
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond,
+            tzinfo=self.tzinfo
+        )
 
-            self._int_timestamp = delta.days * SECONDS_PER_DAY + delta.seconds
+        delta = dt - self._EPOCH
 
-        return self._int_timestamp
+        return delta.days * SECONDS_PER_DAY + delta.seconds
 
     @property
     def offset(self):
@@ -554,25 +443,29 @@ class DateTime(Date, datetime.datetime):
 
     @property
     def timezone(self):
-        return self.get_timezone()
+        if self.tzinfo is None:
+            return None
+
+        return self.tzinfo.tz
 
     @property
     def tz(self):
-        return self.get_timezone()
+        return self.timezone
 
     @property
     def timezone_name(self):
-        return self.timezone.name
+        tz = self.timezone
+
+        if self.timezone is None:
+            return None
+
+        return tz.name
 
     @property
     def age(self):
-        return self.date().diff(self.now(self._tz).date()).in_years()
+        return self.date().diff(self.now(self.tzinfo.tz).date()).in_years()
 
     def is_local(self):
-        """
-
-        :return:
-        """
         return self.offset == self.in_timezone(self._local_timezone()).offset
 
     def is_utc(self):
@@ -581,14 +474,11 @@ class DateTime(Date, datetime.datetime):
     def is_dst(self):
         return self.tzinfo.is_dst()
 
-    def get_timezone(self):
-        return self._tz
-
     def get_offset(self):
-        return int(self._tzinfo.offset)
+        return int(self.tzinfo.offset)
 
     def date(self):
-        return Date.instance(self._datetime.date())
+        return Date.instance(super().date())
 
     def time(self):
         return Time(self.hour, self.minute, self.second, self.microsecond)
@@ -703,23 +593,11 @@ class DateTime(Date, datetime.datetime):
         :type timestamp: int or float
         :rtype: DateTime
         """
-        dt = datetime.datetime.fromtimestamp(timestamp, UTC).astimezone(self._tz)
+        dt = datetime.datetime.fromtimestamp(
+            timestamp, UTC
+        ).astimezone(self.tzinfo.tz)
 
         return self.instance(dt)
-
-    # Normalization Rule
-    @classmethod
-    def set_transition_rule(cls, rule):
-        if rule not in [Timezone.PRE_TRANSITION,
-                        Timezone.POST_TRANSITION,
-                        Timezone.TRANSITION_ERROR]:
-            raise ValueError('Invalid transition rule: {}'.format(rule))
-
-        cls._TRANSITION_RULE = rule
-
-    @classmethod
-    def get_transition_rule(cls):
-        return cls._TRANSITION_RULE
 
     # STRING FORMATTING
 
@@ -856,62 +734,34 @@ class DateTime(Date, datetime.datetime):
 
         return self.format(fmt, locale=locale)
 
+    def __str__(self):
+        return self.isoformat('T')
+
     def __repr__(self):
         us = ''
-        if self._microsecond:
-            us = f', {self._microsecond}'
+        if self.microsecond:
+            us = f', {self.microsecond}'
 
-        return (
+        repr_ = (
             f"{self.__class__.__name__}("
-            f"{self._year}, {self._month}, {self._day}, "
-            f"{self._hour}, {self._minute}, {self._second}{us}, "
-            f"tz='{self._tz.name}'"
-            f")"
+            f"{self.year}, {self.month}, {self.day}, "
+            f"{self.hour}, {self.minute}, {self.second}{us}"
         )
 
+        if self.tzinfo is not None:
+            repr_ += f", tzinfo={self.tzinfo}"
+
+        repr_ += f")"
+
+        return repr_
+
     # Comparisons
-    def __eq__(self, other):
-        try:
-            return self._datetime == self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
-    def __ne__(self, other):
-        try:
-            return self._datetime != self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
-    def __gt__(self, other):
-        try:
-            return self._datetime > self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
-    def __ge__(self, other):
-        try:
-            return self._datetime >= self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
-    def __lt__(self, other):
-        try:
-            return self._datetime < self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
-    def __le__(self, other):
-        try:
-            return self._datetime <= self._get_datetime(other)
-        except ValueError:
-            return NotImplemented
-
     def between(self, dt1, dt2, equal=True):
         """
         Determines if the instance is between two others.
 
-        :type dt1: DateTime or datetime or str or int
-        :type dt2: DateTime or datetime or str or int
+        :type dt1: datetime.datetime
+        :type dt2: datetime.datetime
 
         :param equal: Indicates if a > and < comparison shoud be used or <= and >=
 
@@ -934,27 +784,24 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
-        dt1 = self._get_datetime(dt1, True)
-        dt2 = self._get_datetime(dt2, True)
+        if dt1 < dt2:
+            return self.instance(dt1)
 
-        if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
-            return dt1
-
-        return dt2
+        return self.instance(dt2)
 
     def farthest(self, dt1, dt2):
         """
         Get the farthest date from the instance.
 
-        :type dt1: DateTime or datetime
-        :type dt2: DateTime or datetime
+        :type dt1: datetime.datetime
+        :type dt2: datetime.datetime
 
         :rtype: DateTime
         """
-        dt1 = self._get_datetime(dt1, True)
-        dt2 = self._get_datetime(dt2, True)
+        dt1 = self.instance(dt1)
+        dt2 = self.instance(dt2)
 
-        if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
+        if dt1 > dt2:
             return dt1
 
         return dt2
@@ -969,12 +816,12 @@ class DateTime(Date, datetime.datetime):
         :rtype: DateTime
         """
         if dt is None:
-            dt = DateTime.now(self.timezone)
+            dt = self.now(self.timezone)
 
         if self < dt:
             return self
 
-        return self._get_datetime(dt, True)
+        return self.instance(dt)
 
     def minimum(self, dt=None):
         """
@@ -997,12 +844,12 @@ class DateTime(Date, datetime.datetime):
         :rtype: DateTime
         """
         if dt is None:
-            dt = DateTime.now(self.timezone)
+            dt = self.now(self.timezone)
 
         if self > dt:
             return self
 
-        return self._get_datetime(dt, True)
+        return self.instance(dt)
 
     def maximum(self, dt=None):
         """
@@ -1021,7 +868,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.yesterday(self._tz).to_date_string()
+        return self.to_date_string() == self.yesterday(self.tzinfo.tz).to_date_string()
 
     def is_today(self):
         """
@@ -1029,7 +876,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.now(self._tz).to_date_string()
+        return self.to_date_string() == self.now(self.tzinfo.tz).to_date_string()
 
     def is_tomorrow(self):
         """
@@ -1037,7 +884,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: bool
         """
-        return self.to_date_string() == self.tomorrow(self._tz).to_date_string()
+        return self.to_date_string() == self.tomorrow(self.tzinfo.tz).to_date_string()
 
     def is_future(self):
         """
@@ -1063,7 +910,9 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: bool
         """
-        return DateTime.create(self.year, 12, 28, 0, 0, 0, tz=self._tz).isocalendar()[1] == 53
+        return self.create(
+            self.year, 12, 28, 0, 0, 0, tz=self.tzinfo.tz
+        ).isocalendar()[1] == 53
 
     def is_same_day(self, dt):
         """
@@ -1073,7 +922,7 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: bool
         """
-        dt = self._get_datetime(dt, True)
+        dt = self.instance(dt)
 
         return self.to_date_string() == dt.to_date_string()
 
@@ -1084,9 +933,9 @@ class DateTime(Date, datetime.datetime):
         :rtype: bool
         """
         if dt is None:
-            dt = DateTime.now(self._tz)
+            dt = self.now(self.tzinfo.tz)
 
-        instance = self._get_datetime(dt, True)
+        instance = self.instance(dt)
 
         return (self.month, self.day) == (instance.month, instance.day)
 
@@ -1123,27 +972,38 @@ class DateTime(Date, datetime.datetime):
 
         :rtype: DateTime
         """
+        dt = datetime.datetime(
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond,
+            tzinfo=self.tzinfo
+        )
         dt = add_duration(
-            self._datetime,
+            dt,
             years=years, months=months, weeks=weeks, days=days,
             hours=hours, minutes=minutes, seconds=seconds,
             microseconds=microseconds
         )
 
+        if dt.tzinfo is None:
+            return self.instance(dt, tz=None)
+
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
             # we will not apply the transition (if any)
-            return self.__class__(
+            return self.create(
                 dt.year, dt.month, dt.day,
                 dt.hour, dt.minute, dt.second, dt.microsecond,
-                tzinfo=self._tz,
-                fold=1
+                tz=self.tzinfo
             )
 
         # Else, we need to apply the transition properly (if any)
-        dt = self._tz.convert(dt)
+        dt = self.tzinfo.tz.convert(dt)
 
-        return self.instance(dt)
+        return self.__class__(
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute, dt.second, dt.microsecond,
+            tzinfo=dt.tzinfo
+        )
 
     def subtract(self, years=0, months=0, weeks=0, days=0,
                  hours=0, minutes=0, seconds=0, microseconds=0):
@@ -1260,9 +1120,9 @@ class DateTime(Date, datetime.datetime):
         :rtype: Period
         """
         if dt is None:
-            dt = self.now(self._tz)
+            dt = self.now(self.tzinfo.tz)
 
-        return Period(self, self._get_datetime(dt, pendulum=True), absolute=abs)
+        return Period(self, self.instance(dt), absolute=abs)
 
     # Modifiers
     def start_of(self, unit):
@@ -1826,51 +1686,25 @@ class DateTime(Date, datetime.datetime):
         :rtype: DateTime
         """
         if dt is None:
-            dt = DateTime.now(self._tz)
+            dt = self.now(self.tzinfo.tz)
 
         diff = self.diff(dt, False)
         return self.add(microseconds=(diff.in_seconds() * 1000000 + diff.microseconds) // 2)
-
-    def _get_datetime(self, value, pendulum=False):
-        """
-        Gets a datetime from a given value.
-
-        :param value: The value to get the datetime from.
-        :type value: DateTime or datetime or int or float or str.
-
-        :param pendulum: Whether to return a DateTime instance.
-        :type pendulum: bool
-
-        :rtype: datetime or DateTime
-        """
-        if value is None:
-            return None
-
-        if isinstance(value, DateTime):
-            return value._datetime if not pendulum else value
-
-        if isinstance(value, datetime.datetime):
-            if value.tzinfo is None:
-                value = self._tz.convert(value)
-
-            return value if not pendulum else DateTime.instance(value)
-
-        raise ValueError('Invalid datetime "{}"'.format(value))
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
             return self.subtract_timedelta(other)
 
-        try:
-            return self._get_datetime(other, True).diff(self, False)
-        except ValueError:
+        if not isinstance(other, datetime.datetime):
             return NotImplemented
 
+        return self.instance(other).diff(self, False)
+
     def __rsub__(self, other):
-        try:
-            return self.diff(self._get_datetime(other, True), False)
-        except ValueError:
+        if not isinstance(other, datetime.datetime):
             return NotImplemented
+
+        return self.diff(self.instance(other), False)
 
     def __add__(self, other):
         if not isinstance(other, datetime.timedelta):
@@ -1885,86 +1719,63 @@ class DateTime(Date, datetime.datetime):
 
     @classmethod
     def fromtimestamp(cls, t, tz=None):
-        return cls.create_from_timestamp(t, tz)
+        return cls.instance(datetime.datetime.fromtimestamp(t, tz=tz), tz=tz)
 
     @classmethod
     def utcfromtimestamp(cls, t):
-        return cls.create_from_timestamp(t)
+        return cls.instance(datetime.datetime.utcfromtimestamp(t), tz=None)
 
     @classmethod
     def fromordinal(cls, n):
-        return cls.instance(datetime.datetime.fromordinal(n))
+        return cls.instance(datetime.datetime.fromordinal(n), tz=None)
 
     @classmethod
     def combine(cls, date, time):
-        return cls.instance(datetime.datetime.combine(date, time))
+        return cls.instance(datetime.datetime.combine(date, time), tz=None)
 
-    def timetuple(self):
-        return self._datetime.timetuple()
-
-    def utctimetuple(self):
-        return self._datetime.utctimetuple()
+    def astimezone(self, tz=None):
+        return self.instance(super().astimezone(tz))
 
     def replace(self, year=None, month=None, day=None, hour=None,
                 minute=None, second=None, microsecond=None, tzinfo=True,
                 fold=None):
-        year = year if year is not None else self._year
-        month = month if month is not None else self._month
-        day = day if day is not None else self._day
-        hour = hour if hour is not None else self._hour
-        minute = minute if minute is not None else self._minute
-        second = second if second is not None else self._second
-        microsecond = microsecond if microsecond is not None else self._microsecond
+        if year is None:
+            year = self.year
+        if month is None:
+            month = self.month
+        if day is None:
+            day = self.day
+        if hour is None:
+            hour = self.hour
+        if minute is None:
+            minute = self.minute
+        if second is None:
+            second = self.second
+        if microsecond is None:
+            microsecond = self.microsecond
+        if tzinfo is True:
+            tzinfo = self.tzinfo
+        if fold is None:
+            fold = self.fold
 
-        # Checking tzinfo
-        if tzinfo is not None and tzinfo is not True:
-            tzinfo = self._safe_create_datetime_zone(tzinfo)
-        elif tzinfo is None:
-            tzinfo = UTC
-        else:
-            tzinfo = self._tzinfo.tz
-
-        return self.__class__(
-            year, month, day,
-            hour, minute, second, microsecond,
-            tzinfo=tzinfo, fold=fold
+        return self.instance(
+            super().replace(
+                year=year, month=month, day=day,
+                hour=hour, minute=minute, second=second,
+                microsecond=microsecond,
+                tzinfo=tzinfo,
+                fold=fold
+            )
         )
-
-    def astimezone(self, tz=None):
-        tz = self._safe_create_datetime_zone(tz)
-
-        return self.instance(self._datetime.astimezone(tz))
-
-    def isoformat(self, sep='T'):
-        return self._datetime.isoformat(sep)
-
-    def utcoffset(self):
-        return self._tzinfo.utcoffset(self)
-
-    def tzname(self):
-        return self._datetime.tzname()
-
-    def dst(self):
-        return self._datetime.dst()
-
-    def __hash__(self):
-        return self._datetime.__hash__()
 
     def __getnewargs__(self):
         return(self, )
 
     def _getstate(self, protocol=3):
-        tz = self.timezone_name
-
-        # Fix for fixed timezones not being properly unpickled
-        if isinstance(self.tz, FixedTimezone):
-            tz = self.offset_hours
-
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            tz,
-            self.fold
+            self.tzinfo
         )
 
     def __reduce__(self):
@@ -1972,6 +1783,7 @@ class DateTime(Date, datetime.datetime):
 
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
+
 
 DateTime.min = DateTime.instance(datetime.datetime.min.replace(tzinfo=UTC))
 DateTime.max = DateTime.instance(datetime.datetime.max.replace(tzinfo=UTC))

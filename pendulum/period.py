@@ -20,12 +20,20 @@ class Period(WordableDurationMixin, BaseDuration):
             end, start = start, end
 
         if isinstance(start, pendulum.DateTime):
-            start = start._datetime
+            start = datetime(
+                start.year, start.month, start.day,
+                start.hour, start.minute, start.second, start.microsecond,
+                tzinfo=start.tzinfo
+            )
         elif isinstance(start, pendulum.Date):
             start = date(start.year, start.month, start.day)
 
         if isinstance(end, pendulum.DateTime):
-            end = end._datetime
+            end = datetime(
+                end.year, end.month, end.day,
+                end.hour, end.minute, end.second, end.microsecond,
+                tzinfo=end.tzinfo
+            )
         elif isinstance(end, pendulum.Date):
             end = date(end.year, end.month, end.day)
 
@@ -47,7 +55,11 @@ class Period(WordableDurationMixin, BaseDuration):
             _start = start
         else:
             if isinstance(start, pendulum.DateTime):
-                _start = start._datetime
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo
+                )
             else:
                 _start = date(start.year, start.month, start.day)
 
@@ -60,7 +72,11 @@ class Period(WordableDurationMixin, BaseDuration):
             _end = end
         else:
             if isinstance(end, pendulum.DateTime):
-                _end = end._datetime
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo
+                )
             else:
                 _end = date(end.year, end.month, end.day)
 

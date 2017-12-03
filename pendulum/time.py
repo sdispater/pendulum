@@ -14,36 +14,8 @@ class Time(FormattableMixing, time):
     Represents a time instance as hour, minute, second, microsecond.
     """
 
-    def __init__(self, hour, minute=0, second=0, microsecond=0,
-                 tzinfo=None, fold=0):
-        """
-        Constructor.
-
-        :param hour: The hour.
-        :type hour: int
-
-        :param minute: The minute.
-        :type minute: int
-
-        :param second: The second
-        :type second: int
-
-        :param microsecond: The microsecond
-        :type microsecond: int
-
-        :param tzinfo: The timezone info (not used)
-        :type tzinfo: tzinfo or None
-        """
-        self._hour = hour
-        self._minute = minute
-        self._second = second
-        self._microsecond = microsecond
-        self._tzinfo = tzinfo
-        self._time = time(hour, minute, second, microsecond, tzinfo)
-        self._fold = fold
-
     @classmethod
-    def instance(cls, t, copy=True):
+    def instance(cls, t):
         """
         Creates a Time instance from a time object.
 
@@ -60,10 +32,9 @@ class Time(FormattableMixing, time):
 
         :raises: TypeError
         """
-        if isinstance(t, Time) and not copy:
-            return t
-
-        return cls(t.hour, t.minute, t.second, t.microsecond, t.tzinfo)
+        return cls(t.hour, t.minute,
+                   t.second, t.microsecond,
+                   t.tzinfo, fold=t.fold)
 
     @classmethod
     def now(cls, with_microseconds=True):
@@ -92,39 +63,15 @@ class Time(FormattableMixing, time):
 
         return cls(now.hour, now.minute, now.second, microsecond)
 
-    @property
-    def hour(self):
-        return self._hour
-
-    @property
-    def minute(self):
-        return self._minute
-
-    @property
-    def second(self):
-        return self._second
-
-    @property
-    def microsecond(self):
-        return self._microsecond
-
-    @property
-    def tzinfo(self):
-        return self._tzinfo
-
-    @property
-    def fold(self):
-        return self._fold
-
     # String formatting
     def __repr__(self):
         us = ''
-        if self._microsecond:
-            us = f', {self._microsecond}'
+        if self.microsecond:
+            us = f', {self.microsecond}'
 
         return (
             f'{self.__class__.__name__}('
-            f'{self._hour}, {self._minute}, {self._second}{us}'
+            f'{self.hour}, {self.minute}, {self.second}{us}'
             f')'
         )
 
@@ -158,8 +105,8 @@ class Time(FormattableMixing, time):
 
         :rtype: Time
         """
-        dt1 = self.instance(dt1, False)
-        dt2 = self.instance(dt2, False)
+        dt1 = self.instance(dt1)
+        dt2 = self.instance(dt2)
 
         if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
             return dt1
@@ -175,8 +122,8 @@ class Time(FormattableMixing, time):
 
         :rtype: Time
         """
-        dt1 = self.instance(dt1, False)
-        dt2 = self.instance(dt2, False)
+        dt1 = self.instance(dt1)
+        dt2 = self.instance(dt2)
 
         if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
             return dt1
@@ -198,7 +145,7 @@ class Time(FormattableMixing, time):
         if self < dt:
             return self
 
-        return self.instance(dt, False)
+        return self.instance(dt)
 
     def minimum(self, dt=None):
         """
@@ -226,7 +173,7 @@ class Time(FormattableMixing, time):
         if self > dt:
             return self
 
-        return self.instance(dt, False)
+        return self.instance(dt)
 
     def maximum(self, dt=None):
         """
@@ -238,9 +185,6 @@ class Time(FormattableMixing, time):
         :rtype: Time
         """
         return self.max_(dt)
-
-    def __hash__(self):
-        return self._time.__hash__()
 
     # ADDITIONS AND SUBSTRACTIONS
 
@@ -265,7 +209,7 @@ class Time(FormattableMixing, time):
         from .datetime import DateTime
 
         return DateTime.EPOCH.at(
-            self._hour, self._minute, self._second, self._microsecond
+            self.hour, self.minute, self.second, self.microsecond
         ).add(
             hours=hours,
             minutes=minutes,
@@ -294,7 +238,7 @@ class Time(FormattableMixing, time):
         from .datetime import DateTime
 
         return DateTime.EPOCH.at(
-            self._hour, self._minute, self._second, self._microsecond
+            self.hour, self.minute, self.second, self.microsecond
         ).subtract(
             hours=hours,
             minutes=minutes,
@@ -312,7 +256,7 @@ class Time(FormattableMixing, time):
         :rtype: Time
         """
         if delta.days:
-            raise TypeError('Cannot timedelta with days to Time.')
+            raise TypeError('Cannot add timedelta with days to Time.')
 
         return self.add(
             seconds=delta.seconds,
@@ -329,7 +273,7 @@ class Time(FormattableMixing, time):
         :rtype: Time
         """
         if delta.days:
-            raise TypeError('Cannot timedelta with days to Time.')
+            raise TypeError('Cannot subtract timedelta with days to Time.')
 
         return self.subtract(
             seconds=delta.seconds,
@@ -385,7 +329,7 @@ class Time(FormattableMixing, time):
         if dt is None:
             dt = self.now()
         else:
-            dt = self.instance(dt, False)
+            dt = self.instance(dt)
 
         us1 = (
             self.hour * SECS_PER_HOUR
@@ -458,41 +402,24 @@ class Time(FormattableMixing, time):
 
         return pendulum.translator().trans(trans_id, {'time': time}, locale=locale)
 
-    # String formatting
-
-    def isoformat(self):
-        return self._time.isoformat()
-
     # Compatibility methods
 
     def replace(self, hour=None, minute=None, second=None, microsecond=None,
                 tzinfo=True):
         if tzinfo is True:
-            tzinfo = self._tzinfo
+            tzinfo = self.tzinfo
 
-        hour = hour if hour is not None else self._hour
-        minute = minute if minute is not None else self._minute
-        second = second if second is not None else self._second
-        microsecond = microsecond if microsecond is not None else self._microsecond
+        hour = hour if hour is not None else self.hour
+        minute = minute if minute is not None else self.minute
+        second = second if second is not None else self.second
+        microsecond = microsecond if microsecond is not None else self.microsecond
 
         return self.instance(
-            self._time.replace(
+            super().replace(
                 hour, minute, second, microsecond,
                 tzinfo=tzinfo
             )
         )
-
-    def utcoffset(self):
-        return self._time.utcoffset()
-
-    def dst(self):
-        return self._time.dst()
-
-    def tzname(self):
-        if self._tzinfo is None:
-            return None
-
-        return self._time.tzname()
 
     def _getstate(self, protocol=3):
         tz = self.tzinfo
@@ -507,6 +434,7 @@ class Time(FormattableMixing, time):
 
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
+
 
 Time.min = Time(0, 0, 0)
 Time.max = Time(23, 59, 59, 999999)

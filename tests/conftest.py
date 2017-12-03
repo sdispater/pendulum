@@ -12,7 +12,6 @@ def setup():
     pendulum.set_formatter()
     pendulum.set_locale('en')
     pendulum.set_local_timezone()
-    pendulum.datetime.set_transition_rule(pendulum.POST_TRANSITION)
 
 
 def assert_datetime(d, year, month, day,

@@ -1,7 +1,7 @@
 Instantiation
 =============
 
-There are several different methods available to create a new instances.
+There are several different methods available to create a new `DateTime` instance.
 
 First there is the ``create()`` helper.
 It allows you to provide as many or as few arguments as you want
@@ -23,26 +23,6 @@ and otherwise can be a ``Timezone`` instance or simply a string timezone value.
 
     Supported strings for timezones are the one provided by the `IANA time zone database <https://www.iana.org/time-zones>`_.
     The special ``local`` string is also supported and will return your current timezone.
-
-    As of release 1.3.0, available timezones are exposed via the ``timezones`` attribute.
-
-    .. code-block:: python
-
-        import pendulum
-
-        pendulum.timezones
-        ('CET',
-         'CST6CDT',
-         'Cuba',
-         'EET',
-         'Egypt',
-         'Eire',
-         ...,
-         'US/Michigan',
-         'US/Mountain',
-         'US/Pacific',
-         'US/Pacific-New',
-         'US/Samoa')
 
 This is again shown in the next example which also introduces the ``now()`` function.
 
@@ -91,18 +71,15 @@ and each has their time value set to ``00:00:00``.
 The next helper, ``from_format()``, is similar to the native ``datetime.strptime()`` function
 but uses custom tokens to create a ``DateTime`` instance.
 
-.. note::
-
-    To see all the available tokens, you can check the `Formatter`_ section.
-
-The next helper, ``from_format()``, allows the creation of datetime instances
-from predefined string formats.
-
 .. code-block:: python
 
     dt = pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH')
     print(dt)
     '1975-05-21T22:00:00+00:00'
+
+.. note::
+
+    To see all the available tokens, you can check the `Formatter`_ section.
 
 It also accepts a ``tz`` keyword argument to specify the timezone:
 
@@ -116,7 +93,7 @@ Note that ``strptime`` can still be used:
 .. code-block:: python
 
     # The timezone will be UTC
-    pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
+    pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H')
 
 The final helper is for working with unix timestamps.
 ``from_timestamp()`` will create a ``DateTime`` instance equal to the given timestamp

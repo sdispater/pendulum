@@ -1,94 +1,95 @@
 import pendulum
 
-from pendulum import DateTime
 
-from .. import AbstractTestCase
-from . import AbstractLocalizationTestCase
+locale = 'fr'
 
 
+def test_diff_for_humans():
+    with pendulum.test(pendulum.create(2016, 8, 29)):
+        diff_for_humans()
 
-class FrTest(AbstractLocalizationTestCase, AbstractTestCase):
 
-    locale = 'fr'
+def diff_for_humans():
+    d = pendulum.now().subtract(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 seconde'
 
-    def diff_for_humans(self):
-        d = DateTime.now().subtract(seconds=1)
-        self.assertEqual('il y a 1 seconde', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 secondes'
 
-        d = DateTime.now().subtract(seconds=2)
-        self.assertEqual('il y a 2 secondes', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 minute'
 
-        d = DateTime.now().subtract(minutes=1)
-        self.assertEqual('il y a 1 minute', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 minutes'
 
-        d = DateTime.now().subtract(minutes=2)
-        self.assertEqual('il y a 2 minutes', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 heure'
 
-        d = DateTime.now().subtract(hours=1)
-        self.assertEqual('il y a 1 heure', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 heures'
 
-        d = DateTime.now().subtract(hours=2)
-        self.assertEqual('il y a 2 heures', d.diff_for_humans())
+    d = pendulum.now().subtract(days=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 jour'
 
-        d = DateTime.now().subtract(days=1)
-        self.assertEqual('il y a 1 jour', d.diff_for_humans())
+    d = pendulum.now().subtract(days=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 jours'
 
-        d = DateTime.now().subtract(days=2)
-        self.assertEqual('il y a 2 jours', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 semaine'
 
-        d = DateTime.now().subtract(weeks=1)
-        self.assertEqual('il y a 1 semaine', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 semaines'
 
-        d = DateTime.now().subtract(weeks=2)
-        self.assertEqual('il y a 2 semaines', d.diff_for_humans())
+    d = pendulum.now().subtract(months=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 mois'
 
-        d = DateTime.now().subtract(months=1)
-        self.assertEqual('il y a 1 mois', d.diff_for_humans())
+    d = pendulum.now().subtract(months=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 mois'
 
-        d = DateTime.now().subtract(months=2)
-        self.assertEqual('il y a 2 mois', d.diff_for_humans())
+    d = pendulum.now().subtract(years=1)
+    assert d.diff_for_humans(locale=locale) == 'il y a 1 an'
 
-        d = DateTime.now().subtract(years=1)
-        self.assertEqual('il y a 1 an', d.diff_for_humans())
+    d = pendulum.now().subtract(years=2)
+    assert d.diff_for_humans(locale=locale) == 'il y a 2 ans'
 
-        d = DateTime.now().subtract(years=2)
-        self.assertEqual('il y a 2 ans', d.diff_for_humans())
+    d = pendulum.now().add(seconds=1)
+    assert d.diff_for_humans(locale=locale) == 'dans 1 seconde'
 
-        d = DateTime.now().add(seconds=1)
-        self.assertEqual('dans 1 seconde', d.diff_for_humans())
+    d = pendulum.now().add(seconds=1)
+    d2 = pendulum.now()
+    assert d.diff_for_humans(d2, locale=locale) == '1 seconde après'
+    assert d2.diff_for_humans(d, locale=locale) == '1 seconde avant'
 
-        d = DateTime.now().add(seconds=1)
-        d2 = DateTime.now()
-        self.assertEqual('1 seconde après', d.diff_for_humans(d2))
-        self.assertEqual('1 seconde avant', d2.diff_for_humans(d))
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 seconde'
+    assert d2.diff_for_humans(d.add(seconds=1), True,
+                              locale=locale) == '2 secondes'
 
-        self.assertEqual('1 seconde', d.diff_for_humans(d2, True))
-        self.assertEqual('2 secondes', d2.diff_for_humans(d.add(seconds=1), True))
 
-    def format(self):
-        d = DateTime(2016, 8, 28, 7, 3, 6, 123456)
-        self.assertEqual('dimanche', d.format('dddd'))
-        self.assertEqual('dim', d.format('ddd'))
-        self.assertEqual('août', d.format('MMMM'))
-        self.assertEqual('août', d.format('MMM'))
-        self.assertEqual('AM', d.format('A'))
-        self.assertEqual('28e', d.format('Do'))
+def test_format():
+    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    assert d.format('dddd', locale=locale) == 'dimanche'
+    assert d.format('ddd', locale=locale) == 'dim'
+    assert d.format('MMMM', locale=locale) == 'août'
+    assert d.format('MMM', locale=locale) == 'août'
+    assert d.format('A', locale=locale) == 'AM'
+    assert d.format('Do', locale=locale) == '28e'
 
-        self.assertEqual('07:03', d.format('LT'))
-        self.assertEqual('07:03:06', d.format('LTS'))
-        self.assertEqual('28/08/2016', d.format('L'))
-        self.assertEqual('28 août 2016', d.format('LL'))
-        self.assertEqual('28 août 2016 07:03', d.format('LLL'))
-        self.assertEqual('dimanche 28 août 2016 07:03', d.format('LLLL'))
+    assert d.format('LT', locale=locale) == '07:03'
+    assert d.format('LTS', locale=locale) == '07:03:06'
+    assert d.format('L', locale=locale) == '28/08/2016'
+    assert d.format('LL', locale=locale) == '28 août 2016'
+    assert d.format('LLL', locale=locale) == '28 août 2016 07:03'
+    assert d.format('LLLL', locale=locale) == 'dimanche 28 août 2016 07:03'
 
-    def format_classic(self):
-        pendulum.set_formatter('classic')
 
-        d = DateTime(2000, 1, 1, 12, 45, 31)
-        self.assertEqual('samedi', d.format('%A'))
-        self.assertEqual('sam', d.format('%a'))
-        self.assertEqual('janvier', d.format('%B'))
-        self.assertEqual('janv', d.format('%b'))
-        self.assertEqual('', d.format('%p'))
-        self.assertEqual('er', d.format('%_t'))
-        self.assertEqual('e', d.add(days=1).format('%_t'))
+def test_format_classic():
+    pendulum.set_formatter('classic')
+
+    d = pendulum.create(2000, 1, 1, 12, 45, 31)
+    assert d.format('%A', locale=locale) == 'samedi'
+    assert d.format('%a', locale=locale) == 'sam'
+    assert d.format('%B', locale=locale) == 'janvier'
+    assert d.format('%b', locale=locale) == 'janv'
+    assert d.format('%p', locale=locale) == ''
+    assert d.format('%_t', locale=locale) == 'er'
+    assert d.add(days=1).format('%_t', locale=locale) == 'e'

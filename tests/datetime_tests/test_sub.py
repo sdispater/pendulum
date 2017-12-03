@@ -8,71 +8,71 @@ from .. import AbstractTestCase
 class SubTest(AbstractTestCase):
 
     def test_sub_years_positive(self):
-        self.assertEqual(1974, DateTime.create(1975).subtract(years=1).year)
+        self.assertEqual(1974, pendulum.create(1975).subtract(years=1).year)
 
     def test_sub_years_zero(self):
-        self.assertEqual(1975, DateTime.create(1975).subtract(years=0).year)
+        self.assertEqual(1975, pendulum.create(1975).subtract(years=0).year)
 
     def test_sub_years_negative(self):
-        self.assertEqual(1976, DateTime.create(1975).subtract(years=-1).year)
+        self.assertEqual(1976, pendulum.create(1975).subtract(years=-1).year)
 
     def test_sub_months_positive(self):
-        self.assertEqual(11, DateTime.create(1975, 12).subtract(months=1).month)
+        self.assertEqual(11, pendulum.create(1975, 12).subtract(months=1).month)
 
     def test_sub_months_zero(self):
-        self.assertEqual(12, DateTime.create(1975, 12).subtract(months=0).month)
+        self.assertEqual(12, pendulum.create(1975, 12).subtract(months=0).month)
 
     def test_sub_months_negative(self):
-        self.assertEqual(1, DateTime.create(1975, 12).subtract(months=-1).month)
+        self.assertEqual(1, pendulum.create(1975, 12).subtract(months=-1).month)
 
     def test_sub_days_positive(self):
-        self.assertEqual(30, DateTime(1975, 5, 31).subtract(days=1).day)
+        self.assertEqual(30,pendulum.create(1975, 5, 31).subtract(days=1).day)
 
     def test_sub_days_zero(self):
-        self.assertEqual(31, DateTime(1975, 5, 31).subtract(days=0).day)
+        self.assertEqual(31,pendulum.create(1975, 5, 31).subtract(days=0).day)
 
     def test_sub_days_negative(self):
-        self.assertEqual(1, DateTime(1975, 5, 31).subtract(days=-1).day)
+        self.assertEqual(1,pendulum.create(1975, 5, 31).subtract(days=-1).day)
 
     def test_sub_weeks_positive(self):
-        self.assertEqual(14, DateTime(1975, 5, 21).subtract(weeks=1).day)
+        self.assertEqual(14,pendulum.create(1975, 5, 21).subtract(weeks=1).day)
 
     def test_sub_weeks_zero(self):
-        self.assertEqual(21, DateTime(1975, 5, 21).subtract(weeks=0).day)
+        self.assertEqual(21,pendulum.create(1975, 5, 21).subtract(weeks=0).day)
 
     def test_sub_weeks_negative(self):
-        self.assertEqual(28, DateTime(1975, 5, 21).subtract(weeks=-1).day)
+        self.assertEqual(28,pendulum.create(1975, 5, 21).subtract(weeks=-1).day)
 
     def test_sub_hours_positive(self):
-        self.assertEqual(23, DateTime(1975, 5, 21, 0, 0, 0).subtract(hours=1).hour)
+        self.assertEqual(23,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=1).hour)
 
     def test_sub_hours_zero(self):
-        self.assertEqual(0, DateTime(1975, 5, 21, 0, 0, 0).subtract(hours=0).hour)
+        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=0).hour)
 
     def test_sub_hours_negative(self):
-        self.assertEqual(1, DateTime(1975, 5, 21, 0, 0, 0).subtract(hours=-1).hour)
+        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=-1).hour)
 
     def test_sub_minutes_positive(self):
-        self.assertEqual(59, DateTime(1975, 5, 21, 0, 0, 0).subtract(minutes=1).minute)
+        self.assertEqual(59,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=1).minute)
 
     def test_sub_minutes_zero(self):
-        self.assertEqual(0, DateTime(1975, 5, 21, 0, 0, 0).subtract(minutes=0).minute)
+        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=0).minute)
 
     def test_sub_minutes_negative(self):
-        self.assertEqual(1, DateTime(1975, 5, 21, 0, 0, 0).subtract(minutes=-1).minute)
+        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=-1).minute)
 
     def test_sub_seconds_positive(self):
-        self.assertEqual(59, DateTime(1975, 5, 21, 0, 0, 0).subtract(seconds=1).second)
+        self.assertEqual(59,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=1).second)
 
     def test_sub_seconds_zero(self):
-        self.assertEqual(0, DateTime(1975, 5, 21, 0, 0, 0).subtract(seconds=0).second)
+        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=0).second)
 
     def test_sub_seconds_negative(self):
-        self.assertEqual(1, DateTime(1975, 5, 21, 0, 0, 0).subtract(seconds=-1).second)
+        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=-1).second)
 
     def test_subtract_timedelta(self):
         delta = timedelta(days=6, seconds=16, microseconds=654321)
-        d = DateTime.create(2015, 3, 14, 3, 12, 15, 777777)
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
 
         d = d.subtract_timedelta(delta)
         self.assertEqual(8, d.day)
@@ -80,7 +80,7 @@ class SubTest(AbstractTestCase):
         self.assertEqual(59, d.second)
         self.assertEqual(123456, d.microsecond)
 
-        d = DateTime.create(2015, 3, 14, 3, 12, 15, 777777)
+        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
 
         d = d - delta
         self.assertEqual(8, d.day)
@@ -218,7 +218,7 @@ class SubTest(AbstractTestCase):
         self.assertTrue(dt.is_dst())
 
     def test_subtract_invalid_type(self):
-        d = DateTime(1975, 5, 21, 0, 0, 0)
+        d = pendulum.create(1975, 5, 21, 0, 0, 0)
 
         try:
             d - 'ab'

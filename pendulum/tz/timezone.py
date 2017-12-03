@@ -97,7 +97,7 @@ class Timezone(tzinfo):
 
         return cls._cache[name]
 
-    def convert(self, dt, dst_rule=None):
+    def convert(self, dt, *, with_errors=False):
         """
         Converts or normalizes a datetime.
 
@@ -108,7 +108,7 @@ class Timezone(tzinfo):
         """
         if dt.tzinfo is None:
             # we assume local time
-            converted = self._normalize(dt, dst_rule=dst_rule)
+            converted = self._normalize(dt, with_errors=with_errors)
         else:
             converted = self._convert(dt)
 
@@ -145,11 +145,14 @@ class Timezone(tzinfo):
 
         :rtype: datetime
         """
-        dt = datetime(year, month, day, hour, minute, second, microsecond)
+        dt = datetime(
+            year, month, day, hour, minute, second, microsecond,
+            fold=1
+        )
 
-        return self.convert(dt, dst_rule=self.POST_TRANSITION)
+        return self.convert(dt)
 
-    def _normalize(self, dt, dst_rule=None):
+    def _normalize(self, dt, *, with_errors=False):
         # if tzinfo is set, something wrong happened
         if dt.tzinfo is not None:
             raise ValueError(
@@ -160,15 +163,12 @@ class Timezone(tzinfo):
         # fold attribute (Python 3.6)?
         # We use it to determine the DST rule if none has been specified.
         fold = None
-        if dst_rule is None:
-            if hasattr(dt, 'fold'):
-                fold = dt.fold
-                if dt.fold == 1:
-                    dst_rule = self.POST_TRANSITION
-                else:
-                    dst_rule = self.PRE_TRANSITION
-            else:
-                dst_rule = self.POST_TRANSITION
+        dst_rule = self.PRE_TRANSITION
+        if dt.fold == 1:
+            dst_rule = self.POST_TRANSITION
+
+        if with_errors:
+            dst_rule = self.TRANSITION_ERROR
 
         if not self._transitions:
             # Use the default offset
@@ -499,7 +499,11 @@ class FixedTimezone(Timezone):
 
         return cls._cache[name]
 
-    def _normalize(self, dt, dst_rule=Timezone.POST_TRANSITION):
+    @property
+    def offset(self):
+        return self._offset
+
+    def _normalize(self, dt, *, with_errors=False):
         return dt.replace(tzinfo=self._tzinfo)
 
     def utcoffset(self, dt):
@@ -520,7 +524,7 @@ class FixedTimezone(Timezone):
         return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
 
     def __getinitargs__(self):
-        return self._offset
+        return (self._offset,)
 
 
 class _UTC(FixedTimezone):

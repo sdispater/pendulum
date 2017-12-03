@@ -1,64 +1,65 @@
-from pendulum import DateTime
-
-from .. import AbstractTestCase
-from . import AbstractLocalizationTestCase
+import pendulum
 
 
+locale = 'fa'
 
-class FaTest(AbstractLocalizationTestCase, AbstractTestCase):
 
-    locale = 'fa'
+def test_diff_for_humans():
+    with pendulum.test(pendulum.create(2016, 8, 29)):
+        diff_for_humans()
 
-    def diff_for_humans(self):
-        d = DateTime.now().subtract(seconds=1)
-        self.assertEqual('1 ثانیه پیش', d.diff_for_humans())
 
-        d = DateTime.now().subtract(seconds=2)
-        self.assertEqual('2 ثانیه پیش', d.diff_for_humans())
+def diff_for_humans():
+    d = pendulum.now().subtract(seconds=1)
+    assert d.diff_for_humans(locale=locale) == '1 ثانیه پیش'
 
-        d = DateTime.now().subtract(minutes=1)
-        self.assertEqual('1 دقیقه پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(seconds=2)
+    assert d.diff_for_humans(locale=locale) == '2 ثانیه پیش'
 
-        d = DateTime.now().subtract(minutes=2)
-        self.assertEqual('2 دقیقه پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=1)
+    assert d.diff_for_humans(locale=locale) == '1 دقیقه پیش'
 
-        d = DateTime.now().subtract(hours=1)
-        self.assertEqual('1 ساعت پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(minutes=2)
+    assert d.diff_for_humans(locale=locale) == '2 دقیقه پیش'
 
-        d = DateTime.now().subtract(hours=2)
-        self.assertEqual('2 ساعت پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=1)
+    assert d.diff_for_humans(locale=locale) == '1 ساعت پیش'
 
-        d = DateTime.now().subtract(days=1)
-        self.assertEqual('1 روز پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(hours=2)
+    assert d.diff_for_humans(locale=locale) == '2 ساعت پیش'
 
-        d = DateTime.now().subtract(days=2)
-        self.assertEqual('2 روز پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(days=1)
+    assert d.diff_for_humans(locale=locale) == '1 روز پیش'
 
-        d = DateTime.now().subtract(weeks=1)
-        self.assertEqual('1 هفته پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(days=2)
+    assert d.diff_for_humans(locale=locale) == '2 روز پیش'
 
-        d = DateTime.now().subtract(weeks=2)
-        self.assertEqual('2 هفته پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=1)
+    assert d.diff_for_humans(locale=locale) == '1 هفته پیش'
 
-        d = DateTime.now().subtract(months=1)
-        self.assertEqual('1 ماه پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(weeks=2)
+    assert d.diff_for_humans(locale=locale) == '2 هفته پیش'
 
-        d = DateTime.now().subtract(months=2)
-        self.assertEqual('2 ماه پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(months=1)
+    assert d.diff_for_humans(locale=locale) == '1 ماه پیش'
 
-        d = DateTime.now().subtract(years=1)
-        self.assertEqual('1 سال پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(months=2)
+    assert d.diff_for_humans(locale=locale) == '2 ماه پیش'
 
-        d = DateTime.now().subtract(years=2)
-        self.assertEqual('2 سال پیش', d.diff_for_humans())
+    d = pendulum.now().subtract(years=1)
+    assert d.diff_for_humans(locale=locale) == '1 سال پیش'
 
-        d = DateTime.now().add(seconds=1)
-        self.assertEqual('1 ثانیه بعد', d.diff_for_humans())
+    d = pendulum.now().subtract(years=2)
+    assert d.diff_for_humans(locale=locale) == '2 سال پیش'
 
-        d = DateTime.now().add(seconds=1)
-        d2 = DateTime.now()
-        self.assertEqual('1 ثانیه پس از', d.diff_for_humans(d2))
-        self.assertEqual('1 ثانیه پیش از', d2.diff_for_humans(d))
+    d = pendulum.now().add(seconds=1)
+    assert d.diff_for_humans(locale=locale) == '1 ثانیه بعد'
 
-        self.assertEqual('1 ثانیه', d.diff_for_humans(d2, True))
-        self.assertEqual('2 ثانیه', d2.diff_for_humans(d.add(seconds=1), True))
+    d = pendulum.now().add(seconds=1)
+    d2 = pendulum.now()
+    assert d.diff_for_humans(d2, locale=locale) == '1 ثانیه پس از'
+    assert d2.diff_for_humans(d, locale=locale) == '1 ثانیه پیش از'
+
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 ثانیه'
+    assert d2.diff_for_humans(d.add(seconds=1), True,
+                              locale=locale) == '2 ثانیه'

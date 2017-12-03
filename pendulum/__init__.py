@@ -57,8 +57,6 @@ create = DateTime.create
 from_format = DateTime.from_format
 strptime = DateTime.strptime
 from_timestamp = DateTime.create_from_timestamp
-set_transition_rule = DateTime.set_transition_rule
-get_transition_rule = DateTime.get_transition_rule
 
 # Standard helpers
 min = DateTime.min
