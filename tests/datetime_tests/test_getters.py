@@ -165,39 +165,6 @@ class GettersTest(AbstractTestCase):
         d = pendulum.create(2000, 1, 1, tz=-5)
         self.assertEqual('-05:00', d.timezone_name)
 
-    def test_is_weekday(self):
-        d = pendulum.now().next(pendulum.MONDAY)
-        self.assertTrue(d.is_weekday())
-        d = d.next(pendulum.SATURDAY)
-        self.assertFalse(d.is_weekday())
-
-    def test_is_weekend(self):
-        d = pendulum.now().next(pendulum.MONDAY)
-        self.assertFalse(d.is_weekend())
-        d = d.next(pendulum.SATURDAY)
-        self.assertTrue(d.is_weekend())
-
-    def test_is_today(self):
-        with self.wrap_with_test_now():
-            d = pendulum.now()
-            self.assertTrue(d.is_today())
-            d = d.subtract(days=1)
-            self.assertFalse(d.is_today())
-
-    def test_is_yesterday(self):
-        with self.wrap_with_test_now():
-            d = pendulum.now()
-            self.assertFalse(d.is_yesterday())
-            d = d.subtract(days=1)
-            self.assertTrue(d.is_yesterday())
-
-    def test_is_tomorrow(self):
-        with self.wrap_with_test_now():
-            d = pendulum.now()
-            self.assertFalse(d.is_tomorrow())
-            d = d.add(days=1)
-            self.assertTrue(d.is_tomorrow())
-
     def test_is_future(self):
         with self.wrap_with_test_now(DateTime(2000, 1, 1)):
             d = pendulum.now()
@@ -211,40 +178,6 @@ class GettersTest(AbstractTestCase):
             self.assertFalse(d.is_past())
             d = d.subtract(days=1)
             self.assertTrue(d.is_past())
-
-    def test_is_day_of_week(self):
-        d = pendulum.now()
-        monday = d.next(pendulum.MONDAY)
-        tuesday = d.next(pendulum.TUESDAY)
-        wednesday = d.next(pendulum.WEDNESDAY)
-        thursday = d.next(pendulum.THURSDAY)
-        friday = d.next(pendulum.FRIDAY)
-        saturday = d.next(pendulum.SATURDAY)
-        sunday = d.next(pendulum.SUNDAY)
-
-        self.assertTrue(monday.is_monday())
-        self.assertFalse(tuesday.is_monday())
-
-        self.assertTrue(tuesday.is_tuesday())
-        self.assertFalse(wednesday.is_tuesday())
-
-        self.assertTrue(wednesday.is_wednesday())
-        self.assertFalse(thursday.is_wednesday())
-
-        self.assertTrue(thursday.is_thursday())
-        self.assertFalse(friday.is_thursday())
-
-        self.assertTrue(thursday.is_thursday())
-        self.assertFalse(friday.is_thursday())
-
-        self.assertTrue(friday.is_friday())
-        self.assertFalse(saturday.is_friday())
-
-        self.assertTrue(saturday.is_saturday())
-        self.assertFalse(sunday.is_saturday())
-
-        self.assertTrue(sunday.is_sunday())
-        self.assertFalse(monday.is_sunday())
 
     def test_date(self):
         dt = pendulum.create(2016, 10, 20, 10, 40, 34, 123456)

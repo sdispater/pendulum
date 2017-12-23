@@ -157,34 +157,6 @@ class Period(WordableDurationMixin, BaseDuration):
     def in_days(self):
         return self._delta.total_days
 
-    def in_weekdays(self):
-        start, end = self.start.start_of('day'), self.end.start_of('day')
-        if not self._absolute and self.invert:
-            start, end = self.end.start_of('day'), self.start.start_of('day')
-
-        days = 0
-        while start <= end:
-            if start.is_weekday():
-                days += 1
-
-            start = start.add(days=1)
-
-        return days * (-1 if not self._absolute and self.invert else 1)
-
-    def in_weekend_days(self):
-        start, end = self.start.start_of('day'), self.end.start_of('day')
-        if not self._absolute and self.invert:
-            start, end = self.end.start_of('day'), self.start.start_of('day')
-
-        days = 0
-        while start <= end:
-            if start.is_weekend():
-                days += 1
-
-            start = start.add(days=1)
-
-        return days * (-1 if not self._absolute and self.invert else 1)
-
     def in_words(self, locale=None, separator=' '):
         """
         Get the current interval in words in the current locale.
@@ -266,12 +238,7 @@ class Period(WordableDurationMixin, BaseDuration):
         return self.range('days')
 
     def __contains__(self, item):
-        from .datetime import DateTime
-
-        if not isinstance(item, DateTime):
-            item = DateTime.instance(item)
-
-        return item.between(self.start, self.end)
+        return self.start <= item <= self.end
 
     def __add__(self, other):
         return self.as_interval().__add__(other)

@@ -49,10 +49,6 @@ class SubTest(AbstractTestCase):
         delta = timedelta(days=18)
         d = Date.create(2015, 3, 14)
 
-        new = d.subtract_timedelta(delta)
-        self.assertIsInstanceOfDate(new)
-        self.assertDate(new, 2015, 2, 24)
-
         new = d - delta
         self.assertIsInstanceOfDate(new)
         self.assertDate(new, 2015, 2, 24)
@@ -60,9 +56,6 @@ class SubTest(AbstractTestCase):
     def test_subtract_duration(self):
         delta = pendulum.duration(years=2, months=3, days=18)
         d = pendulum.date(2015, 3, 14)
-
-        new = d.subtract_timedelta(delta)
-        assert_date(new, 2012, 11, 26)
 
         new = d - delta
         assert_date(new, 2012, 11, 26)

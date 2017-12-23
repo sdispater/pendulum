@@ -105,7 +105,7 @@ class ClassicFormatterTest(AbstractTestCase):
         f = AlternativeFormatter()
         d = pendulum.create(2016, 8, 28, 23)
         self.assertEqual('PM', f.format(d, 'A'))
-        self.assertEqual('AM', f.format(d.hour_(11), 'A'))
+        self.assertEqual('AM', f.format(d.set(hour=11), 'A'))
 
     def test_hour(self):
         f = AlternativeFormatter()

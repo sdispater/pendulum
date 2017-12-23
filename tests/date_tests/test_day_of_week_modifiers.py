@@ -9,28 +9,6 @@ from .. import AbstractTestCase
 
 class DayOfWeekModifiersTest(AbstractTestCase):
 
-    def test_get_weekend_days(self):
-        self.assertEqual(
-            [pendulum.SATURDAY, pendulum.SUNDAY],
-            Date.get_weekend_days()
-        )
-        Date.set_weekend_days([pendulum.FRIDAY, pendulum.SATURDAY])
-        self.assertEqual(
-            [pendulum.FRIDAY, pendulum.SATURDAY],
-            Date.get_weekend_days()
-        )
-        Date.set_weekend_days([pendulum.SATURDAY, pendulum.SUNDAY])
-
-    def test_get_week_ends_at(self):
-        Date.set_week_ends_at(pendulum.SATURDAY)
-        self.assertEqual(Date.get_week_ends_at(), pendulum.SATURDAY)
-        Date.set_week_ends_at(pendulum.SUNDAY)
-
-    def test_get_week_starts_at(self):
-        Date.set_week_starts_at(pendulum.TUESDAY)
-        self.assertEqual(Date.get_week_starts_at(), pendulum.TUESDAY)
-        Date.set_week_starts_at(pendulum.MONDAY)
-
     def test_start_of_week(self):
         d = Date(1980, 8, 7).start_of('week')
         self.assertDate(d, 1980, 8, 4)

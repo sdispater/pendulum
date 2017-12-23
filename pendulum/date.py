@@ -29,19 +29,9 @@ class Date(FormattableMixing, date):
         SATURDAY: 'Saturday'
     }
 
-    # First day of week
-    _week_starts_at = MONDAY
-
-    # Last day of week
-    _week_ends_at = SUNDAY
-
-    # Weekend days
-    _weekend_days = [
-        SATURDAY,
-        SUNDAY
+    _MODIFIERS_VALID_UNITS = [
+        'day', 'week', 'month', 'year', 'decade', 'century'
     ]
-
-    _MODIFIERS_VALID_UNITS = ['day', 'week', 'month', 'year', 'decade', 'century']
 
     _diff_formatter = None
 
@@ -55,6 +45,9 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
+        if not isinstance(dt, date):
+            raise ValueError('instance() only accepts date objects')
+
         return cls(dt.year, dt.month, dt.day)
 
     @classmethod
@@ -110,19 +103,12 @@ class Date(FormattableMixing, date):
     def tomorrow(cls):
         return cls.today().add(days=1)
 
-    ### Getters/Setters
+    # Getters/Setters
 
-    def year_(self, year):
-        return self._setter(year=year)
-
-    def month_(self, month):
-        return self._setter(month=month)
-
-    def day_(self, day):
-        return self._setter(day=day)
-
-    def _setter(self, **kwargs):
-        return self.replace(**kwargs)
+    def set(self, year=None, month=None, day=None):
+        return self.replace(
+            year=year, month=month, day=day
+        )
 
     @property
     def day_of_week(self):
@@ -168,73 +154,6 @@ class Date(FormattableMixing, date):
     def quarter(self):
         return int(math.ceil(self.month / 3))
 
-    ### Special week days
-
-    @classmethod
-    def get_week_starts_at(cls):
-        """
-        Get the first day of the week.
-
-        :rtype: int
-        """
-        return cls._week_starts_at
-
-    @classmethod
-    def set_week_starts_at(cls, value):
-        """
-        Set the first day of the week.
-
-        :type value: int
-        """
-        if value not in cls._days:
-            raise ValueError('Invalid day of the week: {}'.format(value))
-
-        cls._week_starts_at = value
-
-    @classmethod
-    def get_week_ends_at(cls):
-        """
-        Get the last day of the week.
-
-        :rtype: int
-        """
-        return cls._week_ends_at
-
-    @classmethod
-    def set_week_ends_at(cls, value):
-        """
-        Set the last day of the week.
-
-        :type value: int
-        """
-        if value not in cls._days:
-            raise ValueError('Invalid day of the week: {}'.format(value))
-
-        cls._week_ends_at = value
-
-    @classmethod
-    def get_weekend_days(cls):
-        """
-        Get weekend days.
-
-        :rtype: list
-        """
-        return cls._weekend_days
-
-    @classmethod
-    def set_weekend_days(cls, values):
-        """
-        Set weekend days.
-
-        :type value: list
-        """
-        for value in values:
-            if value not in cls._days:
-                raise ValueError('Invalid day of the week: {}'
-                                 .format(value))
-
-        cls._weekend_days = values
-
     # String Formatting
 
     def to_date_string(self):
@@ -262,25 +181,6 @@ class Date(FormattableMixing, date):
 
     # COMPARISONS
 
-    def between(self, dt1, dt2, equal=True):
-        """
-        Determines if the instance is between two others.
-
-        :type dt1: Date or date
-        :type dt2: Date or date
-
-        :param equal: Indicates if a > and < comparison shoud be used or <= and >=
-
-        :rtype: bool
-        """
-        if dt1 > dt2:
-            dt1, dt2 = dt2, dt1
-
-        if equal:
-            return self >= dt1 and self <= dt2
-
-        return self > dt1 and self < dt2
-
     def closest(self, dt1, dt2):
         """
         Get the closest date from the instance.
@@ -290,8 +190,8 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        dt1 = self._get_date(dt1, True)
-        dt2 = self._get_date(dt2, True)
+        dt1 = self.instance(dt1)
+        dt2 = self.instance(dt2)
 
         if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
             return dt1
@@ -307,109 +207,13 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        dt1 = self._get_date(dt1, True)
-        dt2 = self._get_date(dt2, True)
+        dt1 = self.instance(dt1)
+        dt2 = self.instance(dt2)
 
         if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
             return dt1
 
         return dt2
-
-    def min_(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default utcnow)
-        and the current instance.
-
-        :type dt: Date or date
-
-        :rtype: Date
-        """
-        if dt is None:
-            dt = Date.today()
-
-        if self < dt:
-            return self
-
-        return self._get_date(dt, True)
-
-    def minimum(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Date or date
-
-        :rtype: Date
-        """
-        return self.min_(dt)
-
-    def max_(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Date or date
-
-        :rtype: Date
-        """
-        if dt is None:
-            dt = Date.today()
-
-        if self > dt:
-            return self
-
-        return self._get_date(dt, True)
-
-    def maximum(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default utcnow)
-        and the current instance.
-
-        :type dt: Date or date
-
-        :rtype: Date
-        """
-        return self.max_(dt)
-
-    def is_weekday(self):
-        """
-        Determines if the instance is a weekday.
-
-        :rtype: bool
-        """
-        return not self.is_weekend()
-
-    def is_weekend(self):
-        """
-        Determines if the instance is a weekend day.
-
-        :rtype: bool
-        """
-        return self.day_of_week in self._weekend_days
-
-    def is_yesterday(self):
-        """
-        Determines if the instance is yesterday.
-
-        :rtype: bool
-        """
-        return self == self.yesterday()
-
-    def is_today(self):
-        """
-        Determines if the instance is today.
-
-        :rtype: bool
-        """
-        return self == self.today()
-
-    def is_tomorrow(self):
-        """
-        Determines if the instance is tomorrow.
-
-        :rtype: bool
-        """
-        return self == self.tomorrow()
 
     def is_future(self):
         """
@@ -455,62 +259,6 @@ class Date(FormattableMixing, date):
         """
         return self == dt
 
-    def is_sunday(self):
-        """
-        Checks if this day is a sunday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SUNDAY
-
-    def is_monday(self):
-        """
-        Checks if this day is a monday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == MONDAY
-
-    def is_tuesday(self):
-        """
-        Checks if this day is a tuesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == TUESDAY
-
-    def is_wednesday(self):
-        """
-        Checks if this day is a wednesday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == WEDNESDAY
-
-    def is_thursday(self):
-        """
-        Checks if this day is a thursday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == THURSDAY
-
-    def is_friday(self):
-        """
-        Checks if this day is a friday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == FRIDAY
-
-    def is_saturday(self):
-        """
-        Checks if this day is a saturday.
-
-        :rtype: bool
-        """
-        return self.day_of_week == SATURDAY
-
     def is_birthday(self, dt=None):
         """
         Check if its the birthday. Compares the date/month values of the two dates.
@@ -520,7 +268,7 @@ class Date(FormattableMixing, date):
         if dt is None:
             dt = Date.today()
 
-        instance = self._get_date(dt, True)
+        instance = self.instance(dt)
 
         return (self.month, self.day) == (instance.month, instance.day)
 
@@ -580,7 +328,7 @@ class Date(FormattableMixing, date):
 
         return self.instance(date(self.year, self.month, self.day) - delta)
 
-    def add_timedelta(self, delta):
+    def _add_timedelta(self, delta):
         """
         Add timedelta duration to the instance.
 
@@ -599,7 +347,7 @@ class Date(FormattableMixing, date):
 
         return self.add(days=delta.days)
 
-    def subtract_timedelta(self, delta):
+    def _subtract_timedelta(self, delta):
         """
         Remove timedelta duration from the instance.
 
@@ -622,14 +370,14 @@ class Date(FormattableMixing, date):
         if not isinstance(other, timedelta):
             return NotImplemented
 
-        return self.add_timedelta(other)
+        return self._add_timedelta(other)
 
     def __sub__(self, other):
         if isinstance(other, timedelta):
-            return self.subtract_timedelta(other)
+            return self._subtract_timedelta(other)
 
         try:
-            return self._get_date(other, True).diff(self, False)
+            return self.instance(other).diff(self, False)
         except ValueError:
             return NotImplemented
 
@@ -661,7 +409,7 @@ class Date(FormattableMixing, date):
         if dt is None:
             dt = self.today()
 
-        return Period(self, self._get_date(dt, True), absolute=abs)
+        return Period(self, self.instance(dt), absolute=abs)
 
     def diff_for_humans(self, other=None, absolute=False, locale=None):
         """
@@ -762,7 +510,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(self.year, self.month, 1)
+        return self.set(self.year, self.month, 1)
 
     def _end_of_month(self):
         """
@@ -770,7 +518,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(
+        return self.set(
             self.year, self.month, self.days_in_month
         )
 
@@ -780,7 +528,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(self.year, 1, 1)
+        return self.set(self.year, 1, 1)
 
     def _end_of_year(self):
         """
@@ -788,7 +536,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(self.year, 12, 31)
+        return self.set(self.year, 12, 31)
 
     def _start_of_decade(self):
         """
@@ -798,7 +546,7 @@ class Date(FormattableMixing, date):
         """
         year = self.year - self.year % YEARS_PER_DECADE
 
-        return self.replace(year, 1, 1)
+        return self.set(year, 1, 1)
 
     def _end_of_decade(self):
         """
@@ -808,7 +556,7 @@ class Date(FormattableMixing, date):
         """
         year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
-        return self.replace(year, 12, 31)
+        return self.set(year, 12, 31)
 
     def _start_of_century(self):
         """
@@ -818,7 +566,7 @@ class Date(FormattableMixing, date):
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
-        return self.replace(year, 1, 1)
+        return self.set(year, 1, 1)
 
     def _end_of_century(self):
         """
@@ -828,7 +576,7 @@ class Date(FormattableMixing, date):
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
-        return self.replace(year, 12, 31)
+        return self.set(year, 12, 31)
 
     def _start_of_week(self):
         """
@@ -838,8 +586,8 @@ class Date(FormattableMixing, date):
         """
         dt = self
 
-        if self.day_of_week != self._week_starts_at:
-            dt = self.previous(self._week_starts_at)
+        if self.day_of_week != pendulum._WEEK_STARTS_AT:
+            dt = self.previous(pendulum._WEEK_STARTS_AT)
 
         return dt.start_of('day')
 
@@ -851,8 +599,8 @@ class Date(FormattableMixing, date):
         """
         dt = self
 
-        if self.day_of_week != self._week_ends_at:
-            dt = self.next(self._week_ends_at)
+        if self.day_of_week != pendulum._WEEK_ENDS_AT:
+            dt = self.next(pendulum._WEEK_ENDS_AT)
 
         return dt.end_of('day')
 
@@ -989,7 +737,7 @@ class Date(FormattableMixing, date):
         dt = self
 
         if day_of_week is None:
-            return dt.day_(1)
+            return dt.set(day=1)
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
@@ -1000,7 +748,7 @@ class Date(FormattableMixing, date):
         else:
             day_of_month = month[1][calendar_day]
 
-        return dt.day_(day_of_month)
+        return dt.set(day=day_of_month)
 
     def _last_of_month(self, day_of_week=None):
         """
@@ -1016,7 +764,7 @@ class Date(FormattableMixing, date):
         dt = self
 
         if day_of_week is None:
-            return dt.day_(self.days_in_month)
+            return dt.set(day=self.days_in_month)
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
@@ -1027,7 +775,7 @@ class Date(FormattableMixing, date):
         else:
             day_of_month = month[-2][calendar_day]
 
-        return dt.day_(day_of_month)
+        return dt.set(day=day_of_month)
 
     def _nth_of_month(self, nth, day_of_week):
         """
@@ -1052,7 +800,7 @@ class Date(FormattableMixing, date):
             dt = dt.next(day_of_week)
 
         if dt.format('YYYY-MM') == check:
-            return self.day_(dt.day)
+            return self.set(day=dt.day)
 
         return False
 
@@ -1067,7 +815,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
+        return self.set(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
 
     def _last_of_quarter(self, day_of_week=None):
         """
@@ -1080,7 +828,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.replace(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
+        return self.set(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
 
     def _nth_of_quarter(self, nth, day_of_week):
         """
@@ -1109,7 +857,7 @@ class Date(FormattableMixing, date):
         if last_month < dt.month or year != dt.year:
             return False
 
-        return self.replace(self.year, dt.month, dt.day)
+        return self.set(self.year, dt.month, dt.day)
 
     def _first_of_year(self, day_of_week=None):
         """
@@ -1122,7 +870,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.month_(1).first_of('month', day_of_week)
+        return self.set(month=1).first_of('month', day_of_week)
 
     def _last_of_year(self, day_of_week=None):
         """
@@ -1135,7 +883,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.month_(MONTHS_PER_YEAR).last_of('month', day_of_week)
+        return self.set(month=MONTHS_PER_YEAR).last_of('month', day_of_week)
 
     def _nth_of_year(self, nth, day_of_week):
         """
@@ -1162,7 +910,7 @@ class Date(FormattableMixing, date):
         if year != dt.year:
             return False
 
-        return self.replace(self.year, dt.month, dt.day)
+        return self.set(self.year, dt.month, dt.day)
 
     def average(self, dt=None):
         """
@@ -1177,29 +925,6 @@ class Date(FormattableMixing, date):
             dt = Date.today()
 
         return self.add(days=int(self.diff(dt, False).in_days() / 2))
-
-    def _get_date(self, value, as_date=False):
-        """
-        Gets a date from a given value.
-
-        :param value: The value to get the datetime from.
-        :type value: Date or date.
-
-        :param pendulum: Whether to return a Date instance.
-        :type pendulum: bool
-
-        :rtype: date or Date
-        """
-        if value is None:
-            return None
-
-        if isinstance(value, Date):
-            return value._datetime if not as_date else value
-
-        if isinstance(value, date):
-            return value if not as_date else Date.instance(value)
-
-        raise ValueError('Invalid date "{}"'.format(value))
 
     # Native methods override
 

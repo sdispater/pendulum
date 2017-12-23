@@ -170,3 +170,17 @@ def set_formatter(formatter=None):
 
 def get_formatter():
     return pendulum._FORMATTER
+
+
+def week_starts_at(wday):
+    if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
+        raise ValueError('Invalid week day as start of week.')
+
+    pendulum._WEEK_STARTS_AT = wday
+
+
+def week_ends_at(wday):
+    if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
+        raise ValueError('Invalid week day as start of week.')
+
+    pendulum._WEEK_ENDS_AT = wday

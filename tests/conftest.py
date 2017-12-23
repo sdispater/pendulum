@@ -12,6 +12,8 @@ def setup():
     pendulum.set_formatter()
     pendulum.set_locale('en')
     pendulum.set_local_timezone()
+    pendulum.week_starts_at(pendulum.MONDAY)
+    pendulum.week_ends_at(pendulum.SUNDAY)
 
 
 def assert_datetime(d, year, month, day,

@@ -60,36 +60,6 @@ class GettersTest(AbstractTestCase):
         self.assertEqual(52, Date(2012, 12, 30).week_of_year)
         self.assertEqual(1, Date(2012, 12, 31).week_of_year)
 
-    def test_is_weekday(self):
-        d = Date.today().next(pendulum.MONDAY)
-        self.assertTrue(d.is_weekday())
-        d = d.next(pendulum.SATURDAY)
-        self.assertFalse(d.is_weekday())
-
-    def test_is_weekend(self):
-        d = Date.today().next(pendulum.MONDAY)
-        self.assertFalse(d.is_weekend())
-        d = d.next(pendulum.SATURDAY)
-        self.assertTrue(d.is_weekend())
-
-    def test_is_today(self):
-        d = Date.today()
-        self.assertTrue(d.is_today())
-        d = d.subtract(days=1)
-        self.assertFalse(d.is_today())
-
-    def test_is_yesterday(self):
-        d = Date.today()
-        self.assertFalse(d.is_yesterday())
-        d = d.subtract(days=1)
-        self.assertTrue(d.is_yesterday())
-
-    def test_is_tomorrow(self):
-        d = Date.today()
-        self.assertFalse(d.is_tomorrow())
-        d = d.add(days=1)
-        self.assertTrue(d.is_tomorrow())
-
     def test_is_future(self):
         d = Date.today()
         self.assertFalse(d.is_future())
@@ -101,37 +71,3 @@ class GettersTest(AbstractTestCase):
         self.assertFalse(d.is_past())
         d = d.subtract(days=1)
         self.assertTrue(d.is_past())
-
-    def test_is_day_of_week(self):
-        d = pendulum.now()
-        monday = d.next(pendulum.MONDAY)
-        tuesday = d.next(pendulum.TUESDAY)
-        wednesday = d.next(pendulum.WEDNESDAY)
-        thursday = d.next(pendulum.THURSDAY)
-        friday = d.next(pendulum.FRIDAY)
-        saturday = d.next(pendulum.SATURDAY)
-        sunday = d.next(pendulum.SUNDAY)
-
-        self.assertTrue(monday.is_monday())
-        self.assertFalse(tuesday.is_monday())
-
-        self.assertTrue(tuesday.is_tuesday())
-        self.assertFalse(wednesday.is_tuesday())
-
-        self.assertTrue(wednesday.is_wednesday())
-        self.assertFalse(thursday.is_wednesday())
-
-        self.assertTrue(thursday.is_thursday())
-        self.assertFalse(friday.is_thursday())
-
-        self.assertTrue(thursday.is_thursday())
-        self.assertFalse(friday.is_thursday())
-
-        self.assertTrue(friday.is_friday())
-        self.assertFalse(saturday.is_friday())
-
-        self.assertTrue(saturday.is_saturday())
-        self.assertFalse(sunday.is_saturday())
-
-        self.assertTrue(sunday.is_sunday())
-        self.assertFalse(monday.is_sunday())

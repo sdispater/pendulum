@@ -52,10 +52,6 @@ class AddTest(AbstractTestCase):
         delta = timedelta(days=18)
         d = Date.create(2015, 3, 14)
 
-        new = d.add_timedelta(delta)
-        self.assertIsInstanceOfDate(new)
-        self.assertDate(new, 2015, 4, 1)
-
         new = d + delta
         self.assertIsInstanceOfDate(new)
         self.assertDate(new, 2015, 4, 1)
@@ -63,9 +59,6 @@ class AddTest(AbstractTestCase):
     def test_add_duration(self):
         duration = pendulum.duration(years=2, months=3, days=18)
         d = pendulum.date(2015, 3, 14)
-
-        new = d.add_timedelta(duration)
-        assert_date(new, 2017, 7, 2)
 
         new = d + duration
         assert_date(new, 2017, 7, 2)

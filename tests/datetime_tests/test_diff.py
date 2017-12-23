@@ -78,36 +78,6 @@ def test_diff_in_days_ensure_is_truncated():
     assert 1 == dt.diff(dt.add(days=1).add(hours=13)).in_days()
 
 
-def test_diff_in_weekdays_positive():
-    dt = pendulum.create(2000, 1, 1)
-    assert 21 == dt.diff(dt.end_of('month')).in_weekdays()
-
-
-def test_diff_in_weekdays_negative_no_sign():
-    dt = pendulum.create(2000, 1, 31)
-    assert 21 == dt.diff(dt.start_of('month')).in_weekdays()
-
-
-def test_diff_in_weekdays_negative_with_sign():
-    dt = pendulum.create(2000, 1, 31)
-    assert -21 == dt.diff(dt.start_of('month'), False).in_weekdays()
-
-
-def test_diff_in_weekend_days_positive():
-    dt = pendulum.create(2000, 1, 1)
-    assert 10 == dt.diff(dt.end_of('month')).in_weekend_days()
-
-
-def test_diff_in_weekend_days_negative_no_sign():
-    dt = pendulum.create(2000, 1, 31)
-    assert 10 == dt.diff(dt.start_of('month')).in_weekend_days()
-
-
-def test_diff_in_weekend_days_negative_with_sign():
-    dt = pendulum.create(2000, 1, 31)
-    assert -10 == dt.diff(dt.start_of('month'), False).in_weekend_days()
-
-
 def test_diff_in_weeks_positive():
     dt = pendulum.create(2000, 1, 1)
     assert 52 == dt.diff(dt.add(years=1)).in_weeks()
@@ -692,16 +662,6 @@ def test_diff_for_humans_accuracy():
     now = pendulum.create(2017, 3, 7, tz='America/Toronto')
     with pendulum.test(now):
         assert '6 days' == now.add(days=6).diff_for_humans(absolute=True)
-
-
-def test_seconds_since_midnight():
-    d = pendulum.create(2016, 7, 5, 12, 32, 25, 0)
-    assert 25 + 32 * 60 + 12 * 3600 == d.seconds_since_midnight()
-
-
-def test_seconds_until_end_of_day():
-    d = pendulum.create(2016, 7, 5, 12, 32, 25, 0)
-    assert 34 + 27 * 60 + 11 * 3600 == d.seconds_until_end_of_day()
 
 
 def test_subtraction():

@@ -119,6 +119,9 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
+        if not isinstance(dt, datetime.datetime):
+            raise ValueError('instance() only accepts datetime objects.')
+
         tz = dt.tzinfo or tz
 
         # Checking for pytz/tzinfo
@@ -383,35 +386,18 @@ class DateTime(datetime.datetime, Date):
 
     # Getters/Setters
 
-    def hour_(self, hour):
-        return self._setter(hour=hour)
+    def set(self, year=None, month=None, day=None,
+            hour=None, minute=None, second=None, microsecond=None,
+            tz=None):
+        tzinfo = self.tzinfo
+        if tz is not None:
+            tzinfo = self._safe_create_datetime_zone(tz)
 
-    def minute_(self, minute):
-        return self._setter(minute=minute)
-
-    def second_(self, second):
-        return self._setter(second=second)
-
-    def microsecond_(self, microsecond):
-        return self._setter(microsecond=microsecond)
-
-    def _setter(self, **kwargs):
-        kwargs['tzinfo'] = True
-
-        return self.tzinfo.tz.convert(self.replace(**kwargs))
-
-    def timezone_(self, tz):
-        return self.create(
-            self.year, self.month, self.day,
-            self.hour, self.minute, self.second, self.microsecond,
-            tz=tz
+        return self.replace(
+            year=year, month=month, day=day,
+            hour=hour, minute=minute, second=second, microsecond=microsecond,
+            tzinfo=tzinfo
         )
-
-    def tz_(self, tz):
-        return self.timezone_(tz)
-
-    def timestamp_(self, timestamp, tz=UTC):
-        return self.create_from_timestamp(timestamp, tz)
 
     @property
     def float_timestamp(self):
@@ -525,42 +511,6 @@ class DateTime(datetime.datetime, Date):
             microsecond=microsecond
         )
 
-    def with_date_time(self, year, month, day, hour, minute, second, microsecond=0):
-        """
-        Return a new instance with the date and time set to the given values.
-
-        :type year: int
-        :type month: int
-        :type day: int
-        :type hour: int
-        :type minute: int
-        :type second: int
-
-        :rtype: DateTime
-        """
-        return self.replace(
-            year=year, month=month, day=day,
-            hour=hour, minute=minute, second=second,
-            microsecond=microsecond
-        )
-
-    def with_time_from_string(self, time):
-        """
-        Returns a new instance with the time set by time string.
-
-        :param time: The time string
-        :type time: str
-
-        :rtype: DateTime
-        """
-        time = time.split(':')
-
-        hour = int(time[0])
-        minute = int(time[1]) if len(time) > 1 else 0
-        second = int(time[2]) if len(time) > 2 else 0
-
-        return self.at(hour, minute, second)
-
     def in_timezone(self, tz):
         """
         Set the instance's timezone from a string or object.
@@ -584,20 +534,6 @@ class DateTime(datetime.datetime, Date):
         :rtype: DateTime
         """
         return self.in_timezone(tz)
-
-    def with_timestamp(self, timestamp):
-        """
-        Set the date and time based on a Unix timestamp.
-
-        :param timestamp: The timestamp
-        :type timestamp: int or float
-        :rtype: DateTime
-        """
-        dt = datetime.datetime.fromtimestamp(
-            timestamp, UTC
-        ).astimezone(self.tzinfo.tz)
-
-        return self.instance(dt)
 
     # STRING FORMATTING
 
@@ -756,25 +692,6 @@ class DateTime(datetime.datetime, Date):
         return repr_
 
     # Comparisons
-    def between(self, dt1, dt2, equal=True):
-        """
-        Determines if the instance is between two others.
-
-        :type dt1: datetime.datetime
-        :type dt2: datetime.datetime
-
-        :param equal: Indicates if a > and < comparison shoud be used or <= and >=
-
-        :rtype: bool
-        """
-        if dt1 > dt2:
-            dt1, dt2 = dt2, dt1
-
-        if equal:
-            return self >= dt1 and self <= dt2
-
-        return self > dt1 and self < dt2
-
     def closest(self, dt1, dt2):
         """
         Get the closest date from the instance.
@@ -805,86 +722,6 @@ class DateTime(datetime.datetime, Date):
             return dt1
 
         return dt2
-
-    def min_(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default utcnow)
-        and the current instance.
-
-        :type dt: DateTime or datetime or str or int
-
-        :rtype: DateTime
-        """
-        if dt is None:
-            dt = self.now(self.timezone)
-
-        if self < dt:
-            return self
-
-        return self.instance(dt)
-
-    def minimum(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: DateTime or datetime or str or int
-
-        :rtype: DateTime
-        """
-        return self.min_(dt)
-
-    def max_(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: DateTime or datetime or str or int
-
-        :rtype: DateTime
-        """
-        if dt is None:
-            dt = self.now(self.timezone)
-
-        if self > dt:
-            return self
-
-        return self.instance(dt)
-
-    def maximum(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default utcnow)
-        and the current instance.
-
-        :type dt: DateTime or datetime or str or int
-
-        :rtype: DateTime
-        """
-        return self.max_(dt)
-
-    def is_yesterday(self):
-        """
-        Determines if the instance is yesterday.
-
-        :rtype: bool
-        """
-        return self.to_date_string() == self.yesterday(self.tzinfo.tz).to_date_string()
-
-    def is_today(self):
-        """
-        Determines if the instance is today.
-
-        :rtype: bool
-        """
-        return self.to_date_string() == self.now(self.tzinfo.tz).to_date_string()
-
-    def is_tomorrow(self):
-        """
-        Determines if the instance is tomorrow.
-
-        :rtype: bool
-        """
-        return self.to_date_string() == self.tomorrow(self.tzinfo.tz).to_date_string()
 
     def is_future(self):
         """
@@ -993,7 +830,7 @@ class DateTime(datetime.datetime, Date):
             return self.create(
                 dt.year, dt.month, dt.day,
                 dt.hour, dt.minute, dt.second, dt.microsecond,
-                tz=self.tzinfo
+                tz=self.tzinfo.tz
             )
 
         # Else, we need to apply the transition properly (if any)
@@ -1042,7 +879,7 @@ class DateTime(datetime.datetime, Date):
             microseconds=-microseconds
         )
 
-    def add_timedelta(self, delta):
+    def _add_timedelta(self, delta):
         """
         Add timedelta duration to the instance.
 
@@ -1066,7 +903,7 @@ class DateTime(datetime.datetime, Date):
         return self.add(days=delta.days, seconds=delta.seconds,
                         microseconds=delta.microseconds)
 
-    def subtract_timedelta(self, delta):
+    def _subtract_timedelta(self, delta):
         """
         Remove timedelta duration from the instance.
 
@@ -1091,22 +928,6 @@ class DateTime(datetime.datetime, Date):
                              microseconds=delta.microseconds)
 
     # DIFFERENCES
-
-    def seconds_since_midnight(self):
-        """
-        The number of seconds since midnight.
-
-        :rtype: int
-        """
-        return self.diff(self.start_of('day')).in_seconds()
-
-    def seconds_until_end_of_day(self):
-        """
-        The number of seconds until 23:59:59.
-
-        :rtype: int
-        """
-        return self.diff(self.end_of('day')).in_seconds()
 
     def diff(self, dt=None, abs=True):
         """
@@ -1181,7 +1002,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.microsecond_(0)
+        return self.set(microsecond=0)
 
     def _end_of_second(self):
         """
@@ -1189,7 +1010,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.microsecond_(999999)
+        return self.set(microsecond=999999)
 
     def _start_of_minute(self):
         """
@@ -1197,7 +1018,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(second=0, microsecond=0)
+        return self.set(second=0, microsecond=0)
 
     def _end_of_minute(self):
         """
@@ -1205,7 +1026,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(second=59, microsecond=999999)
+        return self.set(second=59, microsecond=999999)
 
     def _start_of_hour(self):
         """
@@ -1213,7 +1034,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(minute=0, second=0, microsecond=0)
+        return self.set(minute=0, second=0, microsecond=0)
 
     def _end_of_hour(self):
         """
@@ -1221,7 +1042,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(minute=59, second=59, microsecond=999999)
+        return self.set(minute=59, second=59, microsecond=999999)
 
     def _start_of_day(self):
         """
@@ -1245,7 +1066,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.with_date_time(self.year, self.month, 1, 0, 0, 0)
+        return self.set(self.year, self.month, 1, 0, 0, 0)
 
     def _end_of_month(self):
         """
@@ -1254,7 +1075,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.with_date_time(
+        return self.set(
             self.year, self.month, self.days_in_month, 23, 59, 59, 999999
         )
 
@@ -1264,7 +1085,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.with_date_time(self.year, 1, 1, 0, 0, 0)
+        return self.set(self.year, 1, 1, 0, 0, 0)
 
     def _end_of_year(self):
         """
@@ -1273,7 +1094,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.with_date_time(
+        return self.set(
             self.year, 12, 31, 23, 59, 59, 999999
         )
 
@@ -1285,7 +1106,7 @@ class DateTime(datetime.datetime, Date):
         :rtype: DateTime
         """
         year = self.year - self.year % YEARS_PER_DECADE
-        return self.with_date_time(year, 1, 1, 0, 0, 0)
+        return self.set(year, 1, 1, 0, 0, 0)
 
     def _end_of_decade(self):
         """
@@ -1296,7 +1117,7 @@ class DateTime(datetime.datetime, Date):
         """
         year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
-        return self.with_date_time(
+        return self.set(
             year, 12, 31, 23, 59, 59, 999999
         )
 
@@ -1309,7 +1130,7 @@ class DateTime(datetime.datetime, Date):
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
-        return self.with_date_time(year, 1, 1, 0, 0, 0)
+        return self.set(year, 1, 1, 0, 0, 0)
 
     def _end_of_century(self):
         """
@@ -1320,9 +1141,7 @@ class DateTime(datetime.datetime, Date):
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
-        return self.with_date_time(
-            year, 12, 31, 23, 59, 59, 999999
-        )
+        return self.set(year, 12, 31, 23, 59, 59, 999999)
 
     def _start_of_week(self):
         """
@@ -1333,8 +1152,8 @@ class DateTime(datetime.datetime, Date):
         """
         dt = self
 
-        if self.day_of_week != self._week_starts_at:
-            dt = self.previous(self._week_starts_at)
+        if self.day_of_week != pendulum._WEEK_STARTS_AT:
+            dt = self.previous(pendulum._WEEK_STARTS_AT)
 
         return dt.start_of('day')
 
@@ -1347,8 +1166,8 @@ class DateTime(datetime.datetime, Date):
         """
         dt = self
 
-        if self.day_of_week != self._week_ends_at:
-            dt = self.next(self._week_ends_at)
+        if self.day_of_week != pendulum._WEEK_ENDS_AT:
+            dt = self.next(pendulum._WEEK_ENDS_AT)
 
         return dt.end_of('day')
 
@@ -1501,7 +1320,7 @@ class DateTime(datetime.datetime, Date):
         dt = self.start_of('day')
 
         if day_of_week is None:
-            return dt.day_(1)
+            return dt.set(day=1)
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
@@ -1512,7 +1331,7 @@ class DateTime(datetime.datetime, Date):
         else:
             day_of_month = month[1][calendar_day]
 
-        return dt.day_(day_of_month)
+        return dt.set(day=day_of_month)
 
     def _last_of_month(self, day_of_week=None):
         """
@@ -1528,7 +1347,7 @@ class DateTime(datetime.datetime, Date):
         dt = self.start_of('day')
 
         if day_of_week is None:
-            return dt.day_(self.days_in_month)
+            return dt.set(day=self.days_in_month)
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
@@ -1539,7 +1358,7 @@ class DateTime(datetime.datetime, Date):
         else:
             day_of_month = month[-2][calendar_day]
 
-        return dt.day_(day_of_month)
+        return dt.set(day=day_of_month)
 
     def _nth_of_month(self, nth, day_of_week):
         """
@@ -1564,7 +1383,7 @@ class DateTime(datetime.datetime, Date):
             dt = dt.next(day_of_week)
 
         if dt.format('%Y-%m') == check:
-            return self.day_(dt.day).start_of('day')
+            return self.set(day=dt.day).start_of('day')
 
         return False
 
@@ -1611,7 +1430,7 @@ class DateTime(datetime.datetime, Date):
         if nth == 1:
             return self.first_of('quarter', day_of_week)
 
-        dt = self.day_(1).month_(self.quarter * 3)
+        dt = self.set(day=1, month=self.quarter * 3)
         last_month = dt.month
         year = dt.year
         dt = dt.first_of('quarter')
@@ -1634,7 +1453,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.month_(1).first_of('month', day_of_week)
+        return self.set(month=1).first_of('month', day_of_week)
 
     def _last_of_year(self, day_of_week=None):
         """
@@ -1647,7 +1466,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.month_(MONTHS_PER_YEAR).last_of('month', day_of_week)
+        return self.set(month=MONTHS_PER_YEAR).last_of('month', day_of_week)
 
     def _nth_of_year(self, nth, day_of_week):
         """
@@ -1693,7 +1512,7 @@ class DateTime(datetime.datetime, Date):
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
-            return self.subtract_timedelta(other)
+            return self._subtract_timedelta(other)
 
         if not isinstance(other, datetime.datetime):
             return NotImplemented
@@ -1710,7 +1529,7 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
 
-        return self.add_timedelta(other)
+        return self._add_timedelta(other)
 
     def __radd__(self, other):
         return self.__add__(other)

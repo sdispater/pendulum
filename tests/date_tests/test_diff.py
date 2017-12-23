@@ -57,30 +57,6 @@ def test_diff_in_days_negative_no_sign():
 def test_diff_in_days_vs_default_now():
     assert 7 ==  Date.today().subtract(weeks=1).diff().in_days()
 
-def test_diff_in_weekdays_positive():
-    dt = Date(2000, 1, 1)
-    assert 21 ==  dt.diff(dt.end_of('month')).in_weekdays()
-
-def test_diff_in_weekdays_negative_no_sign():
-    dt = Date(2000, 1, 31)
-    assert 21 ==  dt.diff(dt.start_of('month')).in_weekdays()
-
-def test_diff_in_weekdays_negative_with_sign():
-    dt = Date(2000, 1, 31)
-    assert -21 ==  dt.diff(dt.start_of('month'), False).in_weekdays()
-
-def test_diff_in_weekend_days_positive():
-    dt = Date(2000, 1, 1)
-    assert 10 ==  dt.diff(dt.end_of('month')).in_weekend_days()
-
-def test_diff_in_weekend_days_negative_no_sign():
-    dt = Date(2000, 1, 31)
-    assert 10 ==  dt.diff(dt.start_of('month')).in_weekend_days()
-
-def test_diff_in_weekend_days_negative_with_sign():
-    dt = Date(2000, 1, 31)
-    assert -10 ==  dt.diff(dt.start_of('month'), False).in_weekend_days()
-
 def test_diff_in_weeks_positive():
     dt = Date(2000, 1, 1)
     assert 52 ==  dt.diff(dt.add(years=1)).in_weeks()

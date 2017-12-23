@@ -2,7 +2,8 @@ Comparison
 ==========
 
 Simple comparison is offered up via the basic operators.
-Remember that the comparison is done in the UTC timezone so things aren't always as they seem.
+Remember that the comparison is done in the UTC timezone
+so things aren't always as they seem.
 
 .. code-block:: python
 
@@ -33,8 +34,8 @@ Remember that the comparison is done in the UTC timezone so things aren't always
     first <= second
     True
 
-    first = first.with_date_time(2012, 1, 1, 0, 0, 0)
-    second = second.with_date_time(2012, 1, 1, 0, 0, 0)
+    first = first.on(2012, 1, 1).at(0, 0, 0)
+    second = second.on(2012, 1, 1).at(0, 0, 0)
     # tz is still America/Vancouver for second
 
     first == second
@@ -104,15 +105,8 @@ the ``now()`` is created in the same timezone as the instance.
 
     dt = pendulum.now()
 
-    dt.is_weekday()
-    dt.is_weekend()
-    dt.is_yesterday()
-    dt.is_today()
-    dt.is_tomorrow()
-    dt.is_future()
     dt.is_past()
     dt.is_leap_year()
-    dt.is_same_day(pendulum.now())
 
     born = pendulum.create(1987, 4, 23)
     not_birthday = pendulum.create(2014, 9, 26)

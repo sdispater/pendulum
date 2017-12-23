@@ -77,14 +77,6 @@ class AddTest(AbstractTestCase):
         delta = timedelta(days=6, seconds=45, microseconds=123456)
         d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
 
-        d = d.add_timedelta(delta)
-        self.assertEqual(20, d.day)
-        self.assertEqual(13, d.minute)
-        self.assertEqual(0, d.second)
-        self.assertEqual(777777, d.microsecond)
-
-        d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
-
         d = d + delta
         self.assertEqual(20, d.day)
         self.assertEqual(13, d.minute)
@@ -97,16 +89,6 @@ class AddTest(AbstractTestCase):
         )
         d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
 
-        d = d.add_timedelta(duration)
-        assert 2017 == d.year
-        assert 6 == d.month
-        assert 20 == d.day
-        assert 3 == d.hour
-        assert 13 == d.minute
-        assert 0 == d.second
-        assert 777777 == d.microsecond
-
-        d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
         d = d + duration
         assert 2017 == d.year
         assert 6 == d.month

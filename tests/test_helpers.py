@@ -199,6 +199,7 @@ def test_set_formatter_invalid():
     with pytest.raises(ValueError):
         pendulum.set_formatter('invalid')
 
+
 def test_locale():
     dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
     pendulum.set_formatter('alternative')
@@ -228,3 +229,35 @@ def test_set_locale_malformed_locale(locale):
     pendulum.set_locale(locale)
 
     pendulum.set_locale('en')
+
+
+def test_week_starts_at():
+    pendulum.week_starts_at(pendulum.SATURDAY)
+
+    dt = pendulum.now().start_of('week')
+    assert dt.day_of_week == pendulum.SATURDAY
+    assert dt.date().day_of_week == pendulum.SATURDAY
+
+
+def test_week_starts_at_invalid_value():
+    with pytest.raises(ValueError):
+        pendulum.week_starts_at(-1)
+
+    with pytest.raises(ValueError):
+        pendulum.week_starts_at(11)
+
+
+def test_week_ends_at():
+    pendulum.week_ends_at(pendulum.SATURDAY)
+
+    dt = pendulum.now().end_of('week')
+    assert dt.day_of_week == pendulum.SATURDAY
+    assert dt.date().day_of_week == pendulum.SATURDAY
+
+
+def test_week_ends_at_invalid_value():
+    with pytest.raises(ValueError):
+        pendulum.week_ends_at(-1)
+
+    with pytest.raises(ValueError):
+        pendulum.week_ends_at(11)
