@@ -199,6 +199,21 @@ class Period(WordableIntervalMixin, BaseInterval):
             locale=locale, separator=separator, _periods=periods
         )
 
+    def split(self, unit, amount=1):
+        return list(self.xsplit(unit, amount))
+
+    def xsplit(self, unit, amount=1):
+        start_list = self.range(unit, amount)
+
+        offset = -1
+        if not self._absolute and self.invert:
+            offset = 1
+        end_list = [dt.add(microseconds=offset) for dt in start_list[1:]]
+        end_list.append(self.end)
+
+        for start, end in zip(start_list, end_list):
+            yield end - start
+
     def range(self, unit, amount=1):
         return list(self.xrange(unit, amount))
 
