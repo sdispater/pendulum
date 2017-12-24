@@ -7,7 +7,7 @@ import struct
 from unittest import TestCase
 from contextlib import contextmanager
 
-from pendulum import Pendulum, Date, Time, Interval
+from pendulum import Pendulum, Date, Time, Interval, Period
 from pendulum.tz import LocalTimezone, timezone, Timezone
 
 PY36 = sys.version_info >= (3, 6)
@@ -100,6 +100,9 @@ class AbstractTestCase(TestCase):
 
     def assertIsInstanceOfInterval(self, d):
         self.assertIsInstance(d, Interval)
+
+    def assertIsInstanceOfPeriod(self, p):
+        self.assertIsInstance(p, Period)
 
     @contextmanager
     def wrap_with_test_now(self, dt=None):
