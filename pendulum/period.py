@@ -208,7 +208,11 @@ class Period(WordableIntervalMixin, BaseInterval):
         offset = -1
         if not self._absolute and self.invert:
             offset = 1
-        end_list = [dt.add(microseconds=offset) for dt in start_list[1:]]
+
+        if isinstance(self.start, pendulum.Pendulum):
+            end_list = [dt.add(microseconds=offset) for dt in start_list[1:]]
+        else:
+            end_list = [dt.add(days=offset) for dt in start_list[1:]]
         end_list.append(self.end)
 
         for start, end in zip(start_list, end_list):
