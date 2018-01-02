@@ -86,13 +86,6 @@ class StringsTest(AbstractTestCase):
         with pytest.raises(ValueError):
             d._to_string('invalid')
 
-    def test_custom_formatters(self):
-        d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
-        self.assertEqual(
-            'Thursday 25th of December 1975 02:15:16 PM -05:00',
-            d.format('%A %d%_t of %B %Y %I:%M:%S %p %_z', formatter='classic')
-        )
-
     def test_repr(self):
         d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
         self.assertEqual(
@@ -108,10 +101,10 @@ class StringsTest(AbstractTestCase):
 
     def test_format_with_locale(self):
         d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
-        self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16 PM -05:00',
-                         d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A ZZ', locale='fr'))
-        self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
-                         d.format('%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr', formatter='classic'))
+        self.assertEqual(
+            'jeudi 25e jour de décembre 1975 02:15:16 PM -05:00',
+            d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A ZZ', locale='fr')
+        )
 
     def test_strftime(self):
         d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
@@ -126,10 +119,3 @@ class StringsTest(AbstractTestCase):
         self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
         self.assertEqual('1975', '{:YYYY}'.format(d))
         self.assertEqual('%1975', '{:%Y}'.format(d))
-
-    def test_format_alternative_formatter(self):
-        pendulum.set_formatter('classic')
-
-        d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='Europe/Paris')
-        self.assertEqual('1975-12-25T14:15:16+01:00', '{}'.format(d))
-        self.assertEqual('1975', '{:%Y}'.format(d))

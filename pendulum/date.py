@@ -162,7 +162,7 @@ class Date(FormattableMixing, date):
 
         :rtype: str
         """
-        return self.format('%Y-%m-%d', formatter='classic')
+        return self.strftime('%Y-%m-%d')
 
     def to_formatted_date_string(self):
         """
@@ -170,7 +170,7 @@ class Date(FormattableMixing, date):
 
         :rtype: str
         """
-        return self.format('%b %d, %Y', formatter='classic')
+        return self.strftime('%b %d, %Y')
 
     def __repr__(self):
         return (

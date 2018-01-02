@@ -80,16 +80,3 @@ def test_format():
     assert d.format('LL', locale=locale) == '28 août 2016'
     assert d.format('LLL', locale=locale) == '28 août 2016 07:03'
     assert d.format('LLLL', locale=locale) == 'dimanche 28 août 2016 07:03'
-
-
-def test_format_classic():
-    pendulum.set_formatter('classic')
-
-    d = pendulum.create(2000, 1, 1, 12, 45, 31)
-    assert d.format('%A', locale=locale) == 'samedi'
-    assert d.format('%a', locale=locale) == 'sam'
-    assert d.format('%B', locale=locale) == 'janvier'
-    assert d.format('%b', locale=locale) == 'janv'
-    assert d.format('%p', locale=locale) == ''
-    assert d.format('%_t', locale=locale) == 'er'
-    assert d.add(days=1).format('%_t', locale=locale) == 'e'

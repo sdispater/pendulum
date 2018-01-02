@@ -9,7 +9,6 @@ def setup():
     yield
 
     pendulum.set_test_now()
-    pendulum.set_formatter()
     pendulum.set_locale('en')
     pendulum.set_local_timezone()
     pendulum.week_starts_at(pendulum.MONDAY)

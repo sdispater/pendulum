@@ -1,13 +1,13 @@
-import pendulum
+from ..formatting import Formatter
 
-import locale as _locale
-
-from ..formatting import FORMATTERS
+_formatter = Formatter()
 
 
 class FormattableMixing(object):
 
-    def format(self, fmt, locale=None, formatter=None):
+    _formatter = _formatter
+
+    def format(self, fmt, locale=None):
         """
         Formats the instance using the given format.
 
@@ -17,19 +17,9 @@ class FormattableMixing(object):
         :param locale: The locale to use
         :type locale: str or None
 
-        :param formatter: The formatter to use
-        :type formatter: str or None
-
         :rtype: str
         """
-        if formatter is None:
-            formatter = pendulum.get_formatter()
-        elif formatter not in FORMATTERS:
-            raise ValueError('Invalid formatter [{}]'.format(formatter))
-        else:
-            formatter = FORMATTERS[formatter]
-
-        return formatter.format(self, fmt, locale)
+        return self._formatter.format(self, fmt, locale)
 
     def for_json(self):
         """

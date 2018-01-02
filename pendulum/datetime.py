@@ -9,7 +9,6 @@ from .exceptions import DateTimeException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .helpers import add_duration
-from .formatting import FORMATTERS
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
@@ -293,7 +292,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        formatter = FORMATTERS['alternative']
+        formatter = cls._formatter
 
         parts = formatter.parse(time, fmt)
         actual_parts = {}

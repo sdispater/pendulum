@@ -152,57 +152,8 @@ def test_test_now():
     assert pendulum.get_test_now() is None
 
 
-def test_formatter():
-    dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
-    pendulum.set_formatter('classic')
-
-    assert pendulum.get_formatter() is pendulum.FORMATTERS['classic']
-
-    assert (
-        dt.format('YYYY-MM-DD HH:mm:ss.SSSSSSZZ')
-        ==
-        'YYYY-MM-DD HH:mm:ss.SSSSSSZZ'
-    )
-    assert (
-        dt.date().format('YYYY-MM-DD')
-        ==
-        'YYYY-MM-DD'
-    )
-    assert (
-        dt.time().format('HH:mm:ss.SSSSSS')
-        ==
-        'HH:mm:ss.SSSSSS'
-    )
-
-    pendulum.set_formatter()
-
-    assert pendulum.get_formatter() is pendulum.FORMATTERS['alternative']
-
-    assert (
-        dt.format('YYYY-MM-DD HH:mm:ss.SSSSSSZZ')
-        ==
-        '2000-11-10 12:34:56.123456+00:00'
-    )
-    assert (
-        dt.date().format('YYYY-MM-DD')
-        ==
-        '2000-11-10'
-    )
-    assert(
-        dt.time().format('HH:mm:ss.SSSSSS')
-        ==
-        '12:34:56.123456'
-    )
-
-
-def test_set_formatter_invalid():
-    with pytest.raises(ValueError):
-        pendulum.set_formatter('invalid')
-
-
 def test_locale():
     dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
-    pendulum.set_formatter('alternative')
     pendulum.set_locale('fr')
 
     assert pendulum.get_locale() == 'fr'

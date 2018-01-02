@@ -1,5 +1,5 @@
 import pendulum
-from pendulum.formatting.alternative_formatter import AlternativeFormatter
+from pendulum.formatting import Formatter
 from pendulum.lang import TRANSLATIONS
 from .. import AbstractTestCase
 
@@ -20,13 +20,13 @@ class ClassicFormatterTest(AbstractTestCase):
 
     def test_year_tokens(self):
         d = pendulum.create(2009, 1, 14, 15, 25, 50, 123456)
-        f = AlternativeFormatter()
+        f = Formatter()
         self.assertEqual('2009', f.format(d, 'YYYY'))
         self.assertEqual('09', f.format(d, 'YY'))
         self.assertEqual('2009', f.format(d, 'Y'))
 
     def test_quarter_tokens(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(1985, 1, 4)
         self.assertEqual('1', f.format(d, 'Q'))
         d = pendulum.create(2029, 8, 1)
@@ -41,7 +41,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('3e', f.format(d, 'Qo', locale='fr'))
 
     def test_month_tokens(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 3, 24)
         self.assertEqual('03', f.format(d, 'MM'))
         self.assertEqual('3', f.format(d, 'M'))
@@ -55,7 +55,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('3e', f.format(d, 'Mo', locale='fr'))
 
     def test_day_tokens(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 3, 7)
         self.assertEqual('07', f.format(d, 'DD'))
         self.assertEqual('7', f.format(d, 'D'))
@@ -67,7 +67,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('1er', f.format(d.first_of('month'), 'Do', locale='fr'))
 
     def test_day_of_year(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28)
         self.assertEqual('241', f.format(d, 'DDDD'))
         self.assertEqual('241', f.format(d, 'DDD'))
@@ -81,13 +81,13 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('244e', f.format(d.add(days=3), 'DDDo', locale='fr'))
 
     def test_week_of_year(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28)
 
         self.assertEqual('34th', f.format(d, 'wo'))
 
     def test_day_of_week(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28)
         self.assertEqual('0', f.format(d, 'd'))
 
@@ -102,13 +102,13 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('0th', f.format(d, 'do'))
 
     def test_am_pm(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 23)
         self.assertEqual('PM', f.format(d, 'A'))
         self.assertEqual('AM', f.format(d.set(hour=11), 'A'))
 
     def test_hour(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7)
         self.assertEqual('7', f.format(d, 'H'))
         self.assertEqual('07', f.format(d, 'HH'))
@@ -118,19 +118,19 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('12', f.format(d, 'hh'))
 
     def test_minute(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3)
         self.assertEqual('3', f.format(d, 'm'))
         self.assertEqual('03', f.format(d, 'mm'))
 
     def test_second(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6)
         self.assertEqual('6', f.format(d, 's'))
         self.assertEqual('06', f.format(d, 'ss'))
 
     def test_fractional_second(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
         self.assertEqual('1', f.format(d, 'S'))
         self.assertEqual('12', f.format(d, 'SS'))
@@ -156,7 +156,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('000123', f.format(d, 'SSSSSS'))
 
     def test_timezone(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
         self.assertEqual('CEST', f.format(d, 'z'))
         self.assertEqual('Europe/Paris', f.format(d, 'zz'))
@@ -166,7 +166,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('Europe/Paris', f.format(d, 'zz'))
 
     def test_timezone_offset(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
         self.assertEqual('+0200', f.format(d, 'Z'))
         self.assertEqual('+02:00', f.format(d, 'ZZ'))
@@ -180,13 +180,13 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('-05:00', f.format(d, 'ZZ'))
 
     def test_timestamp(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(1970, 1, 1)
         self.assertEqual('0', f.format(d, 'X'))
         self.assertEqual('86400', f.format(d.add(days=1), 'X'))
 
     def test_date_formats(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
         self.assertEqual('7:03 AM', f.format(d, 'LT'))
         self.assertEqual('7:03:06 AM', f.format(d, 'LTS'))
@@ -203,13 +203,13 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('dimanche 28 août 2016 07:03', f.format(d, 'LLLL', locale='fr'))
 
     def test_escape(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28)
         self.assertEqual('YYYY 2016 [2016]', f.format(d, '[YYYY] YYYY \[YYYY\]'))
         self.assertEqual('D 28 \\28', f.format(d, '\D D \\\D'))
 
     def test_date_formats_missing(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
 
         self.assertEqual('7:03 AM', f.format(d, 'LT', locale='dummy'))
@@ -220,7 +220,7 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('Sunday, August 28, 2016 7:03 AM', f.format(d, 'LLLL', locale='dummy'))
 
     def test_unknown_token(self):
-        f = AlternativeFormatter()
+        f = Formatter()
         d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
 
         self.assertEqual('J', f.format(d, 'J'))

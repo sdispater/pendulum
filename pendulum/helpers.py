@@ -18,8 +18,6 @@ except ImportError:
 
 from .constants import DAYS_PER_MONTHS
 
-from .formatting import FORMATTERS
-
 
 def add_duration(dt, years=0, months=0, weeks=0, days=0,
                  hours=0, minutes=0, seconds=0, microseconds=0):
@@ -154,22 +152,6 @@ def get_locale():
 
 def translator():
     return pendulum._TRANSLATOR
-
-
-def set_formatter(formatter=None):
-    if isinstance(formatter, str):
-        if formatter not in FORMATTERS:
-            raise ValueError(f'Invalid formatter [{formatter}]')
-
-        formatter = FORMATTERS[formatter]
-    elif formatter is None:
-        formatter = pendulum._DEFAULT_FORMATTER
-
-    pendulum._FORMATTER = formatter
-
-
-def get_formatter():
-    return pendulum._FORMATTER
 
 
 def week_starts_at(wday):
