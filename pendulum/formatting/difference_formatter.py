@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from .._compat import decode
 from ..translator import Translator
 
 
@@ -79,7 +80,7 @@ class DifferenceFormatter(object):
         time = self._translator.transchoice(unit, count, {'count': count}, locale=locale)
 
         if absolute:
-            return time
+            return decode(time)
 
         is_future = diff.invert
 
@@ -93,4 +94,6 @@ class DifferenceFormatter(object):
         if try_key_exists != self._translator.transchoice(try_key_exists, count, locale=locale):
             time = self._translator.transchoice(try_key_exists, count, {'count': count}, locale=locale)
 
-        return self._translator.trans(trans_id, {'time': time}, locale=locale)
+        trans = self._translator.trans(trans_id, {'time': time}, locale=locale)
+
+        return decode(trans)

@@ -3,6 +3,7 @@
 import re
 import datetime
 
+from .._compat import decode
 from .formatter import Formatter
 
 
@@ -36,12 +37,13 @@ class ClassicFormatter(Formatter):
         fmt = re.sub('%(a|A|b|B|p)', lambda m: self._localize_directive(dt, m.group(1), locale), fmt)
 
         if hasattr(dt, '_datetime'):
-            return dt._datetime.strftime(fmt)
+            trans = dt._datetime.strftime(fmt)
+        elif hasattr(dt, '_time'):
+            trans = dt._time.strftime(fmt)
+        else:
+            trans = datetime.date(dt.year, dt.month, dt.day).strftime(fmt)
 
-        if hasattr(dt, '_time'):
-            return dt._time.strftime(fmt)
-
-        return datetime.date(dt.year, dt.month, dt.day).strftime(fmt)
+        return decode(trans)
 
     def _localize_directive(self, dt, directive, locale):
         """

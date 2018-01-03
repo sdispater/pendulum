@@ -43,16 +43,16 @@ class DaTest(AbstractLocalizationTestCase, AbstractTestCase):
         self.assertEqual('2 uger siden', d.diff_for_humans())
 
         d = Pendulum.now().subtract(months=1)
-        self.assertEqual('1 måned siden', d.diff_for_humans())
+        self.assertEqual(u'1 måned siden', d.diff_for_humans())
 
         d = Pendulum.now().subtract(months=2)
-        self.assertEqual('2 måneder siden', d.diff_for_humans())
+        self.assertEqual(u'2 måneder siden', d.diff_for_humans())
 
         d = Pendulum.now().subtract(years=1)
-        self.assertEqual('1 år siden', d.diff_for_humans())
+        self.assertEqual(u'1 år siden', d.diff_for_humans())
 
         d = Pendulum.now().subtract(years=2)
-        self.assertEqual('2 år siden', d.diff_for_humans())
+        self.assertEqual(u'2 år siden', d.diff_for_humans())
 
         d = Pendulum.now().add(seconds=1)
         self.assertEqual('om 1 sekund', d.diff_for_humans())
@@ -60,7 +60,7 @@ class DaTest(AbstractLocalizationTestCase, AbstractTestCase):
         d = Pendulum.now().add(seconds=1)
         d2 = Pendulum.now()
         self.assertEqual('1 sekund efter', d.diff_for_humans(d2))
-        self.assertEqual('1 sekund før', d2.diff_for_humans(d))
+        self.assertEqual(u'1 sekund før', d2.diff_for_humans(d))
 
         self.assertEqual('1 sekund', d.diff_for_humans(d2, True))
         self.assertEqual('2 sekunder', d2.diff_for_humans(d.add(seconds=1), True))

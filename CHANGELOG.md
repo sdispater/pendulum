@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `format()`, `diff_for_humans()`, `in_words()` and `to_xxx_string()` methods now return unicode strings.
+
 ### Fixed
 
 - Fixed `from_format()` raising an error with the alternative formatter.

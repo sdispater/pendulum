@@ -200,9 +200,9 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('07:03', f.format(d, 'LT', locale='fr'))
         self.assertEqual('07:03:06', f.format(d, 'LTS', locale='fr'))
         self.assertEqual('28/08/2016', f.format(d, 'L', locale='fr'))
-        self.assertEqual('28 août 2016', f.format(d, 'LL', locale='fr'))
-        self.assertEqual('28 août 2016 07:03', f.format(d, 'LLL', locale='fr'))
-        self.assertEqual('dimanche 28 août 2016 07:03', f.format(d, 'LLLL', locale='fr'))
+        self.assertEqual(u'28 août 2016', f.format(d, 'LL', locale='fr'))
+        self.assertEqual(u'28 août 2016 07:03', f.format(d, 'LLL', locale='fr'))
+        self.assertEqual(u'dimanche 28 août 2016 07:03', f.format(d, 'LLLL', locale='fr'))
 
     def test_escape(self):
         f = AlternativeFormatter()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from .._compat import decode
 from .default import TranslatableMixin
 
 
@@ -49,7 +50,7 @@ class WordableIntervalMixin(TranslatableMixin):
             )
             parts.append(translation)
 
-        return separator.join(parts)
+        return decode(separator.join(parts))
 
     def __str__(self):
         return self.in_words()

@@ -20,7 +20,7 @@ class ClassicFormatterTest(AbstractTestCase):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='Europe/Paris')
         f = ClassicFormatter()
         self.assertEqual(
-            'jeudi 25e jour de décembre 1975 02:15:16  +01:00',
+            u'jeudi 25e jour de décembre 1975 02:15:16  +01:00',
             f.format(d, '%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr')
         )
 
@@ -46,8 +46,8 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('Aug', f.format(d, '%b'))
         self.assertEqual('August', f.format(d, '%B'))
 
-        self.assertEqual('août', f.format(d, '%b', locale='fr'))
-        self.assertEqual('août', f.format(d, '%B', locale='fr'))
+        self.assertEqual(u'août', f.format(d, '%b', locale='fr'))
+        self.assertEqual(u'août', f.format(d, '%B', locale='fr'))
 
     def test_strftime(self):
         f = ClassicFormatter()

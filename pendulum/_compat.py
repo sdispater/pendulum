@@ -21,6 +21,7 @@ try:               # Python >= 3.3
 except NameError:  # Python < 3.3
     FileNotFoundError = IOError  # cf PEP-3151 
 
+
 def decode(string, encodings=None):
     if not PY2 and not isinstance(string, bytes):
         return string
