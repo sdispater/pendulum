@@ -59,7 +59,7 @@ class DeTest(AbstractLocalizationTestCase, AbstractTestCase):
 
         d = Pendulum.now().add(seconds=1)
         d2 = Pendulum.now()
-        self.assertEqual('1 Sekunde später', d.diff_for_humans(d2))
+        self.assertEqual(u'1 Sekunde später', d.diff_for_humans(d2))
         self.assertEqual('1 Sekunde zuvor', d2.diff_for_humans(d))
 
         self.assertEqual('1 Sekunde', d.diff_for_humans(d2, True))

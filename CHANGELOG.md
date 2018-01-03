@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- `format()`, `diff_for_humans()`, `in_words()` and `to_xxx_string()` methods now return unicode strings.
+
+
 ## [1.3.1] - 2017-10-22
 
 ### Fixed

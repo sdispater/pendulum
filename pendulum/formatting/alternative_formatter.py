@@ -3,6 +3,7 @@
 import re
 import datetime
 
+from .._compat import decode
 from .formatter import Formatter
 
 
@@ -316,7 +317,7 @@ class AlternativeFormatter(Formatter):
             # Defaulting to english
             return self._format_localizable_token(dt, token, 'en')
 
-        return trans
+        return decode(trans)
 
     def parse(self, time, fmt):
         """

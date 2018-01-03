@@ -113,7 +113,7 @@ class StringsTest(AbstractTestCase):
 
     def test_format_with_locale(self):
         d = Pendulum(1975, 12, 25, 14, 15, 16, tzinfo='local')
-        self.assertEqual('jeudi 25e jour de décembre 1975 02:15:16  -05:00',
+        self.assertEqual(u'jeudi 25e jour de décembre 1975 02:15:16  -05:00',
                          d.format('%A %d%_t jour de %B %Y %I:%M:%S %p %_z', locale='fr'))
 
     def test_set_formatter_globally(self):
