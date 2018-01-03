@@ -330,6 +330,7 @@ class AlternativeFormatter(Formatter):
 
         :rtype: tuple
         """
+        fmt = re.escape(fmt)
         tokens = self._FORMAT_RE.findall(fmt)
         if not tokens:
             return time
@@ -397,7 +398,7 @@ class AlternativeFormatter(Formatter):
         if token.startswith('[') and token.endswith(']'):
             return token[1:-1]
         elif token.startswith('\\'):
-            return token[1:]
+            return token
         elif token not in self._REGEX_TOKENS:
             raise ValueError('Unsupported token: {}'.format(token))
 

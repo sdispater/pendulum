@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `from_format()` raising an error with the alternative formatter.
+
+
 ## [1.3.2] - 2017-11-16
 
 ### Fixed

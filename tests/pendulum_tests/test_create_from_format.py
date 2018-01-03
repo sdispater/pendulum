@@ -62,6 +62,8 @@ class CreateFromFormatTest(AbstractTestCase):
     ('1234567890', 'X', '2009-02-13T23:31:30+00:00'),
     ('1234567890123', 'x', '2009-02-13T23:31:30.123000+00:00'),
     ('2016-10-06', 'YYYY-MM-DD', '2016-10-06T00:00:00+00:00'),
+    ('2016|10|06', 'YYYY|MM|DD', '2016-10-06T00:00:00+00:00'),
+    ('2016(10|06)', 'YYYY(MM|DD)', '2016-10-06T00:00:00+00:00'),
 ])
 def test_from_format(text, fmt, expected):
     with pendulum.test(pendulum.create(2015, 11, 12)):
