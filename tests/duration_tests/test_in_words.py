@@ -33,7 +33,7 @@ class ForHumansTest(AbstractTestCase):
     def test_repr(self):
         pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
         self.assertEqual(
-            '<Duration [2 years 3 months 168 weeks 1 day 2 hours 1 minute 25 seconds]>',
+            'Duration(years=2, months=3, weeks=168, days=1, hours=2, minutes=1, seconds=25)',
             repr(pi)
         )
 

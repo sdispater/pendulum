@@ -177,6 +177,37 @@ class BaseDuration(timedelta):
         """
         return timedelta(seconds=self.total_seconds())
 
+    def __repr__(self):
+        rep = f'{self.__class__.__name__}('
+
+        if self._years:
+            rep += f'years={self._years}, '
+
+        if self._months:
+            rep += f'months={self._months}, '
+
+        if self._weeks:
+            rep += f'weeks={self._weeks}, '
+
+        if self._days:
+            rep += f'days={self._remaining_days}, '
+
+        if self.hours:
+            rep += f'hours={self.hours}, '
+
+        if self.minutes:
+            rep += f'minutes={self.minutes}, '
+
+        if self.remaining_seconds:
+            rep += f'seconds={self.remaining_seconds}, '
+
+        if self.microseconds:
+            rep += f'microseconds={self.microseconds}, '
+
+        rep += ')'
+
+        return rep.replace(', )', ')')
+
 
 class Duration(WordableDurationMixin, BaseDuration):
     """
