@@ -196,7 +196,7 @@ def test_diff_in_seconds_with_timezones():
 
 def test_diff_for_humans_now_and_second():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 second ago' == pendulum.now().diff_for_humans()
+        assert 'a few seconds ago' == pendulum.now().diff_for_humans()
 
 
 def test_diff_for_humans_now_and_second_with_timezone():
@@ -204,12 +204,12 @@ def test_diff_for_humans_now_and_second_with_timezone():
     here_now = van_now.in_timezone(pendulum.now().timezone)
 
     with pendulum.test(here_now):
-        assert '1 second ago' ==  here_now.diff_for_humans()
+        assert 'a few seconds ago' ==  here_now.diff_for_humans()
 
 
 def test_diff_for_humans_now_and_seconds():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 seconds ago' == pendulum.now().subtract(seconds=2).diff_for_humans()
+        assert 'a few seconds ago' == pendulum.now().subtract(seconds=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_minute():
@@ -305,12 +305,12 @@ def test_diff_for_humans_now_and_years():
 
 def test_diff_for_humans_now_and_future_second():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 second from now' == pendulum.now().add(seconds=1).diff_for_humans()
+        assert 'a few seconds from now' == pendulum.now().add(seconds=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_seconds():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 seconds from now' == pendulum.now().add(seconds=2).diff_for_humans()
+        assert 'a few seconds from now' == pendulum.now().add(seconds=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_minute():
@@ -406,12 +406,12 @@ def test_diff_for_humans_now_and_future_years():
 
 def test_diff_for_humans_other_and_second():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 second before' == pendulum.now().diff_for_humans(pendulum.now().add(seconds=1))
+        assert 'a few seconds before' == pendulum.now().diff_for_humans(pendulum.now().add(seconds=1))
 
 
 def test_diff_for_humans_other_and_seconds():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 seconds before' == pendulum.now().diff_for_humans(pendulum.now().add(seconds=2))
+        assert 'a few seconds before' == pendulum.now().diff_for_humans(pendulum.now().add(seconds=2))
 
 
 def test_diff_for_humans_other_and_nearly_minute():
@@ -507,12 +507,12 @@ def test_diff_for_humans_other_and_years():
 
 def test_diff_for_humans_other_and_future_second():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 second after' == pendulum.now().diff_for_humans(pendulum.now().subtract(seconds=1))
+        assert 'a few seconds after' == pendulum.now().diff_for_humans(pendulum.now().subtract(seconds=1))
 
 
 def test_diff_for_humans_other_and_future_seconds():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 seconds after' == pendulum.now().diff_for_humans(pendulum.now().subtract(seconds=2))
+        assert 'a few seconds after' == pendulum.now().diff_for_humans(pendulum.now().subtract(seconds=2))
 
 
 def test_diff_for_humans_other_and_nearly_future_minute():

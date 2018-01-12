@@ -23,6 +23,7 @@
 - `set_to_string_format()/reset_to_string_format()` methods have been removed.
 - `from_format()` now uses the alternative formatter tokens.
 - Removed `xrange()` method of the `Period` class and made `range()` a generator.
+- `diff_for_humans()` now returns `a few seconds` where appropriate.
 
 
 ## [1.3.2] - 2017-11-16

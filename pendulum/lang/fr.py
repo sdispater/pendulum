@@ -57,6 +57,7 @@ translations = {
     'hour': ['{count} heure', '{count} heures'],
     'minute': ['{count} minute', '{count} minutes'],
     'second': ['{count} seconde', '{count} secondes'],
+    'few_seconds': 'quelques secondes',
 
     # Relative Time
     'ago': 'il y a {time}',

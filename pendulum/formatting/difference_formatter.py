@@ -38,7 +38,7 @@ class DifferenceFormatter(object):
         diff = date.diff(other)
 
         count = diff.remaining_seconds
-        unit = 'second'
+        unit = 'few_seconds'
 
         if diff.years > 0:
             unit = 'year'
@@ -73,11 +73,21 @@ class DifferenceFormatter(object):
         elif diff.minutes > 0:
             unit = 'minute'
             count = diff.minutes
+        elif 10 < diff.remaining_seconds <= 59:
+            unit = 'second'
+            count = diff.remaining_seconds
 
         if count == 0:
             count = 1
 
-        time = self._translator.transchoice(unit, count, {'count': count}, locale=locale)
+        time = self._translator.transchoice(
+            unit, count, locale=locale
+        )
+        if time == unit and unit == 'few_seconds':
+            unit = 'second'
+            time = self._translator.transchoice(
+                'second', count, locale=locale
+            )
 
         if absolute:
             return time
@@ -90,8 +100,11 @@ class DifferenceFormatter(object):
             trans_id = 'after' if is_future else 'before'
 
         # Some langs have special pluralization for past and future tense
-        try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self._translator.transchoice(try_key_exists, count, locale=locale):
-            time = self._translator.transchoice(try_key_exists, count, {'count': count}, locale=locale)
+        try_key_exists = f'{unit}_{trans_id}'
+        trans = self._translator.transchoice(
+            try_key_exists, count, locale=locale
+        )
+        if try_key_exists != trans:
+            time = trans
 
         return self._translator.trans(trans_id, {'time': time}, locale=locale)
