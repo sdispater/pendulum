@@ -1,6 +1,8 @@
 import datetime
 import math
 
+from collections import namedtuple
+
 from ..constants import (
     EPOCH_YEAR,
     SECS_PER_DAY,
@@ -20,61 +22,20 @@ from ..constants import (
 )
 
 
-class PreciseDiff:
-
-    def __init__(self, years, months, days,
-                 hours, minutes, seconds, microseconds,
-                 total_days):
-        self._years = years
-        self._months = months
-        self._days = days
-        self._hours = hours
-        self._minutes = minutes
-        self._seconds = seconds
-        self._microseconds = microseconds
-        self._total_days = total_days
-
-    @property
-    def years(self):
-        return self._years
-
-    @property
-    def months(self):
-        return self._months
-
-    @property
-    def days(self):
-        return self._days
-
-    @property
-    def hours(self):
-        return self._hours
-
-    @property
-    def minutes(self):
-        return self._minutes
-
-    @property
-    def seconds(self):
-        return self._seconds
-
-    @property
-    def microseconds(self):
-        return self._microseconds
-
-    @property
-    def total_days(self):
-        return self._total_days
+class PreciseDiff(namedtuple('PreciseDiff',
+                             'years months days '
+                             'hours minutes seconds microseconds '
+                             'total_days')):
 
     def __repr__(self):
         return (
-            f'{self._years} years '
-            f'{self._months} months '
-            f'{self._days} days '
-            f'{self._hours} hours '
-            f'{self._minutes} minutes '
-            f'{self._seconds} seconds '
-            f'{self._microseconds} microseconds '
+            f'{self.years} years '
+            f'{self.months} months '
+            f'{self.days} days '
+            f'{self.hours} hours '
+            f'{self.minutes} minutes '
+            f'{self.seconds} seconds '
+            f'{self.microseconds} microseconds'
         )
 
 
