@@ -121,6 +121,9 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(dt, datetime.datetime):
             raise ValueError('instance() only accepts datetime objects.')
 
+        if isinstance(dt, DateTime):
+            return dt
+
         tz = dt.tzinfo or tz
 
         # Checking for pytz/tzinfo
@@ -388,14 +391,27 @@ class DateTime(datetime.datetime, Date):
     def set(self, year=None, month=None, day=None,
             hour=None, minute=None, second=None, microsecond=None,
             tz=None):
-        tzinfo = self.tzinfo
-        if tz is not None:
-            tzinfo = self._safe_create_datetime_zone(tz)
+        if year is None:
+            year = self.year
+        if month is None:
+            month = self.month
+        if day is None:
+            day = self.day
+        if hour is None:
+            hour = self.hour
+        if minute is None:
+            minute = self.minute
+        if second is None:
+            second = self.second
+        if microsecond is None:
+            microsecond = self.microsecond
+        if tz is None:
+            tz = self.tz
 
-        return self.replace(
-            year=year, month=month, day=day,
-            hour=hour, minute=minute, second=second, microsecond=microsecond,
-            tzinfo=tzinfo
+        return self.create(
+            year, month, day,
+            hour, minute, second, microsecond,
+            tz=tz
         )
 
     @property
@@ -483,7 +499,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(
+        return self.set(
             year=int(year), month=int(month), day=int(day)
         )
 
@@ -505,7 +521,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.replace(
+        return self.set(
             hour=hour, minute=minute, second=second,
             microsecond=microsecond
         )
@@ -1573,17 +1589,18 @@ class DateTime(datetime.datetime, Date):
             microsecond = self.microsecond
         if tzinfo is True:
             tzinfo = self.tzinfo
-        if fold is None:
-            fold = self.fold
 
-        return self.instance(
-            super().replace(
-                year=year, month=month, day=day,
-                hour=hour, minute=minute, second=second,
-                microsecond=microsecond,
-                tzinfo=tzinfo,
-                fold=fold
-            )
+        transition_rule = Timezone.POST_TRANSITION
+        if fold is not None:
+            transition_rule = Timezone.PRE_TRANSITION
+            if fold:
+                transition_rule = Timezone.POST_TRANSITION
+
+        return self.create(
+            year, month, day,
+            hour, minute, second, microsecond,
+            tz=tzinfo,
+            dst_rule=transition_rule
         )
 
     def __getnewargs__(self):

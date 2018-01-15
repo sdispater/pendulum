@@ -167,7 +167,6 @@ class Timezone(tzinfo):
             dst_rule = self.PRE_TRANSITION
             if dt.fold == 1:
                 dst_rule = self.POST_TRANSITION
-                fold = 1
 
         if not self._transitions:
             # Use the default offset
@@ -225,6 +224,7 @@ class Timezone(tzinfo):
                          tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
                     else:
                         unix_time = tr.unix_time - (tr.time - dt).total_seconds()
+                        fold = 1
         elif tr is end:
             if tr.pre_time < dt:
                 # After the last transition.
@@ -240,6 +240,7 @@ class Timezone(tzinfo):
                      tzinfo_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+                    fold = 1
         else:
             if tr.pre_time <= dt < tr.time:
                 # tr.pre_time <= dt < tr.time
@@ -252,6 +253,7 @@ class Timezone(tzinfo):
                      tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
                 else:
                     unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
+                    fold = 1
             elif tr.time <= dt <= tr.pre_time:
                 # tr.time <= dt <= tr.pre_time
                 # Repeated time
@@ -263,6 +265,7 @@ class Timezone(tzinfo):
                      tzinfo_index) = self._get_previous_transition_time(tr, dt)
                 else:
                     unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+                    fold = 1
             else:
                 # In between transitions
                 # The actual transition type is the previous transition one

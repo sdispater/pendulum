@@ -671,3 +671,17 @@ def test_subtraction():
 
     assert 3600 == (future - d).total_seconds()
     assert 3600 == (future_dt - d).total_seconds()
+
+
+def test_subtraction_with_timezone():
+    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
+    post = dt.add(microseconds=1)
+
+    assert (post - dt).total_seconds() == 1e-06
+
+    dt = pendulum.create(2013, 10, 27, 2, 59, 59, 999999,
+                         tz='Europe/Paris',
+                         dst_rule=pendulum.PRE_TRANSITION)
+    post = dt.add(microseconds=1)
+
+    assert (post - dt).total_seconds() == 1e-06
