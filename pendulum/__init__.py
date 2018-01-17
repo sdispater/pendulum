@@ -29,17 +29,14 @@ POST_TRANSITION = Timezone.POST_TRANSITION
 TRANSITION_ERROR = Timezone.TRANSITION_ERROR
 
 # Global helpers
-from .translator import Translator
-
 _TEST_NOW = None
 _LOCALE = 'en'
-_TRANSLATOR = Translator(_LOCALE)
 _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
 
 from .helpers import (
     test, set_test_now, has_test_now, get_test_now,
-    set_locale, get_locale, translator,
+    set_locale, get_locale, locale, format_diff,
     week_starts_at, week_ends_at
 )
 

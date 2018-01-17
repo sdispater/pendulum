@@ -2,6 +2,8 @@ import re
 import datetime
 import pendulum
 
+from pendulum.locales.locale import Locale
+
 _MATCH_1 = re.compile('\d')
 _MATCH_2 = re.compile('\d\d')
 _MATCH_3 = re.compile('\d{3}')
@@ -27,10 +29,11 @@ class Formatter:
               '(' \
               'Mo|MM?M?M?' \
               '|Do|DDDo|DD?D?D?|ddd?d?|do?' \
+              '|E{1,4}' \
               '|w[o|w]?|W[o|W]?|Qo?' \
               '|YYYY|YY|Y' \
               '|gg(ggg?)?|GG(GGG?)?' \
-              '|e|E|a|A' \
+              '|a|A' \
               '|hh?|HH?|kk?' \
               '|mm?|ss?|S{1,9}' \
               '|x|X' \
@@ -46,6 +49,7 @@ class Formatter:
         'Do',
         'DDDo',
         'do', 'dd', 'ddd', 'dddd',
+        'E', 'EE', 'EEE', 'EEEE',
         'wo',
         'Wo',
         'A', 'a',
@@ -103,6 +107,15 @@ class Formatter:
         # Timezone
         'z': lambda dt: '{}'.format(dt.tzinfo.abbrev),
         'zz': lambda dt: '{}'.format(dt.timezone_name),
+    }
+
+    _DATE_FORMATS = {
+        'LTS': 'formats.time.full',
+        'LT': 'formats.time.short',
+        'L': 'formats.date.short',
+        'LL': 'formats.date.long',
+        'LLL': 'formats.datetime.long',
+        'LLLL': 'formats.datetime.full',
     }
 
     _DEFAULT_DATE_FORMATS = {
@@ -190,12 +203,14 @@ class Formatter:
         :type fmt: str
 
         :param locale: The locale to use
-        :type locale: str or None
+        :type locale: str or Locale or None
 
         :rtype: str
         """
         if not locale:
             locale = pendulum.get_locale()
+
+        locale = Locale.load(locale)
 
         return self._FORMAT_RE.sub(
             lambda m: m.group(1)
@@ -217,13 +232,13 @@ class Formatter:
         :type token: str
 
         :param locale: The locale to use
-        :type locale: str or None
+        :type locale: Locale
 
         :rtype: str
         """
-        if token in self._DEFAULT_DATE_FORMATS:
-            fmt = pendulum.translator().transchoice('date_formats', token, locale=locale)
-            if fmt == 'date_formats':
+        if token in self._DATE_FORMATS:
+            fmt = locale.get(f'custom.date_formats.{token}')
+            if fmt is None:
                 fmt = self._DEFAULT_DATE_FORMATS[token]
 
             return self.format(dt, fmt, locale)
@@ -261,58 +276,40 @@ class Formatter:
         :type token: str
 
         :param locale: The locale to use
-        :type locale: str or None
+        :type locale: Locale
 
         :rtype: str
         """
-        trans_id = ''
-        count = 0
-
         if token == 'MMM':
-            count = dt.month
-            trans_id = 'months_abbrev'
+            return locale.get('translations.months.abbreviated')[dt.month]
         elif token == 'MMMM':
-            count = dt.month
-            trans_id = 'months'
+            return locale.get('translations.months.wide')[dt.month]
         elif token in ('dd', 'ddd'):
-            count = dt.day_of_week
-            trans_id = 'days_abbrev'
+            return locale.get('translations.days.abbreviated')[dt.day_of_week]
         elif token == 'dddd':
-            count = dt.day_of_week
-            trans_id = 'days'
+            return locale.get('translations.days.wide')[dt.day_of_week]
         elif token == 'Do':
-            count = dt.day
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.day)
         elif token == 'do':
-            count = dt.day_of_week
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.day_of_week)
         elif token == 'Mo':
-            count = dt.month
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.month)
         elif token == 'Qo':
-            count = dt.quarter
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.quarter)
         elif token == 'wo':
-            count = dt.week_of_year
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.week_of_year)
         elif token == 'DDDo':
-            count = dt.day_of_year
-            trans_id = 'ordinal'
+            return locale.ordinalize(dt.day_of_year)
         elif token == 'A':
-            count = (dt.hour, dt.minute)
-            trans_id = 'meridian'
+            key = 'translations.day_periods'
+            if dt.hour >= 12:
+                key += '.pm'
+            else:
+                key += '.am'
 
-        trans = pendulum.translator().transchoice(trans_id, count, locale=locale)
-
-        if trans_id == 'ordinal':
-            trans = '{:d}{}'.format(count, trans)
-
-        if trans_id == trans:
-            # Unable to find the corresponding translation
-            # Defaulting to english
-            return self._format_localizable_token(dt, token, 'en')
-
-        return trans
+            return locale.get(key)
+        else:
+            return token
 
     def parse(self, time, fmt):
         """

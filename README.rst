@@ -181,6 +181,44 @@ Contributing
 ============
 
 Contributions are welcome, especially with localization.
-Check the `languages <https://github.com/sdispater/pendulum/tree/master/pendulum/lang>`_ already supported,
-and if you want to add a new one, take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/lang/en.py>`_
-file as a starting point and add tests accordingly.
+
+Getting started
+---------------
+
+To work on the Pendulum codebase, you'll want to clone the project locally
+and install the required depedendencies (it is advised to do that in a virtualenv).
+
+.. code-block:: bash
+
+    $ git clone git@github.com:sdispater/pendulum.git
+    $ pip install -r tests-requirements.txt
+
+Localization
+------------
+
+If you want to help with localization, there are two different cases: the locale already exists
+or not.
+
+If the locale does not exist you will need to create it by using the ``clock`` utility:
+
+.. code-block:: bash
+
+    ./clock locale:dump <your-locale>
+
+It will generate a directory in ``pendulum/locales`` named after your locale, with the following
+structure:
+
+.. code-block:: text
+
+    <your-locale>/
+        - custom.py
+        - locale.py
+
+The ``locale.py`` file must not be modified. It contains the translations provided by
+the CLDR database.
+
+The ``custom.py`` file is the one you want to modify. It contains the data needed
+by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locale/en/custom.py>`_
+data as a reference to see which data is needed.
+
+You should also add tests for the created or modified locale.

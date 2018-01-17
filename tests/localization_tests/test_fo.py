@@ -14,7 +14,7 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == '1 sekund síðan'
 
     d = pendulum.now().subtract(seconds=2)
-    assert d.diff_for_humans(locale=locale) == '2 sekundir síðan'
+    assert d.diff_for_humans(locale=locale) == '2 sekund síðan'
 
     d = pendulum.now().subtract(minutes=1)
     assert d.diff_for_humans(locale=locale) == '1 minutt síðan'
@@ -29,7 +29,7 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == '2 tímar síðan'
 
     d = pendulum.now().subtract(days=1)
-    assert d.diff_for_humans(locale=locale) == '1 dag síðan'
+    assert d.diff_for_humans(locale=locale) == '1 dagur síðan'
 
     d = pendulum.now().subtract(days=2)
     assert d.diff_for_humans(locale=locale) == '2 dagar síðan'
@@ -41,7 +41,7 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == '2 vikur síðan'
 
     d = pendulum.now().subtract(months=1)
-    assert d.diff_for_humans(locale=locale) == '1 mánaður síðan'
+    assert d.diff_for_humans(locale=locale) == '1 mánað síðan'
 
     d = pendulum.now().subtract(months=2)
     assert d.diff_for_humans(locale=locale) == '2 mánaðir síðan'

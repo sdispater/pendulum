@@ -17,6 +17,11 @@ except ImportError:
     )
 
 from .constants import DAYS_PER_MONTHS
+from .formatting.difference_formatter import DifferenceFormatter
+from .locales.locale import Locale
+
+
+difference_formatter = DifferenceFormatter()
 
 
 def add_duration(dt, years=0, months=0, weeks=0, days=0,
@@ -111,6 +116,13 @@ def add_duration(dt, years=0, months=0, weeks=0, days=0,
     )
 
 
+def format_diff(diff, is_now=True, absolute=False, locale=None):
+    if locale is None:
+        locale = get_locale()
+
+    return difference_formatter.format(diff, is_now, absolute, locale)
+
+
 def _sign(x):
     return int(copysign(1, x))
 
@@ -138,20 +150,18 @@ def has_test_now():
     return pendulum._TEST_NOW is not None
 
 
-def set_locale(locale):
-    if not pendulum._TRANSLATOR.has_translations(locale):
-        raise ValueError(f'Unsupported locale [{locale}]')
+def locale(name):
+    return Locale.load(name)
 
-    pendulum._LOCALE = locale
-    pendulum._TRANSLATOR.locale = locale
+
+def set_locale(name):
+    locale(name)
+
+    pendulum._LOCALE = name
 
 
 def get_locale():
     return pendulum._LOCALE
-
-
-def translator():
-    return pendulum._TRANSLATOR
 
 
 def week_starts_at(wday):

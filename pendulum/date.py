@@ -383,18 +383,6 @@ class Date(FormattableMixing, date):
 
     # DIFFERENCES
 
-    @property
-    def diff_formatter(self):
-        """
-        Returns a DifferenceFormatter instance.
-
-        :rtype: DifferenceFormatter
-        """
-        if not self.__class__._diff_formatter:
-            self.__class__._diff_formatter = DifferenceFormatter(pendulum.translator())
-
-        return self.__class__._diff_formatter
-
     def diff(self, dt=None, abs=True):
         """
         Returns the difference between two Date objects as a Period.
@@ -441,7 +429,17 @@ class Date(FormattableMixing, date):
 
         :rtype: str
         """
-        return self.diff_formatter.diff_for_humans(self, other, absolute, locale)
+        is_now = other is None
+
+        if is_now:
+            if hasattr(self, 'now'):
+                other = self.now()
+            else:
+                other = self.today()
+
+        diff = self.diff(other)
+
+        return pendulum.format_diff(diff, is_now, absolute, locale)
 
     # MODIFIERS
 

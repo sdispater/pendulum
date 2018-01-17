@@ -305,103 +305,103 @@ def test_diff_for_humans_now_and_years():
 
 def test_diff_for_humans_now_and_future_second():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert 'a few seconds from now' == pendulum.now().add(seconds=1).diff_for_humans()
+        assert 'in a few seconds' == pendulum.now().add(seconds=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_seconds():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert 'a few seconds from now' == pendulum.now().add(seconds=2).diff_for_humans()
+        assert 'in a few seconds' == pendulum.now().add(seconds=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_minute():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '59 seconds from now' == pendulum.now().add(seconds=59).diff_for_humans()
+        assert 'in 59 seconds' == pendulum.now().add(seconds=59).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_minute():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 minute from now' == pendulum.now().add(minutes=1).diff_for_humans()
+        assert 'in 1 minute' == pendulum.now().add(minutes=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_minutes():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 minutes from now' == pendulum.now().add(minutes=2).diff_for_humans()
+        assert 'in 2 minutes' == pendulum.now().add(minutes=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_hour():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '59 minutes from now' == pendulum.now().add(minutes=59).diff_for_humans()
+        assert 'in 59 minutes' == pendulum.now().add(minutes=59).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_hour():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 hour from now' == pendulum.now().add(hours=1).diff_for_humans()
+        assert 'in 1 hour' == pendulum.now().add(hours=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_hours():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 hours from now' == pendulum.now().add(hours=2).diff_for_humans()
+        assert 'in 2 hours' == pendulum.now().add(hours=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_day():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '23 hours from now' == pendulum.now().add(hours=23).diff_for_humans()
+        assert 'in 23 hours' == pendulum.now().add(hours=23).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_day():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 day from now' == pendulum.now().add(days=1).diff_for_humans()
+        assert 'in 1 day' == pendulum.now().add(days=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_days():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 days from now' == pendulum.now().add(days=2).diff_for_humans()
+        assert 'in 2 days' == pendulum.now().add(days=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_week():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '6 days from now' == pendulum.now().add(days=6).diff_for_humans()
+        assert 'in 6 days' == pendulum.now().add(days=6).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_week():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 week from now' == pendulum.now().add(weeks=1).diff_for_humans()
+        assert 'in 1 week' == pendulum.now().add(weeks=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_weeks():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 weeks from now' == pendulum.now().add(weeks=2).diff_for_humans()
+        assert 'in 2 weeks' == pendulum.now().add(weeks=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_month():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '3 weeks from now' == pendulum.now().add(weeks=3).diff_for_humans()
+        assert 'in 3 weeks' == pendulum.now().add(weeks=3).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_month():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '4 weeks from now' == pendulum.now().add(weeks=4).diff_for_humans()
-        assert '1 month from now' == pendulum.now().add(months=1).diff_for_humans()
+        assert 'in 4 weeks' == pendulum.now().add(weeks=4).diff_for_humans()
+        assert 'in 1 month' == pendulum.now().add(months=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_months():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 months from now' == pendulum.now().add(months=2).diff_for_humans()
+        assert 'in 2 months' == pendulum.now().add(months=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_year():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '11 months from now' == pendulum.now().add(months=11).diff_for_humans()
+        assert 'in 11 months' == pendulum.now().add(months=11).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_year():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '1 year from now' == pendulum.now().add(years=1).diff_for_humans()
+        assert 'in 1 year' == pendulum.now().add(years=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_years():
     with pendulum.test(pendulum.create(2012, 1, 1, 1, 2, 3)):
-        assert '2 years from now' == pendulum.now().add(years=2).diff_for_humans()
+        assert 'in 2 years' == pendulum.now().add(years=2).diff_for_humans()
 
 
 def test_diff_for_humans_other_and_second():

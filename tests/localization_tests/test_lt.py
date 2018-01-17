@@ -56,13 +56,13 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == 'prieš 2 metus'
 
     d = pendulum.now().add(seconds=1)
-    assert d.diff_for_humans(locale=locale) == 'už 1 sekundės'
+    assert d.diff_for_humans(locale=locale) == 'po 1 sekundės'
 
     d = pendulum.now().add(seconds=1)
     d2 = pendulum.now()
-    assert d.diff_for_humans(d2, locale=locale) == 'po 1 sekundę'
+    assert d.diff_for_humans(d2, locale=locale) == 'po 1 sekundės'
     assert d2.diff_for_humans(d, locale=locale) == '1 sekundę nuo dabar'
 
-    assert d.diff_for_humans(d2, True, locale=locale) == '1 sekundę'
+    assert d.diff_for_humans(d2, True, locale=locale) == '1 sekundė'
     assert d2.diff_for_humans(d.add(seconds=1), True,
-                              locale=locale) == '2 sekundes'
+                              locale=locale) == '2 sekundės'

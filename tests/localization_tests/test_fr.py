@@ -68,7 +68,7 @@ def diff_for_humans():
 def test_format():
     d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
     assert d.format('dddd', locale=locale) == 'dimanche'
-    assert d.format('ddd', locale=locale) == 'dim'
+    assert d.format('ddd', locale=locale) == 'dim.'
     assert d.format('MMMM', locale=locale) == 'août'
     assert d.format('MMM', locale=locale) == 'août'
     assert d.format('A', locale=locale) == 'AM'

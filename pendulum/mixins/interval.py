@@ -1,5 +1,7 @@
 import pendulum
 
+from ..locales.locale import Locale
+
 
 class WordableDurationMixin:
 
@@ -31,23 +33,27 @@ class WordableDurationMixin:
                 ('second', self.remaining_seconds)
             ]
 
+        if locale is None:
+            locale = pendulum.get_locale()
+
+        locale = pendulum.locale(locale)
         parts = []
         for period in _periods:
             unit, count = period
             if abs(count) > 0:
-                parts.append(
-                    pendulum.translator().transchoice(
-                        unit, abs(count), {'count': count}, locale=locale
-                    )
+                translation = locale.translation(
+                    f'units.{unit}.{locale.plural(abs(count))}'
                 )
+                parts.append(translation.format(count))
 
         if not parts and abs(self.microseconds) > 0:
-            translation = pendulum.translator().transchoice(
-                'second', 1,
-                {'count': '{:.2f}'.format(abs(self.microseconds) / 1e6)},
-                locale=locale
+            translation = locale.translation(
+                f'units.second.{locale.plural(1)}'
             )
-            parts.append(translation)
+            us = abs(self.microseconds) / 1e6
+            parts.append(
+                translation.format(f'{us:.2f}')
+            )
 
         return separator.join(parts)
 

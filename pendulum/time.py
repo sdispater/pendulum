@@ -370,37 +370,7 @@ class Time(FormattableMixing, time):
 
         diff = self.diff(other)
 
-        if diff.hours > 0:
-            unit = 'hour'
-            count = diff.hours
-        elif diff.minutes > 0:
-            unit = 'minute'
-            count = diff.minutes
-        else:
-            unit = 'second'
-            count = diff.seconds
-
-        if count == 0:
-            count = 1
-
-        time = pendulum.translator().transchoice(unit, count, {'count': count}, locale=locale)
-
-        if absolute:
-            return time
-
-        is_future = diff.invert
-
-        if is_now:
-            trans_id = 'from_now' if is_future else 'ago'
-        else:
-            trans_id = 'after' if is_future else 'before'
-
-        # Some langs have special pluralization for past and future tense
-        try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != pendulum.translator().transchoice(try_key_exists, count, locale=locale):
-            time = pendulum.translator().transchoice(try_key_exists, count, {'count': count}, locale=locale)
-
-        return pendulum.translator().trans(trans_id, {'time': time}, locale=locale)
+        return pendulum.format_diff(diff, is_now, absolute, locale)
 
     # Compatibility methods
 

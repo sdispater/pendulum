@@ -1,6 +1,6 @@
 import pendulum
 from pendulum.formatting import Formatter
-from pendulum.lang import TRANSLATIONS
+from pendulum.locales.locale import Locale
 from .. import AbstractTestCase
 
 
@@ -10,13 +10,13 @@ class ClassicFormatterTest(AbstractTestCase):
         super(ClassicFormatterTest, self).setUp()
 
         # Add dummy locale for testing purposes
-        TRANSLATIONS['dummy'] = {}
+        Locale._cache['dummy'] = {}
 
     def tearDown(self):
         super(ClassicFormatterTest, self).tearDown()
 
         # Add dummy locale for testing purposes
-        del TRANSLATIONS['dummy']
+        del Locale._cache['dummy']
 
     def test_year_tokens(self):
         d = pendulum.create(2009, 1, 14, 15, 25, 50, 123456)
@@ -95,8 +95,8 @@ class ClassicFormatterTest(AbstractTestCase):
         self.assertEqual('Sun', f.format(d, 'ddd'))
         self.assertEqual('Sunday', f.format(d, 'dddd'))
 
-        self.assertEqual('dim', f.format(d, 'dd', locale='fr'))
-        self.assertEqual('dim', f.format(d, 'ddd', locale='fr'))
+        self.assertEqual('dim.', f.format(d, 'dd', locale='fr'))
+        self.assertEqual('dim.', f.format(d, 'ddd', locale='fr'))
         self.assertEqual('dimanche', f.format(d, 'dddd', locale='fr'))
 
         self.assertEqual('0th', f.format(d, 'do'))

@@ -11,10 +11,10 @@ def test_diff_for_humans():
 
 def diff_for_humans():
     d = pendulum.now().subtract(seconds=1)
-    assert d.diff_for_humans(locale=locale) == 'hace 1 segundo'
+    assert d.diff_for_humans(locale=locale) == 'hace unos segundos'
 
     d = pendulum.now().subtract(seconds=2)
-    assert d.diff_for_humans(locale=locale) == 'hace 2 segundos'
+    assert d.diff_for_humans(locale=locale) == 'hace unos segundos'
 
     d = pendulum.now().subtract(minutes=1)
     assert d.diff_for_humans(locale=locale) == 'hace 1 minuto'
@@ -53,13 +53,13 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == 'hace 2 años'
 
     d = pendulum.now().add(seconds=1)
-    assert d.diff_for_humans(locale=locale) == 'dentro de 1 segundo'
+    assert d.diff_for_humans(locale=locale) == 'dentro de unos segundos'
 
     d = pendulum.now().add(seconds=1)
     d2 = pendulum.now()
-    assert d.diff_for_humans(d2, locale=locale) == '1 segundo después'
-    assert d2.diff_for_humans(d, locale=locale) == '1 segundo antes'
+    assert d.diff_for_humans(d2, locale=locale) == 'unos segundos después'
+    assert d2.diff_for_humans(d, locale=locale) == 'unos segundos antes'
 
-    assert d.diff_for_humans(d2, True, locale=locale) == '1 segundo'
+    assert d.diff_for_humans(d2, True, locale=locale) == 'unos segundos'
     assert d2.diff_for_humans(d.add(seconds=1), True,
-                              locale=locale) == '2 segundos'
+                              locale=locale) == 'unos segundos'

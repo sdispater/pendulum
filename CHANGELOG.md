@@ -23,6 +23,7 @@
 - `set_to_string_format()/reset_to_string_format()` methods have been removed.
 - `from_format()` now uses the alternative formatter tokens.
 - Removed `xrange()` method of the `Period` class and made `range()` a generator.
+- New locale system which uses CLDR data for most of the translations.
 - `diff_for_humans()` now returns `a few seconds` where appropriate.
 
 

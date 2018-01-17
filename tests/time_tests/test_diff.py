@@ -76,11 +76,11 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_now_and_second(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 second ago', Time.now().diff_for_humans())
+            self.assertEqual('a few seconds ago', Time.now().diff_for_humans())
 
     def test_diff_for_humans_now_and_seconds(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 seconds ago', Time.now().subtract(seconds=2).diff_for_humans())
+            self.assertEqual('a few seconds ago', Time.now().subtract(seconds=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_minute(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
@@ -108,43 +108,43 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_now_and_future_second(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 second from now', Time.now().add(seconds=1).diff_for_humans())
+            self.assertEqual('in a few seconds', Time.now().add(seconds=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_seconds(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 seconds from now', Time.now().add(seconds=2).diff_for_humans())
+            self.assertEqual('in a few seconds', Time.now().add(seconds=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_future_minute(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('59 seconds from now', Time.now().add(seconds=59).diff_for_humans())
+            self.assertEqual('in 59 seconds', Time.now().add(seconds=59).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_minute(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 minute from now', Time.now().add(minutes=1).diff_for_humans())
+            self.assertEqual('in 1 minute', Time.now().add(minutes=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_minutes(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 minutes from now', Time.now().add(minutes=2).diff_for_humans())
+            self.assertEqual('in 2 minutes', Time.now().add(minutes=2).diff_for_humans())
 
     def test_diff_for_humans_now_and_nearly_future_hour(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('59 minutes from now', Time.now().add(minutes=59).diff_for_humans())
+            self.assertEqual('in 59 minutes', Time.now().add(minutes=59).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_hour(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 hour from now', Time.now().add(hours=1).diff_for_humans())
+            self.assertEqual('in 1 hour', Time.now().add(hours=1).diff_for_humans())
 
     def test_diff_for_humans_now_and_future_hours(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 hours from now', Time.now().add(hours=2).diff_for_humans())
+            self.assertEqual('in 2 hours', Time.now().add(hours=2).diff_for_humans())
 
     def test_diff_for_humans_other_and_second(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 second before', Time.now().diff_for_humans(Time.now().add(seconds=1)))
+            self.assertEqual('a few seconds before', Time.now().diff_for_humans(Time.now().add(seconds=1)))
 
     def test_diff_for_humans_other_and_seconds(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 seconds before', Time.now().diff_for_humans(Time.now().add(seconds=2)))
+            self.assertEqual('a few seconds before', Time.now().diff_for_humans(Time.now().add(seconds=2)))
 
     def test_diff_for_humans_other_and_nearly_minute(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
@@ -172,11 +172,11 @@ class DiffTest(AbstractTestCase):
 
     def test_diff_for_humans_other_and_future_second(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('1 second after', Time.now().diff_for_humans(Time.now().subtract(seconds=1)))
+            self.assertEqual('a few seconds after', Time.now().diff_for_humans(Time.now().subtract(seconds=1)))
 
     def test_diff_for_humans_other_and_future_seconds(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
-            self.assertEqual('2 seconds after', Time.now().diff_for_humans(Time.now().subtract(seconds=2)))
+            self.assertEqual('a few seconds after', Time.now().diff_for_humans(Time.now().subtract(seconds=2)))
 
     def test_diff_for_humans_other_and_nearly_future_minute(self):
         with pendulum.test(pendulum.today().at(12, 34, 56)):
