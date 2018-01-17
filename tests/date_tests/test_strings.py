@@ -1,42 +1,50 @@
 import pendulum
-from pendulum import Date
-from .. import AbstractTestCase
 
 
-class StringsTest(AbstractTestCase):
+def test_to_string():
+    d = pendulum.date(2016, 10, 16)
+    assert str(d) == '2016-10-16'
 
-    def test_to_string(self):
-        d = Date(2016, 10, 16)
-        self.assertEqual('2016-10-16', str(d))
 
-    def test_to_date_string(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('1975-12-25', d.to_date_string())
+def test_to_date_string():
+    d = pendulum.date(1975, 12, 25)
+    assert d.to_date_string() == '1975-12-25'
 
-    def test_to_formatted_date_string(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('Dec 25, 1975', d.to_formatted_date_string())
 
-    def test_repr(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('Date(1975, 12, 25)', repr(d))
-        self.assertEqual('Date(1975, 12, 25)', d.__repr__())
+def test_to_formatted_date_string():
+    d = pendulum.date(1975, 12, 25)
+    assert d.to_formatted_date_string() == 'Dec 25, 1975'
 
-    def test_format_with_locale(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('jeudi 25e jour de décembre 1975',
-                         d.format('dddd Do [jour de] MMMM YYYY', locale='fr'))
 
-    def test_strftime(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('25', d.strftime('%d'))
+def test_repr():
+    d = pendulum.date(1975, 12, 25)
 
-    def test_for_json(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('1975-12-25', d.for_json())
+    assert repr(d) == 'Date(1975, 12, 25)'
+    assert d.__repr__() == 'Date(1975, 12, 25)'
 
-    def test_format(self):
-        d = Date(1975, 12, 25)
-        self.assertEqual('1975-12-25', '{}'.format(d))
-        self.assertEqual('1975', '{:YYYY}'.format(d))
-        self.assertEqual('%1975', '{:%Y}'.format(d))
+
+def test_format_with_locale():
+    d = pendulum.date(1975, 12, 25)
+    expected = 'jeudi 25e jour de décembre 1975'
+    assert d.format('dddd Do [jour de] MMMM YYYY', locale='fr') == expected
+
+
+def test_strftime():
+    d = pendulum.date(1975, 12, 25)
+    assert d.strftime('%d') == '25'
+
+
+def test_for_json():
+    d = pendulum.date(1975, 12, 25)
+    assert d.for_json() == '1975-12-25'
+
+
+def test_format():
+    d = pendulum.date(1975, 12, 25)
+    assert '{}'.format(d) == '1975-12-25'
+    assert '{:YYYY}'.format(d) == '1975'
+    assert '{:%Y}'.format(d) == '%1975'
+
+    assert f'{d}' == '1975-12-25'
+    assert f'{d:YYYY}' == '1975'
+    assert f'{d:%Y}' == '%1975'

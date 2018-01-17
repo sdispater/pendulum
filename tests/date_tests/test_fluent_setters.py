@@ -1,27 +1,27 @@
-from pendulum import Date
+import pendulum
 
-from .. import AbstractTestCase
+from ..conftest import assert_date
 
 
-class FluentSettersTest(AbstractTestCase):
+def test_fluid_year_setter():
+    d = pendulum.date(2016, 10, 20)
+    new = d.set(year=1995)
 
-    def test_fluid_year_setter(self):
-        d = Date(2016, 10, 20)
-        new = d.set(year=1995)
-        self.assertIsInstanceOfDate(new)
-        self.assertDate(new, 1995, 10, 20)
-        self.assertEqual(1995, new.year)
+    assert_date(new, 1995, 10, 20)
+    assert new.year == 1995
 
-    def test_fluid_month_setter(self):
-        d = Date(2016, 7, 2)
-        new = d.set(month=11)
-        self.assertIsInstanceOfDate(new)
-        self.assertEqual(11, new.month)
-        self.assertEqual(7, d.month)
 
-    def test_fluid_day_setter(self):
-        d = Date(2016, 7, 2)
-        new = d.set(day=9)
-        self.assertIsInstanceOfDate(new)
-        self.assertEqual(9, new.day)
-        self.assertEqual(2, d.day)
+def test_fluid_month_setter():
+    d = pendulum.date(2016, 7, 2)
+    new = d.set(month=11)
+
+    assert new.month == 11
+    assert d.month == 7
+
+
+def test_fluid_day_setter():
+    d = pendulum.date(2016, 7, 2)
+    new = d.set(day=9)
+
+    assert new.day == 9
+    assert d.day == 2
