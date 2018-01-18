@@ -130,62 +130,6 @@ class Time(FormattableMixing, time):
 
         return dt2
 
-    def min_(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Time or time
-
-        :rtype: Time
-        """
-        if dt is None:
-            dt = Time.now()
-
-        if self < dt:
-            return self
-
-        return self.instance(dt)
-
-    def minimum(self, dt=None):
-        """
-        Get the minimum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Time or time
-
-        :rtype: Time
-        """
-        return self.min_(dt)
-
-    def max_(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Time or time
-
-        :rtype: Time
-        """
-        if dt is None:
-            dt = Time.now()
-
-        if self > dt:
-            return self
-
-        return self.instance(dt)
-
-    def maximum(self, dt=None):
-        """
-        Get the maximum instance between a given instance (default now)
-        and the current instance.
-
-        :type dt: Time or time
-
-        :rtype: Time
-        """
-        return self.max_(dt)
-
     # ADDITIONS AND SUBSTRACTIONS
 
     def add(self, hours=0, minutes=0, seconds=0, microseconds=0):
