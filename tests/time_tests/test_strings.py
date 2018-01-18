@@ -1,37 +1,40 @@
-import pendulum
 from pendulum import Time
-from .. import AbstractTestCase
 
 
-class StringsTest(AbstractTestCase):
+def test_to_string():
+    d = Time(1, 2, 3)
+    assert str(d) == '01:02:03'
+    d = Time(1, 2, 3, 123456)
+    assert str(d) == '01:02:03.123456'
 
-    def test_to_string(self):
-        d = Time(1, 2, 3)
-        self.assertEqual('01:02:03', str(d))
-        d = Time(1, 2, 3, 123456)
-        self.assertEqual('01:02:03.123456', str(d))
 
-    def test_repr(self):
-        d = Time(1, 2, 3)
-        self.assertEqual('Time(1, 2, 3)', repr(d))
+def test_repr():
+    d = Time(1, 2, 3)
+    assert repr(d) == 'Time(1, 2, 3)'
 
-        d = Time(1, 2, 3, 123456)
-        self.assertEqual('Time(1, 2, 3, 123456)', repr(d))
+    d = Time(1, 2, 3, 123456)
+    assert repr(d) == 'Time(1, 2, 3, 123456)'
 
-    def test_format_with_locale(self):
-        d = Time(14, 15, 16)
-        self.assertEqual('02:15:16 PM',
-                         d.format('hh:mm:ss A', locale='fr'))
 
-    def test_strftime(self):
-        d = Time(14, 15, 16)
-        self.assertEqual('14', d.strftime('%H'))
+def test_format_with_locale():
+    d = Time(14, 15, 16)
+    assert d.format('hh:mm:ss A', locale='fr') == '02:15:16 PM'
 
-    def test_for_json(self):
-        d = Time(14, 15, 16)
-        self.assertEqual('14:15:16', d.for_json())
 
-    def test_format(self):
-        d = Time(14, 15, 16)
-        self.assertEqual('14:15:16', '{}'.format(d))
-        self.assertEqual('15', '{:mm}'.format(d))
+def test_strftime():
+    d = Time(14, 15, 16)
+    assert d.strftime('%H') == '14'
+
+
+def test_for_json():
+    d = Time(14, 15, 16)
+    assert d.for_json() == '14:15:16'
+
+
+def test_format():
+    d = Time(14, 15, 16)
+    assert '{}'.format(d) == '14:15:16'
+    assert '{:mm}'.format(d) == '15'
+
+    assert f'{d}' == '14:15:16'
+    assert f'{d:mm}' == '15'

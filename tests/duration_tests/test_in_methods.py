@@ -1,26 +1,26 @@
-from pendulum.duration import Duration
-
-from .. import AbstractTestCase
+import pendulum
 
 
-class InMethodsTest(AbstractTestCase):
+def test_in_weeks():
+    it = pendulum.duration(days=17)
+    assert it.in_weeks() == 2
 
-    def test_in_weeks(self):
-        it = Duration(days=17)
-        self.assertEqual(2, it.in_weeks())
 
-    def test_in_days(self):
-        it = Duration(days=3)
-        self.assertEqual(3, it.in_days())
+def test_in_days():
+    it = pendulum.duration(days=3)
+    assert it.in_days() == 3
 
-    def test_in_hours(self):
-        it = Duration(days=3, minutes=72)
-        self.assertEqual(73, it.in_hours())
 
-    def test_in_minutes(self):
-        it = Duration(minutes=6, seconds=72)
-        self.assertEqual(7, it.in_minutes())
+def test_in_hours():
+    it = pendulum.duration(days=3, minutes=72)
+    assert it.in_hours() == 73
 
-    def test_in_seconds(self):
-        it = Duration(seconds=72)
-        self.assertEqual(72, it.in_seconds())
+
+def test_in_minutes():
+    it = pendulum.duration(minutes=6, seconds=72)
+    assert it.in_minutes() == 7
+
+
+def test_in_seconds():
+    it = pendulum.duration(seconds=72)
+    assert it.in_seconds() == 72

@@ -1,251 +1,288 @@
 import pendulum
+import pytest
 
-from .. import AbstractTestCase
+from ..conftest import assert_datetime
 
 
-class StartEndOfTest(AbstractTestCase):
+def test_start_of_second():
+    d = pendulum.now()
+    new = d.start_of('second')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 0)
 
-    def test_start_of_second(self):
-        d = pendulum.now()
-        new = d.start_of('second')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 0)
 
-    def test_end_of_second(self):
-        d = pendulum.now()
-        new = d.end_of('second')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 999999)
+def test_end_of_second():
+    d = pendulum.now()
+    new = d.end_of('second')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, d.minute, d.second, 999999)
 
-    def test_start_of_minute(self):
-        d = pendulum.now()
-        new = d.start_of('minute')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, d.minute, 0, 0)
 
-    def test_end_of_minute(self):
-        d = pendulum.now()
-        new = d.end_of('minute')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, d.minute, 59, 999999)
+def test_start_of_minute():
+    d = pendulum.now()
+    new = d.start_of('minute')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, d.minute, 0, 0)
 
-    def test_start_of_hour(self):
-        d = pendulum.now()
-        new = d.start_of('hour')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, 0, 0, 0)
 
-    def test_end_of_hour(self):
-        d = pendulum.now()
-        new = d.end_of('hour')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, d.hour, 59, 59, 999999)
+def test_end_of_minute():
+    d = pendulum.now()
+    new = d.end_of('minute')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, d.minute, 59, 999999)
 
-    def test_start_of_day(self):
-        d = pendulum.now()
-        new = d.start_of('day')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, 0, 0, 0)
 
-    def test_end_of_day(self):
-        d = pendulum.now()
-        new = d.end_of('day')
-        self.assertIsInstanceOfDateTime(new)
-        self.assertDateTime(new, d.year, d.month, d.day, 23, 59, 59, 999999)
+def test_start_of_hour():
+    d = pendulum.now()
+    new = d.start_of('hour')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, 0, 0, 0)
 
-    def test_start_of_month_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.start_of('month'))
 
-    def test_start_of_month_from_now(self):
-        d = pendulum.now()
-        new = d.start_of('month')
-        self.assertDateTime(new, d.year, d.month, 1, 0, 0, 0)
+def test_end_of_hour():
+    d = pendulum.now()
+    new = d.end_of('hour')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, d.hour, 59, 59, 999999)
 
-    def test_start_of_month_from_last_day(self):
-        d = pendulum.create(2000, 1, 31, 2, 3, 4)
-        new = d.start_of('month')
-        self.assertDateTime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_start_of_year_is_fluid(self):
-        d = pendulum.now()
-        new = d.start_of('year')
-        self.assertIsInstanceOfDateTime(new)
+def test_start_of_day():
+    d = pendulum.now()
+    new = d.start_of('day')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, 0, 0, 0)
 
-    def test_start_of_year_from_now(self):
-        d = pendulum.now()
-        new = d.start_of('year')
-        self.assertDateTime(new, d.year, 1, 1, 0, 0, 0)
 
-    def test_start_of_year_from_first_day(self):
-        d = pendulum.create(2000, 1, 1, 1, 1, 1)
-        new = d.start_of('year')
-        self.assertDateTime(new, 2000, 1, 1, 0, 0, 0)
+def test_end_of_day():
+    d = pendulum.now()
+    new = d.end_of('day')
+    assert isinstance(new, pendulum.DateTime)
+    assert_datetime(new, d.year, d.month, d.day, 23, 59, 59, 999999)
 
-    def test_start_of_year_from_last_day(self):
-        d = pendulum.create(2000, 12, 31, 23, 59, 59)
-        new = d.start_of('year')
-        self.assertDateTime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_end_of_month_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.end_of('month'))
+def test_start_of_month_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.start_of('month'), pendulum.DateTime)
 
-    def test_end_of_month_from_now(self):
-        d = pendulum.now().start_of('month')
-        new = d.start_of('month')
-        self.assertDateTime(new, d.year, d.month, 1, 0, 0, 0)
 
-    def test_end_of_month(self):
-        d = pendulum.create(2000, 1, 1, 2, 3, 4).end_of('month')
-        new = d.end_of('month')
-        self.assertDateTime(new, 2000, 1, 31, 23, 59, 59)
+def test_start_of_month_from_now():
+    d = pendulum.now()
+    new = d.start_of('month')
+    assert_datetime(new, d.year, d.month, 1, 0, 0, 0)
 
-    def test_end_of_month_from_last_day(self):
-        d = pendulum.create(2000, 1, 31, 2, 3, 4)
-        new = d.end_of('month')
-        self.assertDateTime(new, 2000, 1, 31, 23, 59, 59)
 
-    def test_end_of_year_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.end_of('year'))
+def test_start_of_month_from_last_day():
+    d = pendulum.create(2000, 1, 31, 2, 3, 4)
+    new = d.start_of('month')
+    assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_end_of_year_from_now(self):
-        d = pendulum.now().end_of('year')
-        new = d.end_of('year')
-        self.assertDateTime(new, d.year, 12, 31, 23, 59, 59, 999999)
 
-    def test_end_of_year_from_first_day(self):
-        d = pendulum.create(2000, 1, 1, 1, 1, 1)
-        new = d.end_of('year')
-        self.assertDateTime(new, 2000, 12, 31, 23, 59, 59, 999999)
+def test_start_of_year_is_fluid():
+    d = pendulum.now()
+    new = d.start_of('year')
+    assert isinstance(new, pendulum.DateTime)
 
-    def test_end_of_year_from_last_day(self):
-        d = pendulum.create(2000, 12, 31, 23, 59, 59, 999999)
-        new = d.end_of('year')
-        self.assertDateTime(new, 2000, 12, 31, 23, 59, 59, 999999)
 
-    def test_start_of_decade_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.start_of('decade'))
+def test_start_of_year_from_now():
+    d = pendulum.now()
+    new = d.start_of('year')
+    assert_datetime(new, d.year, 1, 1, 0, 0, 0)
 
-    def test_start_of_decade_from_now(self):
-        d = pendulum.now()
-        new = d.start_of('decade')
-        self.assertDateTime(new, d.year - d.year % 10, 1, 1, 0, 0, 0)
 
-    def test_start_of_decade_from_first_day(self):
-        d = pendulum.create(2000, 1, 1, 1, 1, 1)
-        new = d.start_of('decade')
-        self.assertDateTime(new, 2000, 1, 1, 0, 0, 0)
+def test_start_of_year_from_first_day():
+    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    new = d.start_of('year')
+    assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_start_of_decade_from_last_day(self):
-        d = pendulum.create(2009, 12, 31, 23, 59, 59)
-        new = d.start_of('decade')
-        self.assertDateTime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_end_of_decade_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.end_of('decade'))
+def test_start_of_year_from_last_day():
+    d = pendulum.create(2000, 12, 31, 23, 59, 59)
+    new = d.start_of('year')
+    assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
-    def test_end_of_decade_from_now(self):
-        d = pendulum.now()
-        new = d.end_of('decade')
-        self.assertDateTime(new, d.year - d.year % 10 + 9, 12, 31, 23, 59, 59, 999999)
 
-    def test_end_of_decade_from_first_day(self):
-        d = pendulum.create(2000, 1, 1, 1, 1, 1)
-        new = d.end_of('decade')
-        self.assertDateTime(new, 2009, 12, 31, 23, 59, 59, 999999)
+def test_end_of_month_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.end_of('month'), pendulum.DateTime)
 
-    def test_end_of_decade_from_last_day(self):
-        d = pendulum.create(2009, 12, 31, 23, 59, 59, 999999)
-        new = d.end_of('decade')
-        self.assertDateTime(new, 2009, 12, 31, 23, 59, 59, 999999)
 
-    def test_start_of_century_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.start_of('century'))
+def test_end_of_month_from_now():
+    d = pendulum.now().start_of('month')
+    new = d.start_of('month')
+    assert_datetime(new, d.year, d.month, 1, 0, 0, 0)
 
-    def test_start_of_century_from_now(self):
-        d = pendulum.now()
-        new = d.start_of('century')
-        self.assertDateTime(new, d.year - d.year % 100 + 1, 1, 1, 0, 0, 0)
 
-    def test_start_of_century_from_first_day(self):
-        d = pendulum.create(2001, 1, 1, 1, 1, 1)
-        new = d.start_of('century')
-        self.assertDateTime(new, 2001, 1, 1, 0, 0, 0)
+def test_end_of_month():
+    d = pendulum.create(2000, 1, 1, 2, 3, 4).end_of('month')
+    new = d.end_of('month')
+    assert_datetime(new, 2000, 1, 31, 23, 59, 59)
 
-    def test_start_of_century_from_last_day(self):
-        d = pendulum.create(2100, 12, 31, 23, 59, 59)
-        new = d.start_of('century')
-        self.assertDateTime(new, 2001, 1, 1, 0, 0, 0)
 
-    def test_end_of_century_is_fluid(self):
-        d = pendulum.now()
-        self.assertIsInstanceOfDateTime(d.end_of('century'))
+def test_end_of_month_from_last_day():
+    d = pendulum.create(2000, 1, 31, 2, 3, 4)
+    new = d.end_of('month')
+    assert_datetime(new, 2000, 1, 31, 23, 59, 59)
 
-    def test_end_of_century_from_now(self):
-        now = pendulum.now()
-        d = now.end_of('century')
-        self.assertDateTime(d, now.year - now.year % 100 + 100, 12, 31, 23, 59, 59, 999999)
 
-    def test_end_of_century_from_first_day(self):
-        d = pendulum.create(2001, 1, 1, 1, 1, 1)
-        new = d.end_of('century')
-        self.assertDateTime(new, 2100, 12, 31, 23, 59, 59, 999999)
+def test_end_of_year_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.end_of('year'), pendulum.DateTime)
 
-    def test_end_of_century_from_last_day(self):
-        d = pendulum.create(2100, 12, 31, 23, 59, 59, 999999)
-        new = d.end_of('century')
-        self.assertDateTime(new, 2100, 12, 31, 23, 59, 59, 999999)
 
-    def test_average_is_fluid(self):
-        d = pendulum.now().average()
-        self.assertIsInstanceOfDateTime(d)
+def test_end_of_year_from_now():
+    d = pendulum.now().end_of('year')
+    new = d.end_of('year')
+    assert_datetime(new, d.year, 12, 31, 23, 59, 59, 999999)
 
-    def test_average_from_same(self):
-        d1 = pendulum.create(2000, 1, 31, 2, 3, 4)
-        d2 = pendulum.create(2000, 1, 31, 2, 3, 4).average(d1)
-        self.assertDateTime(d2, 2000, 1, 31, 2, 3, 4)
 
-    def test_average_from_greater(self):
-        d1 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local')
-        d2 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
-        self.assertDateTime(d2, 2004, 12, 31, 12, 30, 30)
+def test_end_of_year_from_first_day():
+    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    new = d.end_of('year')
+    assert_datetime(new, 2000, 12, 31, 23, 59, 59, 999999)
 
-    def test_average_from_lower(self):
-        d1 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
-        d2 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
-        self.assertDateTime(d2, 2004, 12, 31, 12, 30, 30)
 
-    def start_of_with_invalid_unit(self):
-        self.assertRaises(ValueError, pendulum.now().start_of('invalid'))
+def test_end_of_year_from_last_day():
+    d = pendulum.create(2000, 12, 31, 23, 59, 59, 999999)
+    new = d.end_of('year')
+    assert_datetime(new, 2000, 12, 31, 23, 59, 59, 999999)
 
-    def end_of_with_invalid_unit(self):
-        self.assertRaises(ValueError, pendulum.now().end_of('invalid'))
 
-    def test_start_of_with_transition(self):
-        d = pendulum.create(2013, 10, 27, 23, 59, 59, tz='Europe/Paris')
-        self.assertEqual(3600, d.offset)
-        self.assertEqual(7200, d.start_of('month').offset)
-        self.assertEqual(7200, d.start_of('day').offset)
-        self.assertEqual(3600, d.start_of('year').offset)
+def test_start_of_decade_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.start_of('decade'), pendulum.DateTime)
 
-    def test_end_of_with_transition(self):
-        d = pendulum.create(2013, 3, 31, tz='Europe/Paris')
-        self.assertEqual(3600, d.offset)
-        self.assertEqual(7200, d.end_of('month').offset)
-        self.assertEqual(7200, d.end_of('day').offset)
-        self.assertEqual(3600, d.end_of('year').offset)
 
-    def test_start_of_invalid_unit(self):
-        d = pendulum.create(2013, 3, 31, tz='Europe/Paris')
+def test_start_of_decade_from_now():
+    d = pendulum.now()
+    new = d.start_of('decade')
+    assert_datetime(new, d.year - d.year % 10, 1, 1, 0, 0, 0)
 
-        self.assertRaises(ValueError, d.start_of, 'invalid')
 
-    def test_end_of_invalid_unit(self):
-        d = pendulum.create(2013, 3, 31, tz='Europe/Paris')
+def test_start_of_decade_from_first_day():
+    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    new = d.start_of('decade')
+    assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
-        self.assertRaises(ValueError, d.end_of, 'invalid')
+
+def test_start_of_decade_from_last_day():
+    d = pendulum.create(2009, 12, 31, 23, 59, 59)
+    new = d.start_of('decade')
+    assert_datetime(new, 2000, 1, 1, 0, 0, 0)
+
+
+def test_end_of_decade_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.end_of('decade'), pendulum.DateTime)
+
+
+def test_end_of_decade_from_now():
+    d = pendulum.now()
+    new = d.end_of('decade')
+    assert_datetime(new, d.year - d.year % 10 + 9, 12, 31, 23, 59, 59, 999999)
+
+
+def test_end_of_decade_from_first_day():
+    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    new = d.end_of('decade')
+    assert_datetime(new, 2009, 12, 31, 23, 59, 59, 999999)
+
+
+def test_end_of_decade_from_last_day():
+    d = pendulum.create(2009, 12, 31, 23, 59, 59, 999999)
+    new = d.end_of('decade')
+    assert_datetime(new, 2009, 12, 31, 23, 59, 59, 999999)
+
+
+def test_start_of_century_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.start_of('century'), pendulum.DateTime)
+
+
+def test_start_of_century_from_now():
+    d = pendulum.now()
+    new = d.start_of('century')
+    assert_datetime(new, d.year - d.year % 100 + 1, 1, 1, 0, 0, 0)
+
+
+def test_start_of_century_from_first_day():
+    d = pendulum.create(2001, 1, 1, 1, 1, 1)
+    new = d.start_of('century')
+    assert_datetime(new, 2001, 1, 1, 0, 0, 0)
+
+
+def test_start_of_century_from_last_day():
+    d = pendulum.create(2100, 12, 31, 23, 59, 59)
+    new = d.start_of('century')
+    assert_datetime(new, 2001, 1, 1, 0, 0, 0)
+
+
+def test_end_of_century_is_fluid():
+    d = pendulum.now()
+    assert isinstance(d.end_of('century'), pendulum.DateTime)
+
+
+def test_end_of_century_from_now():
+    now = pendulum.now()
+    d = now.end_of('century')
+    assert_datetime(d, now.year - now.year % 100 + 100, 12, 31, 23, 59, 59, 999999)
+
+
+def test_end_of_century_from_first_day():
+    d = pendulum.create(2001, 1, 1, 1, 1, 1)
+    new = d.end_of('century')
+    assert_datetime(new, 2100, 12, 31, 23, 59, 59, 999999)
+
+
+def test_end_of_century_from_last_day():
+    d = pendulum.create(2100, 12, 31, 23, 59, 59, 999999)
+    new = d.end_of('century')
+    assert_datetime(new, 2100, 12, 31, 23, 59, 59, 999999)
+
+
+def test_average_is_fluid():
+    d = pendulum.now().average()
+    assert isinstance(d, pendulum.DateTime)
+
+
+def test_average_from_same():
+    d1 = pendulum.create(2000, 1, 31, 2, 3, 4)
+    d2 = pendulum.create(2000, 1, 31, 2, 3, 4).average(d1)
+    assert_datetime(d2, 2000, 1, 31, 2, 3, 4)
+
+
+def test_average_from_greater():
+    d1 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local')
+    d2 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
+    assert_datetime(d2, 2004, 12, 31, 12, 30, 30)
+
+
+def test_average_from_lower():
+    d1 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
+    d2 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
+    assert_datetime(d2, 2004, 12, 31, 12, 30, 30)
+
+
+def start_of_with_invalid_unit():
+    with pytest.raises(ValueError):
+        pendulum.now().start_of('invalid')
+
+
+def end_of_with_invalid_unit():
+    with pytest.raises(ValueError):
+        pendulum.now().end_of('invalid')
+
+
+def test_start_of_with_transition():
+    d = pendulum.create(2013, 10, 27, 23, 59, 59, tz='Europe/Paris')
+    assert d.offset == 3600
+    assert d.start_of('month').offset == 7200
+    assert d.start_of('day').offset == 7200
+    assert d.start_of('year').offset == 3600
+
+
+def test_end_of_with_transition():
+    d = pendulum.create(2013, 3, 31, tz='Europe/Paris')
+    assert d.offset == 3600
+    assert d.end_of('month').offset == 7200
+    assert d.end_of('day').offset == 7200
+    assert d.end_of('year').offset == 3600

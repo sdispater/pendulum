@@ -20,7 +20,7 @@ def p1(p):
 
 
 @pytest.fixture
-def dt(p):
+def dt():
     tz = timezone('Europe/Paris')
 
     return tz.convert(datetime(2016, 8, 27, 12, 34, 56, 123456))

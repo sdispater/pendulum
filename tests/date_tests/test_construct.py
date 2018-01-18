@@ -1,37 +1,38 @@
 from datetime import date
 from pendulum import Date
 
-from .. import AbstractTestCase
+from ..conftest import assert_date
 
 
-class ConstructTest(AbstractTestCase):
+def test_construct():
+    d = Date(2016, 10, 20)
 
-    def test_construct(self):
-        d = Date(2016, 10, 20)
+    assert_date(d, 2016, 10, 20)
 
-        self.assertIsInstanceOfDate(d)
-        self.assertDate(d, 2016, 10, 20)
 
-    def test_today(self):
-        d = Date.today()
+def test_today():
+    d = Date.today()
 
-        self.assertIsInstanceOfDate(d)
+    assert isinstance(d, Date)
 
-    def test_instance(self):
-        d = Date.instance(date(2016, 10, 20))
 
-        self.assertIsInstanceOfDate(d)
-        self.assertDate(d, 2016, 10, 20)
+def test_instance():
+    d = Date.instance(date(2016, 10, 20))
 
-    def test_create(self):
-        d = Date.create(2016, 10, 20)
+    assert isinstance(d, Date)
+    assert_date(d, 2016, 10, 20)
 
-        self.assertIsInstanceOfDate(d)
-        self.assertDate(d, 2016, 10, 20)
 
-    def test_create_empty_values(self):
-        now = Date.today()
-        d = Date.create()
+def test_create():
+    d = Date.create(2016, 10, 20)
 
-        self.assertIsInstanceOfDate(d)
-        self.assertDate(d, now.year, now.month, now.day)
+    assert isinstance(d, Date)
+    assert_date(d, 2016, 10, 20)
+
+
+def test_create_empty_values():
+    now = Date.today()
+    d = Date.create()
+
+    assert isinstance(d, Date)
+    assert_date(d, now.year, now.month, now.day)

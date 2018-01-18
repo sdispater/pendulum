@@ -27,6 +27,7 @@ def test_range_no_overflow():
     assert_datetime(r[0], 2000, 1, 1, 12, 45, 37)
     assert_datetime(r[-1], 2000, 1, 30, 12, 45, 37)
 
+
 def test_range_inverted():
     dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
     dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
@@ -89,6 +90,7 @@ def test_range_months_overflow():
     assert_datetime(r[0], 2016, 1, 30, 0, 0, 0)
     assert_datetime(r[-1], 2016, 5, 30, 0, 0, 0)
 
+
 def test_range_with_dst():
     dt1 = pendulum.create(2016, 10, 14, tz='America/Sao_Paulo')
     dt2 = dt1.add(weeks=1)
@@ -99,6 +101,7 @@ def test_range_with_dst():
     assert_datetime(r[0], 2016, 10, 14, 0, 0, 0)
     assert_datetime(r[2], 2016, 10, 16, 1, 0, 0)
     assert_datetime(r[-1], 2016, 10, 21, 0, 0, 0)
+
 
 def test_range_amount():
     dt1 = pendulum.create(2016, 10, 14, tz='America/Sao_Paulo')

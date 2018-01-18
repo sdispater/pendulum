@@ -1,214 +1,234 @@
 import pendulum
+import pytest
+
 from datetime import timedelta
-from pendulum import DateTime
 
-from .. import AbstractTestCase
+from ..conftest import assert_datetime
 
 
-class SubTest(AbstractTestCase):
+def test_sub_years_positive():
+    assert pendulum.create(1975).subtract(years=1).year == 1974
 
-    def test_sub_years_positive(self):
-        self.assertEqual(1974, pendulum.create(1975).subtract(years=1).year)
 
-    def test_sub_years_zero(self):
-        self.assertEqual(1975, pendulum.create(1975).subtract(years=0).year)
+def test_sub_years_zero():
+    assert pendulum.create(1975).subtract(years=0).year == 1975
 
-    def test_sub_years_negative(self):
-        self.assertEqual(1976, pendulum.create(1975).subtract(years=-1).year)
 
-    def test_sub_months_positive(self):
-        self.assertEqual(11, pendulum.create(1975, 12).subtract(months=1).month)
+def test_sub_years_negative():
+    assert pendulum.create(1975).subtract(years=-1).year == 1976
 
-    def test_sub_months_zero(self):
-        self.assertEqual(12, pendulum.create(1975, 12).subtract(months=0).month)
 
-    def test_sub_months_negative(self):
-        self.assertEqual(1, pendulum.create(1975, 12).subtract(months=-1).month)
+def test_sub_months_positive():
+    assert pendulum.create(1975, 12).subtract(months=1).month == 11
 
-    def test_sub_days_positive(self):
-        self.assertEqual(30,pendulum.create(1975, 5, 31).subtract(days=1).day)
 
-    def test_sub_days_zero(self):
-        self.assertEqual(31,pendulum.create(1975, 5, 31).subtract(days=0).day)
+def test_sub_months_zero():
+    assert pendulum.create(1975, 12).subtract(months=0).month == 12
 
-    def test_sub_days_negative(self):
-        self.assertEqual(1,pendulum.create(1975, 5, 31).subtract(days=-1).day)
 
-    def test_sub_weeks_positive(self):
-        self.assertEqual(14,pendulum.create(1975, 5, 21).subtract(weeks=1).day)
+def test_sub_months_negative():
+    assert pendulum.create(1975, 12).subtract(months=-1).month == 1
 
-    def test_sub_weeks_zero(self):
-        self.assertEqual(21,pendulum.create(1975, 5, 21).subtract(weeks=0).day)
 
-    def test_sub_weeks_negative(self):
-        self.assertEqual(28,pendulum.create(1975, 5, 21).subtract(weeks=-1).day)
+def test_sub_days_positive():
+    assert pendulum.create(1975, 5, 31).subtract(days=1).day == 30
 
-    def test_sub_hours_positive(self):
-        self.assertEqual(23,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=1).hour)
 
-    def test_sub_hours_zero(self):
-        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=0).hour)
+def test_sub_days_zero():
+    assert pendulum.create(1975, 5, 31).subtract(days=0).day == 31
 
-    def test_sub_hours_negative(self):
-        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=-1).hour)
 
-    def test_sub_minutes_positive(self):
-        self.assertEqual(59,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=1).minute)
+def test_sub_days_negative():
+    assert pendulum.create(1975, 5, 31).subtract(days=-1).day == 1
 
-    def test_sub_minutes_zero(self):
-        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=0).minute)
 
-    def test_sub_minutes_negative(self):
-        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=-1).minute)
+def test_sub_weeks_positive():
+    assert pendulum.create(1975, 5, 21).subtract(weeks=1).day == 14
 
-    def test_sub_seconds_positive(self):
-        self.assertEqual(59,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=1).second)
 
-    def test_sub_seconds_zero(self):
-        self.assertEqual(0,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=0).second)
+def test_sub_weeks_zero():
+    assert pendulum.create(1975, 5, 21).subtract(weeks=0).day == 21
 
-    def test_sub_seconds_negative(self):
-        self.assertEqual(1,pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=-1).second)
 
-    def test_subtract_timedelta(self):
-        delta = timedelta(days=6, seconds=16, microseconds=654321)
-        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+def test_sub_weeks_negative():
+    assert pendulum.create(1975, 5, 21).subtract(weeks=-1).day == 28
 
-        d = d - delta
-        self.assertEqual(8, d.day)
-        self.assertEqual(11, d.minute)
-        self.assertEqual(59, d.second)
-        self.assertEqual(123456, d.microsecond)
 
-    def test_subtract_duration(self):
-        duration = pendulum.duration(
-            years=2, months=3,
-            days=6, seconds=16, microseconds=654321
-        )
-        d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
+def test_sub_hours_positive():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=1).hour == 23
 
-        d = d - duration
-        assert 2012 == d.year
-        assert 12 == d.month
-        assert 8 == d.day
-        assert 3 == d.hour
-        assert 11 == d.minute
-        assert 59 == d.second
-        assert 123456 == d.microsecond
 
-    def test_subtract_time_to_new_transition_skipped(self):
-        dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
+def test_sub_hours_zero():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=0).hour == 0
 
-        self.assertDateTime(dt, 2013, 3, 31, 3, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst)
 
-        dt = dt.subtract(microseconds=1)
+def test_sub_hours_negative():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(hours=-1).hour == 1
 
-        self.assertDateTime(dt, 2013, 3, 31, 1, 59, 59, 999999)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst())
 
-        dt = pendulum.create(2013, 3, 10, 3, 0, 0, 0, 'America/New_York')
+def test_sub_minutes_positive():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=1).minute == 59
 
-        self.assertDateTime(dt, 2013, 3, 10, 3, 0, 0, 0)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst())
 
-        dt = dt.subtract(microseconds=1)
+def test_sub_minutes_zero():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=0).minute == 0
 
-        self.assertDateTime(dt, 2013, 3, 10, 1, 59, 59, 999999)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst())
 
-        dt = pendulum.create(1957, 4, 28, 3, 0, 0, 0, 'America/New_York')
+def test_sub_minutes_negative():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(minutes=-1).minute == 1
 
-        self.assertDateTime(dt, 1957, 4, 28, 3, 0, 0, 0)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst())
 
-        dt = dt.subtract(microseconds=1)
+def test_sub_seconds_positive():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=1).second == 59
 
-        self.assertDateTime(dt, 1957, 4, 28, 1, 59, 59, 999999)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst())
 
-    def test_subtract_time_to_new_transition_skipped_big(self):
-        dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
+def test_sub_seconds_zero():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=0).second == 0
 
-        self.assertDateTime(dt, 2013, 3, 31, 3, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst())
 
-        dt = dt.subtract(days=1)
+def test_sub_seconds_negative():
+    assert pendulum.create(1975, 5, 21, 0, 0, 0).subtract(seconds=-1).second == 1
 
-        self.assertDateTime(dt, 2013, 3, 30, 3, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst())
 
-    def test_subtract_time_to_new_transition_repeated(self):
-        dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
+def test_subtract_timedelta():
+    delta = timedelta(days=6, seconds=16, microseconds=654321)
+    d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
 
-        self.assertDateTime(dt, 2013, 10, 27, 2, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst())
+    d = d - delta
+    assert d.day == 8
+    assert d.minute == 11
+    assert d.second == 59
+    assert d.microsecond == 123456
 
-        dt = dt.subtract(microseconds=1)
 
-        self.assertDateTime(dt, 2013, 10, 27, 2, 59, 59, 999999)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst())
+def test_subtract_duration():
+    duration = pendulum.duration(
+        years=2, months=3,
+        days=6, seconds=16, microseconds=654321
+    )
+    d = pendulum.create(2015, 3, 14, 3, 12, 15, 777777)
 
-        dt = pendulum.create(2013, 11, 3, 1, 0, 0, 0, 'America/New_York')
+    d = d - duration
+    assert 2012 == d.year
+    assert 12 == d.month
+    assert 8 == d.day
+    assert 3 == d.hour
+    assert 11 == d.minute
+    assert 59 == d.second
+    assert 123456 == d.microsecond
 
-        self.assertDateTime(dt, 2013, 11, 3, 1, 0, 0, 0)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-5 * 3600, dt.offset)
-        self.assertFalse(dt.is_dst())
 
-        dt = dt.subtract(microseconds=1)
+def test_subtract_time_to_new_transition_skipped():
+    dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
 
-        self.assertDateTime(dt, 2013, 11, 3, 1, 59, 59, 999999)
-        self.assertEqual('America/New_York', dt.timezone_name)
-        self.assertEqual(-4 * 3600, dt.offset)
-        self.assertTrue(dt.is_dst())
+    assert_datetime(dt, 2013, 3, 31, 3, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 7200
+    assert dt.is_dst()
 
-    def test_subtract_time_to_new_transition_repeated_big(self):
-        dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
+    dt = dt.subtract(microseconds=1)
 
-        self.assertDateTime(dt, 2013, 10, 27, 2, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(3600, dt.offset)
-        self.assertFalse(dt.is_dst())
+    assert_datetime(dt, 2013, 3, 31, 1, 59, 59, 999999)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 3600
+    assert not dt.is_dst()
 
-        dt = dt.subtract(days=1)
+    dt = pendulum.create(2013, 3, 10, 3, 0, 0, 0, 'America/New_York')
 
-        self.assertDateTime(dt, 2013, 10, 26, 2, 0, 0, 0)
-        self.assertEqual('Europe/Paris', dt.timezone_name)
-        self.assertEqual(7200, dt.offset)
-        self.assertTrue(dt.is_dst())
+    assert_datetime(dt, 2013, 3, 10, 3, 0, 0, 0)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -4 * 3600
+    assert dt.is_dst()
 
-    def test_subtract_invalid_type(self):
-        d = pendulum.create(1975, 5, 21, 0, 0, 0)
+    dt = dt.subtract(microseconds=1)
 
-        try:
-            d - 'ab'
-            self.fail()
-        except TypeError:
-            pass
+    assert_datetime(dt, 2013, 3, 10, 1, 59, 59, 999999)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -5 * 3600
+    assert not dt.is_dst()
 
-        try:
-            'ab' - d
-            self.fail()
-        except TypeError:
-            pass
+    dt = pendulum.create(1957, 4, 28, 3, 0, 0, 0, 'America/New_York')
+
+    assert_datetime(dt, 1957, 4, 28, 3, 0, 0, 0)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -4 * 3600
+    assert dt.is_dst()
+
+    dt = dt.subtract(microseconds=1)
+
+    assert_datetime(dt, 1957, 4, 28, 1, 59, 59, 999999)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -5 * 3600
+    assert not dt.is_dst()
+
+
+def test_subtract_time_to_new_transition_skipped_big():
+    dt = pendulum.create(2013, 3, 31, 3, 0, 0, 0, 'Europe/Paris')
+
+    assert_datetime(dt, 2013, 3, 31, 3, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 7200
+    assert dt.is_dst()
+
+    dt = dt.subtract(days=1)
+
+    assert_datetime(dt, 2013, 3, 30, 3, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 3600
+    assert not dt.is_dst()
+
+
+def test_subtract_time_to_new_transition_repeated():
+    dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
+
+    assert_datetime(dt, 2013, 10, 27, 2, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 3600
+    assert not dt.is_dst()
+
+    dt = dt.subtract(microseconds=1)
+
+    assert_datetime(dt, 2013, 10, 27, 2, 59, 59, 999999)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 7200
+    assert dt.is_dst()
+
+    dt = pendulum.create(2013, 11, 3, 1, 0, 0, 0, 'America/New_York')
+
+    assert_datetime(dt, 2013, 11, 3, 1, 0, 0, 0)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -5 * 3600
+    assert not dt.is_dst()
+
+    dt = dt.subtract(microseconds=1)
+
+    assert_datetime(dt, 2013, 11, 3, 1, 59, 59, 999999)
+    assert dt.timezone_name == 'America/New_York'
+    assert dt.offset == -4 * 3600
+    assert dt.is_dst()
+
+
+def test_subtract_time_to_new_transition_repeated_big():
+    dt = pendulum.create(2013, 10, 27, 2, 0, 0, 0, 'Europe/Paris')
+
+    assert_datetime(dt, 2013, 10, 27, 2, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 3600
+    assert not dt.is_dst()
+
+    dt = dt.subtract(days=1)
+
+    assert_datetime(dt, 2013, 10, 26, 2, 0, 0, 0)
+    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.offset == 7200
+    assert dt.is_dst()
+
+
+def test_subtract_invalid_type():
+    d = pendulum.create(1975, 5, 21, 0, 0, 0)
+
+    with pytest.raises(TypeError):
+        d - 'ab'
+
+    with pytest.raises(TypeError):
+        'ab' - d

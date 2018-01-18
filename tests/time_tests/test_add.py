@@ -1,72 +1,75 @@
-from .. import AbstractTestCase
-
 import pendulum
+import pytest
+
 from datetime import timedelta
-from pendulum import Time
 
 
-class AddTest(AbstractTestCase):
+def test_add_hours_positive():
+    assert pendulum.time(12, 34, 56).add(hours=1).hour == 13
 
-    def test_add_hours_positive(self):
-        self.assertEqual(13, Time(12, 34, 56).add(hours=1).hour)
 
-    def test_add_hours_zero(self):
-        self.assertEqual(12, Time(12, 34, 56).add(hours=0).hour)
+def test_add_hours_zero():
+    assert pendulum.time(12, 34, 56).add(hours=0).hour == 12
 
-    def test_add_hours_negative(self):
-        self.assertEqual(11, Time(12, 34, 56).add(hours=-1).hour)
 
-    def test_add_minutes_positive(self):
-        self.assertEqual(35, Time(12, 34, 56).add(minutes=1).minute)
+def test_add_hours_negative():
+    assert pendulum.time(12, 34, 56).add(hours=-1).hour == 11
 
-    def test_add_minutes_zero(self):
-        self.assertEqual(34, Time(12, 34, 56).add(minutes=0).minute)
 
-    def test_add_minutes_negative(self):
-        self.assertEqual(33, Time(12, 34, 56).add(minutes=-1).minute)
+def test_add_minutes_positive():
+    assert pendulum.time(12, 34, 56).add(minutes=1).minute == 35
 
-    def test_add_seconds_positive(self):
-        self.assertEqual(57, Time(12, 34, 56).add(seconds=1).second)
 
-    def test_add_seconds_zero(self):
-        self.assertEqual(56, Time(12, 34, 56).add(seconds=0).second)
+def test_add_minutes_zero():
+    assert pendulum.time(12, 34, 56).add(minutes=0).minute == 34
 
-    def test_add_seconds_negative(self):
-        self.assertEqual(55, Time(12, 34, 56).add(seconds=-1).second)
 
-    def test_add_timedelta(self):
-        delta = timedelta(seconds=45, microseconds=123456)
-        d = Time(3, 12, 15, 654321)
+def test_add_minutes_negative():
+    assert pendulum.time(12, 34, 56).add(minutes=-1).minute == 33
 
-        d = d.add_timedelta(delta)
-        self.assertEqual(13, d.minute)
-        self.assertEqual(0, d.second)
-        self.assertEqual(777777, d.microsecond)
 
-        d = Time(3, 12, 15, 654321)
+def test_add_seconds_positive():
+    assert pendulum.time(12, 34, 56).add(seconds=1).second == 57
 
-        d = d + delta
-        self.assertEqual(13, d.minute)
-        self.assertEqual(0, d.second)
-        self.assertEqual(777777, d.microsecond)
 
-    def test_add_timedelta_with_days(self):
-        delta = timedelta(days=3, seconds=45, microseconds=123456)
-        d = Time(3, 12, 15, 654321)
+def test_add_seconds_zero():
+    assert pendulum.time(12, 34, 56).add(seconds=0).second == 56
 
-        self.assertRaises(TypeError, d.add_timedelta, delta)
 
-    def test_addition_invalid_type(self):
-        d = Time(3, 12, 15, 654321)
+def test_add_seconds_negative():
+    assert pendulum.time(12, 34, 56).add(seconds=-1).second == 55
 
-        try:
-            d + 3
-            self.fail()
-        except TypeError:
-            pass
 
-        try:
-            3 + d
-            self.fail()
-        except TypeError:
-            pass
+def test_add_timedelta():
+    delta = timedelta(seconds=45, microseconds=123456)
+    d = pendulum.time(3, 12, 15, 654321)
+
+    d = d.add_timedelta(delta)
+    assert d.minute == 13
+    assert d.second == 0
+    assert d.microsecond == 777777
+
+    d = pendulum.time(3, 12, 15, 654321)
+
+    d = d + delta
+    assert d.minute == 13
+    assert d.second == 0
+    assert d.microsecond == 777777
+
+
+def test_add_timedelta_with_days():
+    delta = timedelta(days=3, seconds=45, microseconds=123456)
+    d = pendulum.time(3, 12, 15, 654321)
+
+    with pytest.raises(TypeError):
+        d.add_timedelta(delta)
+
+
+def test_addition_invalid_type():
+    d = pendulum.time(3, 12, 15, 654321)
+
+    with pytest.raises(TypeError):
+        d + 3
+
+    with pytest.raises(TypeError):
+        3 + d

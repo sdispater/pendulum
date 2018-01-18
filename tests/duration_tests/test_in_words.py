@@ -1,68 +1,61 @@
-from pendulum import Duration
-
-from .. import AbstractTestCase
+import pendulum
 
 
-class ForHumansTest(AbstractTestCase):
+def test_week():
+    assert pendulum.duration(days=364).in_words() == '52 weeks'
+    assert pendulum.duration(days=7).in_words() == '1 week'
 
-    def test_week(self):
-        self.assertEqual('52 weeks', Duration(days=364).in_words())
-        self.assertEqual('1 week', Duration(days=7).in_words())
 
-    def test_week_to_string(self):
-        self.assertEqual('52 weeks', str(Duration(days=364)))
-        self.assertEqual('1 week', str(Duration(days=7)))
+def test_week_to_string():
+    assert str(pendulum.duration(days=364)) == '52 weeks'
+    assert str(pendulum.duration(days=7)) == '1 week'
 
-    def test_weeks_and_day(self):
-        self.assertEqual('52 weeks 1 day', Duration(days=365).in_words())
 
-    def test_all(self):
-        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
-        self.assertEqual(
-            '2 years 3 months 168 weeks 1 day 2 hours 1 minute 25 seconds',
-            pi.in_words()
-        )
+def test_weeks_and_day():
+    assert pendulum.duration(days=365).in_words() == '52 weeks 1 day'
 
-    def test_in_french(self):
-        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
-        self.assertEqual(
-            '2 ans 3 mois 168 semaines 1 jour 2 heures 1 minute 25 secondes',
-            pi.in_words(locale='fr')
-        )
 
-    def test_repr(self):
-        pi = Duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
-        self.assertEqual(
-            'Duration(years=2, months=3, weeks=168, days=1, hours=2, minutes=1, seconds=25)',
-            repr(pi)
-        )
+def test_all():
+    pi = pendulum.duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
 
-    def test_singular_negative_values(self):
-        pi = Duration(days=-1)
-        self.assertEqual(
-            '-1 day',
-            pi.in_words()
-        )
+    expected = '2 years 3 months 168 weeks 1 day 2 hours 1 minute 25 seconds'
+    assert pi.in_words() == expected
 
-    def test_separator(self):
-        pi = Duration(days=1177, seconds=7284, microseconds=1000000)
-        self.assertEqual(
-            '168 weeks, 1 day, 2 hours, 1 minute, 25 seconds',
-            pi.in_words(separator=', ')
-        )
 
-    def test_subseconds(self):
-        pi = Duration(microseconds=123456)
+def test_in_french():
+    pi = pendulum.duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
 
-        self.assertEqual(
-            '0.12 second',
-            pi.in_words()
-        )
+    expected = '2 ans 3 mois 168 semaines 1 jour 2 heures 1 minute 25 secondes'
+    assert pi.in_words(locale='fr') == expected
 
-    def test_subseconds_with_seconds(self):
-        pi = Duration(seconds=12, microseconds=123456)
 
-        self.assertEqual(
-            '12 seconds',
-            pi.in_words()
-        )
+def test_repr():
+    pi = pendulum.duration(years=2, months=3, days=1177, seconds=7284, microseconds=1000000)
+
+    expected = 'Duration(years=2, months=3, weeks=168, days=1, hours=2, minutes=1, seconds=25)'
+    assert repr(pi) == expected
+
+
+def test_singular_negative_values():
+    pi = pendulum.duration(days=-1)
+
+    assert pi.in_words() == '-1 day'
+
+
+def test_separator():
+    pi = pendulum.duration(days=1177, seconds=7284, microseconds=1000000)
+
+    expected = '168 weeks, 1 day, 2 hours, 1 minute, 25 seconds'
+    assert pi.in_words(separator=', ') == expected
+
+
+def test_subseconds():
+    pi = pendulum.duration(microseconds=123456)
+
+    assert pi.in_words() == '0.12 second'
+
+
+def test_subseconds_with_seconds():
+    pi = pendulum.duration(seconds=12, microseconds=123456)
+
+    assert pi.in_words() == '12 seconds'
