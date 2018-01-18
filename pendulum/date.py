@@ -13,7 +13,7 @@ from .constants import (
     MONTHS_PER_YEAR,
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 )
-from .exceptions import DateTimeException
+from .exceptions import PendulumException
 
 
 class Date(FormattableMixing, date):
@@ -716,7 +716,7 @@ class Date(FormattableMixing, date):
 
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
-            raise DateTimeException('Unable to find occurence {} of {} in {}'.format(
+            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
                                      nth, self._days[day_of_week], unit))
 
         return dt

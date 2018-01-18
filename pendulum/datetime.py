@@ -5,7 +5,7 @@ import pendulum
 from .date import Date
 from .time import Time
 from .period import Period
-from .exceptions import DateTimeException
+from .exceptions import PendulumException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
 from .helpers import add_duration
@@ -1316,7 +1316,7 @@ class DateTime(datetime.datetime, Date):
 
         dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
         if dt is False:
-            raise DateTimeException('Unable to find occurence {} of {} in {}'.format(
+            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
                                      nth, self._days[day_of_week], unit))
 
         return dt

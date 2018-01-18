@@ -2,7 +2,7 @@ import pytest
 
 import pendulum
 from pendulum import Date
-from pendulum.exceptions import DateTimeException
+from pendulum.exceptions import PendulumException
 
 from ..conftest import assert_date
 
@@ -114,14 +114,14 @@ def test_last_friday_of_month():
 def test_nth_of_month_outside_scope():
     d = Date(1975, 12, 5)
 
-    with pytest.raises(DateTimeException):
+    with pytest.raises(PendulumException):
         d.nth_of('month', 6, pendulum.MONDAY)
 
 
 def test_nth_of_month_outside_year():
     d = Date(1975, 12, 5)
 
-    with pytest.raises(DateTimeException):
+    with pytest.raises(PendulumException):
         d.nth_of('month', 55, pendulum.MONDAY)
 
 
@@ -186,14 +186,14 @@ def test_last_day_of_quarter_that_will_not_exist_in_the_last_month():
 def test_nth_of_quarter_outside_scope():
     d = Date(1975, 1, 5)
 
-    with pytest.raises(DateTimeException):
+    with pytest.raises(PendulumException):
         d.nth_of('quarter', 20, pendulum.MONDAY)
 
 
 def test_nth_of_quarter_outside_year():
     d = Date(1975, 1, 5)
 
-    with pytest.raises(DateTimeException):
+    with pytest.raises(PendulumException):
         d.nth_of('quarter', 55, pendulum.MONDAY)
 
 
@@ -251,7 +251,7 @@ def test_last_friday_of_year():
 def test_nth_of_year_outside_scope():
     d = Date(1975, 1, 5)
 
-    with pytest.raises(DateTimeException):
+    with pytest.raises(PendulumException):
         d.nth_of('year', 55, pendulum.MONDAY)
 
 
