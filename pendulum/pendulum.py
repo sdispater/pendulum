@@ -273,11 +273,11 @@ class Pendulum(Date, datetime.datetime):
             return test_instance
 
         if tz is None or tz == 'local':
-            dt = datetime.datetime.now()
+            dt = datetime.datetime.now(cls._local_timezone())
         elif tz is UTC or tz == 'UTC':
-            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
+            dt = datetime.datetime.now(UTC)
         else:
-            dt = datetime.datetime.utcnow().replace(tzinfo=UTC)
+            dt = datetime.datetime.now(UTC)
             tz = cls._safe_create_datetime_zone(tz)
             dt = tz.convert(dt)
 
@@ -358,7 +358,7 @@ class Pendulum(Date, datetime.datetime):
             if cls.has_test_now():
                 now = cls.get_test_now().in_tz(tz)
             else:
-                now = datetime.datetime.utcnow().replace(tzinfo=UTC)
+                now = datetime.datetime.now(UTC)
                 now = tz.convert(now)
 
             if year is None:
