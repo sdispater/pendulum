@@ -5,6 +5,7 @@
 ### Changed
 
 - `format()`, `diff_for_humans()`, `in_words()` and `to_xxx_string()` methods now return unicode strings.
+- Improved performance of `now()` and `utcnow()`. (Thanks to [pganssle](https://github.com/pganssle))
 
 ### Fixed
 
