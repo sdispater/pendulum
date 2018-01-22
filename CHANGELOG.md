@@ -1,10 +1,10 @@
 # Change Log
 
-## [Unreleased]
+## [1.4.0] - 2017-01-22
 
 ### Changed
 
-- `format()`, `diff_for_humans()`, `in_words()` and `to_xxx_string()` methods now return unicode strings.
+- `format()`, `diff_for_humans()`, `in_words()` and `to_xxx_string()` methods now return unicode strings for Python 2.7.
 - Improved performance of `now()` and `utcnow()`. (Thanks to [pganssle](https://github.com/pganssle))
 
 ### Fixed
@@ -440,7 +440,8 @@ Initial release
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.3.2...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.4.0...1.x
+[1.4.0]: https://github.com/sdispater/pendulum/releases/tag/1.4.0
 [1.3.2]: https://github.com/sdispater/pendulum/releases/tag/1.3.2
 [1.3.1]: https://github.com/sdispater/pendulum/releases/tag/1.3.1
 [1.3.0]: https://github.com/sdispater/pendulum/releases/tag/1.3.0
