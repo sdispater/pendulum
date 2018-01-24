@@ -3,7 +3,7 @@
 import operator
 import pendulum
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from .mixins.interval import WordableIntervalMixin
 from .interval import BaseInterval, Interval
@@ -299,6 +299,17 @@ class Period(WordableIntervalMixin, BaseInterval):
         return '<Period [{} -> {}]>'.format(
             self._start, self._end
         )
+
+    def _cmp(self, other):
+        # Only needed for PyPy3
+        assert isinstance(other, timedelta)
+
+        if isinstance(other, Period):
+            other = other.as_timedelta()
+
+        td = self.as_timedelta()
+
+        return 0 if td == other else 1 if td > other else -1
 
     def _getstate(self, protocol=3):
         start, end = self.start, self.end

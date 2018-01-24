@@ -2,6 +2,9 @@
 
 import pickle
 import pendulum
+
+from datetime import timedelta
+
 from .. import AbstractTestCase
 
 
@@ -34,3 +37,11 @@ class BehaviorTest(AbstractTestCase):
         self.assertEqual(p.start, p2.start)
         self.assertEqual(p.end, p2.end)
         self.assertEqual(p.invert, p2.invert)
+
+    def test_comparison_to_timedelta(self):
+        dt1 = pendulum.create(2016, 11, 18)
+        dt2 = pendulum.create(2016, 11, 20)
+
+        period = dt2 - dt1
+
+        assert period < timedelta(days=4)

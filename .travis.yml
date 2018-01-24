@@ -19,6 +19,7 @@ matrix:
     - python: 3.6
       env: PENDULUM_EXTENSIONS=0
     - python: pypy
+    - python: pypy3
 
 before_install:
   - pip install codecov
