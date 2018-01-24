@@ -218,64 +218,54 @@ class Timezone(tzinfo):
                     offset = self._tzinfos[tzinfo_index].offset
                     unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
                 else:
-                    # tr.pre_time < dt < tr.time
-                    # Skipped time
-                    if dst_rule == self.TRANSITION_ERROR:
-                        raise NonExistingTime(dt)
-                    elif dst_rule == self.PRE_TRANSITION:
-                        # We do not apply the transition
-                        (unix_time,
-                         tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
-                    else:
-                        unix_time = tr.unix_time - (tr.time - dt).total_seconds()
+                    unix_time, tzinfo_index = self._get_time(dt, tr, dst_rule)
         elif tr is end:
             if tr.pre_time < dt:
                 # After the last transition.
                 unix_time = tr.unix_time + (dt - tr.time).total_seconds()
             else:
-                # tr.time <= dt <= tr.pre_time
-                # Repeated time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise AmbiguousTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
-                else:
-                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+                unix_time, tzinfo_index = self._get_time(dt, tr, dst_rule)
         else:
-            if tr.pre_time <= dt < tr.time:
-                # tr.pre_time <= dt < tr.time
-                # Skipped time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise NonExistingTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
-                else:
-                    unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
-            elif tr.time <= dt <= tr.pre_time:
-                # tr.time <= dt <= tr.pre_time
-                # Repeated time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise AmbiguousTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
-                else:
-                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
-            else:
-                # In between transitions
-                # The actual transition type is the previous transition one
-                (unix_time,
-                 tzinfo_index) = self._get_previous_transition_time(tr, dt)
+            unix_time, tzinfo_index = self._get_time(dt, tr, dst_rule)
 
         return self._to_local_time(
             unix_time, dt.microsecond, tzinfo_index,
             fold
         )
+
+    def _get_time(self, dt, tr, dst_rule):
+        tzinfo_index = tr._tzinfo_index
+
+        if tr.pre_time <= dt < tr.time:
+            # tr.pre_time <= dt < tr.time
+            # Skipped time
+            if dst_rule == self.TRANSITION_ERROR:
+                raise NonExistingTime(dt)
+            elif dst_rule == self.PRE_TRANSITION:
+                # We do not apply the transition
+                (unix_time,
+                 tzinfo_index) = self._get_previous_transition_time(tr, dt,
+                                                                    skipped=True)
+            else:
+                unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
+        elif tr.time <= dt <= tr.pre_time:
+            # tr.time <= dt <= tr.pre_time
+            # Repeated time
+            if dst_rule == self.TRANSITION_ERROR:
+                raise AmbiguousTime(dt)
+            elif dst_rule == self.PRE_TRANSITION:
+                # We do not apply the transition
+                (unix_time,
+                 tzinfo_index) = self._get_previous_transition_time(tr, dt)
+            else:
+                unix_time = tr.unix_time + (dt - tr.time).total_seconds()
+        else:
+            # In between transitions
+            # The actual transition type is the previous transition one
+            (unix_time,
+             tzinfo_index) = self._get_previous_transition_time(tr, dt)
+
+        return unix_time, tzinfo_index
 
     def _convert(self, dt):
         """

@@ -227,6 +227,15 @@ class TimezoneTest(AbstractTestCase):
         assert dt.microsecond == 0
         assert dt.utcoffset().total_seconds() == 7200
 
+    def test_just_before_last_transition(self):
+        tz = pendulum.timezone('Asia/Shanghai')
+        dt = datetime(1991, 4, 20, 1, 49, 8)
+        dt = tz.convert(dt, dst_rule=tz.POST_TRANSITION)
+
+        epoch = datetime(1970, 1, 1, tzinfo=timezone('UTC'))
+        expected = (dt - epoch).total_seconds()
+        assert expected == 672079748.0
+
     def test_convert_fold_attribute_is_honored(self):
         self.skip_if_not_36()
 

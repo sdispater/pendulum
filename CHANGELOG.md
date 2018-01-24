@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed an error when comparing a Period to a timedelta in PyPy.
+- Fixed an offset error for datetimes between the before last and last transition.
 
 
 ## [1.4.0] - 2018-01-22
