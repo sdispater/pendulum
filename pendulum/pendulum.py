@@ -1980,16 +1980,10 @@ class Pendulum(Date, datetime.datetime):
         return(self, )
 
     def _getstate(self, protocol=3):
-        tz = self.timezone_name
-
-        # Fix for fixed timezones not being properly unpickled
-        if isinstance(self.tz, FixedTimezone):
-            tz = self.offset_hours
-
         return (
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
-            tz,
+            self.tzinfo,
             self.fold
         )
 
