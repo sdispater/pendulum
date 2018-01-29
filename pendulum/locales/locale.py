@@ -80,5 +80,12 @@ class Locale:
 
         return f'{number}{ordinal}'
 
+    def match_translation(self, key, value):
+        translations = self.translation(key)
+        if value not in translations.values():
+            return None
+
+        return {v: k for k, v in translations.items()}[value]
+
     def __repr__(self):
         return f"{self.__class__.__name__}('{self._locale}')"

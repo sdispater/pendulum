@@ -1,26 +1,29 @@
 import re
 import datetime
 import pendulum
+import typing
 
+from pendulum.helpers import local_time
 from pendulum.locales.locale import Locale
 
-_MATCH_1 = re.compile('\d')
-_MATCH_2 = re.compile('\d\d')
-_MATCH_3 = re.compile('\d{3}')
-_MATCH_4 = re.compile('\d{4}')
-_MATCH_6 = re.compile('[+-]?\d{6}')
-_MATCH_1_TO_2 = re.compile('\d\d?')
-_MATCH_1_TO_3 = re.compile('\d{1,3}')
-_MATCH_1_TO_4 = re.compile('\d{1,4}')
-_MATCH_1_TO_6 = re.compile('[+-]?\d{1,6}')
-_MATCH_3_TO_4 = re.compile('\d{3}\d?')
-_MATCH_5_TO_6 = re.compile('\d{5}\d?')
-_MATCH_UNSIGNED = re.compile('\d+')
-_MATCH_SIGNED = re.compile('[+-]?\d+')
-_MATCH_OFFSET = re.compile('(?i)Z|[+-]\d\d:?\d\d')
-_MATCH_SHORT_OFFSET = re.compile('(?i)Z|[+-]\d\d(?::?\d\d)?')
-_MATCH_TIMESTAMP = re.compile('[+-]?\d+(\.\d{1,3})?')
-_MATCH_WORD = re.compile("[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}")
+_MATCH_1 = '\d'
+_MATCH_2 = '\d\d'
+_MATCH_3 = '\d{3}'
+_MATCH_4 = '\d{4}'
+_MATCH_6 = '[+-]?\d{6}'
+_MATCH_1_TO_2 = '\d\d?'
+_MATCH_1_TO_3 = '\d{1,3}'
+_MATCH_1_TO_4 = '\d{1,4}'
+_MATCH_1_TO_6 = '[+-]?\d{1,6}'
+_MATCH_3_TO_4 = '\d{3}\d?'
+_MATCH_5_TO_6 = '\d{5}\d?'
+_MATCH_UNSIGNED = '\d+'
+_MATCH_SIGNED = '[+-]?\d+'
+_MATCH_OFFSET = '(?i)Z|[+-]\d\d:?\d\d'
+_MATCH_SHORT_OFFSET = '(?i)Z|[+-]\d\d(?::?\d\d)?'
+_MATCH_TIMESTAMP = '[+-]?\d+(\.\d{1,6})?'
+_MATCH_WORD = "(?i)[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}"
+_MATCH_TIMEZONE = '[A-za-z0-9-+]+(/[A-Za-z0-9-+]+)?'
 
 
 class Formatter:
@@ -43,17 +46,24 @@ class Formatter:
 
     _FORMAT_RE = re.compile(_TOKENS)
 
-    _LOCALIZABLE_TOKENS = (
-        'Mo', 'MMM', 'MMMM',
-        'Qo',
-        'Do',
-        'DDDo',
-        'do', 'dd', 'ddd', 'dddd',
-        'E', 'EE', 'EEE', 'EEEE',
-        'wo',
-        'Wo',
-        'A', 'a',
-    )
+    _LOCALIZABLE_TOKENS = {
+        'Qo': None,
+        'MMMM': 'months.wide',
+        'MMM': 'months.abbreviated',
+        'Mo': None,
+        'DDDo': None,
+        'Do': lambda locale: tuple(f'\d+{o}' for o in locale.get('custom.ordinal').values()),
+        'dddd': 'days.wide',
+        'ddd': 'days.abbreviated',
+        'dd': 'days.short',
+        'do': None,
+        'Wo': None,
+        'wo': None,
+        'A': lambda locale: (locale.translation('day_periods.am'),
+                             locale.translation('day_periods.pm')),
+        'a': lambda locale: (locale.translation('day_periods.am').lower(),
+                             locale.translation('day_periods.pm').lower()),
+    }
 
     _TOKENS_RULES = {
         # Year
@@ -105,8 +115,8 @@ class Formatter:
         'X': lambda dt: '{:d}'.format(dt.int_timestamp),
 
         # Timezone
-        'z': lambda dt: '{}'.format(dt.tzinfo.abbrev),
-        'zz': lambda dt: '{}'.format(dt.timezone_name),
+        'zz': lambda dt: '{}'.format(dt.tzinfo.abbrev),
+        'z': lambda dt: '{}'.format(dt.timezone_name),
     }
 
     _DATE_FORMATS = {
@@ -135,12 +145,17 @@ class Formatter:
         'Qo': None,
         'M': _MATCH_1_TO_2,
         'MM': (_MATCH_1_TO_2, _MATCH_2),
-        'MMM': None,
-        'MMMM': None,
+        'MMM': _MATCH_WORD,
+        'MMMM': _MATCH_WORD,
         'D': _MATCH_1_TO_2,
         'DD': (_MATCH_1_TO_2, _MATCH_2),
         'DDD': _MATCH_1_TO_3,
         'DDDD': _MATCH_3,
+        'dddd': _MATCH_WORD,
+        'ddd': _MATCH_WORD,
+        'dd': _MATCH_WORD,
+        'd': _MATCH_1,
+        'E': _MATCH_1,
         'Do': None,
         'H': _MATCH_1_TO_2,
         'HH': (_MATCH_1_TO_2, _MATCH_2),
@@ -156,23 +171,30 @@ class Formatter:
         'SSSS': _MATCH_UNSIGNED,
         'SSSSS': _MATCH_UNSIGNED,
         'SSSSSS': _MATCH_UNSIGNED,
-        'a': None,
         'x': _MATCH_SIGNED,
-        'X': re.compile('[+-]?\d+(\.\d{1,3})?')
+        'X': _MATCH_TIMESTAMP,
+        'ZZ': _MATCH_SHORT_OFFSET,
+        'Z': _MATCH_OFFSET,
+        'z': _MATCH_TIMEZONE
     }
 
     _PARSE_TOKENS = {
         'YYYY': lambda year: int(year),
         'YY': lambda year: 1900 + int(year),
         'Q': lambda quarter: int(quarter),
-        'MMMM': lambda month: None,
-        'MMM': lambda month: None,
+        'MMMM': lambda month: month,
+        'MMM': lambda month: month,
         'MM': lambda month: int(month),
         'M': lambda month: int(month),
         'DDDD': lambda day: int(day),
         'DDD': lambda day: int(day),
         'DD': lambda day: int(day),
         'D': lambda day: int(day),
+        'dddd': lambda weekday: weekday,
+        'ddd': lambda weekday: weekday,
+        'dd': lambda weekday: weekday,
+        'd': lambda weekday: int(weekday) % 7,
+        'E': lambda weekday: int(weekday),
         'HH': lambda hour: int(hour),
         'H': lambda hour: int(hour),
         'hh': lambda hour: int(hour),
@@ -187,9 +209,12 @@ class Formatter:
         'SSSS': lambda us: int(us) * 100,
         'SSSSS': lambda us: int(us) * 10,
         'SSSSSS': lambda us: int(us),
-        'a': lambda meridiem: None,
+        'a': lambda meridiem: meridiem,
         'X': lambda ts: float(ts),
         'x': lambda ts: float(ts) / 1e3,
+        'ZZ': str,
+        'Z': str,
+        'z': str
     }
 
     def format(self, dt, fmt, locale=None):
@@ -251,7 +276,7 @@ class Formatter:
 
         # Timezone
         if token in ['ZZ', 'Z']:
-            separator = ':' if token == 'ZZ' else ''
+            separator = ':' if token == 'Z' else ''
             offset = dt.utcoffset() or datetime.timedelta()
             minutes = offset.total_seconds() / 60
 
@@ -311,21 +336,29 @@ class Formatter:
         else:
             return token
 
-    def parse(self, time, fmt):
+    def parse(self, time: str, fmt: str,
+              now: 'pendulum.DateTime',
+              locale: typing.Union[str, None] = None) -> dict:
         """
         Parses a time string matching a given format as a tuple.
 
         :param time: The timestring
-        :type time: str
-
         :param fmt: The format
-        :type fmt: str
+        :param now: The datetime to use as "now"
+        :param locale: The locale to use
 
-        :rtype: tuple
+        :return: The parsed elements
         """
-        tokens = self._FORMAT_RE.findall(fmt)
+        escaped_fmt = re.escape(fmt)
+
+        tokens = self._FORMAT_RE.findall(escaped_fmt)
         if not tokens:
             return time
+
+        if not locale:
+            locale = pendulum.get_locale()
+
+        locale = Locale.load(locale)
 
         parsed = {
             'year': None,
@@ -343,27 +376,154 @@ class Formatter:
             'timestamp': None
         }
 
-        pattern = self._FORMAT_RE.sub(lambda m: self._replace_tokens(m.group(0)), fmt)
+        pattern = self._FORMAT_RE.sub(
+            lambda m: self._replace_tokens(m.group(0), locale),
+            escaped_fmt
+        )
 
         if not re.match(pattern, time):
-            raise ValueError('String does not match format {}'.format(fmt))
+            raise ValueError(f'String does not match format {fmt}')
 
-        re.sub(pattern, lambda m: self._get_parsed_values(m, parsed), time)
+        re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale), time)
 
-        return parsed
+        return self._check_parsed(parsed, now)
 
-    def _get_parsed_values(self, m, parsed):
+    def _check_parsed(self, parsed: dict, now: 'pendulum.DateTime') -> dict:
+        """
+        Checks validity of parsed elements.
+
+        :param parsed: The elements to parse.
+
+        :return: The validated elements.
+        """
+        validated = {
+            'year': None,
+            'month': None,
+            'day': None,
+            'hour': None,
+            'minute': None,
+            'second': None,
+            'microsecond': None,
+            'tz': None
+        }
+
+        # If timestamp has been specified
+        # we use it and don't go any further
+        if parsed['timestamp'] is not None:
+            str_us = str(parsed['timestamp'])
+            if '.' in str_us:
+                microseconds = int(f"{str_us.split('.')[1].ljust(6, '0')}")
+            else:
+                microseconds = 0
+
+            time = local_time(parsed['timestamp'], 0, microseconds)
+            validated['year'] = time[0]
+            validated['month'] = time[1]
+            validated['day'] = time[2]
+            validated['hour'] = time[3]
+            validated['minute'] = time[4]
+            validated['second'] = time[5]
+            validated['microsecond'] = time[6]
+
+            return validated
+
+        if parsed['quarter'] is not None:
+            dt = now.start_of('year')
+
+            while dt.quarter != parsed['quarter']:
+                dt = dt.add(months=3)
+
+            validated['year'] = dt.year
+            validated['month'] = dt.month
+            validated['day'] = dt.day
+
+        # If the date part has not been specified
+        # we default to today
+        if all([parsed['year'] is None,
+                parsed['month'] is None,
+                parsed['day'] is None]):
+            parsed['year'] = validated['year'] = now.year
+            parsed['month'] = validated['month'] = now.month
+            parsed['day'] = validated['day'] = now.day
+
+        # We replace any not set month/day value
+        # with the first of each unit
+        if any([parsed['month'] is None, parsed['day'] is None]):
+            for part in ['month', 'day']:
+                if parsed[part] is None and validated.get(part) is None:
+                    validated[part] = 1
+
+        for part in ['year', 'month', 'day']:
+            if parsed[part] is not None:
+                validated[part] = parsed[part]
+
+        # If any of hour/minute/second/microsecond is not set
+        # We assume start of corresponding value
+        for part in ['hour', 'minute', 'second', 'microsecond']:
+            if parsed[part] is None:
+                validated[part] = 0
+            else:
+                validated[part] = parsed[part]
+
+        if parsed['day_of_year'] is not None:
+            dt = pendulum.parse(
+                f"{validated['year']}-{parsed['day_of_year']}"
+            )
+
+            validated['month'] = dt.month
+            validated['day'] = dt.day
+
+        if parsed['day_of_week'] is not None:
+            dt = pendulum.create(
+                validated['year'],
+                validated['month'],
+                validated['day']
+            )
+            dt = dt.start_of('week').subtract(days=1)
+            dt = dt.next(parsed['day_of_week'])
+            validated['year'] = dt.year
+            validated['month'] = dt.month
+            validated['day'] = dt.day
+
+        # Meridiem
+        if parsed['meridiem'] is not None:
+            # If the time is greater than 13:00:00
+            # This is not valid
+            t = (
+                validated['hour'],
+                validated['minute'],
+                validated['second'],
+                validated['microsecond']
+            )
+            if t >= (13, 0, 0, 0):
+                raise ValueError('Invalid date')
+
+            pm = parsed['meridiem'] == 'pm'
+            validated['hour'] %= 12
+            if pm:
+                validated['hour'] += 12
+
+        validated['tz'] = parsed['tz']
+
+        return validated
+
+    def _get_parsed_values(self, m, parsed: dict, locale: Locale) -> None:
         for token, index in m.re.groupindex.items():
-            self._get_parsed_value(token, m.group(index), parsed)
+            if token in self._LOCALIZABLE_TOKENS:
+                self._get_parsed_locale_value(
+                    token, m.group(index), parsed, locale
+                )
+            else:
+                self._get_parsed_value(token, m.group(index), parsed)
 
-    def _get_parsed_value(self, token, value, parsed):
+    def _get_parsed_value(self, token: str, value: str, parsed: dict) -> None:
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if 'Y' in token:
             parsed['year'] = parsed_token
         elif 'Q' == token:
             parsed['quarter'] = parsed_token
-        elif 'M' in token:
+        elif token in ['MM', 'M']:
             parsed['month'] = parsed_token
         elif token in ['DDDD', 'DDD']:
             parsed['day_of_year'] = parsed_token
@@ -372,6 +532,9 @@ class Formatter:
         elif 'H' in token:
             parsed['hour'] = parsed_token
         elif token in ['hh', 'h']:
+            if parsed_token > 12:
+                raise ValueError('Invalid date')
+
             parsed['hour'] = parsed_token
         elif 'm' in token:
             parsed['minute'] = parsed_token
@@ -379,28 +542,105 @@ class Formatter:
             parsed['second'] = parsed_token
         elif 'S' in token:
             parsed['microsecond'] = parsed_token
-        elif token in ['MMM', 'MMMM']:
+        elif token in ['d', 'E']:
             parsed['day_of_week'] = parsed_token
-        elif token == 'a':
-            pass
         elif token in ['X', 'x']:
             parsed['timestamp'] = parsed_token
+        elif token in ['ZZ', 'Z']:
+            negative = True if value.startswith('-') else False
+            tz = value[1:]
+            if ':' not in tz:
+                if len(tz) == 2:
+                    tz = '{}00'.format(tz)
 
-    def _replace_tokens(self, token):
+                off_hour = tz[0:2]
+                off_minute = tz[2:4]
+            else:
+                off_hour, off_minute = tz.split(':')
+
+            offset = ((int(off_hour) * 60) + int(off_minute)) * 60
+
+            if negative:
+                offset = -1 * offset
+
+            parsed['tz'] = pendulum.timezone(offset)
+        elif token == 'z':
+            # Full timezone
+            if value not in pendulum.timezones:
+                raise ValueError('Invalid date')
+
+            parsed['tz'] = pendulum.timezone(value)
+
+    def _get_parsed_locale_value(self, token: str, value: str,
+                                 parsed: dict, locale: Locale) -> None:
+        if token == 'MMMM':
+            unit = 'month'
+            match = 'months.wide'
+        elif token == 'MMM':
+            unit = 'month'
+            match = 'months.abbreviated'
+        elif token == 'Do':
+            parsed['day'] = int(re.match('(\d+)', value).group(1))
+
+            return
+        elif token == 'dddd':
+            unit = 'day_of_week'
+            match = 'days.wide'
+        elif token == 'ddd':
+            unit = 'day_of_week'
+            match = 'days.abbreviated'
+        elif token == 'dd':
+            unit = 'day_of_week'
+            match = 'days.short'
+        elif token in ['a', 'A']:
+            valid_values = [
+                locale.translation('day_periods.am'),
+                locale.translation('day_periods.pm'),
+            ]
+
+            if token == 'a':
+                value = value.lower()
+                valid_values = list(map(lambda x: x.lower(), valid_values))
+
+            if value not in valid_values:
+                raise ValueError('Invalid date')
+
+            parsed['meridiem'] = ['am', 'pm'][valid_values.index(value)]
+
+            return
+        else:
+            raise ValueError(f'Invalid token "{token}"')
+
+        parsed[unit] = locale.match_translation(match, value)
+        if value is None:
+            raise ValueError('Invalid date')
+
+    def _replace_tokens(self, token: str, locale: Locale) -> str:
         if token.startswith('[') and token.endswith(']'):
             return token[1:-1]
         elif token.startswith('\\'):
-            return token[1:]
-        elif token not in self._REGEX_TOKENS:
-            raise ValueError('Unsupported token: {}'.format(token))
+            return token
+        elif (token not in self._REGEX_TOKENS
+              and token not in self._LOCALIZABLE_TOKENS):
+            raise ValueError(f'Unsupported token: {token}')
 
-        candidates = self._REGEX_TOKENS[token]
+        if token in self._LOCALIZABLE_TOKENS:
+            values = self._LOCALIZABLE_TOKENS[token]
+            if callable(values):
+                candidates = values(locale)
+            else:
+                candidates = tuple(
+                    locale.translation(self._LOCALIZABLE_TOKENS[token]).values()
+                )
+        else:
+            candidates = self._REGEX_TOKENS[token]
+
         if not candidates:
-            raise ValueError('Unsupported token: {}'.format(token))
+            raise ValueError(f'Unsupported token: {token}')
 
         if not isinstance(candidates, tuple):
             candidates = (candidates,)
 
-        pattern = '(?P<{}>{})'.format(token, '|'.join([p.pattern for p in candidates]))
+        pattern = '(?P<{}>{})'.format(token, '|'.join([p for p in candidates]))
 
         return pattern

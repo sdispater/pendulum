@@ -172,27 +172,27 @@ def test_fractional_second():
 def test_timezone():
     f = Formatter()
     d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
-    assert f.format(d, 'z') == 'CEST'
-    assert f.format(d, 'zz') == 'Europe/Paris'
+    assert f.format(d, 'zz') == 'CEST'
+    assert f.format(d, 'z') == 'Europe/Paris'
 
     d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'Europe/Paris')
-    assert f.format(d, 'z') == 'CET'
-    assert f.format(d, 'zz') == 'Europe/Paris'
+    assert f.format(d, 'zz') == 'CET'
+    assert f.format(d, 'z') == 'Europe/Paris'
 
 
 def test_timezone_offset():
     f = Formatter()
     d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
-    assert f.format(d, 'Z') == '+0200'
-    assert f.format(d, 'ZZ') == '+02:00'
+    assert f.format(d, 'ZZ') == '+0200'
+    assert f.format(d, 'Z') == '+02:00'
 
     d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'Europe/Paris')
-    assert f.format(d, 'Z') == '+0100'
-    assert f.format(d, 'ZZ') == '+01:00'
+    assert f.format(d, 'ZZ') == '+0100'
+    assert f.format(d, 'Z') == '+01:00'
 
     d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'America/Guayaquil')
-    assert f.format(d, 'Z') == '-0500'
-    assert f.format(d, 'ZZ') == '-05:00'
+    assert f.format(d, 'ZZ') == '-0500'
+    assert f.format(d, 'Z') == '-05:00'
 
 
 def test_timestamp():

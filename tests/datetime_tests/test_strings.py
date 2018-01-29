@@ -112,7 +112,7 @@ def test_repr():
 def test_format_with_locale():
     d = pendulum.create(1975, 12, 25, 14, 15, 16, tz='local')
     expected = 'jeudi 25e jour de décembre 1975 02:15:16 PM -05:00'
-    assert d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A ZZ', locale='fr') == expected
+    assert d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A Z', locale='fr') == expected
 
 
 def test_strftime():

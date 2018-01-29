@@ -32,31 +32,79 @@ def test_from_format_with_millis():
     assert_datetime(d, 1975, 5, 21, 22, 32, 11, 123456)
 
 
-@pytest.mark.parametrize('text,fmt,expected', [
-    ('2014-4', 'YYYY-Q', '2014-10-01T00:00:00+00:00'),
-    ('12-02-1999', 'MM-DD-YYYY', '1999-12-02T00:00:00+00:00'),
-    ('12-02-1999', 'DD-MM-YYYY', '1999-02-12T00:00:00+00:00'),
-    ('12/02/1999', 'DD/MM/YYYY', '1999-02-12T00:00:00+00:00'),
-    ('12_02_1999', 'DD_MM_YYYY', '1999-02-12T00:00:00+00:00'),
-    ('12:02:1999', 'DD:MM:YYYY', '1999-02-12T00:00:00+00:00'),
-    ('2-2-99', 'D-M-YY', '1999-02-02T00:00:00+00:00'),
-    ('99', 'YY', '1999-01-01T00:00:00+00:00'),
-    ('300-1999', 'DDD-YYYY', '1999-10-27T00:00:00+00:00'),
-    ('12-02-1999 2:45:10', 'DD-MM-YYYY h:m:s', '1999-02-12T02:45:10+00:00'),
-    ('12-02-1999 12:45:10', 'DD-MM-YYYY h:m:s', '1999-02-12T12:45:10+00:00'),
-    ('12:00:00', 'HH:mm:ss', '2015-11-12T12:00:00+00:00'),
-    ('12:30:00', 'HH:mm:ss', '2015-11-12T12:30:00+00:00'),
-    ('00:00:00', 'HH:mm:ss', '2015-11-12T00:00:00+00:00'),
-    ('00:30:00 1', 'HH:mm:ss S', '2015-11-12T00:30:00.100000+00:00'),
-    ('00:30:00 12', 'HH:mm:ss SS', '2015-11-12T00:30:00.120000+00:00'),
-    ('00:30:00 123', 'HH:mm:ss SSS', '2015-11-12T00:30:00.123000+00:00'),
-    ('1234567890', 'X', '2009-02-13T23:31:30+00:00'),
-    ('1234567890123', 'x', '2009-02-13T23:31:30.123000+00:00'),
-    ('2016-10-06', 'YYYY-MM-DD', '2016-10-06T00:00:00+00:00'),
+@pytest.mark.parametrize('text,fmt,expected,now', [
+    ('2014-4', 'YYYY-Q', '2014-10-01T00:00:00+00:00', None),
+    ('12-02-1999', 'MM-DD-YYYY', '1999-12-02T00:00:00+00:00', None),
+    ('12-02-1999', 'DD-MM-YYYY', '1999-02-12T00:00:00+00:00', None),
+    ('12/02/1999', 'DD/MM/YYYY', '1999-02-12T00:00:00+00:00', None),
+    ('12_02_1999', 'DD_MM_YYYY', '1999-02-12T00:00:00+00:00', None),
+    ('12:02:1999', 'DD:MM:YYYY', '1999-02-12T00:00:00+00:00', None),
+    ('2-2-99', 'D-M-YY', '1999-02-02T00:00:00+00:00', None),
+    ('99', 'YY', '1999-01-01T00:00:00+00:00', None),
+    ('300-1999', 'DDD-YYYY', '1999-10-27T00:00:00+00:00', None),
+    ('12-02-1999 2:45:10', 'DD-MM-YYYY h:m:s', '1999-02-12T02:45:10+00:00', None),
+    ('12-02-1999 12:45:10', 'DD-MM-YYYY h:m:s', '1999-02-12T12:45:10+00:00', None),
+    ('12:00:00', 'HH:mm:ss', '2015-11-12T12:00:00+00:00', None),
+    ('12:30:00', 'HH:mm:ss', '2015-11-12T12:30:00+00:00', None),
+    ('00:00:00', 'HH:mm:ss', '2015-11-12T00:00:00+00:00', None),
+    ('00:30:00 1', 'HH:mm:ss S', '2015-11-12T00:30:00.100000+00:00', None),
+    ('00:30:00 12', 'HH:mm:ss SS', '2015-11-12T00:30:00.120000+00:00', None),
+    ('00:30:00 123', 'HH:mm:ss SSS', '2015-11-12T00:30:00.123000+00:00', None),
+    ('1234567890', 'X', '2009-02-13T23:31:30+00:00', None),
+    ('1234567890123', 'x', '2009-02-13T23:31:30.123000+00:00', None),
+    ('2016-10-06', 'YYYY-MM-DD', '2016-10-06T00:00:00+00:00', None),
+    ('Tuesday', 'dddd', '2015-11-10T00:00:00+00:00', None),
+    ('Monday', 'dddd', '2018-01-29T00:00:00+00:00', '2018-02-02'),
+    ('Mon', 'ddd', '2018-01-29T00:00:00+00:00', '2018-02-02'),
+    ('Mo', 'dd', '2018-01-29T00:00:00+00:00', '2018-02-02'),
+    ('0', 'd', '2018-02-04T00:00:00+00:00', '2018-02-02'),
+    ('1', 'E', '2018-01-29T00:00:00+00:00', '2018-02-02'),
+    ('March', 'MMMM', '2018-03-01T00:00:00+00:00', '2018-02-02'),
+    ('Mar', 'MMM', '2018-03-01T00:00:00+00:00', '2018-02-02'),
+    ('Thursday 25th December 1975 02:15:16 PM', 'dddd Do MMMM YYYY hh:mm:ss A', '1975-12-25T14:15:16+00:00', None),
+    ('Thursday 25th December 1975 02:15:16 PM -05:00', 'dddd Do MMMM YYYY hh:mm:ss A Z', '1975-12-25T14:15:16-05:00', None),
+    ('1975-12-25T14:15:16 America/Guayaquil', 'YYYY-MM-DDTHH:mm:ss z', '1975-12-25T14:15:16-05:00', None)
 ])
-def test_from_format(text, fmt, expected):
-    with pendulum.test(pendulum.create(2015, 11, 12)):
+def test_from_format(text, fmt, expected, now):
+    if now is None:
+        now = pendulum.create(2015, 11, 12)
+    else:
+        now = pendulum.parse(now)
+
+    with pendulum.test(now):
         assert pendulum.from_format(text, fmt).isoformat() == expected
+
+
+@pytest.mark.parametrize('text,fmt,expected', [
+    ('lundi', 'dddd', '2018-01-29T00:00:00+00:00'),
+    ('lun.', 'ddd', '2018-01-29T00:00:00+00:00'),
+    ('lu', 'dd', '2018-01-29T00:00:00+00:00'),
+    ('mars', 'MMMM', '2018-03-01T00:00:00+00:00'),
+    ('mars', 'MMM', '2018-03-01T00:00:00+00:00'),
+])
+def test_from_format_with_locale(text, fmt, expected):
+    now = pendulum.create(2018, 2, 2)
+
+    with pendulum.test(now):
+        formatted = pendulum.from_format(text, fmt, locale='fr').isoformat()
+        assert formatted == expected
+
+
+@pytest.mark.parametrize('text,fmt,locale', [
+    ('23:00', 'hh:mm', 'en'),
+    ('23:00 am', 'HH:mm a', 'en'),
+    ('invalid', 'dddd', 'en'),
+    ('invalid', 'ddd', 'en'),
+    ('invalid', 'dd', 'en'),
+    ('invalid', 'MMMM', 'en'),
+    ('invalid', 'MMM', 'en'),
+])
+def test_from_format_error(text, fmt, locale):
+    now = pendulum.create(2018, 2, 2)
+
+    with pendulum.test(now):
+        with pytest.raises(ValueError):
+            pendulum.from_format(text, fmt, locale=locale)
 
 
 def test_strptime():
