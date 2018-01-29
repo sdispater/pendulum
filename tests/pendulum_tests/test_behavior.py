@@ -6,6 +6,7 @@ from copy import deepcopy
 from datetime import datetime, date, time, timedelta
 from pendulum import Pendulum, timezone
 from pendulum.tz.timezone import Timezone
+from pendulum.tz.loader import Loader
 from .. import AbstractTestCase
 
 
@@ -96,6 +97,14 @@ class BehaviorTest(AbstractTestCase):
 
     def test_pickle_with_integer_tzinfo(self):
         dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, 0)
+        s = pickle.dumps(dt1)
+        dt2 = pickle.loads(s)
+
+        self.assertEqual(dt1, dt2)
+
+    def test_pickle_with_empty_tzinfo_name(self):
+        empty_timezone = Timezone('', *Loader.load('Europe/Paris'))
+        dt1 = Pendulum(2016, 8, 27, 12, 34, 56, 123456, empty_timezone)
         s = pickle.dumps(dt1)
         dt2 = pickle.loads(s)
 

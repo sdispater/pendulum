@@ -512,7 +512,7 @@ class FixedTimezone(Timezone):
         return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
 
     def __getinitargs__(self):
-        return self._offset
+        return (self._offset, )
 
 
 class _UTC(FixedTimezone):
