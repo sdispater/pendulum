@@ -1,28 +1,18 @@
+.. _Period:
+
 Period
 ======
 
 When you subtract a ``Pendulum`` instance to another, or use the ``diff()`` method, it will return a ``Period`` instance.
-it inherits from the `Duration`_ class with the added benefit that it is aware of the
+It inherits from the :ref:`Duration` class with the added benefit that it is aware of the
 instances that generated it, so that it can give access to more methods and properties:
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    start = Pendulum(2000, 1, 1)
-    end = Pendulum(2000, 1, 31)
-
-    period = end - start
-    period.in_weekdays()
-    21
-
-    period.in_weekend_days()
-    10
-
-    # You also have access to the years and months
-    # properties and there related methods
-    start = Pendulum(2000, 11, 20)
-    end = Pendulum(2016, 11, 5)
+    start = pendulum.create(2000, 11, 20)
+    end = pendulum.create(2016, 11, 5)
 
     period = end - start
 
@@ -36,7 +26,7 @@ instances that generated it, so that it can give access to more methods and prop
     191
 
     # Note that the weeks property
-    # will change compared to the Interval class
+    # will change compared to the Duration class
     period.weeks
     2 # 832 for the interval
 
@@ -76,30 +66,31 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 .. warning::
 
     Due to its nature (fixed duration between two datetimes), most arithmetic operations will
-    return an ``Interval`` instead of a ``Period``.
+    return a ``Duration`` instead of a ``Period``.
 
     .. code-block:: python
 
-        dt1 = Pendulum(2016, 8, 7, 12, 34, 56)
+        import pendulum
+
+        dt1 = pendulum.create(2016, 8, 7, 12, 34, 56)
         dt2 = dt1.add(days=6, seconds=34)
-        period = Period(dt1, dt2)
+        period = pendulum.period(dt1, dt2)
         period * 2
-        # <Interval [1 week 5 days 1 minute 8 seconds]>
+        # Duration(weeks=1, days=5, minutes=1, seconds=8)
 
 
 Instantiation
 -------------
 
-You can create an instance in the following ways:
+You can create an instance by using the ``period()`` helper:
 
 .. code-block:: python
 
     import pendulum
 
-    start = pendulum.Pendulum(2000, 1, 1)
-    end = pendulum.Pendulum(2000, 1, 31)
+    start = pendulum.create(2000, 1, 1)
+    end = pendulum.create(2000, 1, 31)
 
-    period = pendulum.Period(start, end)
     period = pendulum.period(start, end)
 
 You can also make an inverted period:
@@ -158,10 +149,6 @@ If you want to iterate over a period, you can use the ``range()`` method:
     Supported units for ``range()`` are: ``years``, ``months``, ``weeks``,
     ``days``, ``hours``, ``minutes`` and ``seconds``
 
-.. note::
-
-    If you just want a generator you can use the ``xrange()`` method.
-
 You can pass an amount for the passed unit to control the length of the gap:
 
 .. code-block:: python
@@ -182,11 +169,11 @@ You can also directly iterate over the ``Period`` instance, the unit will be ``d
     for dt in period:
         print(dt)
 
-You can check if a ``Pendulum`` instance is inside a period using the ``in`` keyword:
+You can check if a ``DateTime`` instance is inside a period using the ``in`` keyword:
 
 .. code-block:: python
 
-    dt = Pendulum(2000, 1, 4)
+    dt = pendulum.create(2000, 1, 4)
 
     dt in period
     True

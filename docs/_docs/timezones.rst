@@ -126,7 +126,7 @@ by default to determine the transition rule.
     dt.isoformat()
     '2013-03-31T03:30:00+02:00'
 
-Instead of relying on the `fold` attribute, you can use the `dst_rule`
+Instead of relying on the ``fold`` attribute, you can use the ``dst_rule``
 keyword argument, this is especially useful if you want to raise errors
 on non-existing and ambiguous times.
 
@@ -147,7 +147,7 @@ on non-existing and ambiguous times.
     paris.convert(dt, dst_rule=pendulum.TRANSITION_ERROR)
     # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
 
-This works as expected. However, whenever we add or subtract a `timedelta`
+This works as expected. However, whenever we add or subtract a ``timedelta``
 object, things get tricky.
 
 .. code-block:: python

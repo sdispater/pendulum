@@ -1,7 +1,7 @@
 Difference
 ==========
 
-The ``diff()`` method returns a `Period`_ instance that represents the total duration
+The ``diff()`` method returns a :ref:`Period` instance that represents the total duration
 between two ``DateTime`` instances. This interval can be then expressed in various units.
 These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.
@@ -106,7 +106,7 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
 
 You can also change the locale of the string either globally by using ``pendulum.set_locale('fr')``
 before the ``diff_for_humans()`` call or specifically for the call by passing the ``locale`` keyword
-argument. See the `Localization`_ section for more detail.
+argument. See the :ref:`Localization` section for more detail.
 
 .. code-block:: python
 

@@ -1,3 +1,5 @@
+.. _Duration:
+
 Duration
 ========
 
@@ -68,7 +70,7 @@ You can create an instance in the following ways:
 Properties and Duration Methods
 -------------------------------
 
-The ``Interval`` class brings more properties than the default ``days``, ``seconds`` and
+The ``Duration`` class brings more properties than the default ``days``, ``seconds`` and
 ``microseconds``.
 
 .. code-block:: python
@@ -162,7 +164,7 @@ supported unit as a truncated integer.
     it.in_seconds()
     101700084
 
-It also has a handy ``in_words()``, which determines the duration representation when printed.
+It also has a handy ``in_words()`` method, which determines the duration representation when printed.
 
 .. code-block:: python
 

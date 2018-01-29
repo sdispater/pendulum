@@ -79,7 +79,7 @@ but uses custom tokens to create a ``DateTime`` instance.
 
 .. note::
 
-    To see all the available tokens, you can check the `Formatter`_ section.
+    To see all the available tokens, you can check the :ref:`Formatter` section.
 
 It also accepts a ``tz`` keyword argument to specify the timezone:
 
