@@ -39,8 +39,6 @@ You can also modify the timezone.
 
     dt.set(tz='Europe/London')
 
-    dt.tz_('America/Toronto').in_timezone('America/Vancouver')
-
 .. note::
 
     Setting the timezone just modify the timezone information without
@@ -51,7 +49,7 @@ You can also modify the timezone.
 
         import pendulum
 
-        dt = pendulum.create(2013, 3, 31, 2, 30)
+        dt = pendulum.datetime(2013, 3, 31, 2, 30)
         print(dt)
         '2013-03-31T02:30:00+00:00'
 

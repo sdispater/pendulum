@@ -11,8 +11,8 @@ instances that generated it, so that it can give access to more methods and prop
 
     import pendulum
 
-    start = pendulum.create(2000, 11, 20)
-    end = pendulum.create(2016, 11, 5)
+    start = pendulum.datetime(2000, 11, 20)
+    end = pendulum.datetime(2016, 11, 5)
 
     period = end - start
 
@@ -43,7 +43,7 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 
     import pendulum
 
-    start = pendulum.create(2017, 3, 7, tz='America/Toronto')
+    start = pendulum.datetime(2017, 3, 7, tz='America/Toronto')
     end = start.add(days=6)
 
     period = end - start
@@ -72,7 +72,7 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 
         import pendulum
 
-        dt1 = pendulum.create(2016, 8, 7, 12, 34, 56)
+        dt1 = pendulum.datetime(2016, 8, 7, 12, 34, 56)
         dt2 = dt1.add(days=6, seconds=34)
         period = pendulum.period(dt1, dt2)
         period * 2
@@ -88,8 +88,8 @@ You can create an instance by using the ``period()`` helper:
 
     import pendulum
 
-    start = pendulum.create(2000, 1, 1)
-    end = pendulum.create(2000, 1, 31)
+    start = pendulum.datetime(2000, 1, 1)
+    end = pendulum.datetime(2000, 1, 31)
 
     period = pendulum.period(start, end)
 
@@ -125,8 +125,8 @@ If you want to iterate over a period, you can use the ``range()`` method:
 
     import pendulum
 
-    start = pendulum.Pendulum(2000, 1, 1)
-    end = pendulum.Pendulum(2000, 1, 10)
+    start = pendulum.datetime(2000, 1, 1)
+    end = pendulum.datetime(2000, 1, 10)
 
     period = pendulum.period(start, end)
 
@@ -173,7 +173,7 @@ You can check if a ``DateTime`` instance is inside a period using the ``in`` key
 
 .. code-block:: python
 
-    dt = pendulum.create(2000, 1, 4)
+    dt = pendulum.datetime(2000, 1, 4)
 
     dt in period
     True
@@ -189,7 +189,7 @@ using the ``intersect()`` method.
     import pendulum
 
 
-    monday = pendulum.create(2016, 9, 12)
+    monday = pendulum.datetime(2016, 9, 12)
     wednesday = monday.next(pendulum.WEDNESDAY)
     friday = monday.next(pendulum.FRIDAY)
     saturday = monday.next(pendulum.SATURDAY)
@@ -206,7 +206,7 @@ You can also pass multiple period to ``intersect()``.
     import pendulum
 
 
-    monday = pendulum.create(2016, 9, 12)
+    monday = pendulum.datetime(2016, 9, 12)
     wednesday = monday.next(pendulum.WEDNESDAY)
     thursday = monday.next(pendulum.THURSDAY)
     friday = monday.next(pendulum.FRIDAY)

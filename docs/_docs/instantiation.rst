@@ -11,7 +11,7 @@ and will provide default values for all others.
 
     import pendulum
 
-    dt = pendulum.create(2015, 2, 5, tz='America/Vancouver')
+    dt = pendulum.datetime(2015, 2, 5, tz='America/Vancouver')
     isinstance(dt, datetime)
     True
 
@@ -87,13 +87,6 @@ It also accepts a ``tz`` keyword argument to specify the timezone:
 
     dt = pendulum.from_format('1975-05-21 22', 'YYYY-MM-DD HH', tz='Europe/London')
     '1975-05-21T22:00:00+01:00'
-
-Note that ``strptime`` can still be used:
-
-.. code-block:: python
-
-    # The timezone will be UTC
-    pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H')
 
 The final helper is for working with unix timestamps.
 ``from_timestamp()`` will create a ``DateTime`` instance equal to the given timestamp

@@ -41,7 +41,7 @@ Pendulum gives access to more attributes and properties than the default ``datet
     dt.int_timestamp
     1346887571
 
-    pendulum.create(1975, 5, 21).age
+    pendulum.datetime(1975, 5, 21).age
     41 # calculated vs now in the same tz
     dt.quarter
     3
@@ -66,9 +66,11 @@ Pendulum gives access to more attributes and properties than the default ``datet
     pendulum.now().timezone_name
 
     # Indicates if daylight savings time is on
-    pendulum.create(2012, 1, 1, tz='America/Toronto').is_dst()
+    dt = pendulum.datetime(2012, 1, 1, tz='America/Toronto')
+    dt.is_dst()
     False
-    pendulum.create(2012, 9, 1, tz='America/Toronto').is_dst()
+    dt = pendulum.datetime(2012, 9, 1, tz='America/Toronto')
+    dt.is_dst()
     True
 
     # Indicates if the instance is in the same timezone as the local timezone
@@ -82,5 +84,5 @@ Pendulum gives access to more attributes and properties than the default ``datet
     False
     pendulum.now('Europe/London').is_local()
     False
-    pendulum.utcnow().is_utc()
+    pendulum.now('UTC').is_utc()
     True

@@ -22,8 +22,8 @@ It has many improvements over the base class.
         delta.seconds
         75600
 
-        d1 = pendulum.create(2012, 1, 1, 1, 2, 3)
-        d2 = pendulum.create(2011, 12, 31, 22, 2, 3)
+        d1 = pendulum.datetime(2012, 1, 1, 1, 2, 3)
+        d2 = pendulum.datetime(2011, 12, 31, 22, 2, 3)
         delta = d2 - d1
         delta.days
         0
@@ -33,17 +33,13 @@ It has many improvements over the base class.
 Instantiation
 -------------
 
-You can create an instance in the following ways:
+To create a `Duration` instance, you can use the `duration()` helper:
 
 .. code-block:: python
 
     import pendulum
 
     it = pendulum.duration(days=1177, seconds=7284, microseconds=1234)
-
-    # You can use an existing timedelta instance
-    delta = timedelta(days=1177, seconds=7284, microseconds=1234)
-    it = pendulum.duration.instance(delta)
 
 .. note::
 
@@ -144,7 +140,7 @@ you can use the appropriate methods.
     it.total_seconds()
     101700084.001234
 
-Similarly, it has the ``in_xxx()`` methods which returns to total duration in each
+Similarly, the ``in_xxx()`` methods return the total duration in each
 supported unit as a truncated integer.
 
 .. code-block:: python

@@ -12,7 +12,7 @@ a possible solution, if any:
     import pendulum
     from sqlite3 import register_adapter
 
-    register_adapter(pendulum.datetime, lambda val: val.isoformat(' '))
+    register_adapter(pendulum.DateTime, lambda val: val.isoformat(' '))
 
 * ``mysqlclient`` (former ``MySQLdb``) and ``PyMySQL`` will use the the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
 
@@ -22,8 +22,8 @@ a possible solution, if any:
     import MySQLdb.converters
     import pymysql.converters
 
-    MySQLdb.converters.conversions[pendulum.datetime] = MySQLdb.converters.DateTime2literal
-    pymysql.converters.conversions[pendulum.datetime] = pymysql.converters.escape_datetime
+    MySQLdb.converters.conversions[pendulum.DateTime] = MySQLdb.converters.DateTime2literal
+    pymysql.converters.conversions[pendulum.DateTime] = pymysql.converters.escape_datetime
 
 * ``django`` will use the ``isoformat()`` method to store datetimes in the database. However since ``pendulum`` is always timezone aware the offset information will always be returned by ``isoformat()`` raising an error, at least for MySQL databases. To work around it you can either create your own ``DateTimeField`` or use the previous workaround for ``MySQLdb``:
 
@@ -38,7 +38,7 @@ a possible solution, if any:
         def value_to_string(self, obj):
             val = self.value_from_object(obj)
 
-            if isinstance(value, pendulum.datetime):
+            if isinstance(value, pendulum.DateTime):
                 return value.format('YYYY-MM-DD HH:mm:ss')
 
             return '' if val is None else val.isoformat()

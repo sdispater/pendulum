@@ -13,19 +13,19 @@ tries to provide an easy and accurate system to handle them properly.
 Normalization
 -------------
 
-When you create a ``Pendulum`` instance, the library will normalize it for the
+When you create a ``DateTime`` instance, the library will normalize it for the
 given timezone to properly handle any transition that might have occurred.
 
 .. code-block:: python
 
     import pendulum
 
-    pendulum.create(2013, 3, 31, 2, 30, tz='Europe/Paris')
+    pendulum.datetime(2013, 3, 31, 2, 30, tz='Europe/Paris')
     # 2:30 for the 31th of March 2013 does not exist
     # so pendulum will return the actual time which is 3:30+02:00
     '2013-03-31T03:30:00+02:00'
 
-    pendulum.create(2013, 10, 27, 2, 30, tz='Europe/Paris')
+    pendulum.datetime(2013, 10, 27, 2, 30, tz='Europe/Paris')
     # Here, 2:30 exists twice in the day so pendulum will
     # assume that the transition already occurred
     '2013-10-27T02:30:00+01:00'
@@ -36,18 +36,18 @@ You can, however, control the normalization behavior:
 
     import pendulum
 
-    pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris',
-                    dst_rule=pendulum.PRE_TRANSITION)
+    pendulum.datetime(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris',
+                      dst_rule=pendulum.PRE_TRANSITION)
     '2013-03-31T01:30:00+01:00'
-    pendulum.create(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
-                    dst_rule=pendulum.PRE_TRANSITION)
+    pendulum.daettime(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
+                      dst_rule=pendulum.PRE_TRANSITION)
     '2013-10-27T02:30:00+02:00'
 
-    pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris'
-                    dst_rule=pendulum.TRANSITION_ERROR)
+    pendulum.datetime(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris'
+                      dst_rule=pendulum.TRANSITION_ERROR)
     # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
-    pendulum.create(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
-                    dst_rule=pendulum.TRANSITION_ERROR)
+    pendulum.datetime(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
+                      dst_rule=pendulum.TRANSITION_ERROR)
     # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
 
 Note that it only affects instances at creation time. Shifting time around
@@ -65,15 +65,15 @@ adopt the proper behavior and apply the transition accordingly.
 
     import pendulum
 
-    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
     '2013-03-31T01:59:59.999999+01:00'
     dt = dt.add(microseconds=1)
     '2013-03-31T03:00:00+02:00'
     dt.subtract(microseconds=1)
     '2013-03-31T01:59:59.999998+01:00'
 
-    dt = pendulum.create(2013, 10, 27, 2, 59, 59, 999999, tz='Europe/Paris'
-                         dst_rule=pendulum.PRE_TRANSITION)
+    dt = pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999, tz='Europe/Paris'
+                           dst_rule=pendulum.PRE_TRANSITION)
     '2013-10-27T02:59:59.999999+02:00'
     dt = dt.add(microseconds=1)
     '2013-10-27T02:00:00+01:00'
@@ -83,7 +83,7 @@ adopt the proper behavior and apply the transition accordingly.
 Switching timezones
 -------------------
 
-You can easily change the timezone of a ``Pendulum`` instance
+You can easily change the timezone of a ``DateTime`` instance
 with the ``in_timezone()`` method.
 
 .. note::
@@ -92,7 +92,7 @@ with the ``in_timezone()`` method.
 
 .. code-block:: python
 
-    in_paris = pendulum.create(2016, 8, 7, 22, 24, 30, tz='Europe/Paris')
+    in_paris = pendulum.datetime(2016, 8, 7, 22, 24, 30, tz='Europe/Paris')
     '2016-08-07T22:24:30+02:00'
     in_paris.in_timezone('America/New_York')
     '2016-08-07T16:24:30-04:00'

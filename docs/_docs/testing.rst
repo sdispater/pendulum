@@ -13,7 +13,7 @@ The provided instance will be returned specifically under the following conditio
     import pendulum
 
     # Create testing datetime
-    known = pendulum.create(2001, 5, 21, 12)
+    known = pendulum.datetime(2001, 5, 21, 12)
 
     # Set the mock
     pendulum.set_test_now(known)
@@ -50,7 +50,7 @@ you can use the provided ``test()`` contextmanager.
 
     import pendulum
 
-    known = pendulum.create(2001, 5, 21, 12)
+    known = pendulum.datetime(2001, 5, 21, 12)
 
     with pendulum.test(known):
         print(pendulum.now())

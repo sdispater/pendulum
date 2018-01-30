@@ -9,7 +9,7 @@ Each method returns a new ``DateTime`` instance.
 
     import pendulum
 
-    dt = pendulum.create(2012, 1, 31, 0)
+    dt = pendulum.datetime(2012, 1, 31)
 
     dt.to_datetime_string()
     '2012-01-31 00:00:00'

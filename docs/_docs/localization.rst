@@ -9,32 +9,13 @@ Localization occurs when using the ``format()`` method which accepts a ``locale`
 
     import pendulum
 
-    dt = pendulum.create(1975, 5, 21)
+    dt = pendulum.datetime(1975, 5, 21)
 
     dt.format('dddd DD MMMM YYYY', locale='de')
     'Mittwoch 21 Mai 1975'
 
     dt.format('dddd DD MMMM YYYY')
     'Wednesday 21 May 1975'
-
-.. note::
-
-    You can also use the ``strftime()`` method, which behaves exactly like the native one.
-
-    .. code-block:: python
-
-        import locale
-        from pendulum import Pendulum
-
-        dt = Pendulum(1975, 5, 21)
-
-        locale.setlocale(locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8'))
-        dt.format('%A %d %B %Y')
-        'Mittwoch 21 Mai 1975'
-
-        locale.setlocale(locale.LC_ALL, locale.getdefaultlocale())
-        dt.format('%A %d %B %Y')
-        'Wednesday 21 May 1975'
 
 ``diff_for_humans()`` is also localized, you can set the locale
 by using ``pendulum.set_locale()``.
