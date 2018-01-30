@@ -3,10 +3,9 @@ import math
 import pendulum
 
 from datetime import date, timedelta
-from dateutil.relativedelta import relativedelta
 
+from .helpers import add_duration
 from .period import Period
-from .formatting.difference_formatter import DifferenceFormatter
 from .mixins.default import FormattableMixing
 from .constants import (
     DAYS_PER_WEEK, YEARS_PER_DECADE, YEARS_PER_CENTURY,
@@ -32,76 +31,6 @@ class Date(FormattableMixing, date):
     _MODIFIERS_VALID_UNITS = [
         'day', 'week', 'month', 'year', 'decade', 'century'
     ]
-
-    _diff_formatter = None
-
-    @classmethod
-    def instance(cls, dt):
-        """
-        Return a new Date instance given a native date instance.
-
-        :param dt: The native date instance.
-        :type dt: date
-
-        :rtype: Date
-        """
-        if not isinstance(dt, date):
-            raise ValueError('instance() only accepts date objects')
-
-        return cls(dt.year, dt.month, dt.day)
-
-    @classmethod
-    def create(cls, year=None, month=None, day=None):
-        """
-        Create a new Date instance from a specific date.
-
-        If any of year, month or day are set to None their today() values will
-        be used.
-
-        :type year: int
-        :type month: int
-        :type day: int
-
-        :rtype: Date
-        """
-        if any([year is None, month is None, day is None]):
-            now = date.today()
-
-            if year is None:
-                year = now.year
-
-            if month is None:
-                month = now.month
-
-            if day is None:
-                day = now.day
-
-        return cls(year, month, day)
-
-    @classmethod
-    def today(cls, tz=None):
-        """
-        Create a Date instance for today.
-
-        :param tz: The timezone
-        :type tz: Timezone or TimezoneInfo or str or None
-
-        :rtype: Date
-        """
-        if pendulum.has_test_now():
-            now = pendulum.get_test_now()
-
-            return now.date()
-
-        return cls.create()
-
-    @classmethod
-    def yesterday(cls):
-        return cls.today().subtract(days=1)
-
-    @classmethod
-    def tomorrow(cls):
-        return cls.today().add(days=1)
 
     # Getters/Setters
 
@@ -190,8 +119,8 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        dt1 = self.instance(dt1)
-        dt2 = self.instance(dt2)
+        dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
+        dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
 
         if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
             return dt1
@@ -207,8 +136,8 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        dt1 = self.instance(dt1)
-        dt2 = self.instance(dt2)
+        dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
+        dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
 
         if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
             return dt1
@@ -261,14 +190,16 @@ class Date(FormattableMixing, date):
 
     def is_birthday(self, dt=None):
         """
-        Check if its the birthday. Compares the date/month values of the two dates.
+        Check if its the birthday.
+
+        Compares the date/month values of the two dates.
 
         :rtype: bool
         """
         if dt is None:
             dt = Date.today()
 
-        instance = self.instance(dt)
+        instance = dt1 = self.__class__(dt.year, dt.month, dt.day)
 
         return (self.month, self.day) == (instance.month, instance.day)
 
@@ -292,14 +223,15 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        delta = relativedelta(
+        dt = add_duration(
+            date(self.year, self.month, self.day),
             years=years,
             months=months,
             weeks=weeks,
-            days=days,
+            days=days
         )
 
-        return self.instance(date(self.year, self.month, self.day) + delta)
+        return self.__class__(dt.year, dt.month, dt.day)
 
     def subtract(self, years=0, months=0, weeks=0, days=0):
         """
@@ -319,14 +251,9 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        delta = relativedelta(
-            years=years,
-            months=months,
-            weeks=weeks,
-            days=days
+        return self.add(
+            years=-years, months=-months, weeks=-weeks, days=-days
         )
-
-        return self.instance(date(self.year, self.month, self.day) - delta)
 
     def _add_timedelta(self, delta):
         """
@@ -337,7 +264,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        if isinstance(delta, pendulum.duration):
+        if isinstance(delta, pendulum.Duration):
             return self.add(
                 years=delta.years,
                 months=delta.months,
@@ -356,7 +283,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        if isinstance(delta, pendulum.duration):
+        if isinstance(delta, pendulum.Duration):
             return self.subtract(
                 years=delta.years,
                 months=delta.months,
@@ -376,10 +303,12 @@ class Date(FormattableMixing, date):
         if isinstance(other, timedelta):
             return self._subtract_timedelta(other)
 
-        try:
-            return self.instance(other).diff(self, False)
-        except ValueError:
+        if not isinstance(other, date):
             return NotImplemented
+
+        dt = self.__class__(other.year, other.month, other.day)
+
+        return dt.diff(self, False)
 
     # DIFFERENCES
 
@@ -397,7 +326,7 @@ class Date(FormattableMixing, date):
         if dt is None:
             dt = self.today()
 
-        return Period(self, self.instance(dt), absolute=abs)
+        return Period(self, Date(dt.year, dt.month, dt.day), absolute=abs)
 
     def diff_for_humans(self, other=None, absolute=False, locale=None):
         """
@@ -432,10 +361,7 @@ class Date(FormattableMixing, date):
         is_now = other is None
 
         if is_now:
-            if hasattr(self, 'now'):
-                other = self.now()
-            else:
-                other = self.today()
+            other = self.today()
 
         diff = self.diff(other)
 
@@ -927,12 +853,20 @@ class Date(FormattableMixing, date):
     # Native methods override
 
     @classmethod
+    def today(cls):
+        return pendulum.today().date()
+
+    @classmethod
     def fromtimestamp(cls, t):
-        return cls.instance(super(Date, cls).fromtimestamp(t))
+        dt = super().fromtimestamp(t)
+
+        return cls(dt.year, dt.month, dt.day)
 
     @classmethod
     def fromordinal(cls, n):
-        return cls.instance(super(Date, cls).fromordinal(n))
+        dt = super().fromordinal(n)
+
+        return cls(dt.year, dt.month, dt.day)
 
     def replace(self, year=None, month=None, day=None):
         year = year if year is not None else self.year

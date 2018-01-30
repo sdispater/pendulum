@@ -8,7 +8,7 @@ from datetime import date
 
 @pytest.fixture()
 def p():
-    return pendulum.date(2016, 8, 27)
+    return pendulum.Date(2016, 8, 27)
 
 
 @pytest.fixture()
@@ -45,26 +45,26 @@ def test_isocalendar(p, d):
 
 
 def test_fromtimestamp():
-    assert pendulum.date.fromtimestamp(0) == date.fromtimestamp(0)
+    assert pendulum.Date.fromtimestamp(0) == date.fromtimestamp(0)
 
 
 def test_fromordinal():
-    assert pendulum.date.fromordinal(730120) == date.fromordinal(730120)
+    assert pendulum.Date.fromordinal(730120) == date.fromordinal(730120)
 
 
 def test_hash():
-    d1 = pendulum.date(2016, 8, 27)
-    d2 = pendulum.date(2016, 8, 27)
-    d3 = pendulum.date(2016, 8, 28)
+    d1 = pendulum.Date(2016, 8, 27)
+    d2 = pendulum.Date(2016, 8, 27)
+    d3 = pendulum.Date(2016, 8, 28)
 
     assert hash(d2) == hash(d1)
     assert hash(d1) != hash(d3)
 
 
 def test_pickle():
-    d1 = pendulum.date(2016, 8, 27)
+    d1 = pendulum.Date(2016, 8, 27)
     s = pickle.dumps(d1)
     d2 = pickle.loads(s)
 
-    assert isinstance(d2, pendulum.date)
+    assert isinstance(d2, pendulum.Date)
     assert d2 == d1

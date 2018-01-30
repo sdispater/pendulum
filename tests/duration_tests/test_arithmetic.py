@@ -7,19 +7,19 @@ def test_multiply():
     it = pendulum.duration(days=6, seconds=34, microseconds=522222)
     mul = it * 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 1, 5, 0, 1, 9, 44444)
 
     it = pendulum.duration(days=6, seconds=34, microseconds=522222)
     mul = 2 * it
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 1, 5, 0, 1, 9, 44444)
 
     it = pendulum.duration(years=2, months=3, weeks=4, days=6, seconds=34, microseconds=522222)
     mul = 2 * it
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 4, 6, 9, 5, 0, 1, 9, 44444)
 
 
@@ -27,19 +27,19 @@ def test_divide():
     it = pendulum.duration(days=2, seconds=34, microseconds=522222)
     mul = it / 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 0, 1, 0, 0, 17, 261111)
 
     it = pendulum.duration(days=2, seconds=35, microseconds=522222)
     mul = it / 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 0, 1, 0, 0, 17, 761111)
 
     it = pendulum.duration(years=2, months=4, days=2, seconds=35, microseconds=522222)
     mul = it / 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 1, 2, 0, 1, 0, 0, 17, 761111)
 
 
@@ -47,23 +47,23 @@ def test_floor_divide():
     it = pendulum.duration(days=2, seconds=34, microseconds=522222)
     mul = it // 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 0, 1, 0, 0, 17, 261111)
 
     it = pendulum.duration(days=2, seconds=35, microseconds=522222)
     mul = it // 3
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 0, 0, 16, 0, 11, 840740)
 
     it = pendulum.duration(years=2, months=4, days=2, seconds=34, microseconds=522222)
     mul = it // 2
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 1, 2, 0, 1, 0, 0, 17, 261111)
 
     it = pendulum.duration(years=2, months=4, days=2, seconds=35, microseconds=522222)
     mul = it // 3
 
-    assert isinstance(mul, pendulum.duration)
+    assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 1, 0, 0, 16, 0, 11, 840740)

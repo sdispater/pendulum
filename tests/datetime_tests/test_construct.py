@@ -22,7 +22,7 @@ def setup():
 
 
 def test_creates_an_instance_default_to_utcnow():
-    now = pendulum.utcnow()
+    now = pendulum.now('UTC')
     p = pendulum.create(
         now.year, now.month, now.day,
         now.hour, now.minute, now.second
@@ -61,33 +61,33 @@ def test_today():
 
 def test_tomorrow():
     now = pendulum.now().start_of('day')
-    tomorrow = DateTime.tomorrow()
+    tomorrow = pendulum.tomorrow()
     assert isinstance(tomorrow, DateTime)
     assert now.diff(tomorrow).in_days() == 1
 
 
 def test_yesterday():
     now = pendulum.now().start_of('day')
-    yesterday = DateTime.yesterday()
+    yesterday = pendulum.yesterday()
 
     assert isinstance(yesterday, DateTime)
     assert now.diff(yesterday, False).in_days() == -1
 
 
 def test_instance_naive_datetime_defaults_to_utc():
-    now = DateTime.instance(datetime.now())
+    now = pendulum.instance(datetime.now())
     assert now.timezone_name == 'UTC'
 
 
 def test_instance_timezone_aware_datetime():
-    now = DateTime.instance(
+    now = pendulum.instance(
         datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, timedelta(0, 3600), 'EST'))
     )
     assert now.timezone_name == 'Europe/Paris'
 
 
 def test_instance_timezone_aware_datetime_pytz():
-    now = DateTime.instance(
+    now = pendulum.instance(
         datetime.now(pytz.timezone('Europe/Paris'))
     )
     assert now.timezone_name == 'Europe/Paris'
@@ -95,7 +95,7 @@ def test_instance_timezone_aware_datetime_pytz():
 
 def test_instance_timezone_aware_datetime_any_tzinfo():
     dt = datetime(2016, 8, 7, 12, 34, 56, tzinfo=tz.gettz('Europe/Paris'))
-    now = DateTime.instance(dt)
+    now = pendulum.instance(dt)
     assert now.timezone_name == '+02:00'
 
 

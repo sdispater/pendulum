@@ -219,12 +219,12 @@ def test_is_past():
 def test_date():
     dt = pendulum.create(2016, 10, 20, 10, 40, 34, 123456)
     d = dt.date()
-    assert isinstance(d, pendulum.date)
+    assert isinstance(d, pendulum.Date)
     assert_date(d, 2016, 10, 20)
 
 
 def test_time():
     dt = pendulum.create(2016, 10, 20, 10, 40, 34, 123456)
     t = dt.time()
-    assert isinstance(t, pendulum.time)
+    assert isinstance(t, pendulum.Time)
     assert_time(t, 10, 40, 34, 123456)

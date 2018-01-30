@@ -47,7 +47,7 @@ def test_iter():
     p = Period(dt1, dt2)
     i = 0
     for dt in p:
-        assert isinstance(dt, pendulum.datetime)
+        assert isinstance(dt, pendulum.DateTime)
         i += 1
 
     assert i == 31

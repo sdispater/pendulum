@@ -14,55 +14,6 @@ class Time(FormattableMixing, time):
     Represents a time instance as hour, minute, second, microsecond.
     """
 
-    @classmethod
-    def instance(cls, t):
-        """
-        Creates a Time instance from a time object.
-
-        It will raise a TypeError exception if the time
-        is timezone aware.
-
-        :param t: The time object
-        :type t: time
-
-        :param copy: Whether to return a copy of the instance or not.
-        :type copy: bool
-
-        :rtype: Time
-
-        :raises: TypeError
-        """
-        return cls(t.hour, t.minute,
-                   t.second, t.microsecond,
-                   t.tzinfo, fold=t.fold)
-
-    @classmethod
-    def now(cls, with_microseconds=True):
-        """
-        Return a Time instance corresponding to the current time.
-
-        It will return your local time.
-
-        By default, it will include microseconds.
-        Just set ``with_microseconds`` to ``False`` to exclude them.
-
-        :param with_microseconds: Whether to include microseconds or not.
-        :type with_microseconds: bool
-
-        :rtype: Time
-        """
-        if pendulum.has_test_now():
-            if not with_microseconds:
-                return pendulum.get_test_now().time().replace(microsecond=0)
-
-            return pendulum.get_test_now().time()
-
-        now = datetime.now()
-
-        microsecond = now.microsecond if with_microseconds else 0
-
-        return cls(now.hour, now.minute, now.second, microsecond)
-
     # String formatting
     def __repr__(self):
         us = ''
@@ -77,25 +28,6 @@ class Time(FormattableMixing, time):
 
     # Comparisons
 
-    def between(self, dt1, dt2, equal=True):
-        """
-        Determines if the instance is between two others.
-
-        :type dt1: Time or time
-        :type dt2: Time or time
-
-        :param equal: Indicates if a > and < comparison shoud be used or <= and >=
-
-        :rtype: bool
-        """
-        if dt1 > dt2:
-            dt1, dt2 = dt2, dt1
-
-        if equal:
-            return self >= dt1 and self <= dt2
-
-        return self > dt1 and self < dt2
-
     def closest(self, dt1, dt2):
         """
         Get the closest time from the instance.
@@ -105,8 +37,8 @@ class Time(FormattableMixing, time):
 
         :rtype: Time
         """
-        dt1 = self.instance(dt1)
-        dt2 = self.instance(dt2)
+        dt1 = self.__class__(dt1.hour, dt1.minute, dt1.second, dt1.microsecond)
+        dt2 = self.__class__(dt2.hour, dt2.minute, dt2.second, dt2.microsecond)
 
         if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
             return dt1
@@ -122,8 +54,8 @@ class Time(FormattableMixing, time):
 
         :rtype: Time
         """
-        dt1 = self.instance(dt1)
-        dt2 = self.instance(dt2)
+        dt1 = self.__class__(dt1.hour, dt1.minute, dt1.second, dt1.microsecond)
+        dt2 = self.__class__(dt2.hour, dt2.minute, dt2.second, dt2.microsecond)
 
         if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
             return dt1
@@ -241,7 +173,7 @@ class Time(FormattableMixing, time):
             if other.tzinfo is not None:
                 raise TypeError('Cannot subtract aware times to or from Time.')
 
-            other = self.instance(other)
+            other = self.__class__(other.hour, other.minute, other.second, other.microsecond)
 
         return other.diff(self, False)
 
@@ -253,7 +185,7 @@ class Time(FormattableMixing, time):
             if other.tzinfo is not None:
                 raise TypeError('Cannot subtract aware times to or from Time.')
 
-            other = self.instance(other)
+            other = self.__class__(other.hour, other.minute, other.second, other.microsecond)
 
         return other.__sub__(self)
 
@@ -271,9 +203,9 @@ class Time(FormattableMixing, time):
         :rtype: Duration
         """
         if dt is None:
-            dt = self.now()
+            dt = pendulum.now().time()
         else:
-            dt = self.instance(dt)
+            dt = self.__class__(dt.hour, dt.minute, dt.second, dt.microsecond)
 
         us1 = (
             self.hour * SECS_PER_HOUR
@@ -310,7 +242,7 @@ class Time(FormattableMixing, time):
         is_now = other is None
 
         if is_now:
-            other = self.now()
+            other = pendulum.now().time()
 
         diff = self.diff(other)
 
@@ -328,11 +260,13 @@ class Time(FormattableMixing, time):
         second = second if second is not None else self.second
         microsecond = microsecond if microsecond is not None else self.microsecond
 
-        return self.instance(
-            super().replace(
-                hour, minute, second, microsecond,
-                tzinfo=tzinfo
-            )
+        t = super().replace(
+            hour, minute, second, microsecond,
+            tzinfo=tzinfo
+        )
+        return self.__class__(
+            t.hour, t.minute, t.second, t.microsecond,
+            tzinfo=t.tzinfo
         )
 
     def _getstate(self, protocol=3):

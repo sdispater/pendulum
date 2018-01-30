@@ -24,9 +24,3 @@ def test_create_from_timestamp_with_timezone():
     d = pendulum.from_timestamp(0, timezone('America/Toronto'))
     assert d.timezone_name == 'America/Toronto'
     assert_datetime(d, 1969, 12, 31, 19, 0, 0)
-
-
-def test_create_from_timestamp_with_pytz_timezone():
-    d = pendulum.from_timestamp(0, pytz.timezone('America/Toronto'))
-    assert d.timezone_name == 'America/Toronto'
-    assert_datetime(d, 1969, 12, 31, 19, 0, 0)

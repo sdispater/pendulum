@@ -41,10 +41,12 @@ def _parse(text, **options):
         )
 
     if isinstance(parsed, datetime.date):
-        return pendulum.date.instance(parsed)
+        return pendulum.date(parsed.year, parsed.month, parsed.day)
 
     if isinstance(parsed, datetime.time):
-        return pendulum.time.instance(parsed)
+        return pendulum.time(
+            parsed.hour, parsed.minute, parsed.second, parsed.microsecond
+        )
 
     if isinstance(parsed, _Interval):
         if parsed.duration is not None:

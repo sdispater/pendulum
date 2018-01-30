@@ -3,13 +3,12 @@ import pendulum
 
 from datetime import datetime, date
 
-from .mixins.interval import WordableDurationMixin
-from .duration import BaseDuration, Duration
+from .duration import Duration
 from .constants import MONTHS_PER_YEAR
 from .helpers import precise_diff
 
 
-class Period(WordableDurationMixin, BaseDuration):
+class Period(Duration):
     """
     Duration class that is aware of the datetimes that generated the
     time difference.
@@ -46,11 +45,11 @@ class Period(WordableDurationMixin, BaseDuration):
     def __init__(self, start, end, absolute=False):
         super(Period, self).__init__()
 
-        if not isinstance(start, (pendulum.Date)):
+        if not isinstance(start, pendulum.Date):
             if isinstance(start, datetime):
-                start = pendulum.DateTime.instance(start)
+                start = pendulum.instance(start)
             else:
-                start = pendulum.Date.instance(start)
+                start = pendulum.date(start.year, start.month, start.day)
 
             _start = start
         else:
@@ -63,11 +62,11 @@ class Period(WordableDurationMixin, BaseDuration):
             else:
                 _start = date(start.year, start.month, start.day)
 
-        if not isinstance(end, (pendulum.Date)):
+        if not isinstance(end, pendulum.Date):
             if isinstance(end, datetime):
-                end = pendulum.DateTime.instance(end)
+                end = pendulum.instance(end)
             else:
-                end = pendulum.Date.instance(end)
+                end = pendulum.date(end.year, end.month, end.day)
 
             _end = end
         else:
@@ -181,9 +180,29 @@ class Period(WordableDurationMixin, BaseDuration):
             ('second', self.remaining_seconds)
         ]
 
-        return super(Period, self).in_words(
-            locale=locale, separator=separator, _periods=periods
-        )
+        if locale is None:
+            locale = pendulum.get_locale()
+
+        locale = pendulum.locale(locale)
+        parts = []
+        for period in periods:
+            unit, count = period
+            if abs(count) > 0:
+                translation = locale.translation(
+                    f'units.{unit}.{locale.plural(abs(count))}'
+                )
+                parts.append(translation.format(count))
+
+        if not parts and abs(self.microseconds) > 0:
+            translation = locale.translation(
+                f'units.second.{locale.plural(1)}'
+            )
+            us = abs(self.microseconds) / 1e6
+            parts.append(
+                translation.format(f'{us:.2f}')
+            )
+
+        return separator.join(parts)
 
     def range(self, unit, amount=1):
         method = 'add'

@@ -7,19 +7,25 @@ from ..conftest import assert_datetime
 def test_from_format_returns_datetime():
     d = pendulum.from_format('1975-05-21 22:32:11', 'YYYY-MM-DD HH:mm:ss')
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert isinstance(d, pendulum.datetime)
+    assert isinstance(d, pendulum.DateTime)
     assert 'UTC' == d.timezone_name
 
 
 def test_from_format_with_timezone_string():
-    d = pendulum.from_format('1975-05-21 22:32:11', 'YYYY-MM-DD HH:mm:ss', 'Europe/London')
+    d = pendulum.from_format(
+        '1975-05-21 22:32:11',
+        'YYYY-MM-DD HH:mm:ss',
+        tz='Europe/London'
+    )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert 'Europe/London' == d.timezone_name
 
 
 def test_from_format_with_timezone():
     d = pendulum.from_format(
-        '1975-05-21 22:32:11', 'YYYY-MM-DD HH:mm:ss', pendulum.timezone('Europe/London')
+        '1975-05-21 22:32:11',
+        'YYYY-MM-DD HH:mm:ss',
+        tz=pendulum.timezone('Europe/London')
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert 'Europe/London' == d.timezone_name
@@ -108,7 +114,7 @@ def test_from_format_error(text, fmt, locale):
 
 
 def test_strptime():
-    d = pendulum.strptime('1975-05-21 22:32:11', '%Y-%m-%d %H:%M:%S')
+    d = pendulum.DateTime.strptime('1975-05-21 22:32:11', '%Y-%m-%d %H:%M:%S')
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert isinstance(d, pendulum.datetime)
+    assert isinstance(d, pendulum.DateTime)
     assert 'UTC' == d.timezone_name

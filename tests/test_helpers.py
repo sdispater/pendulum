@@ -130,20 +130,10 @@ def test_test_now():
 
     assert pendulum.has_test_now()
     assert now == pendulum.get_test_now()
-    assert now.date() == pendulum.date.today()
-    assert now.time() == pendulum.time.now()
 
     assert_datetime(
-        pendulum.datetime.now(),
+        pendulum.now(),
         2000, 11, 10, 12, 34, 56, 123456
-    )
-    assert_date(
-        pendulum.date.today(),
-        2000, 11, 10
-    )
-    assert_time(
-        pendulum.time.now(),
-        12, 34, 56, 123456
     )
 
     pendulum.set_test_now()

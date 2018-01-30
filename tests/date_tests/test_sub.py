@@ -8,59 +8,59 @@ from ..conftest import assert_date
 
 
 def test_subtract_years_positive():
-    assert pendulum.date.create(1975).subtract(years=1).year == 1974
+    assert pendulum.date(1975, 1, 1).subtract(years=1).year == 1974
 
 
 def test_subtract_years_zero():
-    assert pendulum.date.create(1975).subtract(years=0).year == 1975
+    assert pendulum.date(1975, 1, 1).subtract(years=0).year == 1975
 
 
 def test_subtract_years_negative():
-    assert pendulum.date.create(1975).subtract(years=-1).year == 1976
+    assert pendulum.date(1975, 1, 1).subtract(years=-1).year == 1976
 
 
 def test_subtract_months_positive():
-    assert pendulum.date.create(1975, 1).subtract(months=1).month == 12
+    assert pendulum.date(1975, 1, 1).subtract(months=1).month == 12
 
 
 def test_subtract_months_zero():
-    assert pendulum.date.create(1975, 12).subtract(months=0).month == 12
+    assert pendulum.date(1975, 12, 1).subtract(months=0).month == 12
 
 
 def test_subtract_months_negative():
-    assert pendulum.date.create(1975, 11, 1).subtract(months=-1).month == 12
+    assert pendulum.date(1975, 11, 1).subtract(months=-1).month == 12
 
 
 def test_subtract_days_positive():
-    assert pendulum.date(1975, 6, 1).subtract(days=1).day == 31
+    assert pendulum.Date(1975, 6, 1).subtract(days=1).day == 31
 
 
 def test_subtract_days_zero():
-    assert pendulum.date(1975, 5, 31).subtract(days=0).day == 31
+    assert pendulum.Date(1975, 5, 31).subtract(days=0).day == 31
 
 
 def test_subtract_days_negative():
-    assert pendulum.date(1975, 5, 30).subtract(days=-1).day == 31
+    assert pendulum.Date(1975, 5, 30).subtract(days=-1).day == 31
 
 
 def test_subtract_weeks_positive():
-    assert pendulum.date(1975, 5, 28).subtract(weeks=1).day == 21
+    assert pendulum.Date(1975, 5, 28).subtract(weeks=1).day == 21
 
 
 def test_subtract_weeks_zero():
-    assert pendulum.date(1975, 5, 21).subtract(weeks=0).day == 21
+    assert pendulum.Date(1975, 5, 21).subtract(weeks=0).day == 21
 
 
 def test_subtract_weeks_negative():
-    assert pendulum.date(1975, 5, 14).subtract(weeks=-1).day == 21
+    assert pendulum.Date(1975, 5, 14).subtract(weeks=-1).day == 21
 
 
 def test_subtract_timedelta():
     delta = timedelta(days=18)
-    d = pendulum.date.create(2015, 3, 14)
+    d = pendulum.date(2015, 3, 14)
 
     new = d - delta
-    assert isinstance(new, pendulum.date)
+    assert isinstance(new, pendulum.Date)
     assert_date(new, 2015, 2, 24)
 
 

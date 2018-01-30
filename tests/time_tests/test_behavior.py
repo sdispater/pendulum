@@ -9,7 +9,7 @@ from pendulum import Time
 
 @pytest.fixture()
 def p():
-    return pendulum.time(12, 34, 56, 123456, pytz.timezone('Europe/Paris'))
+    return pendulum.Time(12, 34, 56, 123456, pytz.timezone('Europe/Paris'))
 
 
 @pytest.fixture()

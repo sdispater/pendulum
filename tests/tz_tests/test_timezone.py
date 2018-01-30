@@ -240,13 +240,13 @@ def test_convert_accept_pendulum_instance():
     tz = timezone('Europe/Paris')
     new = tz.convert(dt)
 
-    assert isinstance(new, pendulum.datetime)
+    assert isinstance(new, pendulum.DateTime)
     assert_datetime(new, 2016, 8, 7, 14, 53, 54)
 
 
 def test_utcoffset():
     tz = pendulum.timezone('America/Guayaquil')
-    utcoffset = tz.utcoffset(pendulum.utcnow())
+    utcoffset = tz.utcoffset(pendulum.now('UTC'))
     assert utcoffset == timedelta(0, -18000)
 
 

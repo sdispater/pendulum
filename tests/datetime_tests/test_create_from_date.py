@@ -7,7 +7,7 @@ from ..conftest import assert_datetime
 
 def test_create_from_date_with_defaults():
     d = pendulum.create()
-    assert pendulum.utcnow().at(0, 0, 0, 0).timestamp() == d.timestamp()
+    assert pendulum.now('UTC').at(0, 0, 0, 0).timestamp() == d.timestamp()
 
 
 def test_create_from_date():

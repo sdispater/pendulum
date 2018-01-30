@@ -1,25 +1,25 @@
 import pendulum
 
-from pendulum import DateTime, timezone
+from pendulum import timezone
 
 from ..conftest import assert_datetime
 
 
 def test_create_from_time_with_defaults():
     d = pendulum.create()
-    assert DateTime.utcnow().at(0, 0, 0, 0).timestamp() == d.timestamp()
+    assert pendulum.now('UTC').at(0, 0, 0, 0).timestamp() == d.timestamp()
     assert d.timezone_name == 'UTC'
 
 
 def test_create_from_time():
     d = pendulum.create(hour=23, minute=5, second=11)
-    now = DateTime.utcnow()
+    now = pendulum.now('UTC')
     assert_datetime(d, now.year, now.month, now.day, 23, 5, 11)
     assert d.timezone_name == 'UTC'
 
 
 def test_create_from_time_with_hour():
-    with pendulum.test(DateTime(2016, 8, 11, 12, 34, 56, 123456)):
+    with pendulum.test(pendulum.datetime(2016, 8, 11, 12, 34, 56, 123456)):
         d = pendulum.create(hour=23)
         assert d.hour == 23
         assert d.minute == 0

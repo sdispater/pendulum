@@ -1,8 +1,9 @@
 import pendulum
 
 from math import copysign
-from datetime import timedelta
+from datetime import datetime, date, timedelta
 from contextlib import contextmanager
+from typing import Union
 
 
 try:
@@ -24,41 +25,19 @@ from .locales.locale import Locale
 difference_formatter = DifferenceFormatter()
 
 
-def add_duration(dt, years=0, months=0, weeks=0, days=0,
-                 hours=0, minutes=0, seconds=0, microseconds=0):
+def add_duration(dt: Union[datetime, date],
+                 years: int = 0, months: int = 0,
+                 weeks: int = 0, days: int = 0,
+                 hours: int = 0, minutes: int = 0, seconds: int = 0,
+                 microseconds: int = 0) -> Union[datetime, date]:
     """
-    Adds a duration to a datetime instance.
-
-    :param dt: The datetime instance
-    :type dt: datetime.datetime
-
-    :param years: The number of years
-    :type years: int
-
-    :param months: The number of months
-    :type months: int
-
-    :param weeks: The number of weeks
-    :type weeks: int
-
-    :param days: The number of days
-    :type days: int
-
-    :param hours: The number of hours
-    :type hours: int
-
-    :param minutes: The number of minutes
-    :type minutes: int
-
-    :param seconds: The number of seconds
-    :type seconds: int
-
-    :param microseconds: The number of microseconds
-    :type microseconds: int
-
-    :rtype: datetime.datetime
+    Adds a duration to a date/datetime instance.
     """
     days += weeks * 7
+
+    if (isinstance(dt, date) and not isinstance(dt, datetime)
+            and any([hours, minutes, seconds, microseconds])):
+        raise RuntimeError('Time elements cannot be added to a date instance.')
 
     # Normalizing
     if abs(microseconds) > 999999:
@@ -142,11 +121,11 @@ def set_test_now(test_now=None):
     pendulum._TEST_NOW = test_now
 
 
-def get_test_now():
+def get_test_now() -> 'pendulum.DateTime':
     return pendulum._TEST_NOW
 
 
-def has_test_now():
+def has_test_now() -> bool:
     return pendulum._TEST_NOW is not None
 
 

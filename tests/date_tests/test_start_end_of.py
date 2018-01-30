@@ -1,3 +1,4 @@
+import pendulum
 import pytest
 
 from pendulum import Date
@@ -218,32 +219,32 @@ def test_average_is_fluid():
 
 
 def test_average_from_same():
-    d1 = Date.create(2000, 1, 31)
-    d2 = Date.create(2000, 1, 31).average(d1)
+    d1 = pendulum.date(2000, 1, 31)
+    d2 = pendulum.date(2000, 1, 31).average(d1)
     assert_date(d2, 2000, 1, 31)
 
 
 def test_average_from_greater():
-    d1 = Date.create(2000, 1, 1)
-    d2 = Date.create(2009, 12, 31).average(d1)
+    d1 = pendulum.date(2000, 1, 1)
+    d2 = pendulum.date(2009, 12, 31).average(d1)
     assert_date(d2, 2004, 12, 31)
 
 
 def test_average_from_lower():
-    d1 = Date.create(2009, 12, 31)
-    d2 = Date.create(2000, 1, 1).average(d1)
+    d1 = pendulum.date(2009, 12, 31)
+    d2 = pendulum.date(2000, 1, 1).average(d1)
     assert_date(d2, 2004, 12, 31)
 
 
 def test_start_of():
-    d = Date(2013, 3, 31)
+    d = pendulum.date(2013, 3, 31)
 
     with pytest.raises(ValueError):
         d.start_of('invalid')
 
 
 def test_end_of_invalid_unit():
-    d = Date(2013, 3, 31)
+    d = pendulum.date(2013, 3, 31)
 
     with pytest.raises(ValueError):
         d.end_of('invalid')

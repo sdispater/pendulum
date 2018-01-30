@@ -2,7 +2,6 @@ import pytest
 import pendulum
 
 from datetime import timedelta
-from pendulum import Duration
 from pendulum.duration import AbsoluteDuration
 
 from ..conftest import assert_duration
@@ -45,6 +44,7 @@ def test_hours():
     pi = pendulum.duration(seconds=3600 * 3)
     assert_duration(pi, 0, 0, 0, 0, 3, 0, 0)
 
+
 def test_minutes():
     pi = pendulum.duration(seconds=60 * 3)
     assert_duration(pi, 0, 0, 0, 0, 0, 3, 0)
@@ -61,11 +61,6 @@ def test_all():
     assert_duration(pi, 2, 3, 168, 1, 2, 1, 25)
     assert 1997 == pi.days
     assert 7285 == pi.seconds
-
-
-def test_instance():
-    pi = Duration.instance(timedelta(days=1177, seconds=7284, microseconds=1000000))
-    assert_duration(pi, 0, 0, 168, 1, 2, 1, 25)
 
 
 def test_absolute_interval():

@@ -1,8 +1,6 @@
-from datetime import timedelta
+import pendulum
 
-from .mixins.interval import (
-    WordableDurationMixin
-)
+from datetime import timedelta
 
 from .constants import (
     SECONDS_PER_DAY, SECONDS_PER_HOUR,
@@ -30,9 +28,11 @@ def _divide_and_round(a, b):
     return q
 
 
-class BaseDuration(timedelta):
+class Duration(timedelta):
     """
-    Base class for all inherited duration classes.
+    Replacement for the standard timedelta class.
+
+    Provides several improvements over the base class.
     """
 
     _y = None
@@ -163,6 +163,54 @@ class BaseDuration(timedelta):
     def in_seconds(self):
         return int(self.total_seconds())
 
+    def in_words(self, locale=None, separator=' '):
+        """
+        Get the current interval in words in the current locale.
+
+        Ex: 6 jours 23 heures 58 minutes
+
+        :param locale: The locale to use. Defaults to current locale.
+        :type locale: str
+
+        :param separator: The separator to use between each unit
+        :type separator: str
+
+        :rtype: str
+        """
+        periods = [
+            ('year', self.years),
+            ('month', self.months),
+            ('week', self.weeks),
+            ('day', self.remaining_days),
+            ('hour', self.hours),
+            ('minute', self.minutes),
+            ('second', self.remaining_seconds)
+        ]
+
+        if locale is None:
+            locale = pendulum.get_locale()
+
+        locale = pendulum.locale(locale)
+        parts = []
+        for period in periods:
+            unit, count = period
+            if abs(count) > 0:
+                translation = locale.translation(
+                    f'units.{unit}.{locale.plural(abs(count))}'
+                )
+                parts.append(translation.format(count))
+
+        if not parts and abs(self.microseconds) > 0:
+            translation = locale.translation(
+                f'units.second.{locale.plural(1)}'
+            )
+            us = abs(self.microseconds) / 1e6
+            parts.append(
+                translation.format(f'{us:.2f}')
+            )
+
+        return separator.join(parts)
+
     def _sign(self, value):
         if value < 0:
             return -1
@@ -176,6 +224,9 @@ class BaseDuration(timedelta):
         :rtype: timedelta
         """
         return timedelta(seconds=self.total_seconds())
+
+    def __str__(self):
+        return self.in_words()
 
     def __repr__(self):
         rep = f'{self.__class__.__name__}('
@@ -207,25 +258,6 @@ class BaseDuration(timedelta):
         rep += ')'
 
         return rep.replace(', )', ')')
-
-
-class Duration(WordableDurationMixin, BaseDuration):
-    """
-    Replacement for the standard timedelta class.
-
-    Provides several improvements over the base class.
-    """
-
-    @classmethod
-    def instance(cls, delta):
-        """
-        Creates a Duration from a timedelta
-
-        :type delta: timedelta
-
-        :rtype: Duration
-        """
-        return cls(days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds)
 
     def __add__(self, other):
         if isinstance(other, timedelta):
@@ -336,6 +368,7 @@ class Duration(WordableDurationMixin, BaseDuration):
             return q, self.__class__(0, 0, r)
 
         return NotImplemented
+
 
 Duration.min = Duration(days=-999999999)
 Duration.max = Duration(days=999999999, hours=23,

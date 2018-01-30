@@ -4,7 +4,7 @@ from ..conftest import assert_date
 
 
 def test_fluid_year_setter():
-    d = pendulum.date(2016, 10, 20)
+    d = pendulum.Date(2016, 10, 20)
     new = d.set(year=1995)
 
     assert_date(new, 1995, 10, 20)
@@ -12,7 +12,7 @@ def test_fluid_year_setter():
 
 
 def test_fluid_month_setter():
-    d = pendulum.date(2016, 7, 2)
+    d = pendulum.Date(2016, 7, 2)
     new = d.set(month=11)
 
     assert new.month == 11
@@ -20,7 +20,7 @@ def test_fluid_month_setter():
 
 
 def test_fluid_day_setter():
-    d = pendulum.date(2016, 7, 2)
+    d = pendulum.Date(2016, 7, 2)
     new = d.set(day=9)
 
     assert new.day == 9

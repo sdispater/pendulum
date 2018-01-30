@@ -87,19 +87,19 @@ def test_subtract_time():
     t3 = time(1, 1, 1, tzinfo=pytz.timezone('Europe/Paris'))
 
     diff = t - t1
-    assert isinstance(diff, pendulum.duration)
+    assert isinstance(diff, pendulum.Duration)
     assert_duration(diff, 0, hours=11, minutes=33, seconds=55)
 
     diff = t1 - t
-    assert isinstance(diff, pendulum.duration)
+    assert isinstance(diff, pendulum.Duration)
     assert_duration(diff, 0, hours=-11, minutes=-33, seconds=-55)
 
     diff = t - t2
-    assert isinstance(diff, pendulum.duration)
+    assert isinstance(diff, pendulum.Duration)
     assert_duration(diff, 0, hours=11, minutes=33, seconds=55)
 
     diff = t2 - t
-    assert isinstance(diff, pendulum.duration)
+    assert isinstance(diff, pendulum.Duration)
     assert_duration(diff, 0, hours=-11, minutes=-33, seconds=-55)
 
     with pytest.raises(TypeError):

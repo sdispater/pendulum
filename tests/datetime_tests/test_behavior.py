@@ -87,25 +87,25 @@ def test_isocalendar(p, dt):
 
 
 def test_fromtimestamp():
-    p = pendulum.fromtimestamp(0, pendulum.UTC)
+    p = pendulum.DateTime.fromtimestamp(0, pendulum.UTC)
     dt = datetime.fromtimestamp(0, pendulum.UTC)
 
     assert p == dt
 
 
 def test_utcfromtimestamp():
-    p = pendulum.utcfromtimestamp(0)
+    p = pendulum.DateTime.utcfromtimestamp(0)
     dt = datetime.utcfromtimestamp(0)
 
     assert p == dt
 
 
 def test_fromordinal():
-    assert datetime.fromordinal(730120) == pendulum.fromordinal(730120)
+    assert datetime.fromordinal(730120) == pendulum.DateTime.fromordinal(730120)
 
 
 def test_combine():
-    p = pendulum.combine(date(2016, 1, 1), time(1, 2, 3, 123456))
+    p = pendulum.DateTime.combine(date(2016, 1, 1), time(1, 2, 3, 123456))
     dt = datetime.combine(date(2016, 1, 1), time(1, 2, 3, 123456))
 
     assert p == dt
