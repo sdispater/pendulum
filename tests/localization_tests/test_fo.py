@@ -5,7 +5,7 @@ locale = 'fo'
 
 
 def test_diff_for_humans():
-    with pendulum.test(pendulum.create(2016, 8, 29)):
+    with pendulum.test(pendulum.datetime(2016, 8, 29)):
         diff_for_humans()
 
 

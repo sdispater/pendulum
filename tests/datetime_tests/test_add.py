@@ -7,96 +7,96 @@ from ..conftest import assert_datetime
 
 
 def test_add_years_positive():
-    assert pendulum.create(1975).add(years=1).year == 1976
+    assert pendulum.datetime(1975, 1, 1).add(years=1).year == 1976
 
 
 def test_add_years_zero():
-    assert pendulum.create(1975).add(years=0).year == 1975
+    assert pendulum.datetime(1975, 1, 1).add(years=0).year == 1975
 
 
 def test_add_years_negative():
-    assert pendulum.create(1975).add(years=-1).year == 1974
+    assert pendulum.datetime(1975, 1, 1).add(years=-1).year == 1974
 
 
 def test_add_months_positive():
-    assert pendulum.create(1975, 12).add(months=1).month == 1
+    assert pendulum.datetime(1975, 12, 1).add(months=1).month == 1
 
 
 def test_add_months_zero():
-    assert pendulum.create(1975, 12).add(months=0).month == 12
+    assert pendulum.datetime(1975, 12, 1).add(months=0).month == 12
 
 
 def test_add_months_negative():
-    assert pendulum.create(1975, 12).add(months=-1).month == 11
+    assert pendulum.datetime(1975, 12, 1).add(months=-1).month == 11
 
 
 def test_add_month_with_overflow():
-    assert pendulum.create(2012, 1, 31).add(months=1).month == 2
+    assert pendulum.datetime(2012, 1, 31).add(months=1).month == 2
 
 
 def test_add_days_positive():
-    assert pendulum.create(1975, 5, 31).add(days=1).day == 1
+    assert pendulum.datetime(1975, 5, 31).add(days=1).day == 1
 
 
 def test_add_days_zero():
-    assert pendulum.create(1975, 5, 31).add(days=0).day == 31
+    assert pendulum.datetime(1975, 5, 31).add(days=0).day == 31
 
 
 def test_add_days_negative():
-    assert pendulum.create(1975, 5, 31).add(days=-1).day == 30
+    assert pendulum.datetime(1975, 5, 31).add(days=-1).day == 30
 
 
 def test_add_weeks_positive():
-    assert pendulum.create(1975, 5, 21).add(weeks=1).day == 28
+    assert pendulum.datetime(1975, 5, 21).add(weeks=1).day == 28
 
 
 def test_add_weeks_zero():
-    assert pendulum.create(1975, 5, 21).add(weeks=0).day == 21
+    assert pendulum.datetime(1975, 5, 21).add(weeks=0).day == 21
 
 
 def test_add_weeks_negative():
-    assert pendulum.create(1975, 5, 21).add(weeks=-1).day == 14
+    assert pendulum.datetime(1975, 5, 21).add(weeks=-1).day == 14
 
 
 def test_add_hours_positive():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(hours=1).hour == 1
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(hours=1).hour == 1
 
 
 def test_add_hours_zero():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(hours=0).hour == 0
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(hours=0).hour == 0
 
 
 def test_add_hours_negative():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(hours=-1).hour == 23
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(hours=-1).hour == 23
 
 
 def test_add_minutes_positive():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(minutes=1).minute == 1
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(minutes=1).minute == 1
 
 
 def test_add_minutes_zero():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(minutes=0).minute == 0
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(minutes=0).minute == 0
 
 
 def test_add_minutes_negative():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(minutes=-1).minute == 59
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(minutes=-1).minute == 59
 
 
 def test_add_seconds_positive():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(seconds=1).second == 1
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(seconds=1).second == 1
 
 
 def test_add_seconds_zero():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(seconds=0).second == 0
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(seconds=0).second == 0
 
 
 def test_add_seconds_negative():
-    assert pendulum.create(1975, 5, 21, 0, 0, 0).add(seconds=-1).second == 59
+    assert pendulum.datetime(1975, 5, 21, 0, 0, 0).add(seconds=-1).second == 59
 
 
 def test_add_timedelta():
     delta = timedelta(days=6, seconds=45, microseconds=123456)
-    d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
+    d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 654321)
 
     d = d + delta
     assert d.day == 20
@@ -109,7 +109,7 @@ def test_add_duration():
     duration = pendulum.duration(
         years=2, months=3, days=6, seconds=45, microseconds=123456
     )
-    d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
+    d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 654321)
 
     d = d + duration
     assert 2017 == d.year
@@ -122,7 +122,7 @@ def test_add_duration():
 
 
 def test_addition_invalid_type():
-    d = pendulum.create(2015, 3, 14, 3, 12, 15, 654321)
+    d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 654321)
 
     with pytest.raises(TypeError):
         d + 3
@@ -141,7 +141,7 @@ def test_add_to_fixed_timezones():
 
 
 def test_add_time_to_new_transition_skipped():
-    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
 
     assert_datetime(dt, 2013, 3, 31, 1, 59, 59, 999999)
     assert dt.timezone_name == 'Europe/Paris'
@@ -155,7 +155,7 @@ def test_add_time_to_new_transition_skipped():
     assert dt.offset == 7200
     assert dt.is_dst()
 
-    dt = pendulum.create(2013, 3, 10, 1, 59, 59, 999999, 'America/New_York')
+    dt = pendulum.datetime(2013, 3, 10, 1, 59, 59, 999999, tz='America/New_York')
 
     assert_datetime(dt, 2013, 3, 10, 1, 59, 59, 999999)
     assert dt.timezone_name == 'America/New_York'
@@ -169,7 +169,7 @@ def test_add_time_to_new_transition_skipped():
     assert dt.offset == - 4 * 3600
     assert dt.is_dst()
 
-    dt = pendulum.create(1957, 4, 28, 1, 59, 59, 999999, 'America/New_York')
+    dt = pendulum.datetime(1957, 4, 28, 1, 59, 59, 999999, tz='America/New_York')
 
     assert_datetime(dt, 1957, 4, 28, 1, 59, 59, 999999)
     assert dt.timezone_name == 'America/New_York'
@@ -185,7 +185,7 @@ def test_add_time_to_new_transition_skipped():
 
 
 def test_add_time_to_new_transition_skipped_big():
-    dt = pendulum.create(2013, 3, 31, 1, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, tz='Europe/Paris')
 
     assert_datetime(dt, 2013, 3, 31, 1, 0, 0, 0)
     assert dt.timezone_name == 'Europe/Paris'
@@ -201,7 +201,7 @@ def test_add_time_to_new_transition_skipped_big():
 
 
 def test_add_time_to_new_transition_repeated():
-    dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 1, 59, 59, 999999, tz='Europe/Paris')
     dt = dt.add(hours=1)
 
     assert_datetime(dt, 2013, 10, 27, 2, 59, 59, 999999)
@@ -216,7 +216,7 @@ def test_add_time_to_new_transition_repeated():
     assert dt.offset == 3600
     assert not dt.is_dst()
 
-    dt = pendulum.create(2013, 11, 3, 0, 59, 59, 999999, 'America/New_York')
+    dt = pendulum.datetime(2013, 11, 3, 0, 59, 59, 999999, tz='America/New_York')
     dt = dt.add(hours=1)
 
     assert_datetime(dt, 2013, 11, 3, 1, 59, 59, 999999)
@@ -233,7 +233,7 @@ def test_add_time_to_new_transition_repeated():
 
 
 def test_add_time_to_new_transition_repeated_big():
-    dt = pendulum.create(2013, 10, 27, 1, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 1, tz='Europe/Paris')
 
     assert_datetime(dt, 2013, 10, 27, 1, 0, 0, 0)
     assert dt.timezone_name == 'Europe/Paris'

@@ -177,7 +177,7 @@ def test_repeated_time_with_error():
 
 
 def test_pendulum_create_basic():
-    dt = pendulum.create(2016, 6, 1, 12, 34, 56, 123456, tz='Europe/Paris')
+    dt = pendulum.datetime(2016, 6, 1, 12, 34, 56, 123456, tz='Europe/Paris')
 
     assert_datetime(dt, 2016, 6, 1, 12, 34, 56, 123456)
     assert dt.timezone_name == 'Europe/Paris'
@@ -186,7 +186,7 @@ def test_pendulum_create_basic():
 
 
 def test_pendulum_create_skipped():
-    dt = pendulum.create(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris')
 
     assert_datetime(dt, 2013, 3, 31, 3, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
@@ -195,7 +195,7 @@ def test_pendulum_create_skipped():
 
 
 def test_pendulum_create_skipped_with_pre_rule():
-    dt = pendulum.create(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris',
+    dt = pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris',
                          dst_rule=pendulum.PRE_TRANSITION)
 
     assert_datetime(dt, 2013, 3, 31, 1, 30, 45, 123456)
@@ -206,12 +206,12 @@ def test_pendulum_create_skipped_with_pre_rule():
 
 def test_pendulum_create_skipped_with_error():
     with pytest.raises(NonExistingTime):
-        pendulum.create(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris',
+        pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris',
                         dst_rule=pendulum.TRANSITION_ERROR)
 
 
 def test_pendulum_create_repeated():
-    dt = pendulum.create(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris')
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
@@ -220,7 +220,7 @@ def test_pendulum_create_repeated():
 
 
 def test_pendulum_create_repeated_with_pre_rule():
-    dt = pendulum.create(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris',
+    dt = pendulum.datetime(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris',
                          dst_rule=pendulum.PRE_TRANSITION)
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
@@ -231,12 +231,12 @@ def test_pendulum_create_repeated_with_pre_rule():
 
 def test_pendulum_create_repeated_with_error():
     with pytest.raises(AmbiguousTime):
-        pendulum.create(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris',
+        pendulum.datetime(2013, 10, 27, 2, 30, 45, 123456, tz='Europe/Paris',
                         dst_rule=pendulum.TRANSITION_ERROR)
 
 
 def test_convert_accept_pendulum_instance():
-    dt = pendulum.create(2016, 8, 7, 12, 53, 54)
+    dt = pendulum.datetime(2016, 8, 7, 12, 53, 54)
     tz = timezone('Europe/Paris')
     new = tz.convert(dt)
 
@@ -252,7 +252,7 @@ def test_utcoffset():
 
 def test_dst():
     tz = pendulum.timezone('Europe/Amsterdam')
-    dst = tz.dst(pendulum.create(1940, 7, 1))
+    dst = tz.dst(pendulum.datetime(1940, 7, 1))
 
     assert dst == timedelta(0, 6000)
 

@@ -73,7 +73,7 @@ def test_from_format_with_millis():
 ])
 def test_from_format(text, fmt, expected, now):
     if now is None:
-        now = pendulum.create(2015, 11, 12)
+        now = pendulum.datetime(2015, 11, 12)
     else:
         now = pendulum.parse(now)
 
@@ -89,7 +89,7 @@ def test_from_format(text, fmt, expected, now):
     ('mars', 'MMM', '2018-03-01T00:00:00+00:00'),
 ])
 def test_from_format_with_locale(text, fmt, expected):
-    now = pendulum.create(2018, 2, 2)
+    now = pendulum.datetime(2018, 2, 2)
 
     with pendulum.test(now):
         formatted = pendulum.from_format(text, fmt, locale='fr').isoformat()
@@ -106,7 +106,7 @@ def test_from_format_with_locale(text, fmt, expected):
     ('invalid', 'MMM', 'en'),
 ])
 def test_from_format_error(text, fmt, locale):
-    now = pendulum.create(2018, 2, 2)
+    now = pendulum.datetime(2018, 2, 2)
 
     with pendulum.test(now):
         with pytest.raises(ValueError):

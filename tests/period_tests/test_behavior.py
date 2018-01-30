@@ -3,8 +3,8 @@ import pendulum
 
 
 def test_pickle():
-    dt1 = pendulum.create(2016, 11, 18)
-    dt2 = pendulum.create(2016, 11, 20)
+    dt1 = pendulum.datetime(2016, 11, 18)
+    dt2 = pendulum.datetime(2016, 11, 20)
 
     p = pendulum.period(dt1, dt2)
     s = pickle.dumps(p)

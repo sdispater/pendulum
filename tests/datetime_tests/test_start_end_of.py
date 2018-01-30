@@ -72,7 +72,7 @@ def test_start_of_month_from_now():
 
 
 def test_start_of_month_from_last_day():
-    d = pendulum.create(2000, 1, 31, 2, 3, 4)
+    d = pendulum.datetime(2000, 1, 31, 2, 3, 4)
     new = d.start_of('month')
     assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
@@ -90,13 +90,13 @@ def test_start_of_year_from_now():
 
 
 def test_start_of_year_from_first_day():
-    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2000, 1, 1, 1, 1, 1)
     new = d.start_of('year')
     assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
 
 def test_start_of_year_from_last_day():
-    d = pendulum.create(2000, 12, 31, 23, 59, 59)
+    d = pendulum.datetime(2000, 12, 31, 23, 59, 59)
     new = d.start_of('year')
     assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
@@ -113,13 +113,13 @@ def test_end_of_month_from_now():
 
 
 def test_end_of_month():
-    d = pendulum.create(2000, 1, 1, 2, 3, 4).end_of('month')
+    d = pendulum.datetime(2000, 1, 1, 2, 3, 4).end_of('month')
     new = d.end_of('month')
     assert_datetime(new, 2000, 1, 31, 23, 59, 59)
 
 
 def test_end_of_month_from_last_day():
-    d = pendulum.create(2000, 1, 31, 2, 3, 4)
+    d = pendulum.datetime(2000, 1, 31, 2, 3, 4)
     new = d.end_of('month')
     assert_datetime(new, 2000, 1, 31, 23, 59, 59)
 
@@ -136,13 +136,13 @@ def test_end_of_year_from_now():
 
 
 def test_end_of_year_from_first_day():
-    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2000, 1, 1, 1, 1, 1)
     new = d.end_of('year')
     assert_datetime(new, 2000, 12, 31, 23, 59, 59, 999999)
 
 
 def test_end_of_year_from_last_day():
-    d = pendulum.create(2000, 12, 31, 23, 59, 59, 999999)
+    d = pendulum.datetime(2000, 12, 31, 23, 59, 59, 999999)
     new = d.end_of('year')
     assert_datetime(new, 2000, 12, 31, 23, 59, 59, 999999)
 
@@ -159,13 +159,13 @@ def test_start_of_decade_from_now():
 
 
 def test_start_of_decade_from_first_day():
-    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2000, 1, 1, 1, 1, 1)
     new = d.start_of('decade')
     assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
 
 def test_start_of_decade_from_last_day():
-    d = pendulum.create(2009, 12, 31, 23, 59, 59)
+    d = pendulum.datetime(2009, 12, 31, 23, 59, 59)
     new = d.start_of('decade')
     assert_datetime(new, 2000, 1, 1, 0, 0, 0)
 
@@ -182,13 +182,13 @@ def test_end_of_decade_from_now():
 
 
 def test_end_of_decade_from_first_day():
-    d = pendulum.create(2000, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2000, 1, 1, 1, 1, 1)
     new = d.end_of('decade')
     assert_datetime(new, 2009, 12, 31, 23, 59, 59, 999999)
 
 
 def test_end_of_decade_from_last_day():
-    d = pendulum.create(2009, 12, 31, 23, 59, 59, 999999)
+    d = pendulum.datetime(2009, 12, 31, 23, 59, 59, 999999)
     new = d.end_of('decade')
     assert_datetime(new, 2009, 12, 31, 23, 59, 59, 999999)
 
@@ -205,13 +205,13 @@ def test_start_of_century_from_now():
 
 
 def test_start_of_century_from_first_day():
-    d = pendulum.create(2001, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2001, 1, 1, 1, 1, 1)
     new = d.start_of('century')
     assert_datetime(new, 2001, 1, 1, 0, 0, 0)
 
 
 def test_start_of_century_from_last_day():
-    d = pendulum.create(2100, 12, 31, 23, 59, 59)
+    d = pendulum.datetime(2100, 12, 31, 23, 59, 59)
     new = d.start_of('century')
     assert_datetime(new, 2001, 1, 1, 0, 0, 0)
 
@@ -228,13 +228,13 @@ def test_end_of_century_from_now():
 
 
 def test_end_of_century_from_first_day():
-    d = pendulum.create(2001, 1, 1, 1, 1, 1)
+    d = pendulum.datetime(2001, 1, 1, 1, 1, 1)
     new = d.end_of('century')
     assert_datetime(new, 2100, 12, 31, 23, 59, 59, 999999)
 
 
 def test_end_of_century_from_last_day():
-    d = pendulum.create(2100, 12, 31, 23, 59, 59, 999999)
+    d = pendulum.datetime(2100, 12, 31, 23, 59, 59, 999999)
     new = d.end_of('century')
     assert_datetime(new, 2100, 12, 31, 23, 59, 59, 999999)
 
@@ -245,20 +245,20 @@ def test_average_is_fluid():
 
 
 def test_average_from_same():
-    d1 = pendulum.create(2000, 1, 31, 2, 3, 4)
-    d2 = pendulum.create(2000, 1, 31, 2, 3, 4).average(d1)
+    d1 = pendulum.datetime(2000, 1, 31, 2, 3, 4)
+    d2 = pendulum.datetime(2000, 1, 31, 2, 3, 4).average(d1)
     assert_datetime(d2, 2000, 1, 31, 2, 3, 4)
 
 
 def test_average_from_greater():
-    d1 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local')
-    d2 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
+    d1 = pendulum.datetime(2000, 1, 1, 1, 1, 1, tz='local')
+    d2 = pendulum.datetime(2009, 12, 31, 23, 59, 59, tz='local').average(d1)
     assert_datetime(d2, 2004, 12, 31, 12, 30, 30)
 
 
 def test_average_from_lower():
-    d1 = pendulum.create(2009, 12, 31, 23, 59, 59, tz='local')
-    d2 = pendulum.create(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
+    d1 = pendulum.datetime(2009, 12, 31, 23, 59, 59, tz='local')
+    d2 = pendulum.datetime(2000, 1, 1, 1, 1, 1, tz='local').average(d1)
     assert_datetime(d2, 2004, 12, 31, 12, 30, 30)
 
 
@@ -273,7 +273,7 @@ def end_of_with_invalid_unit():
 
 
 def test_start_of_with_transition():
-    d = pendulum.create(2013, 10, 27, 23, 59, 59, tz='Europe/Paris')
+    d = pendulum.datetime(2013, 10, 27, 23, 59, 59, tz='Europe/Paris')
     assert d.offset == 3600
     assert d.start_of('month').offset == 7200
     assert d.start_of('day').offset == 7200
@@ -281,7 +281,7 @@ def test_start_of_with_transition():
 
 
 def test_end_of_with_transition():
-    d = pendulum.create(2013, 3, 31, tz='Europe/Paris')
+    d = pendulum.datetime(2013, 3, 31, tz='Europe/Paris')
     assert d.offset == 3600
     assert d.end_of('month').offset == 7200
     assert d.end_of('day').offset == 7200

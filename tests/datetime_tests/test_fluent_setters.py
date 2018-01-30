@@ -17,7 +17,7 @@ def test_fluid_year_setter():
 
 
 def test_fluid_month_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(month=11)
     assert isinstance(new, datetime)
     assert 11 == new.month
@@ -25,7 +25,7 @@ def test_fluid_month_setter():
 
 
 def test_fluid_day_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(day=9)
     assert isinstance(new, datetime)
     assert 9 == new.day
@@ -33,7 +33,7 @@ def test_fluid_day_setter():
 
 
 def test_fluid_hour_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(hour=5)
     assert isinstance(new, datetime)
     assert 5 == new.hour
@@ -41,7 +41,7 @@ def test_fluid_hour_setter():
 
 
 def test_fluid_minute_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(minute=32)
     assert isinstance(new, datetime)
     assert 32 == new.minute
@@ -49,7 +49,7 @@ def test_fluid_minute_setter():
 
 
 def test_fluid_second_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(second=49)
     assert isinstance(new, datetime)
     assert 49 == new.second
@@ -57,7 +57,7 @@ def test_fluid_second_setter():
 
 
 def test_fluid_microsecond_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20, 123456)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20, 123456)
     new = d.set(microsecond=987654)
     assert isinstance(new, datetime)
     assert 987654 == new.microsecond
@@ -65,13 +65,13 @@ def test_fluid_microsecond_setter():
 
 
 def test_fluid_setter_keeps_timezone():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20, 123456, tz='Europe/Paris')
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20, 123456, tz='Europe/Paris')
     new = d.set(microsecond=987654)
     assert_datetime(new, 2016, 7, 2, 0, 41, 20, 987654)
 
 
 def test_fluid_timezone_setter():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.set(tz='Europe/Paris')
     assert isinstance(new, datetime)
     assert 'Europe/Paris' == new.timezone_name
@@ -79,7 +79,7 @@ def test_fluid_timezone_setter():
 
 
 def test_fluid_on():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.on(1995, 11, 9)
     assert isinstance(new, datetime)
     assert 1995 == new.year
@@ -91,7 +91,7 @@ def test_fluid_on():
 
 
 def test_fluid_on_with_transition():
-    d = pendulum.create(2013, 3, 31, 0, 0, 0, 0, 'Europe/Paris')
+    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz='Europe/Paris')
     new = d.on(2013, 4, 1)
     assert isinstance(new, datetime)
     assert 2013 == new.year
@@ -105,7 +105,7 @@ def test_fluid_on_with_transition():
 
 
 def test_fluid_at():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.at(5, 32, 49, 123456)
     assert isinstance(new, datetime)
     assert 5 == new.hour
@@ -119,7 +119,7 @@ def test_fluid_at():
 
 
 def test_fluid_at_partial():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.at(10)
 
     assert_datetime(new, 2016, 7, 2, 10, 0, 0, 0)
@@ -134,7 +134,7 @@ def test_fluid_at_partial():
 
 
 def test_fluid_at_with_transition():
-    d = pendulum.create(2013, 3, 31, 0, 0, 0, 0, 'Europe/Paris')
+    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz='Europe/Paris')
     new = d.at(2, 30, 0)
     assert isinstance(new, datetime)
     assert 3 == new.hour
@@ -143,14 +143,14 @@ def test_fluid_at_with_transition():
 
 
 def test_replace_tzinfo():
-    d = pendulum.create(2016, 7, 2, 0, 41, 20)
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
     new = d.replace(tzinfo=pendulum.timezone('Europe/Paris'))
 
     assert new.timezone_name == 'Europe/Paris'
 
 
 def test_replace_tzinfo_dst():
-    d = pendulum.create(2013, 3, 31, 2, 30)
+    d = pendulum.datetime(2013, 3, 31, 2, 30)
     new = d.replace(tzinfo=pendulum.timezone('Europe/Paris'))
 
     assert_datetime(new, 2013, 3, 31, 3, 30)

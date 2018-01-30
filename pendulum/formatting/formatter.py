@@ -397,13 +397,13 @@ class Formatter:
         :return: The validated elements.
         """
         validated = {
-            'year': None,
-            'month': None,
-            'day': None,
-            'hour': None,
-            'minute': None,
-            'second': None,
-            'microsecond': None,
+            'year': parsed['year'],
+            'month': parsed['month'],
+            'day': parsed['day'],
+            'hour': parsed['hour'],
+            'minute': parsed['minute'],
+            'second': parsed['second'],
+            'microsecond': parsed['microsecond'],
             'tz': None
         }
 
@@ -428,7 +428,12 @@ class Formatter:
             return validated
 
         if parsed['quarter'] is not None:
-            dt = now.start_of('year')
+            if validated['year'] is not None:
+                dt = pendulum.datetime(validated['year'], 1, 1)
+            else:
+                dt = now
+
+            dt = dt.start_of('year')
 
             while dt.quarter != parsed['quarter']:
                 dt = dt.add(months=3)
@@ -437,33 +442,8 @@ class Formatter:
             validated['month'] = dt.month
             validated['day'] = dt.day
 
-        # If the date part has not been specified
-        # we default to today
-        if all([parsed['year'] is None,
-                parsed['month'] is None,
-                parsed['day'] is None]):
-            parsed['year'] = validated['year'] = now.year
-            parsed['month'] = validated['month'] = now.month
-            parsed['day'] = validated['day'] = now.day
-
-        # We replace any not set month/day value
-        # with the first of each unit
-        if any([parsed['month'] is None, parsed['day'] is None]):
-            for part in ['month', 'day']:
-                if parsed[part] is None and validated.get(part) is None:
-                    validated[part] = 1
-
-        for part in ['year', 'month', 'day']:
-            if parsed[part] is not None:
-                validated[part] = parsed[part]
-
-        # If any of hour/minute/second/microsecond is not set
-        # We assume start of corresponding value
-        for part in ['hour', 'minute', 'second', 'microsecond']:
-            if parsed[part] is None:
-                validated[part] = 0
-            else:
-                validated[part] = parsed[part]
+        if validated['year'] is None:
+            validated['year'] = now.year
 
         if parsed['day_of_year'] is not None:
             dt = pendulum.parse(
@@ -474,10 +454,10 @@ class Formatter:
             validated['day'] = dt.day
 
         if parsed['day_of_week'] is not None:
-            dt = pendulum.create(
+            dt = pendulum.datetime(
                 validated['year'],
-                validated['month'],
-                validated['day']
+                validated['month'] or now.month,
+                validated['day'] or now.day
             )
             dt = dt.start_of('week').subtract(days=1)
             dt = dt.next(parsed['day_of_week'])
@@ -489,6 +469,9 @@ class Formatter:
         if parsed['meridiem'] is not None:
             # If the time is greater than 13:00:00
             # This is not valid
+            if validated['hour'] is None:
+                raise ValueError('Invalid Date')
+
             t = (
                 validated['hour'],
                 validated['minute'],
@@ -502,6 +485,22 @@ class Formatter:
             validated['hour'] %= 12
             if pm:
                 validated['hour'] += 12
+
+        if validated['month'] is None:
+            if parsed['year'] is not None:
+                validated['month'] = parsed['month'] or 1
+            else:
+                validated['month'] = parsed['month'] or now.month
+
+        if validated['day'] is None:
+            if parsed['year'] is not None or parsed['month'] is not None:
+                validated['day'] = parsed['day'] or 1
+            else:
+                validated['day'] = parsed['day'] or now.day
+
+        for part in ['hour', 'minute', 'second', 'microsecond']:
+            if validated[part] is None:
+                validated[part] = 0
 
         validated['tz'] = parsed['tz']
 

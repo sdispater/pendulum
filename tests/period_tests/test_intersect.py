@@ -4,7 +4,7 @@ from ..conftest import assert_datetime
 
 
 def test_intersect_included():
-    start = pendulum.create(2016, 8, 7)
+    start = pendulum.datetime(2016, 8, 7)
     end = start.add(weeks=1)
     p1 = pendulum.period(start, end)
     intersection = p1.intersect(pendulum.period(start.add(days=2), start.add(days=4)))
@@ -14,7 +14,7 @@ def test_intersect_included():
 
 
 def test_intersect_overlap():
-    start = pendulum.create(2016, 8, 7)
+    start = pendulum.datetime(2016, 8, 7)
     end = start.add(weeks=1)
     p1 = pendulum.period(start, end)
     intersection = p1.intersect(pendulum.period(start.add(days=-2), start.add(days=2)))
@@ -24,7 +24,7 @@ def test_intersect_overlap():
 
 
 def test_intersect_multiple():
-    start = pendulum.create(2016, 8, 7)
+    start = pendulum.datetime(2016, 8, 7)
     end = start.add(weeks=1)
     p1 = pendulum.period(start, end)
     intersection = p1.intersect(
@@ -37,7 +37,7 @@ def test_intersect_multiple():
 
 
 def test_intersect_excluded():
-    start = pendulum.create(2016, 8, 7)
+    start = pendulum.datetime(2016, 8, 7)
     end = start.add(weeks=1)
     p1 = pendulum.period(start, end)
     intersection = p1.intersect(
@@ -48,7 +48,7 @@ def test_intersect_excluded():
 
 
 def test_intersect_same():
-    start = pendulum.create(2016, 8, 7)
+    start = pendulum.datetime(2016, 8, 7)
     end = start.add(weeks=1)
     p1 = pendulum.period(start, end)
     intersection = p1.intersect(

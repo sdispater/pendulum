@@ -34,7 +34,7 @@ def _parse(text, **options):
     parsed = base_parse(text, **options)
 
     if isinstance(parsed, datetime.datetime):
-        return pendulum.create(
+        return pendulum.datetime(
             parsed.year, parsed.month, parsed.day,
             parsed.hour, parsed.minute, parsed.second, parsed.microsecond,
             tz=parsed.tzinfo or options.get('tz', UTC)

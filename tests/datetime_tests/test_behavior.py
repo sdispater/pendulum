@@ -11,7 +11,7 @@ from pendulum import timezone
 
 @pytest.fixture
 def p():
-    return pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    return pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
 
 
 @pytest.fixture
@@ -112,16 +112,16 @@ def test_combine():
 
 
 def test_hash():
-    dt1 = pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
-    dt2 = pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
-    dt3 = pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz='America/Toronto')
+    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    dt2 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    dt3 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='America/Toronto')
 
     assert hash(dt1) == hash(dt2)
     assert hash(dt1) != hash(dt3)
 
 
 def test_pickle():
-    dt1 = pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
     s = pickle.dumps(dt1)
     dt2 = pickle.loads(s)
 
@@ -129,7 +129,7 @@ def test_pickle():
 
 
 def test_pickle_with_integer_tzinfo():
-    dt1 = pendulum.create(2016, 8, 27, 12, 34, 56, 123456, tz=0)
+    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz=0)
     s = pickle.dumps(dt1)
     dt2 = pickle.loads(s)
 
@@ -137,13 +137,13 @@ def test_pickle_with_integer_tzinfo():
 
 
 def test_proper_dst():
-    dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
+    dt = pendulum.datetime(1941, 7, 1, tz='Europe/Amsterdam')
 
     assert dt.dst() == timedelta(0, 6000)
 
 
 def test_deepcopy():
-    dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
+    dt = pendulum.datetime(1941, 7, 1, tz='Europe/Amsterdam')
 
     assert dt == deepcopy(dt)
 

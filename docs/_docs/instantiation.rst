@@ -3,9 +3,7 @@ Instantiation
 
 There are several different methods available to create a new `DateTime` instance.
 
-First there is the ``create()`` helper.
-It allows you to provide as many or as few arguments as you want
-and will provide default values for all others.
+First there is the main ``datetime()`` helper.
 
 .. code-block:: python
 
@@ -15,14 +13,19 @@ and will provide default values for all others.
     isinstance(dt, datetime)
     True
 
-``create()`` will default any null parameter to the current date for the date part
-and to ``00:00:00`` for time. The ``tz`` defaults to the ``UTC`` timezone
-and otherwise can be a ``Timezone`` instance or simply a string timezone value.
+``datetime()`` sets the time to ``00:00:00`` if it's not specified,
+and the timezone (the ``tz`` keyword argument) to ``UTC``.
+
+It otherwise can be a ``Timezone`` instance or simply a string timezone value.
 
 .. note::
 
     Supported strings for timezones are the one provided by the `IANA time zone database <https://www.iana.org/time-zones>`_.
     The special ``local`` string is also supported and will return your current timezone.
+
+.. warning::
+
+    The ``tz`` argument is keyword-only, unlike in version `1.x`
 
 This is again shown in the next example which also introduces the ``now()`` function.
 

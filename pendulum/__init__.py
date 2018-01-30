@@ -87,11 +87,27 @@ def _safe_timezone(obj: Union[str, int, float, _datetime.tzinfo]) -> Timezone:
 def datetime(year: int, month: int, day: int,
              hour: int = 0, minute: int = 0, second: int = 0,
              microsecond: int = 0,
-             tz: Union[str, Timezone] = UTC) -> DateTime:
+             *,
+             tz: Union[str, Timezone] = UTC,
+             dst_rule: str = POST_TRANSITION) -> DateTime:
     """
     Creates a new DateTime instance from a specific date and time.
     """
-    return create(year, month, day, hour, minute, second, microsecond, tz=tz)
+    if tz is not None:
+        tz = _safe_timezone(tz)
+
+    dt = _datetime.datetime(
+        year, month, day,
+        hour, minute, second, microsecond
+    )
+    if tz is not None:
+        dt = tz.convert(dt, dst_rule=dst_rule)
+
+    return DateTime(
+        dt.year, dt.month, dt.day,
+        dt.hour, dt.minute, dt.second, dt.microsecond,
+        tzinfo=dt.tzinfo
+    )
 
 
 def date(year: int, month: int, day: int):
@@ -106,56 +122,6 @@ def time(hour: int = 0, minute: int = 0, second: int = 0, microsecond: int = 0):
     Create a new Time instance.
     """
     return Time(hour, minute, second, microsecond)
-
-
-def create(year: Union[int, None] = None,
-           month: Union[int, None] = None,
-           day: Union[int, None] = None,
-           hour: int = 0,
-           minute: int = 0,
-           second: int = 0,
-           microsecond: int = 0,
-           tz: Union[str, Timezone] = UTC,
-           *,
-           dst_rule: str = Timezone.POST_TRANSITION) -> DateTime:
-    """
-    Creates a new DateTime instance from a specific date and time.
-
-    If any of year, month or day are set to None their now() values will
-    be used.
-    """
-    if tz is not None:
-        tz = _safe_timezone(tz)
-
-    if any([year is None, month is None, day is None]):
-        if tz is not None:
-            if has_test_now():
-                now = get_test_now().in_tz(tz)
-            else:
-                now = _datetime.datetime.now(UTC)
-                now = tz.convert(now)
-
-            if year is None:
-                year = now.year
-
-            if month is None:
-                month = now.month
-
-            if day is None:
-                day = now.day
-
-    dt = _datetime.datetime(
-        year, month, day,
-        hour, minute, second, microsecond
-    )
-    if tz is not None:
-        dt = tz.convert(dt, dst_rule=dst_rule)
-
-    return DateTime(
-        dt.year, dt.month, dt.day,
-        dt.hour, dt.minute, dt.second, dt.microsecond,
-        tzinfo=dt.tzinfo
-    )
 
 
 def instance(dt: _datetime.datetime,
@@ -183,7 +149,7 @@ def instance(dt: _datetime.datetime,
             # on a fixed offset
             tz = tz.utcoffset(dt).total_seconds() / 3600
 
-    return create(
+    return datetime(
         dt.year, dt.month, dt.day,
         dt.hour, dt.minute, dt.second, dt.microsecond,
         tz=tz
@@ -247,7 +213,7 @@ def from_format(string: str, fmt: str,
     if parts['tz'] is None:
         parts['tz'] = tz
 
-    return create(**parts)
+    return datetime(**parts)
 
 
 def from_timestamp(timestamp: Union[int, float],
@@ -257,7 +223,7 @@ def from_timestamp(timestamp: Union[int, float],
     """
     dt = _datetime.datetime.utcfromtimestamp(timestamp)
 
-    dt = create(
+    dt = datetime(
         dt.year, dt.month, dt.day,
         dt.hour, dt.minute, dt.second, dt.microsecond
     )

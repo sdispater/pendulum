@@ -5,7 +5,7 @@ locale = 'fr'
 
 
 def test_diff_for_humans():
-    with pendulum.test(pendulum.create(2016, 8, 29)):
+    with pendulum.test(pendulum.datetime(2016, 8, 29)):
         diff_for_humans()
 
 
@@ -66,7 +66,7 @@ def diff_for_humans():
 
 
 def test_format():
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
     assert d.format('dddd', locale=locale) == 'dimanche'
     assert d.format('ddd', locale=locale) == 'dim.'
     assert d.format('MMMM', locale=locale) == 'août'

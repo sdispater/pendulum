@@ -446,7 +446,7 @@ def test_iso8601_ordinal():
     assert parsed.tzinfo is None
 
 def test_iso8601_time():
-    now = pendulum.create(2015, 11, 12)
+    now = pendulum.datetime(2015, 11, 12)
 
     text = '201205'
 

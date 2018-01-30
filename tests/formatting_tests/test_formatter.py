@@ -15,7 +15,7 @@ def setup():
 
 
 def test_year_tokens():
-    d = pendulum.create(2009, 1, 14, 15, 25, 50, 123456)
+    d = pendulum.datetime(2009, 1, 14, 15, 25, 50, 123456)
     f = Formatter()
 
     assert f.format(d, 'YYYY') == '2009'
@@ -25,28 +25,28 @@ def test_year_tokens():
 
 def test_quarter_tokens():
     f = Formatter()
-    d = pendulum.create(1985, 1, 4)
+    d = pendulum.datetime(1985, 1, 4)
     assert f.format(d, 'Q') == '1'
 
-    d = pendulum.create(2029, 8, 1)
+    d = pendulum.datetime(2029, 8, 1)
     assert f.format(d, 'Q') == '3'
 
-    d = pendulum.create(1985, 1, 4)
+    d = pendulum.datetime(1985, 1, 4)
     assert f.format(d, 'Qo') == '1st'
 
-    d = pendulum.create(2029, 8, 1)
+    d = pendulum.datetime(2029, 8, 1)
     assert f.format(d, 'Qo') == '3rd'
 
-    d = pendulum.create(1985, 1, 4)
+    d = pendulum.datetime(1985, 1, 4)
     assert f.format(d, 'Qo', locale='fr') == '1er'
 
-    d = pendulum.create(2029, 8, 1)
+    d = pendulum.datetime(2029, 8, 1)
     assert f.format(d, 'Qo', locale='fr') == '3e'
 
 
 def test_month_tokens():
     f = Formatter()
-    d = pendulum.create(2016, 3, 24)
+    d = pendulum.datetime(2016, 3, 24)
     assert f.format(d, 'MM') == '03'
     assert f.format(d, 'M') == '3'
 
@@ -61,7 +61,7 @@ def test_month_tokens():
 
 def test_day_tokens():
     f = Formatter()
-    d = pendulum.create(2016, 3, 7)
+    d = pendulum.datetime(2016, 3, 7)
     assert f.format(d, 'DD') == '07'
     assert f.format(d, 'D') == '7'
 
@@ -74,7 +74,7 @@ def test_day_tokens():
 
 def test_day_of_year():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28)
+    d = pendulum.datetime(2016, 8, 28)
     assert f.format(d, 'DDDD') == '241'
     assert f.format(d, 'DDD') == '241'
     assert f.format(d.start_of('year'), 'DDDD') == '001'
@@ -89,14 +89,14 @@ def test_day_of_year():
 
 def test_week_of_year():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28)
+    d = pendulum.datetime(2016, 8, 28)
 
     assert f.format(d, 'wo') == '34th'
 
 
 def test_day_of_week():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28)
+    d = pendulum.datetime(2016, 8, 28)
     assert f.format(d, 'd') == '0'
 
     assert f.format(d, 'dd') == 'Sun'
@@ -112,39 +112,39 @@ def test_day_of_week():
 
 def test_am_pm():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 23)
+    d = pendulum.datetime(2016, 8, 28, 23)
     assert f.format(d, 'A') == 'PM'
     assert f.format(d.set(hour=11), 'A') == 'AM'
 
 
 def test_hour():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7)
+    d = pendulum.datetime(2016, 8, 28, 7)
     assert f.format(d, 'H') == '7'
     assert f.format(d, 'HH') == '07'
 
-    d = pendulum.create(2016, 8, 28, 0)
+    d = pendulum.datetime(2016, 8, 28, 0)
     assert f.format(d, 'h') == '12'
     assert f.format(d, 'hh') == '12'
 
 
 def test_minute():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3)
+    d = pendulum.datetime(2016, 8, 28, 7, 3)
     assert f.format(d, 'm') == '3'
     assert f.format(d, 'mm') == '03'
 
 
 def test_second():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6)
     assert f.format(d, 's') == '6'
     assert f.format(d, 'ss') == '06'
 
 
 def test_fractional_second():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
     assert f.format(d, 'S') == '1'
     assert f.format(d, 'SS') == '12'
     assert f.format(d, 'SSS') == '123'
@@ -152,7 +152,7 @@ def test_fractional_second():
     assert f.format(d, 'SSSSS') == '12345'
     assert f.format(d, 'SSSSSS') == '123456'
 
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 0)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 0)
     assert f.format(d, 'S') == '0'
     assert f.format(d, 'SS') == '00'
     assert f.format(d, 'SSS') == '000'
@@ -160,7 +160,7 @@ def test_fractional_second():
     assert f.format(d, 'SSSSS') == '00000'
     assert f.format(d, 'SSSSSS') == '000000'
 
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123)
     assert f.format(d, 'S') == '0'
     assert f.format(d, 'SS') == '00'
     assert f.format(d, 'SSS') == '000'
@@ -171,40 +171,40 @@ def test_fractional_second():
 
 def test_timezone():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456, tz='Europe/Paris')
     assert f.format(d, 'zz') == 'CEST'
     assert f.format(d, 'z') == 'Europe/Paris'
 
-    d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'Europe/Paris')
+    d = pendulum.datetime(2016, 1, 28, 7, 3, 6, 123456, tz='Europe/Paris')
     assert f.format(d, 'zz') == 'CET'
     assert f.format(d, 'z') == 'Europe/Paris'
 
 
 def test_timezone_offset():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456, 'Europe/Paris')
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456, tz='Europe/Paris')
     assert f.format(d, 'ZZ') == '+0200'
     assert f.format(d, 'Z') == '+02:00'
 
-    d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'Europe/Paris')
+    d = pendulum.datetime(2016, 1, 28, 7, 3, 6, 123456, tz='Europe/Paris')
     assert f.format(d, 'ZZ') == '+0100'
     assert f.format(d, 'Z') == '+01:00'
 
-    d = pendulum.create(2016, 1, 28, 7, 3, 6, 123456, 'America/Guayaquil')
+    d = pendulum.datetime(2016, 1, 28, 7, 3, 6, 123456, tz='America/Guayaquil')
     assert f.format(d, 'ZZ') == '-0500'
     assert f.format(d, 'Z') == '-05:00'
 
 
 def test_timestamp():
     f = Formatter()
-    d = pendulum.create(1970, 1, 1)
+    d = pendulum.datetime(1970, 1, 1)
     assert f.format(d, 'X') == '0'
     assert f.format(d.add(days=1), 'X') == '86400'
 
 
 def test_date_formats():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
     assert f.format(d, 'LT') == '7:03 AM'
     assert f.format(d, 'LTS') == '7:03:06 AM'
     assert f.format(d, 'L') == '08/28/2016'
@@ -222,14 +222,14 @@ def test_date_formats():
 
 def test_escape():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28)
+    d = pendulum.datetime(2016, 8, 28)
     assert f.format(d, '[YYYY] YYYY \[YYYY\]') == 'YYYY 2016 [2016]'
     assert f.format(d, '\D D \\\D') == 'D 28 \\28'
 
 
 def test_date_formats_missing():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
 
     assert f.format(d, 'LT', locale='dummy') == '7:03 AM'
     assert f.format(d, 'LTS', locale='dummy') == '7:03:06 AM'
@@ -241,6 +241,6 @@ def test_date_formats_missing():
 
 def test_unknown_token():
     f = Formatter()
-    d = pendulum.create(2016, 8, 28, 7, 3, 6, 123456)
+    d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
 
     assert f.format(d, 'J') == 'J'

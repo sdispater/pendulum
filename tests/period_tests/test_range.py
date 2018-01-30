@@ -5,8 +5,8 @@ from ..conftest import assert_datetime
 
 
 def test_range():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = Period(dt1, dt2)
     r = list(p.range('days'))
@@ -17,8 +17,8 @@ def test_range():
 
 
 def test_range_no_overflow():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 11, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 11, 45, 37)
 
     p = Period(dt1, dt2)
     r = list(p.range('days'))
@@ -29,8 +29,8 @@ def test_range_no_overflow():
 
 
 def test_range_inverted():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = Period(dt2, dt1)
     r = list(p.range('days'))
@@ -41,8 +41,8 @@ def test_range_inverted():
 
 
 def test_iter():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = Period(dt1, dt2)
     i = 0
@@ -54,34 +54,34 @@ def test_iter():
 
 
 def test_contains():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = pendulum.period(dt1, dt2)
-    dt = pendulum.create(2000, 1, 7)
+    dt = pendulum.datetime(2000, 1, 7)
     assert dt in p
 
 
 def test_not_contains():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = pendulum.period(dt1, dt2)
-    dt = pendulum.create(2000, 1, 1, 11, 45, 37)
+    dt = pendulum.datetime(2000, 1, 1, 11, 45, 37)
     assert dt not in p
 
 
 def test_contains_with_datetime():
-    dt1 = pendulum.create(2000, 1, 1, 12, 45, 37)
-    dt2 = pendulum.create(2000, 1, 31, 12, 45, 37)
+    dt1 = pendulum.datetime(2000, 1, 1, 12, 45, 37)
+    dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = pendulum.period(dt1, dt2)
-    dt = pendulum.create(2000, 1, 7)
+    dt = pendulum.datetime(2000, 1, 7)
     assert dt in p
 
 
 def test_range_months_overflow():
-    dt1 = pendulum.create(2016, 1, 30, tz='America/Sao_Paulo')
+    dt1 = pendulum.datetime(2016, 1, 30, tz='America/Sao_Paulo')
     dt2 = dt1.add(months=4)
 
     p = pendulum.period(dt1, dt2)
@@ -92,7 +92,7 @@ def test_range_months_overflow():
 
 
 def test_range_with_dst():
-    dt1 = pendulum.create(2016, 10, 14, tz='America/Sao_Paulo')
+    dt1 = pendulum.datetime(2016, 10, 14, tz='America/Sao_Paulo')
     dt2 = dt1.add(weeks=1)
 
     p = pendulum.period(dt1, dt2)
@@ -104,7 +104,7 @@ def test_range_with_dst():
 
 
 def test_range_amount():
-    dt1 = pendulum.create(2016, 10, 14, tz='America/Sao_Paulo')
+    dt1 = pendulum.datetime(2016, 10, 14, tz='America/Sao_Paulo')
     dt2 = dt1.add(weeks=1)
 
     p = pendulum.period(dt1, dt2)

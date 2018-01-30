@@ -4,7 +4,7 @@ from pendulum.helpers import local_time
 
 
 def test_local_time_positive_integer():
-    d = pendulum.create(2016, 8, 7, 12, 34, 56, 123456)
+    d = pendulum.datetime(2016, 8, 7, 12, 34, 56, 123456)
 
     t = local_time(d.int_timestamp, 0, d.microsecond)
     assert d.year == t[0]
@@ -17,7 +17,7 @@ def test_local_time_positive_integer():
 
 
 def test_local_time_negative_integer():
-    d = pendulum.create(1951, 8, 7, 12, 34, 56, 123456)
+    d = pendulum.datetime(1951, 8, 7, 12, 34, 56, 123456)
 
     t = local_time(d.int_timestamp, 0, d.microsecond)
     assert d.year == t[0]

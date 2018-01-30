@@ -7,8 +7,8 @@ from ..conftest import assert_datetime
 
 
 def test_in_timezone():
-    d = pendulum.create(2015, 1, 15, 18, 15, 34)
-    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    d = pendulum.datetime(2015, 1, 15, 18, 15, 34)
+    now = pendulum.datetime(2015, 1, 15, 18, 15, 34)
     assert d.timezone_name == 'UTC'
     assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 
@@ -18,8 +18,8 @@ def test_in_timezone():
 
 
 def test_in_tz():
-    d = pendulum.create(2015, 1, 15, 18, 15, 34)
-    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    d = pendulum.datetime(2015, 1, 15, 18, 15, 34)
+    now = pendulum.datetime(2015, 1, 15, 18, 15, 34)
     assert d.timezone_name == 'UTC'
     assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 
@@ -29,8 +29,8 @@ def test_in_tz():
 
 
 def test_astimezone():
-    d = pendulum.create(2015, 1, 15, 18, 15, 34)
-    now = pendulum.create(2015, 1, 15, 18, 15, 34)
+    d = pendulum.datetime(2015, 1, 15, 18, 15, 34)
+    now = pendulum.datetime(2015, 1, 15, 18, 15, 34)
     assert d.timezone_name == 'UTC'
     assert_datetime(d, now.year, now.month, now.day, now.hour, now.minute)
 

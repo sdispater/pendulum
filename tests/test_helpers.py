@@ -125,7 +125,7 @@ def test_days_in_years():
 
 
 def test_test_now():
-    now = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
+    now = pendulum.datetime(2000, 11, 10, 12, 34, 56, 123456)
     pendulum.set_test_now(now)
 
     assert pendulum.has_test_now()
@@ -143,7 +143,7 @@ def test_test_now():
 
 
 def test_locale():
-    dt = pendulum.create(2000, 11, 10, 12, 34, 56, 123456)
+    dt = pendulum.datetime(2000, 11, 10, 12, 34, 56, 123456)
     pendulum.set_locale('fr')
 
     assert pendulum.get_locale() == 'fr'

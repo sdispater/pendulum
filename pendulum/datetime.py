@@ -92,7 +92,7 @@ class DateTime(datetime.datetime, Date):
         if tz is None:
             tz = self.tz
 
-        return pendulum.create(
+        return pendulum.datetime(
             year, month, day,
             hour, minute, second, microsecond,
             tz=tz
@@ -436,7 +436,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: bool
         """
-        return pendulum.create(
+        return pendulum.datetime(
             self.year, 12, 28, 0, 0, 0, tz=self.tzinfo.tz
         ).isocalendar()[1] == 53
 
@@ -516,7 +516,7 @@ class DateTime(datetime.datetime, Date):
         if any([years, months, weeks, days]):
             # If we specified any of years, months, weeks or days
             # we will not apply the transition (if any)
-            return pendulum.create(
+            return pendulum.datetime(
                 dt.year, dt.month, dt.day,
                 dt.hour, dt.minute, dt.second, dt.microsecond,
                 tz=self.tzinfo.tz
@@ -1302,7 +1302,7 @@ class DateTime(datetime.datetime, Date):
             if fold:
                 transition_rule = Timezone.POST_TRANSITION
 
-        return pendulum.create(
+        return pendulum.datetime(
             year, month, day,
             hour, minute, second, microsecond,
             tz=tzinfo,

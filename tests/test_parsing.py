@@ -24,7 +24,7 @@ def test_parse():
     assert_datetime(dt, 2016, 10, 16, 0, 0, 0, 0)
     assert 0 == dt.offset
 
-    with pendulum.test(pendulum.create(2015, 11, 12)):
+    with pendulum.test(pendulum.datetime(2015, 11, 12)):
         text = '12:34:56.123456'
 
         dt = pendulum.parse(text)

@@ -23,7 +23,7 @@ def setup():
 
 def test_creates_an_instance_default_to_utcnow():
     now = pendulum.now('UTC')
-    p = pendulum.create(
+    p = pendulum.datetime(
         now.year, now.month, now.day,
         now.hour, now.minute, now.second
     )
@@ -38,7 +38,7 @@ def test_setting_timezone():
     dt = datetime.utcnow()
     offset = dtz.convert(dt).tzinfo.offset / 3600
 
-    p = pendulum.create(dt.year, dt.month, dt.day, tz=dtz)
+    p = pendulum.datetime(dt.year, dt.month, dt.day, tz=dtz)
     assert p.timezone_name == tz
     assert p.offset_hours == int(offset)
 
@@ -49,7 +49,7 @@ def test_setting_timezone_with_string():
     dt = datetime.utcnow()
     offset = dtz.convert(dt).tzinfo.offset / 3600
 
-    p = pendulum.create(dt.year, dt.month, dt.day, tz=tz)
+    p = pendulum.datetime(dt.year, dt.month, dt.day, tz=tz)
     assert p.timezone_name == tz
     assert p.offset_hours == int(offset)
 
@@ -112,49 +112,21 @@ def test_now_with_fixed_offset():
     assert '+06:00' == now.timezone_name
 
 
-def test_create():
-    with pendulum.test(DateTime(2016, 8, 7, 12, 34, 56)):
-        now = pendulum.now()
-        d = pendulum.create()
-        assert_datetime(d, now.year, now.month, now.day, 0, 0, 0, 0)
-
-        d = pendulum.create(year=1975)
-        assert_datetime(d, 1975, now.month, now.day, 0, 0, 0, 0)
-
-        d = pendulum.create(month=11)
-        assert_datetime(d, now.year, 11, now.day, 0, 0, 0, 0)
-
-        d = pendulum.create(day=27)
-        assert_datetime(d, now.year, now.month, 27, 0, 0, 0, 0)
-
-        d = pendulum.create(hour=12)
-        assert_datetime(d, now.year, now.month, now.day, 12, 0, 0, 0)
-
-        d = pendulum.create(minute=12)
-        assert_datetime(d, now.year, now.month, now.day, 0, 12, 0, 0)
-
-        d = pendulum.create(second=12)
-        assert_datetime(d, now.year, now.month, now.day, 0, 0, 12, 0)
-
-        d = pendulum.create(microsecond=123456)
-        assert_datetime(d, now.year, now.month, now.day, 0, 0, 0, 123456)
-
-
-def test_create_with_not_transition_timezone():
-    dt = pendulum.create(tz='Etc/UTC')
+def test_create_with_no_transition_timezone():
+    dt = pendulum.now('Etc/UTC')
 
     assert dt.timezone_name == 'Etc/UTC'
 
 
 def test_create_maintains_microseconds():
-    d = pendulum.create(2016, 11, 12, 2, 9, 39, 594000, 'America/Panama')
+    d = pendulum.datetime(2016, 11, 12, 2, 9, 39, 594000, tz='America/Panama')
     assert_datetime(d, 2016, 11, 12, 2, 9, 39, 594000)
 
-    d = pendulum.create(2316, 11, 12, 2, 9, 39, 857, 'America/Panama')
+    d = pendulum.datetime(2316, 11, 12, 2, 9, 39, 857, tz='America/Panama')
     assert_datetime(d, 2316, 11, 12, 2, 9, 39, 857)
 
 
 def test_second_inaccuracy_on_past_datetimes():
-    dt = pendulum.create(1901, 12, 13, 0, 0, 0, 555555, tz='US/Central')
+    dt = pendulum.datetime(1901, 12, 13, 0, 0, 0, 555555, tz='US/Central')
 
     assert_datetime(dt, 1901, 12, 13, 0, 0, 0, 555555)

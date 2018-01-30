@@ -8,7 +8,7 @@ from ..conftest import assert_datetime
 
 def test_create_from_timestamp_returns_pendulum():
     d = pendulum.from_timestamp(
-        pendulum.create(1975, 5, 21, 22, 32, 5).timestamp()
+        pendulum.datetime(1975, 5, 21, 22, 32, 5).timestamp()
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 5)
     assert d.timezone_name == 'UTC'
