@@ -27,3 +27,4 @@ benchmark.py
 results.json
 profile.html
 /wheelhouse
+/docs/site/*
