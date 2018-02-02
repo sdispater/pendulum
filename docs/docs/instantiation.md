@@ -7,14 +7,24 @@ First there is the main `datetime()` helper.
 ```python
 >>> import pendulum
 
->>> dt = pendulum.datetime(2015, 2, 5, tz='America/Vancouver')
+>>> dt = pendulum.datetime(2015, 2, 5)
 >>> isinstance(dt, datetime)
 True
+>>> dt.timezone.name
+'UTC'
 ```
 
 `datetime()` sets the time to `00:00:00` if it's not specified,
 and the timezone (the `tz` keyword argument) to `UTC`.
 It otherwise can be a `Timezone` instance or simply a string timezone value.
+
+```python
+>>> import pendulum
+
+>>> pendulum.datetime(2015, 2, 5, tz='Europe/Paris')
+>>> tz = pendulum.timezone('Europe/Paris')
+>>> pendulum.datetime(2015, 2, 5, tz=tz)
+```
 
 !!!note
 
@@ -25,25 +35,31 @@ It otherwise can be a `Timezone` instance or simply a string timezone value.
 
     The `tz` argument is keyword-only, unlike in version `1.x`
 
-This is again shown in the next example which also introduces the `now()` function.
+The `local()` helper is similar to `datetime()` but automatically sets the
+timezone to the local timezone.
+
+```python
+>>> import pendulum
+
+>>> dt = pendulum.local(2015, 2, 5)
+>>> print(dt.timezone.name)
+'America/Toronto'
+```
+
+!!!note
+
+    `local()` is just an alias for `datetime(..., tz='local')`.
+
+There is also the `now()` method.
 
 ```python
 >>> import pendulum
 
 >>> now = pendulum.now()
 
->>> tz = pendulum.timezone('Europe/London')
->>> now_in_london_tz = pendulum.now(tz)
-
-# or just pass the timezone as a string
 >>> now_in_london_tz = pendulum.now('Europe/London')
 >>> now_in_london_tz.timezone_name
 'Europe/London'
-
-# or to create a date with a timezone of +1 to GMT
-# during DST then just pass an integer
->>> pendulum.now(1).timezone_name
-'+01:00'
 ```
 
 To accompany `now()`, a few other static instantiation helpers exist to create known instances.
