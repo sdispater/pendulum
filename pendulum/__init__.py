@@ -110,6 +110,16 @@ def datetime(year: int, month: int, day: int,
     )
 
 
+def local(year: int, month: int, day: int,
+          hour: int = 0, minute: int = 0, second: int = 0,
+          microsecond: int = 0) -> DateTime:
+    """
+    Return a DateTime in the local timezone.
+    """
+    return datetime(year, month, day, hour, minute, second, microsecond,
+                    tz=local_timezone())
+
+
 def date(year: int, month: int, day: int):
     """
     Create a new Date instance.

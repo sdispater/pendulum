@@ -14,7 +14,7 @@ from ..conftest import assert_datetime
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def _setup():
     yield
     
     if os.getenv('TZ'):
@@ -130,3 +130,10 @@ def test_second_inaccuracy_on_past_datetimes():
     dt = pendulum.datetime(1901, 12, 13, 0, 0, 0, 555555, tz='US/Central')
 
     assert_datetime(dt, 1901, 12, 13, 0, 0, 0, 555555)
+
+
+def test_local():
+    local = pendulum.local(2018, 2, 2, 12, 34, 56, 123456)
+
+    assert_datetime(local, 2018, 2, 2, 12, 34, 56, 123456)
+    assert local.timezone_name == 'America/Toronto'
