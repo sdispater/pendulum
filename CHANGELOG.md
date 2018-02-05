@@ -6,6 +6,7 @@
 
 - Fixed an error when comparing a Period to a timedelta in PyPy.
 - Fixed an offset error for datetimes between the before last and last transition.
+- Fixed unpickling with undefined / empty timezone name. (Thanks to [Delgan](https://github.com/Delgan))
 
 
 ## [1.4.0] - 2018-01-22
