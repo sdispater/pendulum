@@ -1,6 +1,7 @@
-from datetime import datetime
-
 import pendulum
+import pytest
+
+from datetime import datetime
 
 
 def test_diff_in_years_positive():
@@ -665,12 +666,25 @@ def test_diff_for_humans_accuracy():
 
 
 def test_subtraction():
-    d = pendulum.datetime(2016, 7, 5, 12, 32, 25, 0)
+    d = pendulum.naive(2016, 7, 5, 12, 32, 25, 0)
     future_dt = datetime(2016, 7, 5, 13, 32, 25, 0)
     future = d.add(hours=1)
 
     assert 3600 == (future - d).total_seconds()
     assert 3600 == (future_dt - d).total_seconds()
+
+
+def test_subtraction_aware_naive():
+    dt = pendulum.datetime(2016, 7, 5, 12, 32, 25, 0)
+    future_dt = datetime(2016, 7, 5, 13, 32, 25, 0)
+
+    with pytest.raises(TypeError):
+        future_dt - dt
+
+    future_dt = pendulum.naive(2016, 7, 5, 13, 32, 25, 0)
+
+    with pytest.raises(TypeError):
+        future_dt - dt
 
 
 def test_subtraction_with_timezone():

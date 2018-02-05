@@ -85,6 +85,18 @@ and each has their time value set to `00:00:00`.
 '2016-06-27T00:00:00-05:00'
 ```
 
+Pendulum enforces timezone aware datetimes, and using them is the preferred and recommended way
+of using the library, however is you really need a **naive** `DateTime` object, the `naive()` helper
+is there for you.
+
+```python
+>>> import pendulum
+
+>>> naive = pendulum.naive(2015, 2, 5)
+>>> naive.timezone
+None
+```
+
 The next helper, `from_format()`, is similar to the native `datetime.strptime()` function
 but uses custom tokens to create a `DateTime` instance.
 

@@ -120,6 +120,18 @@ def local(year: int, month: int, day: int,
                     tz=local_timezone())
 
 
+def naive(year: int, month: int, day: int,
+          hour: int = 0, minute: int = 0, second: int = 0,
+          microsecond: int = 0) -> DateTime:
+    """
+    Return a naive DateTime.
+    """
+    return DateTime(
+        year, month, day,
+        hour, minute, second, microsecond
+    )
+
+
 def date(year: int, month: int, day: int):
     """
     Create a new Date instance.

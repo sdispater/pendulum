@@ -9,6 +9,7 @@
 - Added support of ISO 8601 duration parsing.
 - Added support of ISO 8601 interval parsing.
 - Added a `local()` helper.
+- Added a `naive()` helper and a `naive()` method.
 
 ### Changed
 

@@ -15,6 +15,13 @@ class Period(Duration):
     """
 
     def __new__(cls, start, end, absolute=False):
+        if isinstance(start, datetime) and isinstance(end, datetime):
+            if start.tzinfo is None and end.tzinfo is not None \
+                    or start.tzinfo is not None and end.tzinfo is None:
+                raise TypeError(
+                    "can't compare offset-naive and offset-aware datetimes"
+                )
+
         if absolute and start > end:
             end, start = start, end
 

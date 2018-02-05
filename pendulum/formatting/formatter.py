@@ -115,8 +115,8 @@ class Formatter:
         'X': lambda dt: '{:d}'.format(dt.int_timestamp),
 
         # Timezone
-        'zz': lambda dt: '{}'.format(dt.tzinfo.abbrev),
-        'z': lambda dt: '{}'.format(dt.timezone_name),
+        'zz': lambda dt: f"{dt.tzinfo.abbrev if dt.tzinfo is not None else ''}",
+        'z': lambda dt: f"{dt.timezone_name or ''}",
     }
 
     _DATE_FORMATS = {
@@ -276,6 +276,9 @@ class Formatter:
 
         # Timezone
         if token in ['ZZ', 'Z']:
+            if dt.tzinfo is None:
+                return ''
+
             separator = ':' if token == 'Z' else ''
             offset = dt.utcoffset() or datetime.timedelta()
             minutes = offset.total_seconds() / 60

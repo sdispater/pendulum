@@ -168,6 +168,15 @@ class DateTime(datetime.datetime, Date):
     def time(self):
         return Time(self.hour, self.minute, self.second, self.microsecond)
 
+    def naive(self) -> 'DateTime':
+        """
+        Return the DateTime without timezone information.
+        """
+        return self.__class__(
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond
+        )
+
     def on(self, year, month, day):
         """
         Returns a new instance with the current date set to a different date.
@@ -216,7 +225,7 @@ class DateTime(datetime.datetime, Date):
         """
         tz = pendulum._safe_timezone(tz)
 
-        return tz.convert(self)
+        return tz.convert(self, dst_rule=pendulum.POST_TRANSITION)
 
     def in_tz(self, tz: Union[str, Timezone]) -> 'DateTime':
         """
@@ -632,7 +641,7 @@ class DateTime(datetime.datetime, Date):
         if dt is None:
             dt = self.now(self.tzinfo.tz)
 
-        return Period(self, pendulum.instance(dt), absolute=abs)
+        return Period(self, dt, absolute=abs)
 
     def diff_for_humans(self,
                         other: Union['DateTime', None] = None,
@@ -1238,13 +1247,31 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(other, datetime.datetime):
             return NotImplemented
 
-        return pendulum.instance(other).diff(self, False)
+        if not isinstance(other, self.__class__):
+            if other.tzinfo is None:
+                other = pendulum.naive(
+                    other.year, other.month, other.day,
+                    other.hour, other.minute, other.second, other.microsecond
+                )
+            else:
+                other = pendulum.instance(other)
+
+        return other.diff(self, False)
 
     def __rsub__(self, other):
         if not isinstance(other, datetime.datetime):
             return NotImplemented
 
-        return self.diff(pendulum.instance(other), False)
+        if not isinstance(other, self.__class__):
+            if other.tzinfo is None:
+                other = pendulum.naive(
+                    other.year, other.month, other.day,
+                    other.hour, other.minute, other.second, other.microsecond
+                )
+            else:
+                other = pendulum.instance(other)
+
+        return self.diff(other, False)
 
     def __add__(self, other):
         if not isinstance(other, datetime.timedelta):
