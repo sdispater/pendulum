@@ -388,6 +388,18 @@ def test_constructor_fold_attribute_is_honored():
     assert dt.strftime('%z') == '-0500'
 
 
+def test_convert_sets_fold_attribute_properly():
+    tz = pendulum.timezone('US/Eastern')
+
+    dt = tz.convert(datetime(2014, 11, 2, 1, 30),
+                    dst_rule=pendulum.PRE_TRANSITION)
+    assert dt.fold == 0
+
+    dt = tz.convert(datetime(2014, 11, 2, 1, 30),
+                    dst_rule=pendulum.POST_TRANSITION)
+    assert dt.fold == 1
+
+
 def test_timezone_with_no_transitions():
     tz = Timezone('Test', (), ((0, False, None, ''),), 0, [])
 
@@ -431,6 +443,16 @@ def test_fixed_timezone():
 
     assert 18000 == tz2.utcoffset(dt).total_seconds()
     assert tz2.dst(dt) is None
+
+
+def test_just_before_last_transition():
+    tz = pendulum.timezone('Asia/Shanghai')
+    dt = datetime(1991, 4, 20, 1, 49, 8)
+    dt = tz.convert(dt, dst_rule=tz.POST_TRANSITION)
+
+    epoch = datetime(1970, 1, 1, tzinfo=timezone('UTC'))
+    expected = (dt - epoch).total_seconds()
+    assert expected == 672079748.0
 
 
 def test_repr():
