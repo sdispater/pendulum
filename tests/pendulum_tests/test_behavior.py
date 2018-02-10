@@ -5,6 +5,7 @@ import pendulum
 from copy import deepcopy
 from datetime import datetime, date, time, timedelta
 from pendulum import Pendulum, timezone
+from pendulum.tz.timezone_info import UTC
 from pendulum.tz.timezone import Timezone
 from pendulum.tz.loader import Loader
 from .. import AbstractTestCase
@@ -124,6 +125,10 @@ class BehaviorTest(AbstractTestCase):
         dt = pendulum.create(1941, 7, 1, tz='Europe/Amsterdam')
 
         self.assertEqual(dt._datetime, deepcopy(dt._datetime))
+
+    def test_pickle_utc_timezone(self):
+        utc = pickle.loads(pickle.dumps(UTC))
+        self.assertTrue(utc.name == UTC.name)
 
     def test_pickle_timezone(self):
         dt1 = pendulum.timezone('Europe/Amsterdam')
