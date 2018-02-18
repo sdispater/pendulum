@@ -115,7 +115,7 @@ class Formatter:
         'X': lambda dt: '{:d}'.format(dt.int_timestamp),
 
         # Timezone
-        'zz': lambda dt: f"{dt.tzinfo.abbrev if dt.tzinfo is not None else ''}",
+        'zz': lambda dt: f"{dt.tzname() if dt.tzinfo is not None else ''}",
         'z': lambda dt: f"{dt.timezone_name or ''}",
     }
 

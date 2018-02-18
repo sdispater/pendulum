@@ -75,7 +75,7 @@ def test_fluid_timezone_setter():
     new = d.set(tz='Europe/Paris')
     assert isinstance(new, datetime)
     assert 'Europe/Paris' == new.timezone_name
-    assert 'Europe/Paris' == new.tzinfo.tz.name
+    assert 'Europe/Paris' == new.tzinfo.name
 
 
 def test_fluid_on():

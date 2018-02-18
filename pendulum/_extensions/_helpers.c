@@ -363,6 +363,44 @@ PyObject* days_in_year(PyObject *self, PyObject *args) {
     return ndays;
 }
 
+PyObject* timestamp(PyObject *self, PyObject *args) {
+    int64_t result;
+    PyObject* dt;
+
+    if (!PyArg_ParseTuple(args, "O", &dt)) {
+        PyErr_SetString(
+            PyExc_ValueError, "Invalid parameters"
+        );
+        return NULL;
+    }
+
+    int year = (double) PyDateTime_GET_YEAR(dt);
+    int month = PyDateTime_GET_MONTH(dt);
+    int day = PyDateTime_GET_DAY(dt);
+    int hour = PyDateTime_DATE_GET_HOUR(dt);
+    int minute = PyDateTime_DATE_GET_MINUTE(dt);
+    int second = PyDateTime_DATE_GET_SECOND(dt);
+
+    result = (year - 1970) * 365 + MONTHS_OFFSETS[0][month];
+    result += (int) floor((double) (year - 1968) / 4);
+    result -= (year - 1900) / 100;
+    result += (year - 1600) / 400;
+
+    if (_is_leap(year) && month < 3) {
+        result -= 1;
+    }
+
+    result += day - 1;
+    result *= 24;
+    result += hour;
+    result *= 60;
+    result += minute;
+    result *= 60;
+    result += second;
+
+    return PyLong_FromLong(result);
+}
+
 PyObject* local_time(PyObject *self, PyObject *args) {
     double unix_time;
     int32_t utc_offset;
@@ -789,6 +827,12 @@ static PyMethodDef helpers_methods[] = {
         (PyCFunction) days_in_year,
         METH_VARARGS,
         PyDoc_STR("Returns the number of days in the given year.")
+    },
+    {
+        "timestamp",
+        (PyCFunction) timestamp,
+        METH_VARARGS,
+        PyDoc_STR("Returns the timestamp of the given datetime.")
     },
     {
         "local_time",

@@ -15,6 +15,7 @@
 
 - `Pendulum` class has been renamed to `DateTime`.
 - `Interval` class has been renamed to `Duration`.
+- Changed and improved the timezone system.
 - Removed the `create()` helper.
 - `strict` keyword argument for `parse` has been renamed to `exact`.
 - `at()` now supports setting partial time.

@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from pendulum.tz import LocalTimezone
+from pendulum.tz.local_timezone import _get_unix_timezone
 
 
 @pytest.mark.skipif(sys.platform == 'win32',
@@ -12,7 +12,7 @@ def test_unix_symlink():
     # A ZONE setting in the target path of a symbolic linked localtime,
     # f ex systemd distributions
     local_path = os.path.join(os.path.split(__file__)[0], '..')
-    tz = LocalTimezone.get_tz_name_for_unix(
+    tz = _get_unix_timezone(
         _root=os.path.join(local_path, 'fixtures', 'tz', 'symlink')
     )
 

@@ -1,7 +1,7 @@
-import datetime
 import math
-
 from collections import namedtuple
+
+import datetime
 
 from ..constants import (
     EPOCH_YEAR,
@@ -60,6 +60,28 @@ def days_in_year(year):
         return DAYS_PER_L_YEAR
 
     return DAYS_PER_N_YEAR
+
+
+def timestamp(dt: datetime) -> int:
+    year = dt.year
+
+    result = (year - 1970) * 365 + MONTHS_OFFSETS[0][dt.month]
+    result += (year - 1968) // 4
+    result -= (year - 1900) // 100
+    result += (year - 1600) // 400
+
+    if is_leap(year) and dt.month < 3:
+        result -= 1
+
+    result += dt.day - 1
+    result *= 24
+    result += dt.hour
+    result *= 60
+    result += dt.minute
+    result *= 60
+    result += dt.second
+
+    return result
 
 
 def local_time(unix_time, utc_offset, microseconds):

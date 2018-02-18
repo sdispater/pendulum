@@ -1,6 +1,8 @@
 import pytest
 
-from pendulum.tz import timezone, Timezone, FixedTimezone
+from pendulum.tz import timezone
+from pendulum.tz.timezone import Timezone, FixedTimezone
+from pendulum.tz.zoneinfo.exceptions import InvalidTimezone
 
 
 def test_timezone_with_name():
@@ -11,7 +13,7 @@ def test_timezone_with_name():
 
 
 def test_timezone_with_invalid_name():
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidTimezone):
         timezone('Invalid')
 
 

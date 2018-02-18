@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 
 import pendulum
 from pendulum import timezone
-from pendulum.tz import Timezone, FixedTimezone
+from pendulum.tz import fixed_timezone
+from pendulum.tz.timezone import Timezone, FixedTimezone
 from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
 
 from ..conftest import assert_datetime
@@ -21,9 +22,9 @@ def test_basic_convert():
     assert dt.minute == 34
     assert dt.second == 56
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 7200
-    assert dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_skipped_time_with_pre_rule():
@@ -38,9 +39,9 @@ def test_skipped_time_with_pre_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 3600
-    assert not dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_skipped_time_with_post_rule():
@@ -55,9 +56,9 @@ def test_skipped_time_with_post_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 7200
-    assert dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_skipped_time_with_explicit_post_rule():
@@ -72,9 +73,9 @@ def test_skipped_time_with_explicit_post_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 7200
-    assert dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_skipped_time_with_explicit_pre_rule():
@@ -89,9 +90,9 @@ def test_skipped_time_with_explicit_pre_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 3600
-    assert not dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_skipped_time_with_error():
@@ -113,9 +114,9 @@ def test_repeated_time():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 3600
-    assert not dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_repeated_time_explicit_post_rule():
@@ -130,9 +131,9 @@ def test_repeated_time_explicit_post_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 3600
-    assert not dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_repeated_time_pre_rule():
@@ -147,9 +148,9 @@ def test_repeated_time_pre_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 7200
-    assert dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_repeated_time_explicit_pre_rule():
@@ -164,9 +165,9 @@ def test_repeated_time_explicit_pre_rule():
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
-    assert dt.tzinfo.tz.name == 'Europe/Paris'
-    assert dt.tzinfo.offset == 7200
-    assert dt.tzinfo.is_dst()
+    assert dt.tzinfo.name == 'Europe/Paris'
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_repeated_time_with_error():
@@ -190,8 +191,8 @@ def test_pendulum_create_skipped():
 
     assert_datetime(dt, 2013, 3, 31, 3, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
-    assert dt.offset == 7200
-    assert dt.is_dst()
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_pendulum_create_skipped_with_pre_rule():
@@ -200,14 +201,14 @@ def test_pendulum_create_skipped_with_pre_rule():
 
     assert_datetime(dt, 2013, 3, 31, 1, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
-    assert dt.offset == 3600
-    assert not dt.is_dst()
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_pendulum_create_skipped_with_error():
     with pytest.raises(NonExistingTime):
         pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz='Europe/Paris',
-                        dst_rule=pendulum.TRANSITION_ERROR)
+                          dst_rule=pendulum.TRANSITION_ERROR)
 
 
 def test_pendulum_create_repeated():
@@ -215,8 +216,8 @@ def test_pendulum_create_repeated():
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
-    assert dt.offset == 3600
-    assert not dt.is_dst()
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
+    assert dt.tzinfo.dst(dt) == timedelta()
 
 
 def test_pendulum_create_repeated_with_pre_rule():
@@ -225,8 +226,8 @@ def test_pendulum_create_repeated_with_pre_rule():
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
     assert dt.timezone_name == 'Europe/Paris'
-    assert dt.offset == 7200
-    assert dt.is_dst()
+    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
+    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
 def test_pendulum_create_repeated_with_error():
@@ -252,17 +253,17 @@ def test_utcoffset():
 
 def test_dst():
     tz = pendulum.timezone('Europe/Amsterdam')
-    dst = tz.dst(pendulum.datetime(1940, 7, 1))
+    dst = tz.dst(datetime(1940, 7, 1))
 
     assert dst == timedelta(0, 6000)
 
 
 def test_short_timezones():
     tz = pendulum.timezone('CET')
-    assert len(tz.transitions) > 0
+    assert len(tz._transitions) > 0
 
     tz = pendulum.timezone('EET')
-    assert len(tz.transitions) > 0
+    assert len(tz._transitions) > 0
 
 
 def test_short_timezones_should_not_modify_time():
@@ -302,26 +303,26 @@ def test_after_last_transition():
 
 def test_on_last_transition():
     tz = pendulum.timezone('Europe/Paris')
-    dt = datetime(2037, 10, 25, 3, 0, 0, fold=1)
+    dt = datetime(2037, 10, 25, 2, 30, fold=1)
     dt = tz.convert(dt)
 
     assert dt.year == 2037
     assert dt.month == 10
     assert dt.day == 25
-    assert dt.hour == 3
-    assert dt.minute == 0
+    assert dt.hour == 2
+    assert dt.minute == 30
     assert dt.second == 0
     assert dt.microsecond == 0
     assert dt.utcoffset().total_seconds() == 3600
 
-    dt = datetime(2037, 10, 25, 3, 0, 0, fold=0)
+    dt = datetime(2037, 10, 25, 2, 30, fold=0)
     dt = tz.convert(dt)
 
     assert dt.year == 2037
     assert dt.month == 10
     assert dt.day == 25
-    assert dt.hour == 3
-    assert dt.minute == 0
+    assert dt.hour == 2
+    assert dt.minute == 30
     assert dt.second == 0
     assert dt.microsecond == 0
     assert dt.utcoffset().total_seconds() == 7200
@@ -361,7 +362,7 @@ def test_dst_fold_attribute_is_honored():
 
     offset = tz.dst(dt.replace(fold=1))
 
-    assert offset.total_seconds() == -3600
+    assert offset.total_seconds() == 0
 
 
 def test_tzname_fold_attribute_is_honored():
@@ -400,20 +401,6 @@ def test_convert_sets_fold_attribute_properly():
     assert dt.fold == 1
 
 
-def test_timezone_with_no_transitions():
-    tz = Timezone('Test', (), ((0, False, None, ''),), 0, [])
-
-    dt = datetime(2016, 11, 26)
-    dt = tz.convert(dt)
-
-    assert 2016 == dt.year
-    assert 11 == dt.month
-    assert 26 == dt.day
-    assert 0 == dt.hour
-    assert 0 == dt.minute
-    assert 0 == dt.second
-
-
 def test_datetime():
     tz = timezone('Europe/Paris')
 
@@ -437,18 +424,18 @@ def test_datetime():
 
 
 def test_fixed_timezone():
-    tz = FixedTimezone.load(19800)
-    tz2 = FixedTimezone.load(18000)
+    tz = fixed_timezone(19800)
+    tz2 = fixed_timezone(18000)
     dt = datetime(2016, 11, 26, tzinfo=tz)
 
     assert 18000 == tz2.utcoffset(dt).total_seconds()
-    assert tz2.dst(dt) is None
+    assert tz2.dst(dt) == timedelta()
 
 
 def test_just_before_last_transition():
     tz = pendulum.timezone('Asia/Shanghai')
     dt = datetime(1991, 4, 20, 1, 49, 8)
-    dt = tz.convert(dt, dst_rule=tz.POST_TRANSITION)
+    dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
 
     epoch = datetime(1970, 1, 1, tzinfo=timezone('UTC'))
     expected = (dt - epoch).total_seconds()

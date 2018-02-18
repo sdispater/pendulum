@@ -3,10 +3,10 @@ import pendulum
 import pytz
 
 from datetime import datetime
+from pendulum import timezone
 from pendulum.helpers import precise_diff, week_day, days_in_year
-from pendulum.tz.timezone import Timezone
 
-from .conftest import assert_datetime, assert_date, assert_time
+from .conftest import assert_datetime
 
 
 def assert_diff(diff,
@@ -60,9 +60,11 @@ def test_precise_diff():
     )
 
     # DST
-    tz = Timezone.load('America/Toronto')
+    tz = timezone('America/Toronto')
     dt1 = tz.datetime(2017, 3, 7)
     dt2 = tz.datetime(2017, 3, 13)
+    print(dt1)
+    print(dt2)
 
     diff = precise_diff(dt1, dt2)
     assert_diff(

@@ -8,7 +8,8 @@ from .date import Date
 from .time import Time
 from .period import Period
 from .exceptions import PendulumException
-from .tz import Timezone, UTC
+from .tz import UTC
+from .tz.timezone import Timezone
 from .helpers import add_duration
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
@@ -39,8 +40,6 @@ class DateTime(datetime.datetime, Date):
     }
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
-
-    _TRANSITION_RULE = Timezone.POST_TRANSITION
 
     _MODIFIERS_VALID_UNITS = [
         'second', 'minute', 'hour',
@@ -127,18 +126,18 @@ class DateTime(datetime.datetime, Date):
                 / MINUTES_PER_HOUR)
 
     @property
-    def timezone(self):
-        if self.tzinfo is None:
-            return None
+    def timezone(self) -> Union[Timezone, None]:
+        if not isinstance(self.tzinfo, Timezone):
+            return
 
-        return self.tzinfo.tz
+        return self.tzinfo
 
     @property
-    def tz(self):
+    def tz(self) -> Union[Timezone, None]:
         return self.timezone
 
     @property
-    def timezone_name(self):
+    def timezone_name(self) -> Union[str, None]:
         tz = self.timezone
 
         if self.timezone is None:
@@ -148,19 +147,19 @@ class DateTime(datetime.datetime, Date):
 
     @property
     def age(self):
-        return self.date().diff(self.now(self.tzinfo.tz).date()).in_years()
+        return self.date().diff(self.now(self.tz).date()).in_years()
 
     def is_local(self):
         return self.offset == self.in_timezone(pendulum.local_timezone()).offset
 
     def is_utc(self):
-        return self.offset == 0
+        return self.timezone_name == 'UTC'
 
     def is_dst(self):
-        return self.tzinfo.is_dst()
+        return self.dst() != datetime.timedelta()
 
     def get_offset(self):
-        return int(self.tzinfo.offset)
+        return int(self.utcoffset().total_seconds())
 
     def date(self):
         return Date(self.year, self.month, self.day)
@@ -446,7 +445,7 @@ class DateTime(datetime.datetime, Date):
         :rtype: bool
         """
         return pendulum.datetime(
-            self.year, 12, 28, 0, 0, 0, tz=self.tzinfo.tz
+            self.year, 12, 28, 0, 0, 0, tz=self.tz
         ).isocalendar()[1] == 53
 
     def is_same_day(self, dt):
@@ -468,7 +467,7 @@ class DateTime(datetime.datetime, Date):
         :rtype: bool
         """
         if dt is None:
-            dt = self.now(self.tzinfo.tz)
+            dt = self.now(self.tz)
 
         instance = pendulum.instance(dt)
 
@@ -476,68 +475,61 @@ class DateTime(datetime.datetime, Date):
 
     # ADDITIONS AND SUBSTRACTIONS
 
-    def add(self, years=0, months=0, weeks=0, days=0,
-            hours=0, minutes=0, seconds=0, microseconds=0):
+    def add(self,
+            years: int = 0,
+            months: int = 0,
+            weeks: int = 0,
+            days: int = 0,
+            hours: int = 0,
+            minutes: int = 0,
+            seconds: int = 0,
+            microseconds: int = 0) -> 'DateTime':
         """
-        Add duration to the instance.
+        Add a duration to the instance.
 
-        :param years: The number of years
-        :type years: int
-
-        :param months: The number of months
-        :type months: int
-
-        :param weeks: The number of weeks
-        :type weeks: int
-
-        :param days: The number of days
-        :type days: int
-
-        :param hours: The number of hours
-        :type hours: int
-
-        :param minutes: The number of minutes
-        :type minutes: int
-
-        :param seconds: The number of seconds
-        :type seconds: int
-
-        :param microseconds: The number of microseconds
-        :type microseconds: int
-
-        :rtype: DateTime
+        If we're adding units of variable length (i.e., years, months),
+        move forward from curren time,
+        otherwise move forward from utc, for accuracy
+        when moving across DST boundaries.
         """
-        dt = datetime.datetime(
+        units_of_variable_length = any([years, months, weeks, days])
+
+        current_dt = datetime.datetime(
             self.year, self.month, self.day,
-            self.hour, self.minute, self.second, self.microsecond,
-            tzinfo=self.tzinfo
+            self.hour, self.minute, self.second, self.microsecond
         )
+        if not units_of_variable_length:
+            offset = self.utcoffset()
+            if offset:
+                current_dt = current_dt - offset
+
         dt = add_duration(
-            dt,
+            current_dt,
             years=years, months=months, weeks=weeks, days=days,
             hours=hours, minutes=minutes, seconds=seconds,
             microseconds=microseconds
         )
 
-        if dt.tzinfo is None:
-            return pendulum.instance(dt, tz=None)
-
-        if any([years, months, weeks, days]):
-            # If we specified any of years, months, weeks or days
-            # we will not apply the transition (if any)
+        if units_of_variable_length or self.tzinfo is None:
             return pendulum.datetime(
                 dt.year, dt.month, dt.day,
                 dt.hour, dt.minute, dt.second, dt.microsecond,
-                tz=self.tzinfo.tz
+                tz=self.tz
             )
 
-        # Else, we need to apply the transition properly (if any)
-        dt = self.tzinfo.tz.convert(dt)
+        dt = self.__class__(
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute, dt.second, dt.microsecond,
+            tzinfo=UTC
+        )
+
+        dt = self.tz.convert(dt)
 
         return self.__class__(
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute, dt.second, dt.microsecond,
-            tzinfo=dt.tzinfo
+            tzinfo=self.tz,
+            fold=dt.fold
         )
 
     def subtract(self, years=0, months=0, weeks=0, days=0,
@@ -639,7 +631,7 @@ class DateTime(datetime.datetime, Date):
         :rtype: Period
         """
         if dt is None:
-            dt = self.now(self.tzinfo.tz)
+            dt = self.now(self.tz)
 
         return Period(self, dt, absolute=abs)
 
@@ -1235,10 +1227,12 @@ class DateTime(datetime.datetime, Date):
         :rtype: DateTime
         """
         if dt is None:
-            dt = self.now(self.tzinfo.tz)
+            dt = self.now(self.tz)
 
         diff = self.diff(dt, False)
-        return self.add(microseconds=(diff.in_seconds() * 1000000 + diff.microseconds) // 2)
+        return self.add(
+            microseconds=(diff.in_seconds() * 1000000 + diff.microseconds) // 2
+        )
 
     def __sub__(self, other):
         if isinstance(other, datetime.timedelta):
@@ -1323,11 +1317,11 @@ class DateTime(datetime.datetime, Date):
         if tzinfo is True:
             tzinfo = self.tzinfo
 
-        transition_rule = Timezone.POST_TRANSITION
+        transition_rule = pendulum.POST_TRANSITION
         if fold is not None:
-            transition_rule = Timezone.PRE_TRANSITION
+            transition_rule = pendulum.PRE_TRANSITION
             if fold:
-                transition_rule = Timezone.POST_TRANSITION
+                transition_rule = pendulum.POST_TRANSITION
 
         return pendulum.datetime(
             year, month, day,

@@ -217,7 +217,9 @@ def test_add_time_to_new_transition_repeated():
     assert not dt.is_dst()
 
     dt = pendulum.datetime(2013, 11, 3, 0, 59, 59, 999999, tz='America/New_York')
+    print(dt)
     dt = dt.add(hours=1)
+    print(dt)
 
     assert_datetime(dt, 2013, 11, 3, 1, 59, 59, 999999)
     assert dt.timezone_name == 'America/New_York'

@@ -29,7 +29,8 @@ class Period(Duration):
             start = datetime(
                 start.year, start.month, start.day,
                 start.hour, start.minute, start.second, start.microsecond,
-                tzinfo=start.tzinfo
+                tzinfo=start.tzinfo,
+                fold=start.fold
             )
         elif isinstance(start, pendulum.Date):
             start = date(start.year, start.month, start.day)
@@ -38,10 +39,19 @@ class Period(Duration):
             end = datetime(
                 end.year, end.month, end.day,
                 end.hour, end.minute, end.second, end.microsecond,
-                tzinfo=end.tzinfo
+                tzinfo=end.tzinfo,
+                fold=end.fold
             )
         elif isinstance(end, pendulum.Date):
             end = date(end.year, end.month, end.day)
+
+        # Fixing issues with datetime.__sub__()
+        # not handling offsets if the tzinfo is the same
+        if isinstance(start, datetime) and start.tzinfo is not None:
+            start = (start - start.utcoffset()).replace(tzinfo=None)
+
+        if isinstance(end, datetime) and end.tzinfo is not None:
+            end = (end - end.utcoffset()).replace(tzinfo=None)
 
         delta = end - start
 

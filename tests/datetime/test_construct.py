@@ -4,11 +4,10 @@ import pytz
 import pendulum
 import pytest
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil import tz
 from pendulum import DateTime
 from pendulum.tz import timezone
-from pendulum.tz.timezone_info import TimezoneInfo
 
 from ..conftest import assert_datetime
 
@@ -36,7 +35,7 @@ def test_setting_timezone():
     tz = 'Europe/London'
     dtz = timezone(tz)
     dt = datetime.utcnow()
-    offset = dtz.convert(dt).tzinfo.offset / 3600
+    offset = dtz.convert(dt).utcoffset().total_seconds() / 3600
 
     p = pendulum.datetime(dt.year, dt.month, dt.day, tz=dtz)
     assert p.timezone_name == tz
@@ -47,7 +46,7 @@ def test_setting_timezone_with_string():
     tz = 'Europe/London'
     dtz = timezone(tz)
     dt = datetime.utcnow()
-    offset = dtz.convert(dt).tzinfo.offset / 3600
+    offset = dtz.convert(dt).utcoffset().total_seconds() / 3600
 
     p = pendulum.datetime(dt.year, dt.month, dt.day, tz=tz)
     assert p.timezone_name == tz
@@ -55,7 +54,7 @@ def test_setting_timezone_with_string():
 
 
 def test_today():
-    today = DateTime.today()
+    today = pendulum.today()
     assert isinstance(today, DateTime)
 
 
@@ -81,7 +80,7 @@ def test_instance_naive_datetime_defaults_to_utc():
 
 def test_instance_timezone_aware_datetime():
     now = pendulum.instance(
-        datetime.now(TimezoneInfo(timezone('Europe/Paris'), 7200, True, timedelta(0, 3600), 'EST'))
+        datetime.now(timezone('Europe/Paris'))
     )
     assert now.timezone_name == 'Europe/Paris'
 

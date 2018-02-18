@@ -107,12 +107,8 @@ def test_local():
 def test_utc():
     assert not pendulum.datetime(2012, 1, 1, tz='America/Toronto').is_utc()
     assert not pendulum.datetime(2012, 1, 1, tz='Europe/Paris').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='Atlantic/Reykjavik').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='Europe/Lisbon').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='Africa/Casablanca').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='Africa/Dakar').is_utc()
     assert pendulum.datetime(2012, 1, 1, tz='UTC').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='GMT').is_utc()
+    assert not pendulum.datetime(2012, 1, 1, tz='GMT').is_utc()
 
 
 def test_is_dst():

@@ -9,12 +9,14 @@ from typing import Union
 try:
     from ._extensions._helpers import (
         local_time, precise_diff,
-        is_leap, week_day, days_in_year
+        is_leap, week_day, days_in_year,
+        timestamp
     )
 except ImportError:
     from ._extensions.helpers import (
         local_time, precise_diff,
-        is_leap, week_day, days_in_year
+        is_leap, week_day, days_in_year,
+        timestamp
     )
 
 from .constants import DAYS_PER_MONTHS

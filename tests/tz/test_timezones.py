@@ -13,4 +13,5 @@ def test_timezones_are_loadable():
     zones = pendulum.timezones
 
     for zone in zones:
+        print(zone)
         pendulum.timezone(zone)
