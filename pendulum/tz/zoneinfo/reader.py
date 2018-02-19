@@ -10,6 +10,7 @@ from pytzdata.exceptions import TimezoneNotFound
 from .exceptions import InvalidZoneinfoFile, InvalidTimezone
 from .timezone import Timezone
 from .transition import Transition
+from .posix_timezone import posix_spec, PosixTimezone
 from .transition_type import TransitionType
 
 
@@ -140,7 +141,7 @@ class Reader:
                 Transition(0, types[0], None)
             )
 
-        return Timezone(transitions)
+        return Timezone(transitions, posix_rule=trule)
 
     def _parse_header(self, fd) -> header:
         buff = self._check_read(fd, 44)
@@ -211,7 +212,7 @@ class Reader:
 
         return abbrs
 
-    def _parse_posix_tz(self, fd):
+    def _parse_posix_tz(self, fd) -> PosixTimezone:
         s = fd.read().decode('utf-8')
 
         if not s.startswith('\n') or not s.endswith('\n'):
@@ -220,5 +221,7 @@ class Reader:
             )
 
         s = s.strip()
+
+        return posix_spec(s)
 
 

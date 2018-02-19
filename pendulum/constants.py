@@ -69,6 +69,11 @@ SECS_PER_YEAR = (
     DAYS_PER_L_YEAR * SECS_PER_DAY
 )
 
+DAYS_PER_YEAR = (
+    DAYS_PER_N_YEAR,
+    DAYS_PER_L_YEAR
+)
+
 # The month lengths in non-leap and leap years respectively.
 DAYS_PER_MONTHS = (
     (-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),

@@ -442,6 +442,39 @@ def test_just_before_last_transition():
     assert expected == 672079748.0
 
 
+def test_timezones_are_extended():
+    tz = pendulum.timezone('Europe/Paris')
+    dt = tz.convert(datetime(2134, 2, 13, 1))
+
+    assert_datetime(dt, 2134, 2, 13, 1)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+    dt = tz.convert(datetime(2134, 3, 28, 2, 30, fold=1))
+
+    assert_datetime(dt, 2134, 3, 28, 3, 30)
+    assert dt.utcoffset().total_seconds() == 7200
+    assert dt.dst() == timedelta(seconds=3600)
+
+    dt = tz.convert(datetime(2134, 7, 11, 2, 30))
+
+    assert_datetime(dt, 2134, 7, 11, 2, 30)
+    assert dt.utcoffset().total_seconds() == 7200
+    assert dt.dst() == timedelta(seconds=3600)
+
+    dt = tz.convert(datetime(2134, 10, 31, 2, 30, fold=0))
+
+    assert_datetime(dt, 2134, 10, 31, 2, 30)
+    assert dt.utcoffset().total_seconds() == 7200
+    assert dt.dst() == timedelta(seconds=3600)
+
+    dt = tz.convert(datetime(2134, 10, 31, 2, 30, fold=1))
+
+    assert_datetime(dt, 2134, 10, 31, 2, 30)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+
 def test_repr():
     tz = timezone('Europe/Paris')
 

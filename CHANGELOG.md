@@ -10,6 +10,7 @@
 - Added support of ISO 8601 interval parsing.
 - Added a `local()` helper.
 - Added a `naive()` helper and a `naive()` method.
+- Added support for POSIX specification to extend timezones DST transitions.
 
 ### Changed
 
@@ -32,4 +33,4 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.X...2.0
+[Unreleased]: https://github.com/sdispater/pendulum/compare/1.x...2.0

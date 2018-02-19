@@ -14,3 +14,11 @@ class InvalidTimezone(ZoneinfoError):
         super().__init__(
             'Invalid timezone "{}"'.format(name)
         )
+
+
+class InvalidPosixSpec(ZoneinfoError):
+
+    def __init__(self, spec):
+        super().__init__(
+            'Invalid POSIX spec: {}'.format(spec)
+        )
