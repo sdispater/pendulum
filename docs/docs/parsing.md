@@ -28,7 +28,9 @@ you have to pass `strict=False`.
 >>> import pendulum
 
 >>> dt = pendulum.parse('31-01-01')
-# ParserError: Unable to parse string [31-01-01]
+Traceback (most recent call last):
+...
+ParserError: Unable to parse string [31-01-01]
 
 >>> dt = pendulum.parse('31-01-01', strict=False)
 >>> print(dt)

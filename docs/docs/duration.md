@@ -71,9 +71,9 @@ The `Duration` class brings more properties than the default `days`, `seconds` a
 >>> import pendulum
 
 >>> it = pendulum.duration(
-        years=2, months=3,
-        days=1177, seconds=7284, microseconds=1234
-    )
+...     years=2, months=3,
+...     days=1177, seconds=7284, microseconds=1234
+... )
 
 >>> it.years
 2
