@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed an offset error when subtracting datetimes in the same timezone.
+
+
 ## [1.4.1] - 2018-02-05
 
 ### Fixed

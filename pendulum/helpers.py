@@ -194,7 +194,10 @@ def precise_diff(d1, d2):
     if hasattr(d2, 'hour'):
         # If we are not in the same timezone
         # we need to adjust
-        if not in_same_tz:
+        #
+        # We also need to adjust if we do not
+        # have variable-length units
+        if not in_same_tz or total_days == 0:
             offset1 = d1.utcoffset()
             offset2 = d2.utcoffset()
 
