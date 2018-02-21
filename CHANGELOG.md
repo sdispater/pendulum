@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed an offset error when subtracting datetimes in the same timezone.
+- Fixed wrong value returned by `tzname()` for the UTC timezone
 
 
 ## [1.4.1] - 2018-02-05

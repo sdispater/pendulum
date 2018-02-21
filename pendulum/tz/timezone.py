@@ -518,7 +518,7 @@ class FixedTimezone(Timezone):
 class _UTC(FixedTimezone):
 
     def __init__(self):
-        super(_UTC, self).__init__(0, 'UTC', TransitionType(0, False, 'GMT'))
+        super(_UTC, self).__init__(0, 'UTC', TransitionType(0, False, 'UTC'))
 
         UTC._tz = self
 

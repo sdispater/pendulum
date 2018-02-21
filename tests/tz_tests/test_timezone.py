@@ -379,3 +379,9 @@ class TimezoneTest(AbstractTestCase):
 
         self.assertEqual(tz2.utcoffset(dt).total_seconds(), 18000)
         self.assertIsNone(tz2.dst(dt))
+
+    def test_utc_tzname(self):
+        tz = Timezone.load('UTC')
+        dt = datetime(2016, 11, 26)
+
+        assert tz.tzname(dt) == 'UTC'
