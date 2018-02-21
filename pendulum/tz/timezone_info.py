@@ -134,4 +134,8 @@ class _UTC(TimezoneInfo):
     def fromutc(self, dt):
         return dt.replace(tzinfo=self)
 
+    def __getinitargs__(self):
+        return ()
+
+
 UTC = _UTC()

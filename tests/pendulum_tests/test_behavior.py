@@ -125,6 +125,11 @@ class BehaviorTest(AbstractTestCase):
 
         self.assertEqual(dt._datetime, deepcopy(dt._datetime))
 
+    def test_deepcopy_datetime_utcnow(self):
+        dt = pendulum.utcnow()
+
+        self.assertEqual(dt._datetime, deepcopy(dt._datetime))
+
     def test_pickle_timezone(self):
         dt1 = pendulum.timezone('Europe/Amsterdam')
         s = pickle.dumps(dt1)
