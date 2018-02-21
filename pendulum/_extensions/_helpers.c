@@ -554,7 +554,10 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     char *tz1 = "";
     char *tz2 = "";
     int in_same_tz = 0;
-    int total_days = 0;
+    int total_days = (
+        _day_number(dt2_year, dt2_month, dt2_day)
+        - _day_number(dt1_year, dt1_month, dt1_day)
+    );
 
     // If both dates are datetimes, we check
     // If we are in the same timezone
@@ -580,7 +583,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         dt1_second = PyDateTime_DATE_GET_SECOND(dt1);
         dt1_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt1);
 
-        if (!in_same_tz && dt1_offset != 0) {
+        if ((!in_same_tz && dt1_offset != 0) || total_days == 0) {
             dt1_hour -= dt1_offset / SECS_PER_HOUR;
             dt1_offset %= SECS_PER_HOUR;
             dt1_minute -= dt1_offset / SECS_PER_MIN;
@@ -625,7 +628,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
         dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
         dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
 
-        if (!in_same_tz && dt2_offset != 0) {
+        if ((!in_same_tz && dt2_offset != 0) || total_days == 0) {
             dt2_hour -= dt2_offset / SECS_PER_HOUR;
             dt2_offset %= SECS_PER_HOUR;
             dt2_minute -= dt2_offset / SECS_PER_MIN;
@@ -717,6 +720,11 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
             dt2_second = PyDateTime_DATE_GET_SECOND(dt2);
             dt2_microsecond = PyDateTime_DATE_GET_MICROSECOND(dt2);
         }
+
+        total_days = (
+            _day_number(dt2_year, dt2_month, dt2_day)
+            - _day_number(dt1_year, dt1_month, dt1_day)
+        );
     }
 
     year_diff = dt2_year - dt1_year;
@@ -726,10 +734,6 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     minute_diff = dt2_minute - dt1_minute;
     second_diff = dt2_second - dt1_second;
     microsecond_diff = dt2_microsecond - dt1_microsecond;
-    total_days = (
-        _day_number(dt2_year, dt2_month, dt2_day)
-        - _day_number(dt1_year, dt1_month, dt1_day)
-    );
 
     if (microsecond_diff < 0) {
         microsecond_diff += 1e6;
