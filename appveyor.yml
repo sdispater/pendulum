@@ -20,7 +20,7 @@ install:
   - "%CMD_IN_ENV% pip install codecov"
 
 test_script:
-  - "pytest --cov=pendulum --cov-config=.coveragerc tests/"
+  - "%CMD_IN_ENV% pytest --cov=pendulum --cov-config=.coveragerc tests/"
 
 after_test:
   - "codecov"
