@@ -10,17 +10,20 @@ install:
 
   # Upgrade to the latest version of pip to avoid it displaying warnings
   # about it being out of date.
-  - "%CMD_IN_ENV% pip install --disable-pip-version-check --user --upgrade pip"
+  - "pip install --disable-pip-version-check --user --upgrade pip"
 
   # Install poetry
-  - "%CMD_IN_ENV% pip install poetry"
+  - "pip install poetry"
 
   # Install dependencies
-  - "%CMD_IN_ENV% poetry install"
-  - "%CMD_IN_ENV% pip install codecov"
+  - "poetry install"
+  # For some reason pytest-cov doesn't seem to be picked up
+  # So reinstall with pip
+  - "pip install pytest-cov"
+  - "pip install codecov"
 
 test_script:
-  - "%CMD_IN_ENV% pytest --cov=pendulum --cov-config=.coveragerc tests/"
+  - "pytest --cov=pendulum --cov-config=.coveragerc tests/"
 
 after_test:
   - "codecov"
