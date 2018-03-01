@@ -12,12 +12,15 @@ install:
   # about it being out of date.
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
+  # Install poetry
+  - "%CMD_IN_ENV% pip poetry"
+
   # Install dependencies
-  - "%CMD_IN_ENV% pip install -r tests-requirements.txt"
+  - "%CMD_IN_ENV% poetry install"
   - "%CMD_IN_ENV% pip install codecov"
 
 test_script:
-  - "py.test --cov=pendulum --cov-config=.coveragerc tests/"
+  - "pytest --cov=pendulum --cov-config=.coveragerc tests/"
 
 after_test:
   - "codecov"

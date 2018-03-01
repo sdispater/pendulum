@@ -78,9 +78,9 @@ kwargs = dict(
     download_url='https://github.com/sdispater/pendulum/archive/%s.tar.gz' % __version__,
     packages=packages,
     install_requires=[
-        'tzlocal',
-        'python-dateutil',
-        'pytzdata',
+        'tzlocal>=1.3,<2.0',
+        'python-dateutil>=2.6,<3.0',
+        'pytzdata>=2018.3',
     ],
     include_package_data=True,
     tests_require=['pytest'],

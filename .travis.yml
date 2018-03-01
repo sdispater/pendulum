@@ -13,12 +13,13 @@ matrix:
 
 before_install:
   - pip install codecov
+  - pip install poetry
 
 install:
-  - pip install -r tests-requirements.txt
+  - poetry install
   - python setup.py develop
 
-script: py.test --cov=pendulum --cov-config=.coveragerc tests/
+script: pytest --cov=pendulum --cov-config=.coveragerc tests/
 
 after_success:
   - codecov
