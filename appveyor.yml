@@ -13,7 +13,7 @@ install:
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
   # Install poetry
-  - "%CMD_IN_ENV% pip poetry"
+  - "%CMD_IN_ENV% pip install poetry"
 
   # Install dependencies
   - "%CMD_IN_ENV% poetry install"
