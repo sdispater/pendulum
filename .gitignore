@@ -28,3 +28,4 @@ benchmark.py
 results.json
 profile.html
 /wheelhouse
+pyproject.lock

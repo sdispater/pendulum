@@ -45,6 +45,7 @@ if with_extensions:
                   ['pendulum/_extensions/_helpers.c']),
     ]
 
+
 class BuildFailed(Exception):
 
     pass
@@ -66,6 +67,7 @@ class ve_build_ext(build_ext):
                 DistutilsPlatformError, ValueError):
             raise BuildFailed()
 
+
 packages = ['pendulum']
 for pkg in find_packages('pendulum'):
     packages.append('pendulum.' + pkg)
@@ -82,13 +84,16 @@ kwargs = dict(
     download_url='https://github.com/sdispater/pendulum/archive/%s.tar.gz' % __version__,
     packages=packages,
     install_requires=[
-        'tzlocal',
-        'python-dateutil',
-        'pytzdata',
+        'tzlocal>=1.5.0,<2.0.0',
+        'python-dateutil>=2.6.0,<3.0.0',
+        'pytzdata>=2018.3',
     ],
     include_package_data=True,
-    tests_require=['pytest'],
-    test_suite='nose.collector',
+    tests_require=[
+        'pytest>=3.4.0,<4.0.0',
+        'pytest-cov>=2.4.0,<3.0.0',
+        'pytz>=2018.3',
+    ],
     classifiers=[
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
