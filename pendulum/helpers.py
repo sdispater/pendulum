@@ -159,9 +159,7 @@ def precise_diff(d1, d2):
         d1, d2 = d2, d1
         sign = -1
 
-    y_diff = d2.year - d1.year
-    m_diff = d2.month - d1.month
-    d_diff = d2.day - d1.day
+    d_diff = 0
     hour_diff = 0
     min_diff = 0
     sec_diff = 0
@@ -170,6 +168,7 @@ def precise_diff(d1, d2):
         _day_number(d2.year, d2.month, d2.day)
         - _day_number(d1.year, d1.month, d1.day)
     )
+
     in_same_tz = False
     tz1 = None
     tz2 = None
@@ -227,6 +226,14 @@ def precise_diff(d1, d2):
         if hour_diff < 0:
             hour_diff += 24
             d_diff -= 1
+
+    if d1 > d2:
+        d1, d2 = d2, d1
+        sign = -1
+
+    y_diff = d2.year - d1.year
+    m_diff = d2.month - d1.month
+    d_diff += d2.day - d1.day
 
     if d_diff < 0:
         year = d2.year

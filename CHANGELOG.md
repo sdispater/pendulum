@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed an error when adding intervals to a Pendulum instance across DST transition.
+- Fixed an error when subtracting two pendulum instances in the same timezone.
 
 
 ## [1.4.2] - 2018-02-22

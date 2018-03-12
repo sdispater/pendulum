@@ -237,6 +237,14 @@ class AddTest(AbstractTestCase):
         self.assertEqual(7200, dt.offset)
         self.assertTrue(dt.is_dst)
 
+    def test_period_over_midnight_tz(self):
+        start = pendulum.create(2018, 2, 25, tz='Europe/Paris')
+        end = start.add(hours=1)
+        period = end - start
+        new_end = start + period
+
+        assert new_end == end
+
     def test_add_interval(self):
         dt = pendulum.create(2017, 3, 11, 10, 45, tz='America/Los_Angeles')
         new = dt + pendulum.interval(hours=24)
