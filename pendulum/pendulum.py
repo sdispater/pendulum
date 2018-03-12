@@ -1233,8 +1233,7 @@ class Pendulum(Date, datetime.datetime):
                 seconds=delta.remaining_seconds, microseconds=delta.microseconds
             )
 
-        return self.add(days=delta.days, seconds=delta.seconds,
-                        microseconds=delta.microseconds)
+        return self.add(seconds=delta.total_seconds())
 
     def subtract_timedelta(self, delta):
         """

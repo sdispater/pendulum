@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed an error when adding intervals to a Pendulum instance across DST transition.
+
+
 ## [1.4.2] - 2018-02-22
 
 ### Fixed

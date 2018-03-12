@@ -236,3 +236,9 @@ class AddTest(AbstractTestCase):
         self.assertEqual('Europe/Paris', dt.timezone_name)
         self.assertEqual(7200, dt.offset)
         self.assertTrue(dt.is_dst)
+
+    def test_add_interval(self):
+        dt = pendulum.create(2017, 3, 11, 10, 45, tz='America/Los_Angeles')
+        new = dt + pendulum.interval(hours=24)
+
+        self.assertPendulum(new, 2017, 3, 12, 11, 45)
