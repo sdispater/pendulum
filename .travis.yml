@@ -38,10 +38,7 @@ install:
         virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
-  - |
-      if [ "$TRAVIS_PYTHON_VERSION" != "3.6" ]; then
-        virtualenv --python="$HOME/virtualenv/python3.6/bin/python" "$HOME/virtualenvs/venv-poetry"
-      fi
+  - virtualenv --python="$HOME/virtualenv/python3.6/bin/python" "$HOME/virtualenvs/venv-poetry"
   - $HOME/virtualenvs/venv-poetry/bin/pip install poetry --pre
   - $HOME/virtualenvs/venv-poetry/bin/poetry install -v
   - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
