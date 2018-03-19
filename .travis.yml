@@ -5,22 +5,30 @@ python:
 
 matrix:
   include:
-    - env: VENV='2.7'
-      env: PENDULUM_EXTENSIONS=1
-    - env: VENV='2.7'
-      env: PENDULUM_EXTENSIONS=0
-    - env: VENV='3.4'
-      env: PENDULUM_EXTENSIONS=1
-    - env: VENV='3.4'
-      env: PENDULUM_EXTENSIONS=0
-    - env: VENV='3.5'
-      env: PENDULUM_EXTENSIONS=1
-    - env: VENV='3.5'
-      env: PENDULUM_EXTENSIONS=0
-    - env: VENV=''
-      env: PENDULUM_EXTENSIONS=1
-    - env: VENV=''
-      env: PENDULUM_EXTENSIONS=0
+    - env:
+        - VENV='2.7'
+        - PENDULUM_EXTENSIONS=0
+    - env:
+        - VENV='2.7'
+        - PENDULUM_EXTENSIONS=1
+    - env:
+        - VENV='3.4'
+        - PENDULUM_EXTENSIONS=0
+    - env:
+        - VENV='3.4'
+        - PENDULUM_EXTENSIONS=1
+    - env:
+        - VENV='3.5'
+        - PENDULUM_EXTENSIONS=0
+    - env:
+        - VENV='3.5'
+        - PENDULUM_EXTENSIONS=1
+    - env:
+        - VENV=''
+        - PENDULUM_EXTENSIONS=0
+    - env:
+        - VENV=''
+        - PENDULUM_EXTENSIONS=1
     - env: VENV='pypy'
     - env: VENV='pypy3'
 
@@ -48,7 +56,7 @@ install:
         source "$HOME/virtualenvs/venv-$VENV/bin/activate"
       fi
   - poetry install -v
-  - poetry build
+  - poetry build -v
   - pip --version
   - find dist/ -iname pendulum*.tar.gz -exec pip install {} \;
 
