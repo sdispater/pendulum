@@ -1,45 +1,32 @@
 language: python
 
-python:
-  - "3.6"
-
 matrix:
   include:
-    - env:
-        - VENV='2.7'
-        - PENDULUM_EXTENSIONS=0
-    - env:
-        - VENV='2.7'
-        - PENDULUM_EXTENSIONS=1
-    - env:
-        - VENV='3.4'
-        - PENDULUM_EXTENSIONS=0
-    - env:
-        - VENV='3.4'
-        - PENDULUM_EXTENSIONS=1
-    - env:
-        - VENV='3.5'
-        - PENDULUM_EXTENSIONS=0
-    - env:
-        - VENV='3.5'
-        - PENDULUM_EXTENSIONS=1
-    - env:
-        - VENV=''
-        - PENDULUM_EXTENSIONS=0
-    - env:
-        - VENV=''
-        - PENDULUM_EXTENSIONS=1
-    - env: VENV='pypy'
-    - env: VENV='pypy3'
+    - python: 2.7
+      env: PENDULUM_EXTENSIONS=1
+    - python: 2.7
+      env: PENDULUM_EXTENSIONS=0
+    - python: 3.4
+      env: PENDULUM_EXTENSIONS=1
+    - python: 3.4
+      env: PENDULUM_EXTENSIONS=0
+    - python: 3.5
+      env: PENDULUM_EXTENSIONS=1
+    - python: 3.5
+      env: PENDULUM_EXTENSIONS=0
+    - python: 3.6
+      env: PENDULUM_EXTENSIONS=1
+    - python: 3.6
+      env: PENDULUM_EXTENSIONS=0
+    - python: pypy
+    - python: pypy3
 
 before_install:
-  - ls /opt/python/
   - pip install codecov
-  - pip install poetry --pre
 
 install:
   - |
-      if [ "$VENV" = "pypy" ]; then
+      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
         export PYENV_ROOT="$HOME/.pyenv"
         if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
           pushd "$PYENV_ROOT" && git pull && popd
@@ -52,13 +39,12 @@ install:
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
   - |
-      if ([ "$VENV" != "" ] && [ "$VENV" != "pypy" ]); then
-        virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
-        source "$HOME/virtualenvs/venv-$VENV/bin/activate"
+      if [ "$TRAVIS_PYTHON_VERSION" != "3.6" ]; then
+        virtualenv --python="$HOME/virtualenv/python3.6/bin/python" "$HOME/virtualenvs/venv-poetry"
       fi
-  - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/poetry install -v
-  - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/poetry build -v
-  - pip --version
+  - $HOME/virtualenvs/venv-poetry/bin/pip install poetry
+  - $HOME/virtualenvs/venv-poetry/bin/poetry install -v
+  - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
   - find dist/ -iname pendulum*.tar.gz -exec pip install {} \;
 
 script: pytest --cov=pendulum --cov-config=.coveragerc tests/
