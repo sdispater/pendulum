@@ -1,28 +1,32 @@
 language: python
 
+python:
+  - "3.6"
+
 matrix:
   include:
-    - python: 2.7
+    - env: VENV='2.7'
       env: PENDULUM_EXTENSIONS=1
-    - python: 2.7
+    - env: VENV='2.7'
       env: PENDULUM_EXTENSIONS=0
-    - python: 3.4
+    - env: VENV='3.4'
       env: PENDULUM_EXTENSIONS=1
-    - python: 3.4
+    - env: VENV='3.4'
       env: PENDULUM_EXTENSIONS=0
-    - python: 3.5
+    - env: VENV='3.5'
       env: PENDULUM_EXTENSIONS=1
-    - python: 3.5
+    - env: VENV='3.5'
       env: PENDULUM_EXTENSIONS=0
-    - python: 3.6
+    - env: VENV=''
       env: PENDULUM_EXTENSIONS=1
-    - python: 3.6
+    - env: VENV=''
       env: PENDULUM_EXTENSIONS=0
-    - python: pypy
-    - python: pypy3
+    - env: VENV='pypy'
+    - env: VENV='pypy3'
 
 before_install:
   - pip install codecov
+  - pip install poetry
 
 install:
   - |
@@ -38,10 +42,17 @@ install:
         virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
-  - pip install -r tests-requirements.txt
-  - python setup.py develop
+  - |
+      if [ "$VENV" != "" ]; then
+        virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
+        source "$HOME/virtualenvs/venv-$VENV/bin/activate"
+      fi
+  - poetry install -v
+  - poetry build
+  - pip --version
+  - find dist/ -iname pendulum*.tar.gz -exec pip install {} \;
 
-script: py.test --cov=pendulum --cov-config=.coveragerc tests/
+script: pytest --cov=pendulum --cov-config=.coveragerc tests/
 
 after_success:
   - codecov
