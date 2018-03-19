@@ -34,11 +34,11 @@ matrix:
 
 before_install:
   - pip install codecov
-  - pip install poetry
+  - pip install poetry --pre
 
 install:
   - |
-      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
+      if [ "$VENV" = "pypy" ]; then
         export PYENV_ROOT="$HOME/.pyenv"
         if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
           pushd "$PYENV_ROOT" && git pull && popd
