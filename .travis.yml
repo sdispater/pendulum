@@ -52,7 +52,7 @@ install:
       fi
   - |
       if ([ "$VENV" != "" ] && [ "$VENV" != "pypy" ]); then
-        virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
+        virtualenv --python="$(which python$VENV)" "$HOME/virtualenvs/venv-$VENV"
         source "$HOME/virtualenvs/venv-$VENV/bin/activate"
       fi
   - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/poetry install -v
