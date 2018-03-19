@@ -51,7 +51,7 @@ install:
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
   - |
-      if [ "$VENV" != "" && "$VENV" != "pypy" ]; then
+      if ([ "$VENV" != "" ] && [ "$VENV" != "pypy" ]); then
         virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
         source "$HOME/virtualenvs/venv-$VENV/bin/activate"
       fi
