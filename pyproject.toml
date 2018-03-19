@@ -28,3 +28,4 @@ pytzdata = ">=2018.3"
 [tool.poetry.dev-dependencies]
 pytest = "^3.4"
 pytest-cov = "^2.4"
+pytz = ">=2018.3"
