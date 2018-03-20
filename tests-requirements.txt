@@ -1,4 +1,0 @@
--r requirements.txt
-pytest>=3.4.0,<4.0.0
-pytest-cov>=2.4.0,<3.0.0
-pytz>=2018.3

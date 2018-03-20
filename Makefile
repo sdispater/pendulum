@@ -23,7 +23,7 @@ setup: setup-python
 test:
 	@py.test --cov=pendulum --cov-config .coveragerc tests/ -sq
 
-release: tar wheels_x64 cp_wheels_x64 wheels_i686 cp_wheels_i686 wheel
+release: wheels_x64 cp_wheels_x64 wheels_i686 cp_wheels_i686 wheel
 
 publish:
 	@python -m twine upload dist/pendulum-$(PENDULUM_RELEASE)*
@@ -32,7 +32,7 @@ tar:
 	python setup.py sdist --formats=gztar
 
 wheel:
-	@pip wheel --no-index --no-deps --wheel-dir dist dist/pendulum-$(PENDULUM_RELEASE).tar.gz
+	@poetry build -v
 
 wheels_x64: clean_wheels build_wheels_x64
 
@@ -40,11 +40,13 @@ wheels_i686: clean_wheels build_wheels_i686
 
 build_wheels_x64:
 	rm -rf wheelhouse/
+	mkdir wheelhouse
 	docker pull quay.io/pypa/manylinux1_x86_64
 	docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_x86_64 /io/build-wheels.sh
 
 build_wheels_i686:
 	rm -rf wheelhouse/
+	mkdir wheelhouse
 	docker pull quay.io/pypa/manylinux1_i686
 	docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_i686 /io/build-wheels.sh
 
