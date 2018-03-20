@@ -21,6 +21,7 @@ install:
   # Create poetry virtualenv
   - pip install virtualenv
   - virtualenv --python="C:/Python36-x64\\python.exe" "venv-poetry"
+  - "python -c \"import sys; print(sys.executable)\""
   - venv-poetry\\Scripts\\pip.exe install poetry --pre
 
   # Create current python virtualenv
