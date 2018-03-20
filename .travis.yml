@@ -40,10 +40,11 @@ install:
       fi
   - virtualenv --python="$HOME/virtualenv/python3.6/bin/python" "$HOME/virtualenvs/venv-poetry"
   - $HOME/virtualenvs/venv-poetry/bin/pip install poetry --pre
-  - $HOME/virtualenvs/venv-poetry/bin/poetry install -v
   - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
-  - find dist/ -iname pendulum*.tar.gz -exec pip install -e {} --no-deps \;
-  - python -c "import pendulum; print(pendulum.__file__)"
+  - |
+      if [ "$PENDULUM_EXTENSIONS" == "1" ]; then
+        find dist/ -iname pendulum*.whl -exec unzip {} 'pendulum/*' -d pendulum/ \;
+      fi
 
 script: pytest --cov=pendulum --cov-config=.coveragerc tests/
 
