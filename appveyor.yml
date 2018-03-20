@@ -27,6 +27,7 @@ install:
   # Create current python virtualenv
   - python -m virtualenv venv
   - venv\Scripts\activate.bat
+  - "SET VIRTUAL_ENV=venv"
   - "python -c \"import sys; print(sys.executable)\""
 
   # Install dependencies
