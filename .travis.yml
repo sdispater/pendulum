@@ -43,6 +43,7 @@ install:
   - $HOME/virtualenvs/venv-poetry/bin/poetry install -v
   - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
   - find dist/ -iname pendulum*.tar.gz -exec pip install -e {} --no-deps \;
+  - python -c "import pendulum; print(pendulum.__file__)"
 
 script: pytest --cov=pendulum --cov-config=.coveragerc tests/
 
