@@ -20,7 +20,7 @@ install:
 
   # Create poetry virtualenv
   - pip install virtualenv
-  - virtualenv --python="C:/Python36-x64\\Scripts\\python.exe" "venv-poetry"
+  - virtualenv --python="C:/Python36-x64\\python.exe" "venv-poetry"
 
   # Install dependencies
   - pip install codecov
