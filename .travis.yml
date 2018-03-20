@@ -44,7 +44,7 @@ install:
   - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
   - |
       if [ "$PENDULUM_EXTENSIONS" == "1" ]; then
-        find dist/ -iname pendulum*.whl -exec unzip {} 'pendulum/*' -d . \;
+        find dist/ -iname pendulum*.whl -exec unzip -o {} 'pendulum/*' -d . \;
       fi
 
 script: pytest --cov=pendulum --cov-config=.coveragerc tests/
