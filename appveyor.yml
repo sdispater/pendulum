@@ -24,9 +24,9 @@ install:
   - venv-poetry\\Scripts\\pip.exe install poetry --pre
 
   # Create current python virtualenv
-  - "virtualenv --python=%PYTHON%\\python.exe venv"
-  - cmd: call venv\Scripts\activate.bat
-  - python --version
+  - python -m virtualenv venv
+  - venv\Scripts\activate.bat
+  - "python -c \"import sys; print(sys.executable)\""
 
   # Install dependencies
   - pip install codecov
