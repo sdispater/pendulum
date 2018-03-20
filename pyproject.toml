@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "1.4.3b0"
+version = "1.4.3"
 description = "Python datetimes made easy."
 
 license = "MIT"
@@ -20,7 +20,7 @@ build = "build.py"
 
 
 [tool.poetry.dependencies]
-python = ">=2.7 || ^3.4"
+python = "~2.7 || ^3.4"
 python-dateutil = "^2.6"
 tzlocal = "^1.5"
 pytzdata = ">=2018.3"
