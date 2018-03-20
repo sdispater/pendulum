@@ -17,15 +17,14 @@ for PYTHON in ${PYTHON_VERSIONS}; do
     . /opt/python/venv-${PYTHON}/bin/activate
     ${POETRY_VENV}/bin/poetry install -v
     ${POETRY_VENV}/bin/poetry build -v
-    mv dist/*-${RELEASE}-*.whl wheelhouse/
+    mv dist/*-${RELEASE}-*-linux_*.whl wheelhouse/
     deactivate
     cd -
 done
 
 echo "Bundle external shared libraries into the wheels"
-for whl in /io/wheelhouse/pendulum-${RELEASE}-*.whl; do
-    auditwheel repair $whl -w /io/wheelhouse/
-    rm -f $whl
+for whl in /io/wheelhouse/pendulum-${RELEASE}-*-linux_*.whl; do
+    auditwheel repair "$whl" -w /io/wheelhouse/
 done
 
 echo "Install packages and test"

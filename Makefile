@@ -54,10 +54,10 @@ clean_wheels:
 	rm -rf wheelhouse/
 
 cp_wheels_x64:
-	cp wheelhouse/*manylinux1_x86_64.whl dist/
+	mv wheelhouse/*manylinux1_x86_64.whl dist/
 
 cp_wheels_i686:
-	cp wheelhouse/*manylinux1_i686.whl dist/
+	mv wheelhouse/*manylinux1_i686.whl dist/
 
 upload_wheels_x64:
 	@for f in wheelhouse/*manylinux1_x86_64.whl ; do \
