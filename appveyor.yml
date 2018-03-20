@@ -8,6 +8,8 @@ environment:
     - PYTHON: "C:/Python34-x64"
     - PYTHON: "C:/Python35"
     - PYTHON: "C:/Python35-x64"
+    - PYTHON: "C:/Python36"
+    - PYTHON: "C:/Python36-x64"
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
@@ -16,12 +18,17 @@ install:
   # about it being out of date.
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
+  # Create poetry virtualenv
+  - pip install virtualenv
+  - virtualenv --python="C:/Python36-x64\\Scripts\\python.exe" "venv-poetry"
+
   # Install dependencies
-  - "%CMD_IN_ENV% pip install -r tests-requirements.txt"
-  - "%CMD_IN_ENV% pip install codecov"
+  - pip install codecov
+  - venv-poetry\\Scripts\\pip.exe install poetry --pre
+  - venv-poetry\\Scripts\\poetry.exe install -v
 
 test_script:
-  - "py.test --cov=pendulum --cov-config=.coveragerc tests/"
+  - "pytest --cov=pendulum --cov-config=.coveragerc tests/"
 
 after_test:
   - "codecov"
