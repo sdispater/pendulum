@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed extension building script.
+
+
 ## [1.4.3] - 2018-03-20
 
 ### Fixed

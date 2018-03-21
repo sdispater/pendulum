@@ -38,14 +38,14 @@ class ExtBuilder(build_ext):
         try:
             build_ext.run(self)
         except (DistutilsPlatformError, FileNotFoundError):
-            raise BuildFailed()
+           pass
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
         except (CCompilerError, DistutilsExecError,
                 DistutilsPlatformError, ValueError):
-            raise BuildFailed()
+            pass
 
 
 def build(setup_kwargs):
