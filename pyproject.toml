@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "1.4.3"
+version = "1.4.4"
 description = "Python datetimes made easy."
 
 license = "MIT"
