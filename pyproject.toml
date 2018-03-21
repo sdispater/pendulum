@@ -1,6 +1,6 @@
-[package]
+[tool.poetry]
 name = "pendulum"
-version = "2.0.0-alpha0"
+version = "2.0.0a0"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
@@ -13,17 +13,16 @@ documentation = "https://pendulum.eustace.io/docs"
 
 keywords = ['datetime', 'date', 'time']
 
-include = ['pendulum/**/*']
-
-python-versions = "^3.6"
+build = "build.py"
 
 
-[dependencies]
+[tool.poetry.dependencies]
+python = "^3.6"
 tzlocal = "^1.3"
 python-dateutil = "^2.6"
 pytzdata = ">=2018.3"
 
-[dev-dependencies]
+[tool.poetry.dev-dependencies]
 pytest = "^3.4"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"

@@ -12,15 +12,19 @@ install:
   # about it being out of date.
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
-  # Install poetry
-  - "pip install poetry"
+  # Create poetry virtualenv
+  - pip install virtualenv
+  - virtualenv --python="C:/Python36-x64\\python.exe" "venv-poetry"
+  - venv-poetry\\Scripts\\pip.exe install poetry --pre
+
+  # Create current python virtualenv
+  - python -m virtualenv venv
+  - venv\Scripts\activate.bat
+  - "SET VIRTUAL_ENV=venv"  # Seems that activate.bat does not set VIRTUAL_ENV
 
   # Install dependencies
-  - "poetry install"
-  # For some reason pytest-cov doesn't seem to be picked up
-  # So reinstall with pip
-  - "pip install pytest-cov"
-  - "pip install codecov"
+  - pip install codecov
+  - venv-poetry\\Scripts\\poetry.exe install -v
 
 test_script:
   - "pytest --cov=pendulum --cov-config=.coveragerc tests/"

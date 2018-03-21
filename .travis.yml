@@ -13,11 +13,16 @@ matrix:
 
 before_install:
   - pip install codecov
-  - pip install poetry
 
 install:
-  - poetry install
-  - python setup.py develop
+  - virtualenv --python="$HOME/virtualenv/python3.6/bin/python" "$HOME/virtualenvs/venv-poetry"
+  - $HOME/virtualenvs/venv-poetry/bin/pip install poetry --pre
+  - $HOME/virtualenvs/venv-poetry/bin/poetry install -v
+  - $HOME/virtualenvs/venv-poetry/bin/poetry build -v
+  - |
+      if [ "$PENDULUM_EXTENSIONS" == "1" ]; then
+        find dist/ -iname pendulum*.whl -exec unzip -o {} 'pendulum/*' -d . \;
+      fi
 
 script: pytest --cov=pendulum --cov-config=.coveragerc tests/
 
