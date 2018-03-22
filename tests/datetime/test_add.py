@@ -255,3 +255,12 @@ def test_add_interval():
     new = dt + pendulum.duration(hours=24)
 
     assert_datetime(new, 2017, 3, 12, 11, 45)
+
+
+def test_period_over_midnight_tz():
+    start = pendulum.datetime(2018, 2, 25, tz='Europe/Paris')
+    end = start.add(hours=1)
+    period = end - start
+    new_end = start + period
+
+    assert new_end == end

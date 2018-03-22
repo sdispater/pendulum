@@ -13,6 +13,7 @@ try:
         timestamp
     )
 except ImportError:
+    print('PURE PYTHON')
     from ._extensions.helpers import (
         local_time, precise_diff,
         is_leap, week_day, days_in_year,
