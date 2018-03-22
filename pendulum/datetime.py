@@ -578,7 +578,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        if isinstance(delta, pendulum.Duration):
+        if isinstance(delta, pendulum.Period):
             return self.add(
                 years=delta.years,
                 months=delta.months,
@@ -589,9 +589,14 @@ class DateTime(datetime.datetime, Date):
                 seconds=delta.remaining_seconds,
                 microseconds=delta.microseconds
             )
+        elif isinstance(delta, pendulum.Duration):
+            return self.add(
+                years=delta.years,
+                months=delta.months,
+                seconds=delta.total_seconds()
+            )
 
-        return self.add(days=delta.days, seconds=delta.seconds,
-                        microseconds=delta.microseconds)
+        return self.add(seconds=delta.total_seconds())
 
     def _subtract_timedelta(self, delta):
         """

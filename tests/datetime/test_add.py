@@ -248,3 +248,10 @@ def test_add_time_to_new_transition_repeated_big():
     assert dt.timezone_name == 'Europe/Paris'
     assert dt.offset == 3600
     assert not dt.is_dst()
+
+
+def test_add_interval():
+    dt = pendulum.datetime(2017, 3, 11, 10, 45, tz='America/Los_Angeles')
+    new = dt + pendulum.duration(hours=24)
+
+    assert_datetime(new, 2017, 3, 12, 11, 45)

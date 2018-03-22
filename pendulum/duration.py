@@ -64,10 +64,10 @@ class Duration(timedelta):
         self._microseconds = round(total % m * 1e6)
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
 
-        days = abs(int(total)) // SECONDS_PER_DAY * m
-        self._days = days + (years * 365 + months * 30)
-        self._remaining_days = abs(days) % 7 * m
-        self._weeks = abs(days) // 7 * m
+        _days = abs(int(total)) // SECONDS_PER_DAY * m
+        self._days = _days + (years * 365 + months * 30)
+        self._remaining_days = abs(_days) % 7 * m
+        self._weeks = abs(_days) // 7 * m
         self._months = months
         self._years = years
 
