@@ -7,6 +7,8 @@ from typing import List, Dict
 
 from pytzdata.exceptions import TimezoneNotFound
 
+from pendulum.utils._compat import PY2
+
 from .exceptions import InvalidZoneinfoFile, InvalidTimezone
 from .timezone import Timezone
 from .transition import Transition
@@ -33,7 +35,7 @@ class Reader:
     Reads compiled zoneinfo TZif (\0, 2 or 3) files.
     """
 
-    def read_for(self, timezone: str) -> Timezone:
+    def read_for(self, timezone):  # type: (str) -> Timezone
         """
         Read the zoneinfo structure for a given timezone name.
 
@@ -46,7 +48,7 @@ class Reader:
 
         return self.read(file_path)
 
-    def read(self, file_path: str) -> Timezone:
+    def read(self, file_path):  # type: (str) -> Timezone
         """
         Read a zoneinfo structure from the given path.
 
@@ -58,7 +60,7 @@ class Reader:
         with open(file_path, 'rb') as fd:
             return self._parse(fd)
 
-    def _check_read(self, fd, nbytes) -> bytes:
+    def _check_read(self, fd, nbytes):  # type: (...) -> bytes
         """
         Reads the given number of bytes from the given file
         and checks that the correct number of bytes could be read.
@@ -67,13 +69,18 @@ class Reader:
 
         if not result or len(result) != nbytes:
             raise InvalidZoneinfoFile(
-                f'Expected {nbytes} bytes reading {fd.name}, '
-                f'but got {len(result) if result else 0}'
+                'Expected {} bytes reading {}, '
+                'but got {}'.format(
+                    nbytes, fd.name, len(result) if result else 0
+                )
             )
+
+        if PY2:
+            return bytearray(result)
 
         return result
 
-    def _parse(self, fd) -> Timezone:
+    def _parse(self, fd):  # type: (...) -> Timezone
         """
         Parse a zoneinfo file.
         """
@@ -97,7 +104,7 @@ class Reader:
 
             if hdr.version != 2 and hdr.version != 3:
                 raise InvalidZoneinfoFile(
-                    f'Header versions mismatch for file {fd.name}'
+                    'Header versions mismatch for file {}'.format(fd.name)
                 )
 
             # Parse the v2 data
@@ -113,7 +120,6 @@ class Reader:
                 1
             )
 
-            # TODO: posix tz
             trule = self._parse_posix_tz(fd)
         else:
             # TZFile v1
@@ -143,12 +149,12 @@ class Reader:
 
         return Timezone(transitions, posix_rule=trule)
 
-    def _parse_header(self, fd) -> header:
+    def _parse_header(self, fd):  # type: (...) -> header
         buff = self._check_read(fd, 44)
 
         if buff[:4] != b'TZif':
             raise InvalidZoneinfoFile(
-                f'The file "{fd.name}" has an invalid header.'
+                'The file "{}" has an invalid header.'.format(fd.name)
             )
 
         version = {
@@ -159,7 +165,7 @@ class Reader:
 
         if version is None:
             raise InvalidZoneinfoFile(
-                f'The file "{fd.name}" has an invalid version.'
+                'The file "{}" has an invalid version.'.format(fd.name)
             )
 
         hdr = header(
@@ -169,7 +175,7 @@ class Reader:
 
         return hdr
 
-    def _parse_trans_64(self, fd, n: int) -> List[int]:
+    def _parse_trans_64(self, fd, n):  # type: (..., int) -> List[int]
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 8)
@@ -177,7 +183,7 @@ class Reader:
 
         return trans
 
-    def _parse_trans_32(self, fd, n: int) -> List[int]:
+    def _parse_trans_32(self, fd, n):  # type: (..., int) -> List[int]
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 4)
@@ -185,12 +191,12 @@ class Reader:
 
         return trans
 
-    def _parse_type_idx(self, fd, n: int) -> List[int]:
+    def _parse_type_idx(self, fd, n):  # type: (..., int) -> List[int]
         buff = self._check_read(fd, n)
 
-        return list(unpack(f'{n}B', buff))
+        return list(unpack('{}B'.format(n), buff))
 
-    def _parse_types(self, fd, n: int) -> List[tuple]:
+    def _parse_types(self, fd, n):  # type: (..., int) -> List[tuple]
         types = []
 
         for _ in range(n):
@@ -201,27 +207,30 @@ class Reader:
 
         return types
 
-    def _parse_abbrs(self, fd, n: int, types: List[tuple]) -> Dict[int, str]:
+    def _parse_abbrs(self,
+                     fd,
+                     n,     # type: int
+                     types  # type: List[tuple]
+                     ):     # type: (...) -> Dict[int, str]
         abbrs = {}
         buff = self._check_read(fd, n)
 
-        for *_, idx in types:
+        for offset, is_dst, idx in types:
             if idx not in abbrs:
                 abbr = buff[idx:buff.find(b'\0', idx)].decode('utf-8')
                 abbrs[idx] = abbr
 
         return abbrs
 
-    def _parse_posix_tz(self, fd) -> PosixTimezone:
+    def _parse_posix_tz(self, fd):  # type: (...) -> PosixTimezone
         s = fd.read().decode('utf-8')
 
         if not s.startswith('\n') or not s.endswith('\n'):
             raise InvalidZoneinfoFile(
-                f'Invalid posix rule in file "{fd.name}"'
+                'Invalid posix rule in file "{}"'.format(fd.name)
             )
 
         s = s.strip()
 
         return posix_spec(s)
-
 

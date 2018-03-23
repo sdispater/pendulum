@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import pendulum
 
 from math import copysign
@@ -13,7 +15,6 @@ try:
         timestamp
     )
 except ImportError:
-    print('PURE PYTHON')
     from ._extensions.helpers import (
         local_time, precise_diff,
         is_leap, week_day, days_in_year,
@@ -28,11 +29,16 @@ from .locales.locale import Locale
 difference_formatter = DifferenceFormatter()
 
 
-def add_duration(dt: Union[datetime, date],
-                 years: int = 0, months: int = 0,
-                 weeks: int = 0, days: int = 0,
-                 hours: int = 0, minutes: int = 0, seconds: int = 0,
-                 microseconds: int = 0) -> Union[datetime, date]:
+def add_duration(dt,         # type:  Union[datetime, date]
+                 years=0,    # type: int
+                 months=0,   # type: int
+                 weeks=0,    # type: int
+                 days=0,     # type: int
+                 hours=0,    # type: int
+                 minutes=0,  # type: int
+                 seconds=0,  # type: int
+                 microseconds=0
+                 ):  # type: (...) -> Union[datetime, date]
     """
     Adds a duration to a date/datetime instance.
     """
@@ -124,11 +130,11 @@ def set_test_now(test_now=None):
     pendulum._TEST_NOW = test_now
 
 
-def get_test_now() -> 'pendulum.DateTime':
+def get_test_now():  # type: () -> pendulum.DateTime
     return pendulum._TEST_NOW
 
 
-def has_test_now() -> bool:
+def has_test_now():  # type: () -> bool
     return pendulum._TEST_NOW is not None
 
 

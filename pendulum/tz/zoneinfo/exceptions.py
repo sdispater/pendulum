@@ -11,7 +11,7 @@ class InvalidZoneinfoFile(ZoneinfoError):
 class InvalidTimezone(ZoneinfoError):
 
     def __init__(self, name):
-        super().__init__(
+        super(InvalidTimezone, self).__init__(
             'Invalid timezone "{}"'.format(name)
         )
 
@@ -19,6 +19,6 @@ class InvalidTimezone(ZoneinfoError):
 class InvalidPosixSpec(ZoneinfoError):
 
     def __init__(self, spec):
-        super().__init__(
+        super(InvalidPosixSpec, self).__init__(
             'Invalid POSIX spec: {}'.format(spec)
         )

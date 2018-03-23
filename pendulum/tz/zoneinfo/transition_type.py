@@ -1,5 +1,8 @@
 from datetime import timedelta
 
+from pendulum.utils._compat import PY2
+from pendulum.utils._compat import encode
+
 
 class TransitionType:
 
@@ -11,18 +14,23 @@ class TransitionType:
         self._utcoffset = timedelta(seconds=offset)
 
     @property
-    def offset(self) -> int:
+    def offset(self):  # type: () -> int
         return self._offset
 
     @property
-    def abbreviation(self) -> str:
+    def abbreviation(self):  # type: () -> str
+        if PY2:
+            return encode(self._abbr)
+
         return self._abbr
 
-    def is_dst(self) -> bool:
+    def is_dst(self):  # type: () -> bool
         return self._is_dst
 
-    def utcoffset(self) -> timedelta:
+    def utcoffset(self):  # type: () -> timedelta
         return self._utcoffset
 
-    def __repr__(self):
-        return f'TransitionType({self._offset}, {self._is_dst}, {self._abbr})'
+    def __repr__(self):  # type: () -> str
+        return 'TransitionType({}, {}, {})'.format(
+            self._offset, self._is_dst, self._abbr
+        )

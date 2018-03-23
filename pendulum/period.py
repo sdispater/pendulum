@@ -1,7 +1,12 @@
+from __future__ import absolute_import
+
 import operator
 import pendulum
 
 from datetime import datetime, date
+
+from pendulum.utils._compat import _HAS_FOLD
+from pendulum.utils._compat import decode
 
 from .duration import Duration
 from .constants import MONTHS_PER_YEAR
@@ -25,35 +30,55 @@ class Period(Duration):
         if absolute and start > end:
             end, start = start, end
 
+        _start = start
+        _end = end
         if isinstance(start, pendulum.DateTime):
-            start = datetime(
-                start.year, start.month, start.day,
-                start.hour, start.minute, start.second, start.microsecond,
-                tzinfo=start.tzinfo,
-                fold=start.fold
-            )
+            if _HAS_FOLD:
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo,
+                    fold=start.fold
+                )
+            else:
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo
+                )
         elif isinstance(start, pendulum.Date):
-            start = date(start.year, start.month, start.day)
+            _start = date(start.year, start.month, start.day)
 
         if isinstance(end, pendulum.DateTime):
-            end = datetime(
-                end.year, end.month, end.day,
-                end.hour, end.minute, end.second, end.microsecond,
-                tzinfo=end.tzinfo,
-                fold=end.fold
-            )
+            if _HAS_FOLD:
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo,
+                    fold=end.fold
+                )
+            else:
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo
+                )
         elif isinstance(end, pendulum.Date):
-            end = date(end.year, end.month, end.day)
+            _end = date(end.year, end.month, end.day)
 
         # Fixing issues with datetime.__sub__()
         # not handling offsets if the tzinfo is the same
-        if isinstance(start, datetime) and start.tzinfo is not None:
-            start = (start - start.utcoffset()).replace(tzinfo=None)
+        if (
+            isinstance(_start, datetime) and isinstance(_end, datetime)
+            and _start.tzinfo is _end.tzinfo
+        ):
+            if _start.tzinfo is not None:
+                _start = (_start - start.utcoffset()).replace(tzinfo=None)
 
-        if isinstance(end, datetime) and end.tzinfo is not None:
-            end = (end - end.utcoffset()).replace(tzinfo=None)
+            if isinstance(end, datetime) and _end.tzinfo is not None:
+                _end = (_end - end.utcoffset()).replace(tzinfo=None)
 
-        delta = end - start
+        delta = _end - _start
 
         return super(Period, cls).__new__(
             cls, seconds=delta.total_seconds()
@@ -206,20 +231,22 @@ class Period(Duration):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    f'units.{unit}.{locale.plural(abs(count))}'
+                    'units.{}.{}'.format(
+                        unit, locale.plural(abs(count))
+                    )
                 )
                 parts.append(translation.format(count))
 
         if not parts and abs(self.microseconds) > 0:
             translation = locale.translation(
-                f'units.second.{locale.plural(1)}'
+                'units.second.{}'.format(locale.plural(1))
             )
             us = abs(self.microseconds) / 1e6
             parts.append(
-                translation.format(f'{us:.2f}')
+                translation.format('{:.2f}').format(us)
             )
 
-        return separator.join(parts)
+        return decode(separator.join(parts))
 
     def range(self, unit, amount=1):
         method = 'add'

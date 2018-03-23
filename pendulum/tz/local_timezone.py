@@ -12,7 +12,7 @@ _mock_local_timezone = None
 _local_timezone = None
 
 
-def get_local_timezone() -> Timezone:
+def get_local_timezone():  # type: () -> Timezone
     global _local_timezone
 
     if _mock_local_timezone is not None:
@@ -26,14 +26,14 @@ def get_local_timezone() -> Timezone:
     return _local_timezone
 
 
-def set_local_timezone(mock: Union[str, Timezone, None] = None) -> None:
+def set_local_timezone(mock=None):  # type: (Union[str, Timezone, None]) -> None
     global _mock_local_timezone
 
     _mock_local_timezone = mock
 
 
 @contextmanager
-def test_local_timezone(mock: Timezone) -> None:
+def test_local_timezone(mock):  # type: (Timezone) -> None
     set_local_timezone(mock)
 
     yield
@@ -41,7 +41,7 @@ def test_local_timezone(mock: Timezone) -> None:
     set_local_timezone()
 
 
-def _get_system_timezone() -> Timezone:
+def _get_system_timezone():  # type: () -> Timezone
     if sys.platform == 'win32':
         return _get_windows_timezone()
     elif 'darwin' in sys.platform:
@@ -50,13 +50,13 @@ def _get_system_timezone() -> Timezone:
     return _get_unix_timezone()
 
 
-def _get_windows_timezone() -> Timezone:
+def _get_windows_timezone():  # type: () -> Timezone
     from tzlocal.win32 import get_localzone_name
 
     return Timezone(get_localzone_name())
 
 
-def _get_darwin_timezone() -> Timezone:
+def _get_darwin_timezone():  # type: () -> Timezone
     # link will be something like /usr/share/zoneinfo/America/Los_Angeles.
     link = os.readlink("/etc/localtime")
     tzname = link[link.rfind("zoneinfo/") + 9:]
@@ -64,7 +64,7 @@ def _get_darwin_timezone() -> Timezone:
     return Timezone(tzname)
 
 
-def _get_unix_timezone(_root='/') -> Timezone:
+def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
     tzenv = os.environ.get('TZ')
     if tzenv:
         try:
@@ -148,7 +148,7 @@ def _get_unix_timezone(_root='/') -> Timezone:
     raise RuntimeError('Unable to find any timezone configuration')
 
 
-def _tz_from_env(tzenv: str) -> Timezone:
+def _tz_from_env(tzenv):  # type: (str) -> Timezone
     if tzenv[0] == ':':
         tzenv = tzenv[1:]
 

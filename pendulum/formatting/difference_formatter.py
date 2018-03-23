@@ -1,3 +1,5 @@
+from pendulum.utils._compat import decode
+
 from ..locales.locale import Locale
 
 
@@ -99,14 +101,14 @@ class DifferenceFormatter(object):
             count = 1
 
         if absolute:
-            key = f'translations.units.{unit}'
+            key = 'translations.units.{}'.format(unit)
         else:
             is_future = diff.invert
 
             if is_now:
                 # Relative to now, so we can use
                 # the CLDR data
-                key = f'translations.relative.{unit}'
+                key = 'translations.relative.{}'.format(unit)
 
                 if is_future:
                     key += '.future'
@@ -119,15 +121,17 @@ class DifferenceFormatter(object):
                 # Checking for special pluralization rules
                 key = 'custom.units_relative'
                 if is_future:
-                    key += f'.{unit}.future'
+                    key += '.{}.future'.format(unit)
                 else:
-                    key += f'.{unit}.past'
+                    key += '.{}.past'.format(unit)
 
                 trans = locale.get(key)
                 if not trans:
                     # No special rule
                     time = locale.get(
-                        f'translations.units.{unit}.{locale.plural(count)}'
+                        'translations.units.{}.{}'.format(
+                            unit, locale.plural(count)
+                        )
                     ).format(count)
                 else:
                     time = trans[locale.plural(count)].format(count)
@@ -138,8 +142,8 @@ class DifferenceFormatter(object):
                 else:
                     key += '.before'
 
-                return locale.get(key).format(time)
+                return locale.get(key).format(decode(time))
 
-        key += f'.{locale.plural(count)}'
+        key += '.{}'.format(locale.plural(count))
 
-        return locale.get(key).format(count)
+        return decode(locale.get(key).format(count))

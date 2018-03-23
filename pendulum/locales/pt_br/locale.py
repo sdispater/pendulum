@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 """
-pt-br locale file.
+pt_br locale file.
 
 It has been generated automatically and must not be modified directly.
 """

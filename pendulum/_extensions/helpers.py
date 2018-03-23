@@ -29,13 +29,21 @@ class PreciseDiff(namedtuple('PreciseDiff',
 
     def __repr__(self):
         return (
-            f'{self.years} years '
-            f'{self.months} months '
-            f'{self.days} days '
-            f'{self.hours} hours '
-            f'{self.minutes} minutes '
-            f'{self.seconds} seconds '
-            f'{self.microseconds} microseconds'
+            '{years} years '
+            '{months} months '
+            '{days} days '
+            '{hours} hours '
+            '{minutes} minutes '
+            '{seconds} seconds '
+            '{microseconds} microseconds'
+        ).format(
+            years=self.years,
+            months=self.months,
+            days=self.days,
+            hours=self.hours,
+            minutes=self.minutes,
+            seconds=self.seconds,
+            microseconds=self.microseconds
         )
 
 
@@ -62,7 +70,7 @@ def days_in_year(year):
     return DAYS_PER_N_YEAR
 
 
-def timestamp(dt: datetime) -> int:
+def timestamp(dt):  # type: (datetime) -> int
     year = dt.year
 
     result = (year - 1970) * 365 + MONTHS_OFFSETS[0][dt.month]

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+from __future__ import unicode_literals
 
-import pathlib
+import glob
+import os
 
 from babel.plural import (
     PluralRule, compile_zero,
@@ -43,7 +45,9 @@ class LocaleCreate(Command):
         {locales?* : Locales to dump}
     """
 
-    TEMPLATE = """\"\"\"
+    TEMPLATE = """# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+\"\"\"
 {locale} locale file.
 
 It has been generated automatically and must not be modified directly.
@@ -60,14 +64,16 @@ locale = {{
 }}
 """
 
-    CUSTOM_TEMPLATE = """\"\"\"
+    CUSTOM_TEMPLATE = """# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+\"\"\"
 {locale} custom locale file.
 \"\"\"
 
 translations = {{}}
 """
 
-    LOCALE_DIR = pathlib.Path('pendulum/locales')
+    LOCALE_DIR = os.path.join('pendulum', 'locales')
 
     def handle(self):
         locales = self.argument('locales')
@@ -82,10 +88,12 @@ translations = {{}}
 
             normalized = normalize_locale(locale.replace('-', '_'))
             if not normalized:
-                self.error(f'Locale [{locale}] does not exist.')
+                self.error('Locale [{}] does not exist.'.format(locale))
                 continue
 
-            self.line(f'<info>Generating <comment>{locale}</> locale.</>')
+            self.line(
+                '<info>Generating <comment>{}</> locale.</>'.format(locale)
+            )
 
             content = LocaleDataDict(load(normalized))
 
@@ -117,7 +125,7 @@ translations = {{}}
             ]
             data['units'] = {}
             for unit in units:
-                pattern = patterns[f'duration-{unit}']['long']
+                pattern = patterns['duration-{}'.format(unit)]['long']
                 if 'per' in pattern:
                     del pattern['per']
 
@@ -144,19 +152,23 @@ translations = {{}}
                 translations=self.format_dict(data, tab=2)
             )
 
-            dest_dir = self.LOCALE_DIR / f"{locale.replace('-', '_')}"
-            dest_dir.mkdir(exist_ok=True)
-            init = dest_dir / '__init__.py'
-            main = dest_dir / 'locale.py'
-            custom = dest_dir / 'custom.py'
+            dest_dir = os.path.join(self.LOCALE_DIR, locale.replace('-', '_'))
+            if not os.path.exists(dest_dir):
+                os.mkdir(dest_dir)
 
-            init.touch(exist_ok=True)
+            init = os.path.join(dest_dir, '__init__.py')
+            main = os.path.join(dest_dir, 'locale.py')
+            custom = os.path.join(dest_dir, 'custom.py')
 
-            with main.open('w') as fw:
+            if not os.path.exists(init):
+                with open(init, 'w'):
+                    os.utime(init)
+
+            with open(main, 'w') as fw:
                 fw.write(result)
 
-            if not custom.exists():
-                with custom.open('w') as fw:
+            if not os.path.exists(custom):
+                with open(custom, 'w') as fw:
                     fw.write(self.CUSTOM_TEMPLATE.format(locale=locale))
 
     def format_dict(self, d, tab=1):
@@ -213,8 +225,13 @@ class LocaleRecreate(Command):
 
     def handle(self):
         # Listing locales
-        locales_dir = pathlib.Path(__file__).parent / 'pendulum' / 'locales'
-        locales = [p.parent.stem for p in locales_dir.glob('**/*/locale.py')]
+
+        locales_dir = os.path.join('pendulum', 'locales')
+        locales = glob.glob(os.path.join(locales_dir, '*', 'locale.py'))
+        locales = [
+            os.path.basename(os.path.dirname(l))
+            for l in locales
+        ]
 
         self.call('locale:create', [('locales', locales)])
 

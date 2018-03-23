@@ -20,7 +20,7 @@ timezones = pytzdata.timezones
 _tz_cache = {}
 
 
-def timezone(name: Union[str, int]) -> _Timezone:
+def timezone(name):  # type: (Union[str, int]) -> _Timezone
     """
     Return a Timezone instance given its name.
     """
@@ -39,7 +39,7 @@ def timezone(name: Union[str, int]) -> _Timezone:
     return tz
 
 
-def fixed_timezone(offset: int) -> _FixedTimezone:
+def fixed_timezone(offset):  # type: (int) -> _FixedTimezone
     """
     Return a Timezone instance given its offset in seconds.
     """
@@ -52,7 +52,7 @@ def fixed_timezone(offset: int) -> _FixedTimezone:
     return tz
 
 
-def local_timezone() -> _Timezone:
+def local_timezone():  # type: () -> _Timezone
     """
     Return the local timezone.
     """

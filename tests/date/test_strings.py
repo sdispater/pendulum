@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pendulum
 
 
@@ -25,7 +26,7 @@ def test_repr():
 
 def test_format_with_locale():
     d = pendulum.Date(1975, 12, 25)
-    expected = 'jeudi 25e jour de décembre 1975'
+    expected = u'jeudi 25e jour de décembre 1975'
     assert d.format('dddd Do [jour de] MMMM YYYY', locale='fr') == expected
 
 
@@ -44,7 +45,3 @@ def test_format():
     assert '{}'.format(d) == '1975-12-25'
     assert '{:YYYY}'.format(d) == '1975'
     assert '{:%Y}'.format(d) == '%1975'
-
-    assert f'{d}' == '1975-12-25'
-    assert f'{d:YYYY}' == '1975'
-    assert f'{d:%Y}' == '%1975'

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import datetime as _datetime
 from typing import Union
 
@@ -22,6 +24,8 @@ from .helpers import (
     set_locale, get_locale, locale, format_diff,
     week_starts_at, week_ends_at
 )
+
+from .utils._compat import _HAS_FOLD
 
 from .tz import (
     timezones,
@@ -49,7 +53,8 @@ _WEEK_ENDS_AT = SUNDAY
 _formatter = Formatter()
 
 
-def _safe_timezone(obj: Union[str, int, float, _datetime.tzinfo]) -> _Timezone:
+def _safe_timezone(obj):
+    # type: (Union[str, int, float, _datetime.tzinfo]) -> _Timezone
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -78,22 +83,32 @@ def _safe_timezone(obj: Union[str, int, float, _datetime.tzinfo]) -> _Timezone:
 
 
 # Public API
-def datetime(year: int, month: int, day: int,
-             hour: int = 0, minute: int = 0, second: int = 0,
-             microsecond: int = 0,
-             *,
-             tz: Union[str, _Timezone] = UTC,
-             dst_rule: str = POST_TRANSITION) -> DateTime:
+def datetime(year,                      # type: int
+             month,                     # type: int
+             day,                       # type: int
+             hour=0,                    # type: int
+             minute=0,                  # type: int
+             second=0,                  # type: int
+             microsecond=0,             # type: int
+             tz=UTC,                    # type: Union[str, _Timezone]
+             dst_rule=POST_TRANSITION,  # type: str
+             ):  # type: (...) -> DateTime
     """
     Creates a new DateTime instance from a specific date and time.
     """
     if tz is not None:
         tz = _safe_timezone(tz)
 
-    dt = _datetime.datetime(
-        year, month, day,
-        hour, minute, second, microsecond
-    )
+    if not _HAS_FOLD:
+        dt = naive(
+            year, month, day,
+            hour, minute, second, microsecond
+        )
+    else:
+        dt = _datetime.datetime(
+            year, month, day,
+            hour, minute, second, microsecond
+        )
     if tz is not None:
         dt = tz.convert(dt, dst_rule=dst_rule)
 
@@ -105,9 +120,9 @@ def datetime(year: int, month: int, day: int,
     )
 
 
-def local(year: int, month: int, day: int,
-          hour: int = 0, minute: int = 0, second: int = 0,
-          microsecond: int = 0) -> DateTime:
+def local(year, month, day,
+          hour=0, minute=0, second=0, microsecond=0
+          ):  # type: (int, int, int, int, int, int, int) -> DateTime
     """
     Return a DateTime in the local timezone.
     """
@@ -115,9 +130,9 @@ def local(year: int, month: int, day: int,
                     tz=local_timezone())
 
 
-def naive(year: int, month: int, day: int,
-          hour: int = 0, minute: int = 0, second: int = 0,
-          microsecond: int = 0) -> DateTime:
+def naive(year, month, day,
+          hour=0, minute=0, second=0, microsecond=0
+          ):  # type: (int, int, int, int, int, int, int) -> DateTime
     """
     Return a naive DateTime.
     """
@@ -127,22 +142,24 @@ def naive(year: int, month: int, day: int,
     )
 
 
-def date(year: int, month: int, day: int):
+def date(year, month, day):  # type: (int, int, int) -> Date
     """
     Create a new Date instance.
     """
     return Date(year, month, day)
 
 
-def time(hour: int = 0, minute: int = 0, second: int = 0, microsecond: int = 0):
+def time(hour, minute=0, second=0, microsecond=0
+         ):  # type: (int, int, int, int) -> Time
     """
     Create a new Time instance.
     """
     return Time(hour, minute, second, microsecond)
 
 
-def instance(dt: _datetime.datetime,
-             tz: Union[str, _Timezone] = UTC) -> DateTime:
+def instance(dt,     # type: _datetime.datetime
+             tz=UTC  # type: Union[str, _Timezone, None]
+             ):  # type: (...) -> DateTime
     """
     Create a DateTime instance from a datetime one.
     """
@@ -173,7 +190,7 @@ def instance(dt: _datetime.datetime,
     )
 
 
-def now(tz: Union[str, _Timezone, None] = None) -> DateTime:
+def now(tz=None):  # type: (Union[str, _Timezone, None]) -> DateTime
     """
     Get a DateTime instance for the current date and time.
     """
@@ -198,31 +215,32 @@ def now(tz: Union[str, _Timezone, None] = None) -> DateTime:
     return instance(dt, tz)
 
 
-def today(tz: Union[str, _Timezone] = 'local') -> DateTime:
+def today(tz='local'):  # type: (Union[str, _Timezone]) -> DateTime
     """
     Create a DateTime instance for today.
     """
     return now(tz).start_of('day')
 
 
-def tomorrow(tz: Union[str, _Timezone] = 'local') -> DateTime:
+def tomorrow(tz='local'):  # type: (Union[str, _Timezone]) -> DateTime
     """
     Create a DateTime instance for today.
     """
     return today(tz).add(days=1)
 
 
-def yesterday(tz: Union[str, _Timezone] = 'local') -> DateTime:
+def yesterday(tz='local'):  # type: (Union[str, _Timezone]) -> DateTime
     """
     Create a DateTime instance for today.
     """
     return today(tz).subtract(days=1)
 
 
-def from_format(string: str, fmt: str,
-                *,
-                tz: Union[str, _Timezone] = UTC,
-                locale: Union[str, None] = None) -> DateTime:
+def from_format(string,      # type: str
+                fmt,         # type: str
+                tz=UTC,      # type: Union[str, _Timezone]
+                locale=None  # type: Union[str, None]
+                ):  # type: (...) -> DateTime
     """
     Creates a DateTime instance from a specific format.
     """
@@ -233,8 +251,9 @@ def from_format(string: str, fmt: str,
     return datetime(**parts)
 
 
-def from_timestamp(timestamp: Union[int, float],
-                   tz: Union[str, _Timezone] = UTC) -> DateTime:
+def from_timestamp(timestamp,  # type: Union[int, float]
+                   tz=UTC      # type: Union[str, _Timezone]
+                   ):  # type: (...) -> DateTime
     """
     Create a DateTime instance from a timestamp.
     """
@@ -251,9 +270,16 @@ def from_timestamp(timestamp: Union[int, float],
     return dt
 
 
-def duration(days: float = 0, seconds: float = 0, microseconds: float = 0,
-             milliseconds: float = 0, minutes: float = 0, hours: float = 0,
-             weeks: float = 0, years: int = 0, months: int = 0) -> Duration:
+def duration(days=0,          # type: float
+             seconds=0,       # type: float
+             microseconds=0,  # type: float
+             milliseconds=0,  # type: float
+             minutes=0,       # type: float
+             hours=0,         # type: float
+             weeks=0,         # type: float
+             years=0,         # type: float
+             months=0         # type: float
+             ):  # type: (...) -> DateTime
     """
     Create a Duration instance.
     """
@@ -264,9 +290,10 @@ def duration(days: float = 0, seconds: float = 0, microseconds: float = 0,
     )
 
 
-def period(start: DateTime,
-           end: DateTime,
-           absolute: bool = False) -> Period:
+def period(start,          # type: DateTime
+           end,            # type: DateTime
+           absolute=False  # type: bool
+           ):  # type: (...) -> Period
     """
     Create a Period instance.
     """

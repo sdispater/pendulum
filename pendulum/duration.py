@@ -1,6 +1,10 @@
+from __future__ import absolute_import
+
 import pendulum
 
 from datetime import timedelta
+
+from pendulum.utils._compat import decode
 
 from .constants import (
     SECONDS_PER_DAY, SECONDS_PER_HOUR,
@@ -196,20 +200,22 @@ class Duration(timedelta):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    f'units.{unit}.{locale.plural(abs(count))}'
+                    'units.{}.{}'.format(
+                        unit, locale.plural(abs(count))
+                    )
                 )
                 parts.append(translation.format(count))
 
         if not parts and abs(self.microseconds) > 0:
             translation = locale.translation(
-                f'units.second.{locale.plural(1)}'
+                'units.second.{}'.format(locale.plural(1))
             )
             us = abs(self.microseconds) / 1e6
             parts.append(
-                translation.format(f'{us:.2f}')
+                translation.format('{:.2f}'.format(us))
             )
 
-        return separator.join(parts)
+        return decode(separator.join(parts))
 
     def _sign(self, value):
         if value < 0:
@@ -229,31 +235,31 @@ class Duration(timedelta):
         return self.in_words()
 
     def __repr__(self):
-        rep = f'{self.__class__.__name__}('
+        rep = '{}('.format(self.__class__.__name__)
 
         if self._years:
-            rep += f'years={self._years}, '
+            rep += 'years={}, '.format(self._years)
 
         if self._months:
-            rep += f'months={self._months}, '
+            rep += 'months={}, '.format(self._months)
 
         if self._weeks:
-            rep += f'weeks={self._weeks}, '
+            rep += 'weeks={}, '.format(self._weeks)
 
         if self._days:
-            rep += f'days={self._remaining_days}, '
+            rep += 'days={}, '.format(self._remaining_days)
 
         if self.hours:
-            rep += f'hours={self.hours}, '
+            rep += 'hours={}, '.format(self.hours)
 
         if self.minutes:
-            rep += f'minutes={self.minutes}, '
+            rep += 'minutes={}, '.format(self.minutes)
 
         if self.remaining_seconds:
-            rep += f'seconds={self.remaining_seconds}, '
+            rep += 'seconds={}, '.format(self.remaining_seconds)
 
         if self.microseconds:
-            rep += f'microseconds={self.microseconds}, '
+            rep += 'microseconds={}, '.format(self.microseconds)
 
         rep += ')'
 

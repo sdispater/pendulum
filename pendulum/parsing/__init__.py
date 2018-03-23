@@ -113,7 +113,7 @@ def _parse(text, **options):
     # so we fallback on the dateutil parser
     # If not strict
     if options.get('strict', True):
-        raise ParserError(f'Unable to parse string [{text}]')
+        raise ParserError('Unable to parse string [{}]'.format(text))
 
     try:
         dt = parser.parse(

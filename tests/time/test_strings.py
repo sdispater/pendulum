@@ -35,6 +35,3 @@ def test_format():
     d = Time(14, 15, 16)
     assert '{}'.format(d) == '14:15:16'
     assert '{:mm}'.format(d) == '15'
-
-    assert f'{d}' == '14:15:16'
-    assert f'{d:mm}' == '15'

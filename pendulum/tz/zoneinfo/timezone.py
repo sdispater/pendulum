@@ -11,15 +11,17 @@ from .transition_type import TransitionType
 
 class Timezone:
 
-    def __init__(self, transitions: List[Transition],
-                 posix_rule: Union[PosixTimezone, None] = None):
+    def __init__(self,
+                 transitions,      # type: List[Transition]
+                 posix_rule=None,  # type: Union[PosixTimezone, None]
+                 ):
         self._posix_rule = posix_rule
         self._transitions = transitions
 
         self._extends()
 
     @property
-    def transitions(self) -> List[Transition]:
+    def transitions(self):  # type: () -> List[Transition]
         return self._transitions
 
     @property
@@ -110,8 +112,12 @@ class Timezone:
             tr = Transition(jan1_time + tr0_offset - tt1.offset, tt0, tr)
             self._transitions.append(tr)
 
-    def _check_ttype(self, ttype: TransitionType,
-                     offset, is_dst, abbr) -> bool:
+    def _check_ttype(self,
+                     ttype,   # type: TransitionType
+                     offset,  # type: int
+                     is_dst,  # type: bool
+                     abbr     # type: str
+                     ):       # type: (...) -> bool
         return (
             ttype.offset == offset
             and ttype.is_dst() == is_dst

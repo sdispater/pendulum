@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import division
+
 import calendar
 import math
 import pendulum
@@ -103,9 +106,14 @@ class Date(FormattableMixing, date):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}('
-            f'{self.year}, {self.month}, {self.day}'
-            f')'
+            '{klass}('
+            '{year}, {month}, {day}'
+            ')'.format(
+                klass=self.__class__.__name__,
+                year=self.year,
+                month=self.month,
+                day=self.day,
+            )
         )
 
     # COMPARISONS
@@ -858,13 +866,13 @@ class Date(FormattableMixing, date):
 
     @classmethod
     def fromtimestamp(cls, t):
-        dt = super().fromtimestamp(t)
+        dt = super(Date, cls).fromtimestamp(t)
 
         return cls(dt.year, dt.month, dt.day)
 
     @classmethod
     def fromordinal(cls, n):
-        dt = super().fromordinal(n)
+        dt = super(Date, cls).fromordinal(n)
 
         return cls(dt.year, dt.month, dt.day)
 

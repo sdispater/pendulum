@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pendulum
 import pytest
 
@@ -101,17 +102,17 @@ def test_to_string_invalid():
 
 def test_repr():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz='local')
-    expected = f"DateTime(1975, 12, 25, 14, 15, 16, tzinfo={repr(d.tzinfo)})"
+    expected = "DateTime(1975, 12, 25, 14, 15, 16, tzinfo={})".format(repr(d.tzinfo))
     assert repr(d) == expected
 
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz='local')
-    expected = f"DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={repr(d.tzinfo)})"
+    expected = "DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={})".format(repr(d.tzinfo))
     assert repr(d) == expected
 
 
 def test_format_with_locale():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz='local')
-    expected = 'jeudi 25e jour de décembre 1975 02:15:16 PM -05:00'
+    expected = u'jeudi 25e jour de décembre 1975 02:15:16 PM -05:00'
     assert d.format('dddd Do [jour de] MMMM YYYY hh:mm:ss A Z', locale='fr') == expected
 
 
@@ -130,7 +131,3 @@ def test_format():
     assert '{}'.format(d) == '1975-12-25T14:15:16+01:00'
     assert '{:YYYY}'.format(d) == '1975'
     assert '{:%Y}'.format(d) == '%1975'
-
-    assert f'{d}' == '1975-12-25T14:15:16+01:00'
-    assert f'{d:YYYY}' == '1975'
-    assert f'{d:%Y}' == '%1975'

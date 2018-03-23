@@ -34,14 +34,14 @@ _spec = re.compile(
 )
 
 
-def posix_spec(spec: str) -> 'PosixTimezone':
+def posix_spec(spec):  # type: (str) -> PosixTimezone
     try:
         return _posix_spec(spec)
     except ValueError:
         raise InvalidPosixSpec(spec)
 
 
-def _posix_spec(spec: str) -> 'PosixTimezone':
+def _posix_spec(spec):  # type: (str) -> PosixTimezone
     m = _spec.match(spec)
     if not m:
         raise ValueError('Invalid posix spec')
@@ -71,11 +71,11 @@ def _posix_spec(spec: str) -> 'PosixTimezone':
     )
 
 
-def _parse_abbr(text: str) -> Union[str, None]:
+def _parse_abbr(text):  # type: (str) -> Union[str, None]
     return text.lstrip('<').rstrip('>')
 
 
-def _parse_offset(text: str, sign: int = -1) -> int:
+def _parse_offset(text, sign=-1):  # type: (str, int) -> int
     if text.startswith(('+', '-')):
         if text.startswith('-'):
             sign *= -1
@@ -97,7 +97,7 @@ def _parse_offset(text: str, sign: int = -1) -> int:
     return sign * ((((hours * 60) + minutes) * 60) + seconds)
 
 
-def _parse_rule(rule: str) -> 'PosixTransition':
+def _parse_rule(rule):  # type: (str) -> PosixTransition
     klass = NPosixTransition
     args = ()
 
@@ -129,34 +129,34 @@ def _parse_rule(rule: str) -> 'PosixTransition':
     return klass(*args)
 
 
-class PosixTransition:
+class PosixTransition(object):
 
-    def __init__(self, offset: int):
+    def __init__(self, offset):  # type: (int) -> None
         self._offset = offset
 
     @property
-    def offset(self) -> int:
+    def offset(self):  # type: () -> int
         return self._offset
 
-    def trans_offset(self, is_leap: bool, jan1_weekday: int) -> int:
+    def trans_offset(self, is_leap, jan1_weekday):  # type: (bool, int) -> int
         raise NotImplementedError()
 
 
 class JPosixTransition(PosixTransition):
 
-    def __init__(self, day: int, offset: int):
+    def __init__(self, day, offset):  # type: (int, int) -> None
         self._day = day
 
-        super().__init__(offset)
+        super(JPosixTransition, self).__init__(offset)
 
     @property
-    def day(self):
+    def day(self):  # type: () -> int
         """
         day of non-leap year [1:365]
         """
         return self._day
 
-    def trans_offset(self, is_leap: bool, jan1_weekday: int) -> int:
+    def trans_offset(self, is_leap, jan1_weekday):  # type: (bool, int) -> int
         days = self._day
         if not is_leap or days < MONTHS_OFFSETS[1][3]:
             days -= 1
@@ -166,19 +166,19 @@ class JPosixTransition(PosixTransition):
 
 class NPosixTransition(PosixTransition):
 
-    def __init__(self, day: int, offset: int):
+    def __init__(self, day, offset):  # type: (int, int) -> None
         self._day = day
 
-        super().__init__(offset)
+        super(NPosixTransition, self).__init__(offset)
 
     @property
-    def day(self):
+    def day(self):  # type: () -> int
         """
         day of year [0:365]
         """
         return self._day
 
-    def trans_offset(self, is_leap: bool, jan1_weekday: int) -> int:
+    def trans_offset(self, is_leap, jan1_weekday):  # type: (bool, int) -> int
         days = self._day
 
         return (days * SECS_PER_DAY) + self._offset
@@ -186,35 +186,36 @@ class NPosixTransition(PosixTransition):
 
 class MPosixTransition(PosixTransition):
 
-    def __init__(self, month: int, week: int, weekday: int, offset: int):
+    def __init__(self, month, week, weekday, offset):
+        # type: (int, int, int, int) -> None
         self._month = month
         self._week = week
         self._weekday = weekday
 
-        super().__init__(offset)
+        super(MPosixTransition, self).__init__(offset)
 
     @property
-    def month(self) -> int:
+    def month(self):  # type: () -> int
         """
         month of year [1:12]
         """
         return self._month
 
     @property
-    def week(self) -> int:
+    def week(self):  # type: () -> int
         """
         week of month [1:5] (5==last)
         """
         return self._week
 
     @property
-    def weekday(self) -> int:
+    def weekday(self):  # type: () -> int
         """
         0==Sun, ..., 6=Sat
         """
         return self._weekday
 
-    def trans_offset(self, is_leap: bool, jan1_weekday: int) -> int:
+    def trans_offset(self, is_leap, jan1_weekday):  # type: (bool, int) -> int
         last_week = self._week == 5
         days = MONTHS_OFFSETS[is_leap][self._month + int(last_week)]
         weekday = (jan1_weekday + days) % 7
@@ -235,11 +236,13 @@ class PosixTimezone:
     """
 
     def __init__(self,
-                 std_abbr: str, std_offset: int,
-                 dst_abbr: Union[str, None] = None,
-                 dst_offset: Union[str, None] = None,
-                 dst_start: Union[PosixTransition, None] = None,
-                 dst_end: Union[PosixTransition, None] = None) -> None:
+                 std_abbr,        # type: str
+                 std_offset,      # type: int
+                 dst_abbr,        # type: Union[str, None] = None
+                 dst_offset,      # type: Union[str, None] = None
+                 dst_start=None,  # type: Union[PosixTransition, None]
+                 dst_end=None     # type: Union[PosixTransition, None]
+                 ):
         self._std_abbr = std_abbr
         self._std_offset = std_offset
         self._dst_abbr = dst_abbr
@@ -248,25 +251,25 @@ class PosixTimezone:
         self._dst_end = dst_end
 
     @property
-    def std_abbr(self) -> str:
+    def std_abbr(self):  # type: () -> str
         return self._std_abbr
 
     @property
-    def std_offset(self) -> int:
+    def std_offset(self):  # type: () -> int
         return self._std_offset
 
     @property
-    def dst_abbr(self) -> Union[str, None]:
+    def dst_abbr(self):  # type: () -> Union[str, None]
         return self._dst_abbr
 
     @property
-    def dst_offset(self) -> Union[int, None]:
+    def dst_offset(self):  # type: () -> Union[int, None]
         return self._dst_offset
 
     @property
-    def dst_start(self) -> Union[PosixTransition, None]:
+    def dst_start(self):  # type: () -> Union[PosixTransition, None]
         return self._dst_start
 
     @property
-    def dst_end(self) -> Union[PosixTransition, None]:
+    def dst_end(self):  # type: () -> Union[PosixTransition, None]
         return self._dst_end

@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import pendulum
 
-from datetime import time, datetime, timedelta
+from datetime import time, timedelta
 
 from .duration import Duration, AbsoluteDuration
 from .mixins.default import FormattableMixing
@@ -18,12 +20,13 @@ class Time(FormattableMixing, time):
     def __repr__(self):
         us = ''
         if self.microsecond:
-            us = f', {self.microsecond}'
+            us = ', {}'.format(self.microsecond)
 
         return (
-            f'{self.__class__.__name__}('
-            f'{self.hour}, {self.minute}, {self.second}{us}'
-            f')'
+            '{}({}, {}, {}{})'.format(
+                self.__class__.__name__,
+                self.hour, self.minute, self.second, us
+            )
         )
 
     # Comparisons
@@ -260,7 +263,7 @@ class Time(FormattableMixing, time):
         second = second if second is not None else self.second
         microsecond = microsecond if microsecond is not None else self.microsecond
 
-        t = super().replace(
+        t = super(Time, self).replace(
             hour, minute, second, microsecond,
             tzinfo=tzinfo
         )

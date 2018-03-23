@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+
 import calendar
 import datetime
 import pendulum
@@ -8,9 +12,12 @@ from .date import Date
 from .time import Time
 from .period import Period
 from .exceptions import PendulumException
+from .utils._compat import _HAS_FOLD
+from .utils._compat import PY2
 from .tz import UTC
 from .tz.timezone import Timezone
 from .helpers import add_duration
+from .helpers import timestamp
 from .constants import (
     YEARS_PER_CENTURY, YEARS_PER_DECADE,
     MONTHS_PER_YEAR,
@@ -47,26 +54,41 @@ class DateTime(datetime.datetime, Date):
         'decade', 'century'
     ]
 
+    if PY2:
+        def __new__(cls, year, month, day,
+                    hour=0, minute=0, second=0, microsecond=0,
+                    tzinfo=None, fold=0):
+            self = datetime.datetime.__new__(
+                cls,
+                year, month, day,
+                hour, minute, second, microsecond,
+                tzinfo=tzinfo
+            )
+
+            self._fold = fold
+
+            return self
+
     @classmethod
-    def now(cls, tz=None) -> 'DateTime':
+    def now(cls, tz=None):  # type: (Union[str, Timezone, None]) -> DateTime
         """
         Get a DateTime instance for the current date and time.
         """
         return pendulum.now(tz)
 
     @classmethod
-    def utcnow(cls) -> 'DateTime':
+    def utcnow(cls):  # type: () -> DateTime
         """
         Get a DateTime instance for the current date and time in UTC.
         """
         return pendulum.now(UTC)
 
     @classmethod
-    def today(cls) -> 'DateTime':
+    def today(cls):  # type: () -> DateTime
         return pendulum.now()
 
     @classmethod
-    def strptime(cls, time: str, fmt: str) -> 'DateTime':
+    def strptime(cls, time, fmt):  # type: (str, str) -> DateTime
         return pendulum.instance(datetime.datetime.strptime(time, fmt))
 
     # Getters/Setters
@@ -97,6 +119,31 @@ class DateTime(datetime.datetime, Date):
             tz=tz
         )
 
+    if PY2:
+        @property
+        def fold(self):
+            return self._fold
+
+        def timestamp(self):
+            if self.tzinfo is None:
+                s = timestamp(self)
+
+                return s + self.microsecond / 1e6
+            else:
+                kwargs = {
+                    'tzinfo': self.tzinfo,
+                }
+
+                if _HAS_FOLD:
+                    kwargs['fold'] = self.fold
+
+                dt = datetime.datetime(
+                    self.year, self.month, self.day,
+                    self.hour, self.minute, self.second, self.microsecond,
+                    **kwargs
+                )
+                return (dt - self._EPOCH).total_seconds()
+
     @property
     def float_timestamp(self):
         return self.timestamp()
@@ -126,18 +173,18 @@ class DateTime(datetime.datetime, Date):
                 / MINUTES_PER_HOUR)
 
     @property
-    def timezone(self) -> Union[Timezone, None]:
+    def timezone(self):  # type: () -> Union[str, None]
         if not isinstance(self.tzinfo, Timezone):
             return
 
         return self.tzinfo
 
     @property
-    def tz(self) -> Union[Timezone, None]:
+    def tz(self):  # type: () -> Union[str, None]
         return self.timezone
 
     @property
-    def timezone_name(self) -> Union[str, None]:
+    def timezone_name(self):  # type: () -> Union[str, None]
         tz = self.timezone
 
         if self.timezone is None:
@@ -167,7 +214,7 @@ class DateTime(datetime.datetime, Date):
     def time(self):
         return Time(self.hour, self.minute, self.second, self.microsecond)
 
-    def naive(self) -> 'DateTime':
+    def naive(self):  # type: () -> DateTime
         """
         Return the DateTime without timezone information.
         """
@@ -218,7 +265,8 @@ class DateTime(datetime.datetime, Date):
             microsecond=microsecond
         )
 
-    def in_timezone(self, tz: Union[str, Timezone]) -> 'DateTime':
+    def in_timezone(self, tz
+                    ):  # type: (Union[str, Timezone]) -> DateTime
         """
         Set the instance's timezone from a string or object.
         """
@@ -226,7 +274,8 @@ class DateTime(datetime.datetime, Date):
 
         return tz.convert(self, dst_rule=pendulum.POST_TRANSITION)
 
-    def in_tz(self, tz: Union[str, Timezone]) -> 'DateTime':
+    def in_tz(self, tz
+              ):  # type: (Union[str, Timezone]) -> DateTime
         """
         Set the instance's timezone from a string or object.
         """
@@ -373,20 +422,30 @@ class DateTime(datetime.datetime, Date):
     def __repr__(self):
         us = ''
         if self.microsecond:
-            us = f', {self.microsecond}'
+            us = ', {}'.format(self.microsecond)
 
         repr_ = (
-            f"{self.__class__.__name__}("
-            f"{self.year}, {self.month}, {self.day}, "
-            f"{self.hour}, {self.minute}, {self.second}{us}"
+            "{klass}("
+            "{year}, {month}, {day}, "
+            "{hour}, {minute}, {second}{us}"
         )
 
         if self.tzinfo is not None:
-            repr_ += f", tzinfo={self.tzinfo}"
+            repr_ += ", tzinfo={tzinfo}"
 
-        repr_ += f")"
+        repr_ += ")"
 
-        return repr_
+        return repr_.format(
+            klass=self.__class__.__name__,
+            year=self.year,
+            month=self.month,
+            day=self.day,
+            hour=self.hour,
+            minute=self.minute,
+            second=self.second,
+            us=us,
+            tzinfo=self.tzinfo
+        )
 
     # Comparisons
     def closest(self, dt1, dt2):
@@ -450,7 +509,8 @@ class DateTime(datetime.datetime, Date):
 
     def is_same_day(self, dt):
         """
-        Checks if the passed in date is the same day as the instance current day.
+        Checks if the passed in date is the same day
+        as the instance current day.
 
         :type dt: DateTime or datetime or str or int
 
@@ -462,7 +522,8 @@ class DateTime(datetime.datetime, Date):
 
     def is_birthday(self, dt=None):
         """
-        Check if its the birthday. Compares the date/month values of the two dates.
+        Check if its the birthday.
+        Compares the date/month values of the two dates.
 
         :rtype: bool
         """
@@ -476,14 +537,15 @@ class DateTime(datetime.datetime, Date):
     # ADDITIONS AND SUBSTRACTIONS
 
     def add(self,
-            years: int = 0,
-            months: int = 0,
-            weeks: int = 0,
-            days: int = 0,
-            hours: int = 0,
-            minutes: int = 0,
-            seconds: int = 0,
-            microseconds: int = 0) -> 'DateTime':
+            years=0,
+            months=0,
+            weeks=0,
+            days=0,
+            hours=0,
+            minutes=0,
+            seconds=0,
+            microseconds=0
+            ):  # type: (int, int, int, int, int, int, int) -> DateTime
         """
         Add a duration to the instance.
 
@@ -641,9 +703,10 @@ class DateTime(datetime.datetime, Date):
         return Period(self, dt, absolute=abs)
 
     def diff_for_humans(self,
-                        other: Union['DateTime', None] = None,
-                        absolute: bool = False,
-                        locale: Union[str, None] = None) -> str:
+                        other=None,  # type: Union['DateTime', None]
+                        absolute=False,  # type: bool
+                        locale=None  # type:Union[str, None]
+                        ):  # type: (...) -> False
         """
         Get the difference in a human readable format in the current locale.
 
@@ -1285,22 +1348,34 @@ class DateTime(datetime.datetime, Date):
 
     @classmethod
     def fromtimestamp(cls, t, tz=None):
-        return pendulum.instance(datetime.datetime.fromtimestamp(t, tz=tz), tz=tz)
+        return pendulum.instance(
+            datetime.datetime.fromtimestamp(t, tz=tz),
+            tz=tz
+        )
 
     @classmethod
     def utcfromtimestamp(cls, t):
-        return pendulum.instance(datetime.datetime.utcfromtimestamp(t), tz=None)
+        return pendulum.instance(
+            datetime.datetime.utcfromtimestamp(t),
+            tz=None
+        )
 
     @classmethod
     def fromordinal(cls, n):
-        return pendulum.instance(datetime.datetime.fromordinal(n), tz=None)
+        return pendulum.instance(
+            datetime.datetime.fromordinal(n),
+            tz=None
+        )
 
     @classmethod
     def combine(cls, date, time):
-        return pendulum.instance(datetime.datetime.combine(date, time), tz=None)
+        return pendulum.instance(
+            datetime.datetime.combine(date, time),
+            tz=None
+        )
 
     def astimezone(self, tz=None):
-        return pendulum.instance(super().astimezone(tz))
+        return pendulum.instance(super(DateTime, self).astimezone(tz))
 
     def replace(self, year=None, month=None, day=None, hour=None,
                 minute=None, second=None, microsecond=None, tzinfo=True,
