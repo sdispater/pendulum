@@ -36,11 +36,11 @@ You can, however, control the normalization behavior:
 >>> pendulum.datetime(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris',
                       dst_rule=pendulum.PRE_TRANSITION)
 '2013-03-31T01:30:00+01:00'
->>> pendulum.daettime(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
+>>> pendulum.datetime(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
                       dst_rule=pendulum.PRE_TRANSITION)
 '2013-10-27T02:30:00+02:00'
 
->>> pendulum.datetime(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris'
+>>> pendulum.datetime(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris',
                       dst_rule=pendulum.TRANSITION_ERROR)
 # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
 >>> pendulum.datetime(2013, 10, 27, 2, 30, 0, 0, tz='Europe/Paris',
@@ -70,7 +70,7 @@ adopt the proper behavior and apply the transition accordingly.
 '2013-03-31T01:59:59.999998+01:00'
 
 >>> dt = pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999,
-                           tz='Europe/Paris'
+                           tz='Europe/Paris',
                            dst_rule=pendulum.PRE_TRANSITION)
 '2013-10-27T02:59:59.999999+02:00'
 >>> dt = dt.add(microseconds=1)
@@ -98,6 +98,16 @@ with the `in_timezone()` method.
 ```
 
 ## Using the timezone library directly
+
+!!!warning
+
+    **You should avoid using the timezone library in Python < 3.6.**
+    
+    This is due to the fact that Pendulum relies heavily on the presence
+    of the `fold` attribute which was introduced in Python 3.6.
+    
+    The reason it works inside the Pendulum ecosystem is that it
+    backported the `fold` attribute in the `DateTime` class.
 
 Like said in the introduction, you can use the timezone library
 directly with standard `datetime` objects but with limitations, especially

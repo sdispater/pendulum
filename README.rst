@@ -16,7 +16,7 @@ Pendulum
 
 Python datetimes made easy.
 
-Supports Python **3.6+**.
+Supports Python **2.7** and **3.4+**.
 
 
 .. code-block:: python
@@ -45,11 +45,11 @@ Supports Python **3.6+**.
    '6 days 23 hours 58 minutes'
 
    # Proper handling of datetime normalization
-   >>> pendulum.create(2013, 3, 31, 2, 30, 0, 0, tz='Europe/Paris')
+   >>> pendulum.datetime(2013, 3, 31, 2, 30, tz='Europe/Paris')
    '2013-03-31T03:30:00+02:00' # 2:30 does not exist (Skipped time)
 
    # Proper handling of dst transitions
-   >>> just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
+   >>> just_before = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
    '2013-03-31T01:59:59.999999+01:00'
    >>> just_before.add(microseconds=1)
    '2013-03-31T03:00:00+02:00'
@@ -65,7 +65,7 @@ So it's still ``datetime`` but better.
 
 Unlike other datetime libraries for Python, Pendulum is a drop-in replacement
 for the standard ``datetime`` class (it inherits from it), so, basically, you can replace all your ``datetime``
-instances by ``Pendulum`` instances in you code (exceptions exist for libraries that check
+instances by ``DateTime`` instances in you code (exceptions exist for libraries that check
 the type of the objects by using the ``type`` function like ``sqlite3`` or ``PyMySQL`` for instance).
 
 It also removes the notion of naive datetimes: each ``Pendulum`` instance is timezone-aware
@@ -111,7 +111,7 @@ and it will try its best to return something while silently failing to handle so
     -3599.999999
     # Should be 1e-06
 
-    just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    just_before = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
     just_after = just_before.add(microseconds=1)
     '2013-03-31T03:00:00+02:00'
 
@@ -125,7 +125,7 @@ behavior with the data you are passing to it.
 Limitations
 ===========
 
-Even though the ``Pendulum`` class is a subclass of ``datetime`` there are some rare cases where
+Even though the ``DateTime`` class is a subclass of ``datetime`` there are some rare cases where
 it can't replace the native class directly. Here is a list (non-exhaustive) of the reported cases with
 a possible solution, if any:
 
@@ -172,8 +172,8 @@ a possible solution, if any:
 Resources
 =========
 
-* `Official Website <http://pendulum.eustace.io>`_
-* `Documentation <http://pendulum.eustace.io/docs/>`_
+* `Official Website <https://pendulum.eustace.io>`_
+* `Documentation <https://pendulum.eustace.io/docs/>`_
 * `Issue Tracker <https://github.com/sdispater/pendulum/issues>`_
 
 

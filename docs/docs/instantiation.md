@@ -28,7 +28,9 @@ It otherwise can be a `Timezone` instance or simply a string timezone value.
 
 !!!note
 
-    Supported strings for timezones are the one provided by the [IANA time zone database](https://www.iana.org/time-zones>).
+    Supported strings for timezones are the one provided
+    by the [IANA time zone database](https://www.iana.org/time-zones>).
+    
     The special `local` string is also supported and will return your current timezone.
 
 !!!warning
