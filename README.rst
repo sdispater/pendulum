@@ -186,12 +186,12 @@ Getting started
 ---------------
 
 To work on the Pendulum codebase, you'll want to clone the project locally
-and install the required depedendencies (it is advised to do that in a virtualenv).
+and install the required depedendencies via `poetry <https://poetry.eustace.io>`_.
 
 .. code-block:: bash
 
     $ git clone git@github.com:sdispater/pendulum.git
-    $ pip install -r tests-requirements.txt
+    $ poetry install
 
 Localization
 ------------
