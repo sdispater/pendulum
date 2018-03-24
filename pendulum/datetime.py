@@ -13,7 +13,6 @@ from .time import Time
 from .period import Period
 from .exceptions import PendulumException
 from .utils._compat import _HAS_FOLD
-from .utils._compat import PY2
 from .tz import UTC
 from .tz.timezone import Timezone
 from .helpers import add_duration
@@ -54,7 +53,7 @@ class DateTime(datetime.datetime, Date):
         'decade', 'century'
     ]
 
-    if PY2:
+    if not _HAS_FOLD:
         def __new__(cls, year, month, day,
                     hour=0, minute=0, second=0, microsecond=0,
                     tzinfo=None, fold=0):
@@ -119,7 +118,7 @@ class DateTime(datetime.datetime, Date):
             tz=tz
         )
 
-    if PY2:
+    if not _HAS_FOLD:
         @property
         def fold(self):
             return self._fold
