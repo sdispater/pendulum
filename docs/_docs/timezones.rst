@@ -21,12 +21,12 @@ given timezone to properly handle any transition that might have occurred.
 
     import pendulum
 
-    pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+    pendulum.datetime(2013, 3, 31, 2, 30, 'Europe/Paris')
     # 2:30 for the 31th of March 2013 does not exist
     # so pendulum will return the actual time which is 3:30+02:00
     '2013-03-31T03:30:00+02:00'
 
-    pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+    pendulum.datetime(2013, 10, 27, 2, 30, 'Europe/Paris')
     # Here, 2:30 exists twice in the day so pendulum will
     # assume that the transition already occurred
     '2013-10-27T02:30:00+01:00'
@@ -42,16 +42,16 @@ given timezone to properly handle any transition that might have occurred.
 
         pendulum.set_transition_rule(pendulum.PRE_TRANSITION)
 
-        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        pendulum.datetime(2013, 3, 31, 2, 30, 'Europe/Paris')
         '2013-03-31T01:30:00+01:00'
-        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        pendulum.datetime(2013, 10, 27, 2, 30, 'Europe/Paris')
         '2013-10-27T02:30:00+02:00'
 
         pendulum.set_transition_rule(pendulum.TRANSITION_ERROR)
 
-        pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        pendulum.datetime(2013, 3, 31, 2, 30, 'Europe/Paris')
         # NonExistingTime: The datetime 2013-03-31 02:30:00 does not exist
-        pendulum.create(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris')
+        pendulum.datetime(2013, 10, 27, 2, 30, 'Europe/Paris')
         # AmbiguousTime: The datetime 2013-10-27 02:30:00 is ambiguous.
 
     Note that it only affects instances at creation time. Shifting time around
@@ -69,23 +69,23 @@ given timezone to properly handle any transition that might have occurred.
 
         from pendulum import Pendulum
 
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+        dt = Pendulum(2013, 3, 31, 2, 30, 'Europe/Paris')
         dt.isoformat()
         '2013-03-31T03:30:00+02:00'
 
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=0)
+        dt = Pendulum(2013, 3, 31, 2, 30, 'Europe/Paris', fold=0)
         dt.isoformat()
         '2013-03-31T01:30:00+01:00'
 
-        dt = Pendulum(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris', fold=1)
+        dt = Pendulum(2013, 3, 31, 2, 30, 'Europe/Paris', fold=1)
         dt.isoformat()
         '2013-03-31T03:30:00+02:00'
 
-        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=0)
+        dt = Pendulum(2013, 10, 27, 2, 30, 'Europe/Paris', fold=0)
         dt.isoformat()
         '2013-10-27T02:30:00+02:00'
 
-        dt = Pendulum(2013, 10, 27, 2, 30, 0, 0, 'Europe/Paris', fold=1)
+        dt = Pendulum(2013, 10, 27, 2, 30, 'Europe/Paris', fold=1)
         dt.isoformat()
         '2013-10-27T02:30:00+01:00'
 
@@ -101,17 +101,17 @@ adopt the proper behavior and apply the transition accordingly.
 
     import pendulum
 
-    dt = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
     '2013-03-31T01:59:59.999999+01:00'
     dt = dt.add(microseconds=1)
     '2013-03-31T03:00:00+02:00'
     dt.subtract(microseconds=1)
     '2013-03-31T01:59:59.999998+01:00'
 
-    dt = pendulum.create(2013, 10, 27, 1, 59, 59, 999999, 'Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 1, 59, 59, 999999, 'Europe/Paris')
     dt = dt.add(hours=1)
     # We can't just do
-    # pendulum.create(2013, 10, 27, 2, 59, 59, 999999, 'Europe/Paris')
+    # pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999, 'Europe/Paris')
     # because of the default normalization
     '2013-10-27T02:59:59.999999+02:00'
     dt = dt.add(microseconds=1)
@@ -131,7 +131,7 @@ with the ``in_timezone()`` method.
 
 .. code-block:: python
 
-    in_paris = pendulum.create(2016, 8, 7, 22, 24, 30, tz='Europe/Paris')
+    in_paris = pendulum.datetime(2016, 8, 7, 22, 24, 30, tz='Europe/Paris')
     '2016-08-07T22:24:30+02:00'
     in_paris.in_timezone('America/New_York')
     '2016-08-07T16:24:30-04:00'

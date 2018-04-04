@@ -8,7 +8,6 @@ from .interval import Interval
 from .period import Period
 
 # Mimicking standard library
-datetime = Pendulum
 date = Date
 time = Time
 
@@ -78,3 +77,19 @@ period = Period
 
 # Timezones
 from .tz import timezone, timezones, local_timezone, UTC
+
+
+def datetime(year, month, day,
+             hour=0, minute=0, second=0, microsecond=0,
+             tzinfo=None, tz=None, dst_rule=None):
+    fold = None
+    if dst_rule == POST_TRANSITION:
+        fold = 1
+    elif dst_rule == PRE_TRANSITION:
+        fold = 0
+
+    return Pendulum(
+        year, month, day, hour, minute, second, microsecond,
+        tzinfo=tzinfo or tz,
+        fold=fold
+    )

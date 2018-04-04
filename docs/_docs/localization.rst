@@ -5,9 +5,9 @@ Localization occurs when using the ``format()`` method which accepts a ``locale`
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    dt = Pendulum(1975, 5, 21)
+    dt = pendulum.datetime(1975, 5, 21)
 
     dt.format('%A %d %B %Y', locale='de')
     'Mittwoch 21 Mai 1975'
@@ -22,9 +22,10 @@ Localization occurs when using the ``format()`` method which accepts a ``locale`
     .. code-block:: python
 
         import locale
-        from pendulum import Pendulum
 
-        dt = Pendulum(1975, 5, 21)
+        import pendulum
+
+        dt = pendulum.datetime(1975, 5, 21)
 
         locale.setlocale(locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8'))
         dt.format('%A %d %B %Y')

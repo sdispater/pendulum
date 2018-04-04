@@ -17,8 +17,8 @@ This will default to ``True``, return the absolute value. The comparisons are do
 
     import pendulum
 
-    dt_ottawa = pendulum.create(2000, 1, 1, tz='America/Toronto')
-    dt_vancouver = pendulum.create(2000, 1, 1, tz='America/Vancouver')
+    dt_ottawa = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
+    dt_vancouver = pendulum.datetime(2000, 1, 1, tz='America/Vancouver')
 
     dt_ottawa.diff(dt_vancouver).in_hours()
     3
@@ -27,19 +27,19 @@ This will default to ``True``, return the absolute value. The comparisons are do
     dt_vancouver.diff(dt_ottawa, False).in_hours()
     -3
 
-    dt = pendulum.create(2012, 1, 31, 0)
+    dt = pendulum.datetime(2012, 1, 31, 0)
     dt.diff(dt.add(months=1)).in_days()
     29
     dt.diff(dt.subtract(months=1), False).in_days()
     -31
 
-    dt = pendulum.create(2012, 4, 30, 0)
+    dt = pendulum.datetime(2012, 4, 30, 0)
     dt.diff(dt.add(months=1)).in_days()
     30
     dt.diff(dt.add(weeks=1)).in_days()
     7
 
-    dt = pendulum.create(2012, 1, 1, 0)
+    dt = pendulum.datetime(2012, 1, 1, 0)
     dt.diff(dt.add(seconds=59)).in_minutes()
     0
     dt.diff(dt.add(seconds=60)).in_minutes()
@@ -89,7 +89,7 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     pendulum.now().diff_for_humans(pendulum.now().subtract(years=1))
     '1 year after'
 
-    dt = pendulum.create(2011, 8, 1)
+    dt = pendulum.datetime(2011, 8, 1)
     dt.diff_for_humans(dt.add(months=1))
     '1 month before'
     dt.diff_for_humans(dt.subtract(months=1))

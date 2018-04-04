@@ -2,22 +2,19 @@ Instantiation
 =============
 
 There are several different methods available to create a new instance of Pendulum.
-First there is a constructor. It accepts the same parameters as the standard class.
+First there is a the `datetime()` helper.
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    dt = Pendulum(2015, 2, 5, tzinfo='America/Vancouver')
+    dt = pendulum.datetime(2015, 2, 5, tz='America/Vancouver')
     isinstance(dt, datetime)
     True
 
-    dt = Pendulum.now(-5)
-
-You'll notice above that the timezone (2nd) parameter was passed as a string and an integer
-rather than a ``tzinfo`` instance. All timezone parameters have been augmented
-so you can pass a ``tzinfo`` instance, string or integer offset to GMT
-and the timezone will be created for you.
+`datetime()` sets the time to `00:00:00` if it's not specified,
+and the timezone (the `tz` keyword argument) to `UTC`.
+It otherwise can be a `Timezone` instance or simply a string timezone value.
 
 .. note::
 
@@ -44,7 +41,7 @@ and the timezone will be created for you.
          'US/Pacific-New',
          'US/Samoa')
 
-This is again shown in the next example which also introduces the ``now()`` function.
+There is also the ``now()`` helper.
 
 .. code-block:: python
 
@@ -87,7 +84,7 @@ besides behaving as expected, all accept a timezone parameter and each has their
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
-The next helper is ``create()`` which allows you to provide
+The next helper is ``datetime()`` which allows you to provide
 as many or as few arguments as you want and will provide default values for all others.
 
 .. code-block:: python
@@ -129,7 +126,7 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
 
     Note that it will be the only one supported in the next major version.
 
-The final ``create`` function is for working with unix timestamps.
+The final helper is for working with unix timestamps.
 ``from_timestamp()`` will create a ``Pendulum`` instance equal to the given timestamp
 and will set the timezone as well or default it to ``UTC``.
 
@@ -140,21 +137,6 @@ and will set the timezone as well or default it to ``UTC``.
 
     pendulum.from_timestamp(-1, 'Europe/London').to_datetime_string()
     '1970-01-01 00:59:59'
-
-    # Using the standard fromtimestamp is also possible
-    pendulum.fromtimestamp(-1).to_datetime_string()
-    '1969-12-31 23:59:59'
-
-You can also create a ``copy()`` of an existing ``Pendulum`` instance.
-As expected the date, time and timezone values are all copied to the new instance.
-
-.. code-block:: python
-
-    dt = pendulum.now()
-    print(dt.diff(dt.copy().add(years=1)).in_years())
-    1
-
-    # dt was unchanged and still holds the value of pendulum.now()
 
 Finally, if you find yourself inheriting a ``datetime`` instance,
 you can create a ``Pendulum`` instance via the ``instance()`` function.

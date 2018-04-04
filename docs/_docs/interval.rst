@@ -12,6 +12,8 @@ It has many improvements over the base class.
 
     .. code-block:: python
 
+        import pendulum
+
         d1 = datetime(2012, 1, 1, 1, 2, 3, tzinfo=pytz.UTC)
         d2 = datetime(2011, 12, 31, 22, 2, 3, tzinfo=pytz.UTC)
         delta = d2 - d1
@@ -20,8 +22,8 @@ It has many improvements over the base class.
         delta.seconds
         75600
 
-        d1 = Pendulum(2012, 1, 1, 1, 2, 3)
-        d2 = Pendulum(2011, 12, 31, 22, 2, 3)
+        d1 = pendulum.datetime(2012, 1, 1, 1, 2, 3)
+        d2 = pendulum.datetime(2011, 12, 31, 22, 2, 3)
         delta = d2 - d1
         delta.days
         0
@@ -37,7 +39,6 @@ You can create an instance in the following ways:
 
     import pendulum
 
-    it = pendulum.Interval(days=1177, seconds=7284, microseconds=1234)
     it = pendulum.interval(days=1177, seconds=7284, microseconds=1234)
 
     # You can use an existing timedelta instance
@@ -63,7 +64,7 @@ The ``Interval`` class brings more properties than the default ``days``, ``secon
     1117
 
     # If you want the remaining days not included in full weeks
-    it.remaning_days
+    it.remaining_days
     1
 
     # The remaining number in each unit

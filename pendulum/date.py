@@ -4,6 +4,8 @@ from __future__ import division
 
 import calendar
 import math
+import warnings
+
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -113,16 +115,39 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
     ### Getters/Setters
 
     def year_(self, year):
-        return self._setter(year=year)
+        warnings.warn(
+            'The year_() method will be removed in version 2.0. '
+            'Use set(year={}) instead.'.format(year),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.set(year=year)
 
     def month_(self, month):
-        return self._setter(month=month)
+        warnings.warn(
+            'The month_() method will be removed in version 2.0. '
+            'Use set(month={}) instead.'.format(month),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.set(month=month)
 
     def day_(self, day):
-        return self._setter(day=day)
+        warnings.warn(
+            'The day_() method will be removed in version 2.0. '
+            'Use set(day={}) instead.'.format(day),
+            DeprecationWarning,
+            stacklevel=2
+        )
 
-    def _setter(self, **kwargs):
-        return self.replace(**kwargs)
+        return self.set(day=day)
+
+    def set(self, year=None, month=None, day=None):
+        return self.replace(
+            year=year, month=month, day=day
+        )
 
     @property
     def day_of_week(self):
@@ -266,6 +291,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The between() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt1 > dt2:
             dt1, dt2 = dt2, dt1
 
@@ -317,6 +348,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The min_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Date.today()
 
@@ -334,6 +371,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The minimum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.min_(dt)
 
     def max_(self, dt=None):
@@ -345,6 +388,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The max_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Date.today()
 
@@ -362,6 +411,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The maximum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.max_(dt)
 
     def is_weekday(self):
@@ -370,6 +425,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_weekday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return not self.is_weekend()
 
     def is_weekend(self):
@@ -378,6 +439,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_weekend() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week in self._weekend_days
 
     def is_yesterday(self):
@@ -386,6 +453,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_yesterday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self == self.yesterday()
 
     def is_today(self):
@@ -394,6 +467,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_today() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self == self.today()
 
     def is_tomorrow(self):
@@ -402,6 +481,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_tomorrow() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self == self.tomorrow()
 
     def is_future(self):
@@ -446,6 +531,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_same_day() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self == dt
 
     def is_sunday(self):
@@ -454,6 +545,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_sunday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == SUNDAY
 
     def is_monday(self):
@@ -462,6 +559,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_monday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == MONDAY
 
     def is_tuesday(self):
@@ -470,6 +573,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_tuesday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == TUESDAY
 
     def is_wednesday(self):
@@ -478,6 +587,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_wednesday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == WEDNESDAY
 
     def is_thursday(self):
@@ -486,6 +601,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_thursday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == THURSDAY
 
     def is_friday(self):
@@ -494,6 +615,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_friday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == FRIDAY
 
     def is_saturday(self):
@@ -502,6 +629,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_saturday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.day_of_week == SATURDAY
 
     def is_birthday(self, dt=None):
@@ -582,6 +715,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The add_timedelta() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.add(days=delta.days)
 
     def subtract_timedelta(self, delta):
@@ -593,6 +732,12 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
 
         :rtype: Date
         """
+        warnings.warn(
+            'The subtract_timedelta() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.subtract(days=delta.days)
 
     def __add__(self, other):

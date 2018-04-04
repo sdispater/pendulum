@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import locale as _locale
+import warnings
+
 from contextlib import contextmanager
 
 from ..translator import Translator
@@ -77,6 +79,12 @@ class FormattableMixing(object):
         Reset the format used to the default
         when type juggling a Date instance to a string.
         """
+        warnings.warn(
+            'The reset_to_string_format() helper '
+            'will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
         cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
 
     @classmethod
@@ -87,6 +95,12 @@ class FormattableMixing(object):
 
         :type fmt: str
         """
+        warnings.warn(
+            'The set_to_string_format() helper '
+            'will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
         cls._to_string_format = fmt
 
     def format(self, fmt, locale=None, formatter=None):

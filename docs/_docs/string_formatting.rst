@@ -9,9 +9,9 @@ The default string representation is the same as the one returned by the ``isofo
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    dt = Pendulum(1975, 12, 25, 14, 15, 16)
+    dt = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
     print(dt)
     '1975-12-25T14:15:16+00:00'
@@ -133,7 +133,7 @@ or globally by using ``pendulum.set_formatter()``.
 
     import pendulum
 
-    dt = pendulum.Pendulum(1975, 12, 25, 14, 15, 16)
+    dt = pendulum.datetime(1975, 12, 25, 14, 15, 16)
     dt.format('YYYY-MM-DD HH:mm:ss', formatter='alternative')
     '1975-12-25 14:15:16'
 

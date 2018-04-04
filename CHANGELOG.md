@@ -1,5 +1,25 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added the `set()` method to set properties.
+- Added the `is_utc()` and `is_local()` methods.
+
+### Deprecated
+
+- `year_()`, `month_()`, `day_`, `hour_`, `minute_`, `second_`, `microsecond_()` are now deprecated.
+- `timezone_()` and `tz_()` are now deprecated.
+- `timestamp_()` is now deprecated.
+- `with_date_time()`, `with_time_from_string()` and `with_timestamp()` are now deprecated.
+- `between()` is now deprecated.
+- `min_()`, `max_()`, `minimum()`, `maximum()` are now deprecated.
+- `is_today()`, `is_yesterday()`, `is_tomorrow()` and `is_same_day()` are now depecreated.
+- `is_sunday()` -> `is_saturday()` are now deprecated.
+- The `utc` and `local` properties are now deprecated. Use `is_utc()` and `is_local()` instead.
+
+
 ## [1.4.4] - 2018-03-21
 
 ### Fixed

@@ -352,6 +352,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The create() helper will no longer exist in version 2.0. '
+            'Use datetime() instead.',
+            DeprecationWarning,
+            stacklevel=2
+        )
         tz = cls._safe_create_datetime_zone(tz)
 
         if any([year is None, month is None, day is None]):
@@ -512,28 +518,68 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The copy() method will be removed in version 2.0. ',
+            DeprecationWarning,
+            stacklevel=2
+        )
         return self.instance(self._datetime)
 
     # Getters/Setters
 
     def hour_(self, hour):
-        return self._setter(hour=hour)
+        warnings.warn(
+            'The hour_() method will be removed in version 2.0. '
+            'Use set(hour={}) instead.'.format(hour),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.set(hour=hour)
 
     def minute_(self, minute):
-        return self._setter(minute=minute)
+        warnings.warn(
+            'The minute_() method will be removed in version 2.0. '
+            'Use set(minute={}) instead.'.format(minute),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.set(minute=minute)
 
     def second_(self, second):
-        return self._setter(second=second)
+        warnings.warn(
+            'The second_() method will be removed in version 2.0. '
+            'Use set(second={}) instead.'.format(second),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.set(second=second)
 
     def microsecond_(self, microsecond):
-        return self._setter(microsecond=microsecond)
+        warnings.warn(
+            'The microsecond_() method will be removed in version 2.0. '
+            'Use set(microsecond={}) instead.'.format(microsecond),
+            DeprecationWarning,
+            stacklevel=2
+        )
 
-    def _setter(self, **kwargs):
+        return self.set(microsecond=microsecond)
+
+    def set(self, **kwargs):
         kwargs['tzinfo'] = True
 
         return self._tz.convert(self.replace(**kwargs))
 
     def timezone_(self, tz):
+        warnings.warn(
+            'The timezone_() method will be removed in version 2.0. '
+            'Use set(tz={}) instead.'.format(tz),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.__class__(
             self.year, self.month, self.day,
             self.hour, self.minute, self.second, self.microsecond,
@@ -541,9 +587,22 @@ class Pendulum(Date, datetime.datetime):
         )
 
     def tz_(self, tz):
+        warnings.warn(
+            'The tz_() method will be removed in version 2.0. '
+            'Use set(tz={}) instead.'.format(tz),
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.timezone_(tz)
 
     def timestamp_(self, timestamp, tz=UTC):
+        warnings.warn(
+            'The timestamp_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.create_from_timestamp(timestamp, tz)
 
     @property
@@ -615,10 +674,30 @@ class Pendulum(Date, datetime.datetime):
 
     @property
     def local(self):
+        warnings.warn(
+            'The local property will be removed in version 2.0. '
+            'Use is_local() instead.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.is_local()
+
+    def is_local(self):
         return self.offset == self.in_timezone(self._local_timezone()).offset
 
     @property
     def utc(self):
+        warnings.warn(
+            'The utc property will be removed in version 2.0. '
+            'Use is_utc() instead.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        return self.is_utc()
+
+    def is_utc(self):
         return self.offset == 0
 
     @property
@@ -708,6 +787,13 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The with_date_time() method will be removed in version 2.0. '
+            'Use both on() and at() methods instead.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.replace(
             year=year, month=month, day=day,
             hour=hour, minute=minute, second=second,
@@ -723,6 +809,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The with_time_from_string() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         time = time.split(':')
 
         hour = int(time[0])
@@ -763,6 +855,12 @@ class Pendulum(Date, datetime.datetime):
         :type timestamp: int or float
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The with_timestamp() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         dt = datetime.datetime.fromtimestamp(timestamp, UTC).astimezone(self._tz)
 
         return self.instance(dt)
@@ -951,6 +1049,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The between() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt1 > dt2:
             dt1, dt2 = dt2, dt1
 
@@ -1002,6 +1106,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The min_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Pendulum.now(self.timezone)
 
@@ -1019,6 +1129,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The minimum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.min_(dt)
 
     def max_(self, dt=None):
@@ -1030,6 +1146,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The max_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Pendulum.now(self.timezone)
 
@@ -1047,6 +1169,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The maximum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.max_(dt)
 
     def is_yesterday(self):
@@ -1055,6 +1183,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_yesterday() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.to_date_string() == self.yesterday(self._tz).to_date_string()
 
     def is_today(self):
@@ -1063,6 +1197,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_today() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.to_date_string() == self.now(self._tz).to_date_string()
 
     def is_tomorrow(self):
@@ -1071,6 +1211,11 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_tomorrow() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
         return self.to_date_string() == self.tomorrow(self._tz).to_date_string()
 
     def is_future(self):
@@ -1107,6 +1252,11 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The is_same_day() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
         dt = self._get_datetime(dt, True)
 
         return self.to_date_string() == dt.to_date_string()
@@ -1225,6 +1375,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The add_timedelta() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if isinstance(delta, Period):
             return self.add(
                 years=delta.years, months=delta.months,
@@ -1244,6 +1400,12 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: Pendulum
         """
+        warnings.warn(
+            'The subtract_timedelta() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if isinstance(delta, Period):
             return self.subtract(
                 years=delta.years, months=delta.months,
@@ -1263,6 +1425,13 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: int
         """
+        warnings.warn(
+            'The seconds_since_midnight() '
+            'method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.diff(self.start_of('day')).in_seconds()
 
     def seconds_until_end_of_day(self):
@@ -1271,6 +1440,13 @@ class Pendulum(Date, datetime.datetime):
 
         :rtype: int
         """
+        warnings.warn(
+            'The seconds_until_end_of_day() '
+            'method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.diff(self.end_of('day')).in_seconds()
 
     def diff(self, dt=None, abs=True):

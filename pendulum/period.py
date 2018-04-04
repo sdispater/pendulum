@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import operator
+import warnings
+
 import pendulum
 
 from datetime import datetime, date, timedelta
@@ -144,6 +146,12 @@ class Period(WordableIntervalMixin, BaseInterval):
         return self._delta['total']['days']
 
     def in_weekdays(self):
+        warnings.warn(
+            'The in_weekdays() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         start, end = self.start.start_of('day'), self.end.start_of('day')
         if not self._absolute and self.invert:
             start, end = self.end.start_of('day'), self.start.start_of('day')
@@ -158,6 +166,12 @@ class Period(WordableIntervalMixin, BaseInterval):
         return days * (-1 if not self._absolute and self.invert else 1)
 
     def in_weekend_days(self):
+        warnings.warn(
+            'The in_weekend_days() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         start, end = self.start.start_of('day'), self.end.start_of('day')
         if not self._absolute and self.invert:
             start, end = self.end.start_of('day'), self.start.start_of('day')

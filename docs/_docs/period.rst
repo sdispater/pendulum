@@ -7,22 +7,17 @@ instances that generated it, so that it can give access to more methods and prop
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    start = Pendulum(2000, 1, 1)
-    end = Pendulum(2000, 1, 31)
+    start = pendulum.datetime(2000, 1, 1)
+    end = pendulum.datetime(2000, 1, 31)
 
     period = end - start
-    period.in_weekdays()
-    21
 
-    period.in_weekend_days()
-    10
-
-    # You also have access to the years and months
+    # You have access to the years and months
     # properties and there related methods
-    start = Pendulum(2000, 11, 20)
-    end = Pendulum(2016, 11, 5)
+    start = pendulum.datetime(2000, 11, 20)
+    end = pendulum.datetime(2016, 11, 5)
 
     period = end - start
 
@@ -53,7 +48,7 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 
     import pendulum
 
-    start = pendulum.create(2017, 3, 7, tz='America/Toronto')
+    start = pendulum.datetime(2017, 3, 7, tz='America/Toronto')
     end = start.add(days=6)
 
     period = end - start
@@ -80,9 +75,11 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 
     .. code-block:: python
 
-        dt1 = Pendulum(2016, 8, 7, 12, 34, 56)
+        import pendulum
+
+        dt1 = pendulum.datetime(2016, 8, 7, 12, 34, 56)
         dt2 = dt1.add(days=6, seconds=34)
-        period = Period(dt1, dt2)
+        period = pendulum.period(dt1, dt2)
         period * 2
         # <Interval [1 week 5 days 1 minute 8 seconds]>
 
@@ -96,22 +93,19 @@ You can create an instance in the following ways:
 
     import pendulum
 
-    start = pendulum.Pendulum(2000, 1, 1)
-    end = pendulum.Pendulum(2000, 1, 31)
+    start = pendulum.datetime(2000, 1, 1)
+    end = pendulum.datetime(2000, 1, 31)
 
-    period = pendulum.Period(start, end)
     period = pendulum.period(start, end)
+    period = end - start
 
 You can also make an inverted period:
 
 .. code-block:: python
 
     period = pendulum.period(end, start)
-    period.in_weekdays()
-    -21
-
-    period.in_weekend_days()
-    -10
+    period.days
+    -30
 
 If you have inverted dates but want to make sure that the period is positive,
 you set the ``absolute`` keyword argument to ``True``:
@@ -119,11 +113,8 @@ you set the ``absolute`` keyword argument to ``True``:
 .. code-block:: python
 
     period = pendulum.period(end, start, absolute=True)
-    period.in_weekdays()
-    21
-
-    period.in_weekend_days()
-    10
+    period.days
+    30
 
 Range
 -----
@@ -134,8 +125,8 @@ If you want to iterate over a period, you can use the ``range()`` method:
 
     import pendulum
 
-    start = pendulum.Pendulum(2000, 1, 1)
-    end = pendulum.Pendulum(2000, 1, 10)
+    start = pendulum.datetime(2000, 1, 1)
+    end = pendulum.datetime(2000, 1, 10)
 
     period = pendulum.period(start, end)
 
@@ -186,7 +177,7 @@ You can check if a ``Pendulum`` instance is inside a period using the ``in`` key
 
 .. code-block:: python
 
-    dt = Pendulum(2000, 1, 4)
+    dt = pendulum.datetime(2000, 1, 4)
 
     dt in period
     True
@@ -202,12 +193,12 @@ using the ``intersect()`` method.
     import pendulum
 
 
-    monday = pendulum.create(2016, 9, 12)
+    monday = pendulum.datetime(2016, 9, 12)
     wednesday = monday.next(pendulum.WEDNESDAY)
     friday = monday.next(pendulum.FRIDAY)
     saturday = monday.next(pendulum.SATURDAY)
 
-    period = pendulum.period(monday, friday)
+    period = pendulum.datetime(monday, friday)
 
     period.intersect(pendulum.period(wednesday, saturday))
     # <Period [2016-09-14T00:00:00+00:00 -> 2016-09-16T00:00:00+00:00]>
@@ -219,7 +210,7 @@ You can also pass multiple period to ``intersect()``.
     import pendulum
 
 
-    monday = pendulum.create(2016, 9, 12)
+    monday = pendulum.datetime(2016, 9, 12)
     wednesday = monday.next(pendulum.WEDNESDAY)
     thursday = monday.next(pendulum.THURSDAY)
     friday = monday.next(pendulum.FRIDAY)

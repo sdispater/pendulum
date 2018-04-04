@@ -8,8 +8,8 @@ Remember that the comparison is done in the UTC timezone so things aren't always
 
     import pendulum
 
-    first = pendulum.create(2012, 9, 5, 23, 26, 11, 0, tz='America/Toronto')
-    second = pendulum.create(2012, 9, 5, 20, 26, 11, 0, tz='America/Vancouver')
+    first = pendulum.datetime(2012, 9, 5, 23, 26, 11, tz='America/Toronto')
+    second = pendulum.datetime(2012, 9, 5, 20, 26, 11, tz='America/Vancouver')
 
     first.to_datetime_string()
     '2012-09-05 23:26:11'
@@ -58,14 +58,14 @@ The default is ``True`` which determines if its between or equal to the boundari
 
     import pendulum
 
-    first = pendulum.create(2012, 9, 5, 1)
-    second = pendulum.create(2012, 9, 5, 5)
+    first = pendulum.datetime(2012, 9, 5, 1)
+    second = pendulum.datetime(2012, 9, 5, 5)
 
-    pendulum.create(2012, 9, 5, 3).between(first, second)
+    pendulum.datetime(2012, 9, 5, 3).between(first, second)
     True
-    pendulum.create(2012, 9, 5, 3).between(first, second)
+    pendulum.datetime(2012, 9, 5, 3).between(first, second)
     True
-    pendulum.create(2012, 9, 5, 5).between(first, second, False)
+    pendulum.datetime(2012, 9, 5, 5).between(first, second, False)
     False
 
 There are also the ``min_()`` and ``max_()`` methods.
@@ -75,8 +75,8 @@ As usual the default parameter is ``now`` if ``None`` is specified.
 
     import pendulum
 
-    dt1 =  pendulum.create(2012, 1, 1, 0, 0, 0, 0)
-    dt2 =  pendulum.create(2014, 1, 30, 0, 0, 0, 0)
+    dt1 =  pendulum.datetime(2012, 1, 1, 0, 0, 0, 0)
+    dt2 =  pendulum.datetime(2014, 1, 30, 0, 0, 0, 0)
 
     print(dt1.min_(dt2))
     '2012-01-01T00:00:00+00:00'
@@ -104,15 +104,9 @@ the ``now()`` is created in the same timezone as the instance.
 
     dt = pendulum.now()
 
-    dt.is_weekday()
-    dt.is_weekend()
-    dt.is_yesterday()
-    dt.is_today()
-    dt.is_tomorrow()
     dt.is_future()
     dt.is_past()
     dt.is_leap_year()
-    dt.is_same_day(pendulum.now())
 
     born = pendulum.create(1987, 4, 23)
     not_birthday = pendulum.create(2014, 9, 26)

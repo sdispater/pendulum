@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import warnings
+
 from datetime import time, datetime, timedelta
 
 from .interval import Interval, AbsoluteInterval
@@ -129,6 +131,12 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: bool
         """
+        warnings.warn(
+            'The between() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt1 > dt2:
             dt1, dt2 = dt2, dt1
 
@@ -180,6 +188,12 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
+        warnings.warn(
+            'The min_() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Time.now()
 
@@ -197,6 +211,12 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
+        warnings.warn(
+            'The minimum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.min_(dt)
 
     def max_(self, dt=None):
@@ -208,6 +228,12 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
+        warnings.warn(
+            'The max() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         if dt is None:
             dt = Time.now()
 
@@ -225,6 +251,12 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
 
         :rtype: Time
         """
+        warnings.warn(
+            'The maximum() method will be removed in version 2.0.',
+            DeprecationWarning,
+            stacklevel=2
+        )
+
         return self.max_(dt)
 
     def __hash__(self):

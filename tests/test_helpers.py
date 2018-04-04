@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import pendulum
+
 from datetime import datetime, date, time
 from pendulum.helpers import precise_diff, parse_iso8601
-from pendulum.tz.timezone import FixedTimezone
 
 from . import AbstractTestCase
 
@@ -174,6 +175,28 @@ class HelpersTestCase(AbstractTestCase):
         self.assertRaises(ValueError, parse_iso8601, '2012-W12-9')
         self.assertRaises(ValueError, parse_iso8601, '2012W12-3')  # Missing separator
         self.assertRaises(ValueError, parse_iso8601, '2012-W123')  # Missing separator
+
+    def test_datetime(self):
+        dt = pendulum.datetime(2018, 4, 4, 12, 34, 56, 123456)
+
+        self.assertPendulum(dt, 2018, 4, 4, 12, 34, 56, 123456)
+
+        dt = pendulum.datetime(
+            2013, 3, 31, 2, 30,
+            tzinfo='Europe/Paris'
+        )
+
+        self.assertPendulum(dt, 2013, 3, 31, 3, 30)
+        assert dt.timezone_name == 'Europe/Paris'
+
+        dt = pendulum.datetime(
+            2013, 3, 31, 2, 30,
+            tz='Europe/Paris',
+            dst_rule=pendulum.PRE_TRANSITION
+        )
+
+        self.assertPendulum(dt, 2013, 3, 31, 1, 30)
+        assert dt.timezone_name == 'Europe/Paris'
 
     def assert_diff(self, diff,
                     years=0, months=0, days=0,
