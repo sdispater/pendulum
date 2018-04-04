@@ -102,7 +102,7 @@ the ``now()`` is created in the same timezone as the instance.
 
     import pendulum
 
-    dt = Pendulum.now()
+    dt = pendulum.now()
 
     dt.is_weekday()
     dt.is_weekend()
@@ -112,7 +112,7 @@ the ``now()`` is created in the same timezone as the instance.
     dt.is_future()
     dt.is_past()
     dt.is_leap_year()
-    dt.is_same_day(Pendulum.now())
+    dt.is_same_day(pendulum.now())
 
     born = pendulum.create(1987, 4, 23)
     not_birthday = pendulum.create(2014, 9, 26)

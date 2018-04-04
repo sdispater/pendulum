@@ -86,7 +86,7 @@ You may also pass ``True`` as a 2nd parameter to remove the modifiers `ago`, `fr
     pendulum.now().subtract(days=1).diff_for_humans()
     '5 days ago'
 
-    pendulum.now().diff_for_humans(Pendulum.now().subtract(years=1))
+    pendulum.now().diff_for_humans(pendulum.now().subtract(years=1))
     '1 year after'
 
     dt = pendulum.create(2011, 8, 1)
