@@ -23,11 +23,11 @@ matrix:
       env: PENDULUM_EXTENSIONS=1
     - python: 3.7-dev
       env: PENDULUM_EXTENSIONS=0
+    - python: pypy
+    - python: pypy3
   allow_failures:
     - python: pypy
-      env:
     - python: pypy3
-      env:
 
 cache:
   pip: true
