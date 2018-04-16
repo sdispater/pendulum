@@ -52,7 +52,7 @@ install:
         find dist/ -iname pendulum*.whl -exec unzip -o {} 'pendulum/*' -d . \;
       fi
 
-script: pytest --cov=pendulum --cov-config=.coveragerc tests/
+script: poetry run pytest --cov=pendulum --cov-config=.coveragerc tests/ -W ignore
 
 after_success:
   - codecov

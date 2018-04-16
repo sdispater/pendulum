@@ -4,8 +4,6 @@ environment:
   matrix:
     - PYTHON: "C:/Python27"
     - PYTHON: "C:/Python27-x64"
-    - PYTHON: "C:/Python34"
-    - PYTHON: "C:/Python34-x64"
     - PYTHON: "C:/Python35"
     - PYTHON: "C:/Python35-x64"
     - PYTHON: "C:/Python36"
@@ -32,7 +30,7 @@ install:
   - poetry install -v
 
 test_script:
-  - "poetry run pytest --cov=pendulum --cov-config=.coveragerc tests/"
+  - "poetry run pytest --cov=pendulum --cov-config=.coveragerc tests/ -W ignore"
 
 after_test:
   - "codecov"
