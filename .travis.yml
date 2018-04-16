@@ -1,6 +1,9 @@
 language: python
 
+env:
+
 matrix:
+  fast_finish: true
   include:
     - python: 2.7
       env: PENDULUM_EXTENSIONS=1
