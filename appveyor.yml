@@ -11,12 +11,17 @@ environment:
     - PYTHON: "C:/Python36"
     - PYTHON: "C:/Python36-x64"
 
+cache:
+  - '%LocalAppData%\pip\Cache'
+  - '%LocalAppData%\pypoetry\Cache'
+
+
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
   # Upgrade to the latest version of pip to avoid it displaying warnings
   # about it being out of date.
-  - "pip install --disable-pip-version-check --user --upgrade pip"
+  - "python -m pip install --disable-pip-version-check --user --upgrade pip"
 
   # Downloading and installing poetry
   - curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
