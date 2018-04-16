@@ -1,7 +1,5 @@
 language: python
 
-env:
-
 matrix:
   fast_finish: true
   include:
@@ -27,7 +25,9 @@ matrix:
       env: PENDULUM_EXTENSIONS=0
   allow_failures:
     - python: pypy
+      env:
     - python: pypy3
+      env:
 
 cache:
   pip: true
