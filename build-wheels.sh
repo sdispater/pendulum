@@ -8,7 +8,7 @@ echo "Create Poetry's virtualenv"
 /opt/python/${POETRY_PYTHON}/bin/virtualenv --python /opt/python/${POETRY_PYTHON}/bin/python ${POETRY_VENV}
 ${POETRY_VENV}/bin/pip install poetry --pre
 
-RELEASE=$(sed -n "s/__version__ = '\(.*\)'/\1/p" /io/pendulum/__version__.py)
+RELEASE=$(sed -n "s/VERSION = '\(.*\)'/\1/p" /io/pendulum/version.py)
 
 echo "Compile wheels"
 for PYTHON in ${PYTHON_VERSIONS}; do

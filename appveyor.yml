@@ -7,29 +7,28 @@ environment:
     - PYTHON: "C:/Python36"
     - PYTHON: "C:/Python36-x64"
 
+cache:
+  - '%LocalAppData%\pip\Cache'
+  - '%LocalAppData%\pypoetry\Cache'
+
+
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
   # Upgrade to the latest version of pip to avoid it displaying warnings
   # about it being out of date.
-  - "pip install --disable-pip-version-check --user --upgrade pip"
+  - "python -m pip install --disable-pip-version-check --user --upgrade pip"
 
-  # Create poetry virtualenv
-  - pip install virtualenv
-  - virtualenv --python="C:/Python36-x64\\python.exe" "venv-poetry"
-  - venv-poetry\\Scripts\\pip.exe install poetry --pre
-
-  # Create current python virtualenv
-  - python -m virtualenv venv
-  - venv\Scripts\activate.bat
-  - "SET VIRTUAL_ENV=venv"  # Seems that activate.bat does not set VIRTUAL_ENV
+  # Downloading and installing poetry
+  - curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+  - python get-poetry.py --preview
 
   # Install dependencies
-  - pip install codecov
-  - venv-poetry\\Scripts\\poetry.exe install -v
+  - python -m pip install codecov
+  - poetry install -v
 
 test_script:
-  - "pytest --cov=pendulum --cov-config=.coveragerc tests/"
+  - "poetry run pytest --cov=pendulum --cov-config=.coveragerc tests/ -W ignore"
 
 after_test:
   - "codecov"
