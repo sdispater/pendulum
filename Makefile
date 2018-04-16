@@ -61,4 +61,4 @@ cp_wheels_i686:
 
 # run tests against all supported python versions
 tox:
-@tox
+	@tox
