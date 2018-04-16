@@ -26,7 +26,7 @@ test:
 release: wheels_x64 cp_wheels_x64 wheels_i686 cp_wheels_i686 wheel
 
 publish:
-	@python -m twine upload dist/pendulum-$(PENDULUM_RELEASE)*
+	@poetry publish --no-build
 
 tar:
 	python setup.py sdist --formats=gztar

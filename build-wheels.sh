@@ -1,5 +1,5 @@
 #!/bin/bash
-PYTHON_VERSIONS="cp27-cp27m cp35-cp35m cp36-cp36m"
+PYTHON_VERSIONS="cp27-cp27m cp34-cp34m cp35-cp35m cp36-cp36m"
 
 POETRY_PYTHON="cp36-cp36m"
 POETRY_VENV="/opt/python/poetry"
@@ -32,7 +32,7 @@ for PYTHON in ${PYTHON_VERSIONS}; do
     . /opt/python/venv-${PYTHON}/bin/activate
     pip install pendulum==${RELEASE} --no-index --find-links /io/wheelhouse
     find ./io/tests | grep -E "(__pycache__|\.pyc$)" | xargs rm -rf
-    pytest /io/tests
+    pytest /io/tests -W ignore
     find ./io/tests | grep -E "(__pycache__|\.pyc$)" | xargs rm -rf
     deactivate
 done
