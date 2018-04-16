@@ -4,12 +4,13 @@
 
 ### Added
 
+- Added the `datetime()` helper.
 - Added the `set()` method to set properties.
 - Added the `is_utc()` and `is_local()` methods.
 
 ### Deprecated
 
-- `year_()`, `month_()`, `day_`, `hour_`, `minute_`, `second_`, `microsecond_()` are now deprecated.
+- `year_()`, `month_()`, `day_()`, `hour_()`, `minute_()`, `second_()`, `microsecond_()` are now deprecated.
 - `timezone_()` and `tz_()` are now deprecated.
 - `timestamp_()` is now deprecated.
 - `with_date_time()`, `with_time_from_string()` and `with_timestamp()` are now deprecated.
