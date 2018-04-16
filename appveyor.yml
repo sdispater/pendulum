@@ -23,7 +23,7 @@ install:
   - python get-poetry.py --preview
 
   # Install dependencies
-  - pip install codecov
+  - python -m pip install codecov
   - poetry install -v
 
 test_script:
