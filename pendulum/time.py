@@ -4,6 +4,7 @@ import warnings
 
 from datetime import time, datetime, timedelta
 
+from .exceptions import PendulumDeprecationWarning
 from .interval import Interval, AbsoluteInterval
 from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
 from .constants import (
@@ -133,7 +134,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         warnings.warn(
             'The between() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -190,7 +191,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         warnings.warn(
             'The min_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -213,7 +214,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         warnings.warn(
             'The minimum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -230,7 +231,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         warnings.warn(
             'The max() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -253,7 +254,7 @@ class Time(TranslatableMixin, FormattableMixing, TestableMixin, time):
         """
         warnings.warn(
             'The maximum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 

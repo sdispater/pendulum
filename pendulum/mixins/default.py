@@ -5,6 +5,7 @@ import warnings
 
 from contextlib import contextmanager
 
+from ..exceptions import PendulumDeprecationWarning
 from ..translator import Translator
 from ..formatting import FORMATTERS
 
@@ -82,7 +83,7 @@ class FormattableMixing(object):
         warnings.warn(
             'The reset_to_string_format() helper '
             'will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         cls.set_to_string_format(cls.DEFAULT_TO_STRING_FORMAT)
@@ -98,7 +99,7 @@ class FormattableMixing(object):
         warnings.warn(
             'The set_to_string_format() helper '
             'will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         cls._to_string_format = fmt

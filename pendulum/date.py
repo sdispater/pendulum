@@ -9,6 +9,7 @@ import warnings
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
+from .exceptions import PendulumDeprecationWarning
 from .period import Period
 from .formatting.difference_formatter import DifferenceFormatter
 from .mixins.default import TranslatableMixin, FormattableMixing, TestableMixin
@@ -118,7 +119,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         warnings.warn(
             'The year_() method will be removed in version 2.0. '
             'Use set(year={}) instead.'.format(year),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -128,7 +129,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         warnings.warn(
             'The month_() method will be removed in version 2.0. '
             'Use set(month={}) instead.'.format(month),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -138,7 +139,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         warnings.warn(
             'The day_() method will be removed in version 2.0. '
             'Use set(day={}) instead.'.format(day),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -293,7 +294,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The between() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -350,7 +351,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The min_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -373,7 +374,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The minimum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -390,7 +391,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The max_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -413,7 +414,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The maximum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -427,7 +428,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_weekday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -441,7 +442,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_weekend() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -455,7 +456,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_yesterday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -469,7 +470,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_today() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -483,7 +484,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_tomorrow() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -533,7 +534,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_same_day() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -547,7 +548,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_sunday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -561,7 +562,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_monday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -575,7 +576,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_tuesday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -589,7 +590,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_wednesday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -603,7 +604,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_thursday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -617,7 +618,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_friday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -631,7 +632,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The is_saturday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -717,7 +718,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The add_timedelta() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -734,7 +735,7 @@ class Date(TranslatableMixin, FormattableMixing, TestableMixin, date):
         """
         warnings.warn(
             'The subtract_timedelta() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 

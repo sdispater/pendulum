@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from .parsing.exceptions import ParserError
-
 
 class PendulumException(BaseException):
+
+    pass
+
+
+class PendulumWarning(Warning):
+
+    pass
+
+
+class PendulumDeprecationWarning(PendulumWarning):
 
     pass

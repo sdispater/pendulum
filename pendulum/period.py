@@ -7,6 +7,7 @@ import pendulum
 
 from datetime import datetime, date, timedelta
 
+from .exceptions import PendulumDeprecationWarning
 from .mixins.interval import WordableIntervalMixin
 from .interval import BaseInterval, Interval
 from .constants import MONTHS_PER_YEAR
@@ -148,7 +149,7 @@ class Period(WordableIntervalMixin, BaseInterval):
     def in_weekdays(self):
         warnings.warn(
             'The in_weekdays() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -168,7 +169,7 @@ class Period(WordableIntervalMixin, BaseInterval):
     def in_weekend_days(self):
         warnings.warn(
             'The in_weekend_days() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 

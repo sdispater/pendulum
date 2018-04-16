@@ -7,6 +7,7 @@ import warnings
 from datetime import datetime, date, time
 from dateutil import parser
 
+from ..exceptions import PendulumDeprecationWarning
 from ..helpers import parse_iso8601, week_day, days_in_year
 from .exceptions import ParserError
 
@@ -68,7 +69,7 @@ class Parser(object):
             warnings.warn(
                 'The "strict" keyword when parsing will have '
                 'another meaning in version 2.0. Use "exact" instead.',
-                DeprecationWarning,
+                PendulumDeprecationWarning,
                 stacklevel=2
             )
 
@@ -80,7 +81,7 @@ class Parser(object):
     def is_strict(self):
         warnings.warn(
             'is_strict() is deprecated. Use is_exact() instead.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 

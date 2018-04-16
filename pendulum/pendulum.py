@@ -11,6 +11,7 @@ import pendulum
 from .date import Date
 from .time import Time
 from .period import Period
+from .exceptions import PendulumDeprecationWarning
 from .exceptions import PendulumException
 from .tz import Timezone, UTC, FixedTimezone, local_timezone
 from .tz.timezone_info import TimezoneInfo
@@ -355,7 +356,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The create() helper will no longer exist in version 2.0. '
             'Use datetime() instead.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         tz = cls._safe_create_datetime_zone(tz)
@@ -409,7 +410,7 @@ class Pendulum(Date, datetime.datetime):
                 'Using the classic formatter in from_format() '
                 'is deprecated and will no longer be possible '
                 'in version 2.0. Use the alternative formatter instead.',
-                DeprecationWarning,
+                PendulumDeprecationWarning,
                 stacklevel=2
             )
             dt = datetime.datetime.strptime(time, fmt)
@@ -520,7 +521,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The copy() method will be removed in version 2.0. ',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         return self.instance(self._datetime)
@@ -531,7 +532,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The hour_() method will be removed in version 2.0. '
             'Use set(hour={}) instead.'.format(hour),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -541,7 +542,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The minute_() method will be removed in version 2.0. '
             'Use set(minute={}) instead.'.format(minute),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -551,7 +552,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The second_() method will be removed in version 2.0. '
             'Use set(second={}) instead.'.format(second),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -561,7 +562,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The microsecond_() method will be removed in version 2.0. '
             'Use set(microsecond={}) instead.'.format(microsecond),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -576,7 +577,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The timezone_() method will be removed in version 2.0. '
             'Use set(tz={}) instead.'.format(tz),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -590,7 +591,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The tz_() method will be removed in version 2.0. '
             'Use set(tz={}) instead.'.format(tz),
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -599,7 +600,7 @@ class Pendulum(Date, datetime.datetime):
     def timestamp_(self, timestamp, tz=UTC):
         warnings.warn(
             'The timestamp_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -677,7 +678,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The local property will be removed in version 2.0. '
             'Use is_local() instead.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -691,7 +692,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The utc property will be removed in version 2.0. '
             'Use is_utc() instead.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -790,7 +791,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The with_date_time() method will be removed in version 2.0. '
             'Use both on() and at() methods instead.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -811,7 +812,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The with_time_from_string() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -857,7 +858,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The with_timestamp() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1051,7 +1052,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The between() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1108,7 +1109,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The min_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1131,7 +1132,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The minimum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1148,7 +1149,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The max_() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1171,7 +1172,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The maximum() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1185,7 +1186,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The is_yesterday() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1199,7 +1200,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The is_today() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1213,7 +1214,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The is_tomorrow() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         return self.to_date_string() == self.tomorrow(self._tz).to_date_string()
@@ -1254,7 +1255,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The is_same_day() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
         dt = self._get_datetime(dt, True)
@@ -1377,7 +1378,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The add_timedelta() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1402,7 +1403,7 @@ class Pendulum(Date, datetime.datetime):
         """
         warnings.warn(
             'The subtract_timedelta() method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1428,7 +1429,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The seconds_since_midnight() '
             'method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
@@ -1443,7 +1444,7 @@ class Pendulum(Date, datetime.datetime):
         warnings.warn(
             'The seconds_until_end_of_day() '
             'method will be removed in version 2.0.',
-            DeprecationWarning,
+            PendulumDeprecationWarning,
             stacklevel=2
         )
 
