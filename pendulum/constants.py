@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # The day constants
 SUNDAY = 0
 MONDAY = 1
@@ -22,19 +20,19 @@ SECONDS_PER_HOUR = MINUTES_PER_HOUR * SECONDS_PER_MINUTE
 SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR
 
 # Formats
-ATOM = '%Y-%m-%dT%H:%M:%S%_z'
-COOKIE = '%A, %d-%b-%Y %H:%M:%S %Z'
-ISO8601 = '%Y-%m-%dT%H:%M:%S%_z'
-ISO8601_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-RFC822 = '%a, %d %b %y %H:%M:%S %z'
-RFC850 = '%A, %d-%b-%y %H:%M:%S %Z'
-RFC1036 = '%a, %d %b %y %H:%M:%S %z'
-RFC1123 = '%a, %d %b %Y %H:%M:%S %z'
-RFC2822 = '%a, %d %b %Y %H:%M:%S %z'
-RFC3339 = '%Y-%m-%dT%H:%M:%S%_z'
-RFC3339_EXTENDED = '%Y-%m-%dT%H:%M:%S.%f%_z'
-RSS = '%a, %d %b %Y %H:%M:%S %z'
-W3C = '%Y-%m-%dT%H:%M:%S%_z'
+ATOM = 'YYYY-MM-DDTHH:mm:ssZ'
+COOKIE = 'dddd, DD-MMM-YYYY HH:mm:ss zz'
+ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ'
+ISO8601_EXTENDED = 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ'
+RFC822 = 'ddd, DD MMM YY HH:mm:ss ZZ'
+RFC850 = 'dddd, DD-MMM-YY HH:mm:ss zz'
+RFC1036 = 'ddd, DD MMM YY HH:mm:ss ZZ'
+RFC1123 = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
+RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
+RFC3339 = ISO8601
+RFC3339_EXTENDED = ISO8601_EXTENDED
+RSS = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
+W3C = ISO8601
 
 
 EPOCH_YEAR = 1970
@@ -69,6 +67,11 @@ SECS_PER_4_YEARS = (
 SECS_PER_YEAR = (
     DAYS_PER_N_YEAR * SECS_PER_DAY,
     DAYS_PER_L_YEAR * SECS_PER_DAY
+)
+
+DAYS_PER_YEAR = (
+    DAYS_PER_N_YEAR,
+    DAYS_PER_L_YEAR
 )
 
 # The month lengths in non-leap and leap years respectively.

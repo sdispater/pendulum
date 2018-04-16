@@ -1,0 +1,33 @@
+---
+layout: documentation
+title: {{ config.site_name|striptags|e }}
+version: 2.x
+---
+
+
+    <!-- START CONTENT SECTION -->
+    <section class="sm-p-b-30 p-b-70 p-t-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3 text-center p-t-100">
+              <h6 class="block-title m-b-0 hint-text">Version <span class="documentation-version">{{config.extra.version}}</span></h6>
+              <h1 class="m-t-5">Documentation</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END CONTENT SECTION -->
+
+    <section class="p-b-50 p-t-50 documentation-content">
+        <div class="container">
+            <div class="panel panel-transparent">
+                <div class="bg-white row p-l-20 p-r-20 p-b-20 p-t-5 xs-no-padding">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2 documentation-body">
+                            {{page.content}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
+from pendulum.utils._compat import decode
 
-from .._compat import decode
-from ..translator import Translator
+from ..locales.locale import Locale
 
 
 class DifferenceFormatter(object):
@@ -9,20 +8,20 @@ class DifferenceFormatter(object):
     Handles formatting differences in text.
     """
 
-    def __init__(self, translator=Translator()):
-        self._translator = translator
+    def __init__(self, locale='en'):
+        self._locale = Locale.load(locale)
 
-    def diff_for_humans(self, date, other=None, absolute=False, locale=None):
+    def format(self, diff, is_now=True, absolute=False, locale=None):
         """
-        Get the difference in a human readable format.
+        Formats a difference.
 
-        :param date: The datetime to start with.
-        :type date: pendulum.Date or pendulum.Pendulum
+        :param diff: The difference to format
+        :type diff: pendulum.period.Period
 
-        :param other: The datetime to compare against (defaults to now).
-        :type other: pendulum.Date or pendulum.Pendulum or None
+        :param is_now: Whether the difference includes now
+        :type is_now: bool
 
-        :param absolute: Removes time difference modifiers ago, after, etc
+        :param absolute: Whether it's an absolute difference or not
         :type absolute: bool
 
         :param locale: The locale to use
@@ -30,18 +29,12 @@ class DifferenceFormatter(object):
 
         :rtype: str
         """
-        is_now = other is None
-
-        if is_now:
-            if hasattr(date, 'now'):
-                other = date.now(date.timezone)
-            else:
-                other = date.today()
-
-        diff = date.diff(other)
+        if locale is None:
+            locale = self._locale
+        else:
+            locale = Locale.load(locale)
 
         count = diff.remaining_seconds
-        unit = 'second'
 
         if diff.years > 0:
             unit = 'year'
@@ -67,33 +60,90 @@ class DifferenceFormatter(object):
         elif diff.remaining_days > 0:
             unit = 'day'
             count = diff.remaining_days
+
+            if diff.hours >= 22:
+                count += 1
         elif diff.hours > 0:
             unit = 'hour'
             count = diff.hours
         elif diff.minutes > 0:
             unit = 'minute'
             count = diff.minutes
+        elif 10 < diff.remaining_seconds <= 59:
+            unit = 'second'
+            count = diff.remaining_seconds
+        else:
+            # We check if the "a few seconds" unit exists
+            time = locale.get('custom.units.few_second')
+            if time is not None:
+                if absolute:
+                    return time
+
+                key = 'custom'
+                is_future = diff.invert
+                if is_now:
+                    if is_future:
+                        key += '.from_now'
+                    else:
+                        key += '.ago'
+                else:
+                    if is_future:
+                        key += '.after'
+                    else:
+                        key += '.before'
+
+                return locale.get(key).format(time)
+            else:
+                unit = 'second'
+                count = diff.remaining_seconds
 
         if count == 0:
             count = 1
 
-        time = self._translator.transchoice(unit, count, {'count': count}, locale=locale)
-
         if absolute:
-            return decode(time)
-
-        is_future = diff.invert
-
-        if is_now:
-            trans_id = 'from_now' if is_future else 'ago'
+            key = 'translations.units.{}'.format(unit)
         else:
-            trans_id = 'after' if is_future else 'before'
+            is_future = diff.invert
 
-        # Some langs have special pluralization for past and future tense
-        try_key_exists = '%s_%s' % (unit, trans_id)
-        if try_key_exists != self._translator.transchoice(try_key_exists, count, locale=locale):
-            time = self._translator.transchoice(try_key_exists, count, {'count': count}, locale=locale)
+            if is_now:
+                # Relative to now, so we can use
+                # the CLDR data
+                key = 'translations.relative.{}'.format(unit)
 
-        trans = self._translator.trans(trans_id, {'time': time}, locale=locale)
+                if is_future:
+                    key += '.future'
+                else:
+                    key += '.past'
+            else:
+                # Absolute comparison
+                # So we have to use the custom locale data
 
-        return decode(trans)
+                # Checking for special pluralization rules
+                key = 'custom.units_relative'
+                if is_future:
+                    key += '.{}.future'.format(unit)
+                else:
+                    key += '.{}.past'.format(unit)
+
+                trans = locale.get(key)
+                if not trans:
+                    # No special rule
+                    time = locale.get(
+                        'translations.units.{}.{}'.format(
+                            unit, locale.plural(count)
+                        )
+                    ).format(count)
+                else:
+                    time = trans[locale.plural(count)].format(count)
+
+                key = 'custom'
+                if is_future:
+                    key += '.after'
+                else:
+                    key += '.before'
+
+                return locale.get(key).format(decode(time))
+
+        key += '.{}'.format(locale.plural(count))
+
+        return decode(locale.get(key).format(count))

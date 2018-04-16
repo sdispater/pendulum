@@ -1,37 +1,84 @@
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import operator
 import pendulum
 
 from datetime import datetime, date
 
-from .mixins.interval import WordableIntervalMixin
-from .interval import BaseInterval, Interval
+from pendulum.utils._compat import _HAS_FOLD
+from pendulum.utils._compat import decode
+
+from .duration import Duration
 from .constants import MONTHS_PER_YEAR
 from .helpers import precise_diff
 
 
-class Period(WordableIntervalMixin, BaseInterval):
+class Period(Duration):
     """
-    Interval class that is aware of the datetimes that generated the
+    Duration class that is aware of the datetimes that generated the
     time difference.
     """
 
     def __new__(cls, start, end, absolute=False):
+        if isinstance(start, datetime) and isinstance(end, datetime):
+            if start.tzinfo is None and end.tzinfo is not None \
+                    or start.tzinfo is not None and end.tzinfo is None:
+                raise TypeError(
+                    "can't compare offset-naive and offset-aware datetimes"
+                )
+
         if absolute and start > end:
             end, start = start, end
 
-        if isinstance(start, pendulum.Pendulum):
-            start = start._datetime
+        _start = start
+        _end = end
+        if isinstance(start, pendulum.DateTime):
+            if _HAS_FOLD:
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo,
+                    fold=start.fold
+                )
+            else:
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo
+                )
         elif isinstance(start, pendulum.Date):
-            start = date(start.year, start.month, start.day)
+            _start = date(start.year, start.month, start.day)
 
-        if isinstance(end, pendulum.Pendulum):
-            end = end._datetime
+        if isinstance(end, pendulum.DateTime):
+            if _HAS_FOLD:
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo,
+                    fold=end.fold
+                )
+            else:
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo
+                )
         elif isinstance(end, pendulum.Date):
-            end = date(end.year, end.month, end.day)
+            _end = date(end.year, end.month, end.day)
 
-        delta = end - start
+        # Fixing issues with datetime.__sub__()
+        # not handling offsets if the tzinfo is the same
+        if (
+            isinstance(_start, datetime) and isinstance(_end, datetime)
+            and _start.tzinfo is _end.tzinfo
+        ):
+            if _start.tzinfo is not None:
+                _start = (_start - start.utcoffset()).replace(tzinfo=None)
+
+            if isinstance(end, datetime) and _end.tzinfo is not None:
+                _end = (_end - end.utcoffset()).replace(tzinfo=None)
+
+        delta = _end - _start
 
         return super(Period, cls).__new__(
             cls, seconds=delta.total_seconds()
@@ -40,29 +87,37 @@ class Period(WordableIntervalMixin, BaseInterval):
     def __init__(self, start, end, absolute=False):
         super(Period, self).__init__()
 
-        if not isinstance(start, (pendulum.Date)):
+        if not isinstance(start, pendulum.Date):
             if isinstance(start, datetime):
-                start = pendulum.Pendulum.instance(start)
+                start = pendulum.instance(start)
             else:
-                start = pendulum.Date.instance(start)
+                start = pendulum.date(start.year, start.month, start.day)
 
             _start = start
         else:
-            if isinstance(start, pendulum.Pendulum):
-                _start = start._datetime
+            if isinstance(start, pendulum.DateTime):
+                _start = datetime(
+                    start.year, start.month, start.day,
+                    start.hour, start.minute, start.second, start.microsecond,
+                    tzinfo=start.tzinfo
+                )
             else:
                 _start = date(start.year, start.month, start.day)
 
-        if not isinstance(end, (pendulum.Date)):
+        if not isinstance(end, pendulum.Date):
             if isinstance(end, datetime):
-                end = pendulum.Pendulum.instance(end)
+                end = pendulum.instance(end)
             else:
-                end = pendulum.Date.instance(end)
+                end = pendulum.date(end.year, end.month, end.day)
 
             _end = end
         else:
-            if isinstance(end, pendulum.Pendulum):
-                _end = end._datetime
+            if isinstance(end, pendulum.DateTime):
+                _end = datetime(
+                    end.year, end.month, end.day,
+                    end.hour, end.minute, end.second, end.microsecond,
+                    tzinfo=end.tzinfo
+                )
             else:
                 _end = date(end.year, end.month, end.day)
 
@@ -81,15 +136,15 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     @property
     def years(self):
-        return self._delta['years']
+        return self._delta.years
 
     @property
     def months(self):
-        return self._delta['months']
+        return self._delta.months
 
     @property
     def weeks(self):
-        return self._delta['days'] // 7
+        return self._delta.days // 7
 
     @property
     def days(self):
@@ -97,15 +152,15 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     @property
     def remaining_days(self):
-        return abs(self._delta['days']) % 7 * self._sign(self._days)
+        return abs(self._delta.days) % 7 * self._sign(self._days)
 
     @property
     def hours(self):
-        return self._delta['hours']
+        return self._delta.hours
 
     @property
     def minutes(self):
-        return self._delta['minutes']
+        return self._delta.minutes
 
     @property
     def start(self):
@@ -141,35 +196,7 @@ class Period(WordableIntervalMixin, BaseInterval):
         return sign * (abs(days) // 7)
 
     def in_days(self):
-        return self._delta['total']['days']
-
-    def in_weekdays(self):
-        start, end = self.start.start_of('day'), self.end.start_of('day')
-        if not self._absolute and self.invert:
-            start, end = self.end.start_of('day'), self.start.start_of('day')
-
-        days = 0
-        while start <= end:
-            if start.is_weekday():
-                days += 1
-
-            start = start.add(days=1)
-
-        return days * (-1 if not self._absolute and self.invert else 1)
-
-    def in_weekend_days(self):
-        start, end = self.start.start_of('day'), self.end.start_of('day')
-        if not self._absolute and self.invert:
-            start, end = self.end.start_of('day'), self.start.start_of('day')
-
-        days = 0
-        while start <= end:
-            if start.is_weekend():
-                days += 1
-
-            start = start.add(days=1)
-
-        return days * (-1 if not self._absolute and self.invert else 1)
+        return self._delta.total_days
 
     def in_words(self, locale=None, separator=' '):
         """
@@ -195,14 +222,33 @@ class Period(WordableIntervalMixin, BaseInterval):
             ('second', self.remaining_seconds)
         ]
 
-        return super(Period, self).in_words(
-            locale=locale, separator=separator, _periods=periods
-        )
+        if locale is None:
+            locale = pendulum.get_locale()
+
+        locale = pendulum.locale(locale)
+        parts = []
+        for period in periods:
+            unit, count = period
+            if abs(count) > 0:
+                translation = locale.translation(
+                    'units.{}.{}'.format(
+                        unit, locale.plural(abs(count))
+                    )
+                )
+                parts.append(translation.format(count))
+
+        if not parts and abs(self.microseconds) > 0:
+            translation = locale.translation(
+                'units.second.{}'.format(locale.plural(1))
+            )
+            us = abs(self.microseconds) / 1e6
+            parts.append(
+                translation.format('{:.2f}').format(us)
+            )
+
+        return decode(separator.join(parts))
 
     def range(self, unit, amount=1):
-        return list(self.xrange(unit, amount))
-
-    def xrange(self, unit, amount=1):
         method = 'add'
         op = operator.le
         if not self._absolute and self.invert:
@@ -245,22 +291,17 @@ class Period(WordableIntervalMixin, BaseInterval):
 
     def as_interval(self):
         """
-        Return the Period as an Interval.
+        Return the Period as an Duration.
 
-        :rtype: Interval
+        :rtype: Duration
         """
-        return Interval(seconds=self.total_seconds())
+        return Duration(seconds=self.total_seconds())
 
     def __iter__(self):
-        return self.xrange('days')
+        return self.range('days')
 
     def __contains__(self, item):
-        from .pendulum import Pendulum
-
-        if not isinstance(item, Pendulum):
-            item = Pendulum.instance(item)
-
-        return item.between(self.start, self.end)
+        return self.start <= item <= self.end
 
     def __add__(self, other):
         return self.as_interval().__add__(other)
@@ -299,6 +340,9 @@ class Period(WordableIntervalMixin, BaseInterval):
         return '<Period [{} -> {}]>'.format(
             self._start, self._end
         )
+
+    def __str__(self):
+        return self.__repr__()
 
     def _getstate(self, protocol=3):
         start, end = self.start, self.end

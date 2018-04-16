@@ -1,0 +1,245 @@
+#!/usr/bin/env python
+from __future__ import unicode_literals
+
+import glob
+import os
+
+from babel.plural import (
+    PluralRule, compile_zero,
+    _GettextCompiler, _binary_compiler, _unary_compiler
+)
+from babel.dates import tokenize_pattern, PATTERN_CHARS
+from babel.localedata import load, normalize_locale, LocaleDataDict
+
+from cleo import Application, Command
+from pendulum import __version__
+
+
+class _LambdaCompiler(_GettextCompiler):
+    """Compiles the expression to lambda function."""
+    compile_v = compile_zero
+    compile_w = compile_zero
+    compile_f = compile_zero
+    compile_t = compile_zero
+    compile_and = _binary_compiler('(%s and %s)')
+    compile_or = _binary_compiler('(%s or %s)')
+    compile_not = _unary_compiler('(not %s)')
+    compile_mod = _binary_compiler('(%s %% %s)')
+
+    def compile_relation(self, method, expr, range_list):
+        code = _GettextCompiler.compile_relation(
+            self, method, expr, range_list)
+        code = code.replace('&&', 'and')
+        code = code.replace('||', 'or')
+        if method == 'in':
+            expr = self.compile(expr)
+            code = '(%s == %s and %s)' % (expr, expr, code)
+        return code
+
+
+class LocaleCreate(Command):
+    """
+    Creates locale translations.
+
+    locale:create
+        {locales?* : Locales to dump}
+    """
+
+    TEMPLATE = """# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+\"\"\"
+{locale} locale file.
+
+It has been generated automatically and must not be modified directly.
+\"\"\"
+
+from .custom import translations as custom_translations
+
+
+locale = {{
+    'plural': {plural},
+    'ordinal': {ordinal},
+    'translations': {translations},
+    'custom': custom_translations
+}}
+"""
+
+    CUSTOM_TEMPLATE = """# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+\"\"\"
+{locale} custom locale file.
+\"\"\"
+
+translations = {{}}
+"""
+
+    LOCALE_DIR = os.path.join('pendulum', 'locales')
+
+    def handle(self):
+        locales = self.argument('locales')
+        if not locales:
+            return
+
+        for locale in locales:
+            data = {}
+            parts = locale.split('-')
+            if len(parts) > 1:
+                parts[1] = parts[1].upper()
+
+            normalized = normalize_locale(locale.replace('-', '_'))
+            if not normalized:
+                self.error('Locale [{}] does not exist.'.format(locale))
+                continue
+
+            self.line(
+                '<info>Generating <comment>{}</> locale.</>'.format(locale)
+            )
+
+            content = LocaleDataDict(load(normalized))
+
+            # Pluralization rule
+            rule = content['plural_form']
+            plural = self.plural_rule_to_lambda(rule)
+
+            # Ordinal rule
+            rule = content['ordinal_form']
+            ordinal = self.plural_rule_to_lambda(rule)
+
+            # Getting days names
+            days = content['days']['format']
+            data['days'] = {}
+            for fmt, names in days.items():
+                data['days'][fmt] = {}
+                for value, name in names.items():
+                    data['days'][fmt][(value + 1) % 7] = name
+
+            # Getting months names
+            months = content['months']['format']
+            data['months'] = months
+
+            # Units
+            patterns = content['unit_patterns']
+            units = [
+                'year', 'month', 'week', 'day',
+                'hour', 'minute', 'second', 'microsecond'
+            ]
+            data['units'] = {}
+            for unit in units:
+                pattern = patterns['duration-{}'.format(unit)]['long']
+                if 'per' in pattern:
+                    del pattern['per']
+
+                data['units'][unit] = pattern
+
+            # Relative
+            data['relative'] = {}
+            for key in content['date_fields']:
+                if key not in [
+                    'year', 'month', 'week', 'day',
+                    'hour', 'minute', 'second'
+                ]:
+                    continue
+
+                data['relative'][key] = content['date_fields'][key]
+
+            # Day periods
+            data['day_periods'] = content['day_periods']['format']['wide']
+
+            result = self.TEMPLATE.format(
+                locale=locale,
+                plural=plural,
+                ordinal=ordinal,
+                translations=self.format_dict(data, tab=2)
+            )
+
+            dest_dir = os.path.join(self.LOCALE_DIR, locale.replace('-', '_'))
+            if not os.path.exists(dest_dir):
+                os.mkdir(dest_dir)
+
+            init = os.path.join(dest_dir, '__init__.py')
+            main = os.path.join(dest_dir, 'locale.py')
+            custom = os.path.join(dest_dir, 'custom.py')
+
+            if not os.path.exists(init):
+                with open(init, 'w'):
+                    os.utime(init)
+
+            with open(main, 'w') as fw:
+                fw.write(result)
+
+            if not os.path.exists(custom):
+                with open(custom, 'w') as fw:
+                    fw.write(self.CUSTOM_TEMPLATE.format(locale=locale))
+
+    def format_dict(self, d, tab=1):
+        s = ['{\n']
+        for k, v in d.items():
+            if isinstance(v, (dict, LocaleDataDict)):
+                v = self.format_dict(v, tab + 1)
+            else:
+                v = repr(v)
+
+            s.append('%s%r: %s,\n' % ('    ' * tab, k, v))
+        s.append('%s}' % ('    ' * (tab - 1)))
+
+        return ''.join(s)
+
+    def plural_rule_to_lambda(self, rule):
+        to_py = _LambdaCompiler().compile
+        result = ['lambda n: ']
+        for tag, ast in PluralRule.parse(rule).abstract:
+            result.append("'%s' if %s else " % (tag, to_py(ast)))
+        result.append("'other'")
+        return ''.join(result)
+
+    def convert_ldml_format(self, fmt):
+        result = []
+
+        for tok_type, tok_value in tokenize_pattern(fmt):
+            if tok_type == "chars":
+                result.append(tok_value.replace('%', '%%'))
+            elif tok_type == "field":
+                fieldchar, fieldnum = tok_value
+                limit = PATTERN_CHARS[fieldchar]
+                if limit and fieldnum not in limit:
+                    raise ValueError('Invalid length for field: %r'
+                                     % (fieldchar * fieldnum))
+                result.append(
+                    self.TOKENS_MAP.get(
+                        fieldchar * fieldnum,
+                        fieldchar * fieldnum
+                    )
+                )
+            else:
+                raise NotImplementedError("Unknown token type: %s" % tok_type)
+
+        return ''.join(result)
+
+
+class LocaleRecreate(Command):
+    """
+    Recreate existing locales.
+
+    locale:recreate
+    """
+
+    def handle(self):
+        # Listing locales
+
+        locales_dir = os.path.join('pendulum', 'locales')
+        locales = glob.glob(os.path.join(locales_dir, '*', 'locale.py'))
+        locales = [
+            os.path.basename(os.path.dirname(l))
+            for l in locales
+        ]
+
+        self.call('locale:create', [('locales', locales)])
+
+
+app = Application('Clock', __version__)
+app.add(LocaleCreate())
+app.add(LocaleRecreate())
+
+
+if __name__ == '__main__':
+    app.run()

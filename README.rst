@@ -16,7 +16,7 @@ Pendulum
 
 Python datetimes made easy.
 
-Supports Python **2.7+**, **3.4+** and **PyPy**.
+Supports Python **2.7** and **3.4+**.
 
 
 .. code-block:: python
@@ -34,10 +34,6 @@ Supports Python **2.7+**, **3.4+** and **PyPy**.
    >>> tomorrow = pendulum.now().add(days=1)
    >>> last_week = pendulum.now().subtract(weeks=1)
 
-   >>> if pendulum.now().is_weekend():
-   ...     print('Party!')
-   'Party!'
-
    >>> past = pendulum.now().subtract(minutes=2)
    >>> past.diff_for_humans()
    >>> '2 minutes ago'
@@ -49,11 +45,11 @@ Supports Python **2.7+**, **3.4+** and **PyPy**.
    '6 days 23 hours 58 minutes'
 
    # Proper handling of datetime normalization
-   >>> pendulum.create(2013, 3, 31, 2, 30, 0, 0, 'Europe/Paris')
+   >>> pendulum.datetime(2013, 3, 31, 2, 30, tz='Europe/Paris')
    '2013-03-31T03:30:00+02:00' # 2:30 does not exist (Skipped time)
 
    # Proper handling of dst transitions
-   >>> just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+   >>> just_before = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
    '2013-03-31T01:59:59.999999+01:00'
    >>> just_before.add(microseconds=1)
    '2013-03-31T03:00:00+02:00'
@@ -69,7 +65,7 @@ So it's still ``datetime`` but better.
 
 Unlike other datetime libraries for Python, Pendulum is a drop-in replacement
 for the standard ``datetime`` class (it inherits from it), so, basically, you can replace all your ``datetime``
-instances by ``Pendulum`` instances in you code (exceptions exist for libraries that check
+instances by ``DateTime`` instances in you code (exceptions exist for libraries that check
 the type of the objects by using the ``type`` function like ``sqlite3`` or ``PyMySQL`` for instance).
 
 It also removes the notion of naive datetimes: each ``Pendulum`` instance is timezone-aware
@@ -115,7 +111,7 @@ and it will try its best to return something while silently failing to handle so
     -3599.999999
     # Should be 1e-06
 
-    just_before = pendulum.create(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
+    just_before = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
     just_after = just_before.add(microseconds=1)
     '2013-03-31T03:00:00+02:00'
 
@@ -129,7 +125,7 @@ behavior with the data you are passing to it.
 Limitations
 ===========
 
-Even though the ``Pendulum`` class is a subclass of ``datetime`` there are some rare cases where
+Even though the ``DateTime`` class is a subclass of ``datetime`` there are some rare cases where
 it can't replace the native class directly. Here is a list (non-exhaustive) of the reported cases with
 a possible solution, if any:
 
@@ -137,10 +133,10 @@ a possible solution, if any:
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    from pendulum import DateTime
     from sqlite3 import register_adapter
 
-    register_adapter(Pendulum, lambda val: val.isoformat(' '))
+    register_adapter(DateTime, lambda val: val.isoformat(' '))
 
 * ``mysqlclient`` (former ``MySQLdb``) and ``PyMySQL`` will use the ``type()`` function to determine the type of the object by default. To work around it you can register a new adapter:
 
@@ -149,17 +145,17 @@ a possible solution, if any:
     import MySQLdb.converters
     import pymysql.converters
 
-    from pendulum import Pendulum
+    from pendulum import DateTime
 
-    MySQLdb.converters.conversions[Pendulum] = MySQLdb.converters.DateTime2literal
-    pymysql.converters.conversions[Pendulum] = pymysql.converters.escape_datetime
+    MySQLdb.converters.conversions[DateTime] = MySQLdb.converters.DateTime2literal
+    pymysql.converters.conversions[DateTime] = pymysql.converters.escape_datetime
 
 * ``django`` will use the ``isoformat()`` method to store datetimes in the database. However since ``pendulum`` is always timezone aware the offset information will always be returned by ``isoformat()`` raising an error, at least for MySQL databases. To work around it you can either create your own ``DateTimeField`` or use the previous workaround for ``MySQLdb``:
 
 .. code-block:: python
 
     from django.db.models import DateTimeField as BaseDateTimeField
-    from pendulum import Pendulum
+    from pendulum import DateTime
 
 
     class DateTimeField(BaseDateTimeField):
@@ -167,7 +163,7 @@ a possible solution, if any:
         def value_to_string(self, obj):
             val = self.value_from_object(obj)
 
-            if isinstance(value, Pendulum):
+            if isinstance(value, DateTime):
                 return value.to_datetime_string()
 
             return '' if val is None else val.isoformat()
@@ -176,8 +172,8 @@ a possible solution, if any:
 Resources
 =========
 
-* `Official Website <http://pendulum.eustace.io>`_
-* `Documentation <http://pendulum.eustace.io/docs/>`_
+* `Official Website <https://pendulum.eustace.io>`_
+* `Documentation <https://pendulum.eustace.io/docs/>`_
 * `Issue Tracker <https://github.com/sdispater/pendulum/issues>`_
 
 
@@ -185,6 +181,44 @@ Contributing
 ============
 
 Contributions are welcome, especially with localization.
-Check the `languages <https://github.com/sdispater/pendulum/tree/master/pendulum/lang>`_ already supported,
-and if you want to add a new one, take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/lang/en.py>`_
-file as a starting point and add tests accordingly.
+
+Getting started
+---------------
+
+To work on the Pendulum codebase, you'll want to clone the project locally
+and install the required depedendencies via `poetry <https://poetry.eustace.io>`_.
+
+.. code-block:: bash
+
+    $ git clone git@github.com:sdispater/pendulum.git
+    $ poetry install
+
+Localization
+------------
+
+If you want to help with localization, there are two different cases: the locale already exists
+or not.
+
+If the locale does not exist you will need to create it by using the ``clock`` utility:
+
+.. code-block:: bash
+
+    ./clock locale:dump <your-locale>
+
+It will generate a directory in ``pendulum/locales`` named after your locale, with the following
+structure:
+
+.. code-block:: text
+
+    <your-locale>/
+        - custom.py
+        - locale.py
+
+The ``locale.py`` file must not be modified. It contains the translations provided by
+the CLDR database.
+
+The ``custom.py`` file is the one you want to modify. It contains the data needed
+by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locale/en/custom.py>`_
+data as a reference to see which data is needed.
+
+You should also add tests for the created or modified locale.

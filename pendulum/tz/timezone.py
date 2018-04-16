@@ -1,473 +1,308 @@
-# -*- coding: utf-8 -*-
+import pendulum
 
-from datetime import datetime, tzinfo
-from bisect import bisect_right
+from datetime import datetime, timedelta, tzinfo
+from typing import Optional, Union
 
-from ..constants import SECONDS_PER_DAY
-from .loader import Loader
-from .timezone_info import TimezoneInfo, UTC
-from ..helpers import local_time as _local_time
-from .transition_type import TransitionType
+from pendulum.helpers import local_time, timestamp
+from pendulum.utils._compat import _HAS_FOLD
+
 from .exceptions import NonExistingTime, AmbiguousTime
+from .zoneinfo import read, read_file
+from .zoneinfo.transition import Transition
+
+
+POST_TRANSITION = 'post'
+PRE_TRANSITION = 'pre'
+TRANSITION_ERROR = 'error'
 
 
 class Timezone(tzinfo):
     """
     Represents a named timezone.
 
-    It inherits from tzinfo in order to be passed to astimezone().
+    The accepted names are those provided by the IANA time zone database.
+
+    >>> from pendulum.tz.timezone import Timezone
+    >>> tz = Timezone('Europe/Paris')
     """
 
-    _cache = {}
+    def __init__(self, name):  # type: (str) -> None
+        tz = read(name)
 
-    PRE_TRANSITION = 'pre'
-    POST_TRANSITION = 'post'
-    TRANSITION_ERROR = 'error'
-
-    def __init__(self, name, transitions,
-                 tzinfos,
-                 default_tzinfo_index,
-                 utc_transition_times):
-        """
-        Constructor.
-
-        :param name: The name of the timezone.
-        :type name: str
-
-        :param transitions: The timezone transitions
-        :type transitions: tuple
-
-        :param tzinfos: The timezone information.
-        :type tzinfos: tuple
-
-        :param default_tzinfo_index: The default TimezoneInfo index.
-        :type default_tzinfo_index: int
-
-        :param utc_transition_times: Timestamps of transition times (UTC)
-        :type utc_transition_times: list
-        """
         self._name = name
-        self._transitions = transitions
-        self.__tzinfos = tzinfos
-        self._tzinfos = tuple(
-            map(lambda tzinfo: TimezoneInfo(self, *tzinfo), tzinfos)
-        )
-        self._default_tzinfo_index = default_tzinfo_index
-        self._utc_transition_times = utc_transition_times
-        self._local_hint = {}
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def transitions(self):
-        return self._transitions
-
-    @property
-    def tzinfos(self):
-        return self._tzinfos
-
-    @classmethod
-    def load(cls, name):
-        """
-        Loads a timezone with the given name or
-        returns it from the cache.
-
-        :param name: The name of the timezone
-        :type name: str or int
-
-        :rtype: Timezone
-        """
-        # Shortcut to UTC
-        if name.upper() == 'UTC':
-            return UTCTimezone
-
-        if name not in cls._cache:
-            (transitions,
-             tzinfos,
-             default_tzinfo_index,
-             utc_transition_times) = Loader.load(name)
-
-            zone = cls(name,
-                       transitions,
-                       tzinfos,
-                       default_tzinfo_index,
-                       utc_transition_times)
-
-            cls._cache[name] = zone
-
-        return cls._cache[name]
-
-    def convert(self, dt, dst_rule=None):
-        """
-        Converts or normalizes a datetime.
-
-        If there is no tzinfo set on the datetime, local time will be assumed
-        and normalization will occur.
-
-        Otherwise, it will convert the datetime to local time.
-        """
-        if dt.tzinfo is None:
-            # we assume local time
-            converted = self._normalize(dt, dst_rule=dst_rule)
-        else:
-            converted = self._convert(dt)
-
-        if not isinstance(converted, tuple):
-            return converted
-
-        return dt.__class__(*converted[0], **converted[1])
-
-    def datetime(self, year, month, day,
-                 hour=0, minute=0, second=0, microsecond=0):
-        """
-        Creates a new datetime object for the current timezone.
-
-        :param year: The year
-        :type year: int
-
-        :param month: The month
-        :type month: int
-
-        :param day: The day
-        :type day: int
-
-        :param hour: The hour
-        :type hour: int
-
-        :param minute: The minute
-        :type minute: int
-
-        :param second: The second
-        :type second: int
-
-        :param microsecond: The microsecond
-        :type microsecond: int
-
-        :rtype: datetime
-        """
-        dt = datetime(year, month, day, hour, minute, second, microsecond)
-
-        return self.convert(dt, dst_rule=self.POST_TRANSITION)
-
-    def _normalize(self, dt, dst_rule=None):
-        # if tzinfo is set, something wrong happened
-        if dt.tzinfo is not None:
-            raise ValueError(
-                'A datetime with a tzinfo cannot be normalized. '
-                'Use _convert() instead.'
-            )
-
-        # fold attribute (Python 3.6)?
-        # We use it to determine the DST rule if none has been specified.
-        fold = None
-        if dst_rule is None:
-            if hasattr(dt, 'fold'):
-                fold = dt.fold
-                if dt.fold == 1:
-                    dst_rule = self.POST_TRANSITION
-                else:
-                    dst_rule = self.PRE_TRANSITION
-            else:
-                dst_rule = self.POST_TRANSITION
-
-        if not self._transitions:
-            # Use the default offset
-            offset = self._tzinfos[self._default_tzinfo_index].offset
-            unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
-
-            return self._to_local_time(
-                unix_time, dt.microsecond, self._default_tzinfo_index,
-                fold
-            )
-
-        # Find the first transition after our target date/time
-        begin = self._transitions[0]
-        end = self._transitions[-1]
-
-        if dt < begin.time:
-            tr = begin
-        elif dt >= end.time:
-            tr = end
-        else:
-            idx = self._find_transition_index(dt)
-            tr = self._transitions[idx]
-
-            if idx > 0:
-                pre_tr = self._transitions[idx - 1]
-
-                # DST -> No DST
-                if dt <= pre_tr.pre_time:
-                    tr = pre_tr
-
-        tzinfo_index = tr._tzinfo_index
-        if tr is begin:
-            if tr.pre_time >= dt:
-                # Before first transition, so use the default offset.
-                offset = self._tzinfos[self._default_tzinfo_index].offset
-                unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
-
-                return self._to_local_time(
-                    unix_time, dt.microsecond, self._default_tzinfo_index,
-                    fold
-                )
-            else:
-                if begin is end:
-                    # We only have one transition
-                    offset = self._tzinfos[tzinfo_index].offset
-                    unix_time = (dt - datetime(1970, 1, 1)).total_seconds() - offset
-                else:
-                    # tr.pre_time < dt < tr.time
-                    # Skipped time
-                    if dst_rule == self.TRANSITION_ERROR:
-                        raise NonExistingTime(dt)
-                    elif dst_rule == self.PRE_TRANSITION:
-                        # We do not apply the transition
-                        (unix_time,
-                         tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
-                    else:
-                        unix_time = tr.unix_time - (tr.time - dt).total_seconds()
-        elif tr is end:
-            if tr.pre_time < dt:
-                # After the last transition.
-                unix_time = tr.unix_time + (dt - tr.time).total_seconds()
-            else:
-                # tr.time <= dt <= tr.pre_time
-                # Repeated time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise AmbiguousTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
-                else:
-                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
-        else:
-            if tr.pre_time <= dt < tr.time:
-                # tr.pre_time <= dt < tr.time
-                # Skipped time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise NonExistingTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt, skipped=True)
-                else:
-                    unix_time = tr.unix_time - (tr.pre_time - dt).total_seconds()
-            elif tr.time <= dt <= tr.pre_time:
-                # tr.time <= dt <= tr.pre_time
-                # Repeated time
-                if dst_rule == self.TRANSITION_ERROR:
-                    raise AmbiguousTime(dt)
-                elif dst_rule == self.PRE_TRANSITION:
-                    # We do not apply the transition
-                    (unix_time,
-                     tzinfo_index) = self._get_previous_transition_time(tr, dt)
-                else:
-                    unix_time = tr.unix_time + (dt - tr.time).total_seconds()
-            else:
-                # In between transitions
-                # The actual transition type is the previous transition one
-                (unix_time,
-                 tzinfo_index) = self._get_previous_transition_time(tr, dt)
-
-        return self._to_local_time(
-            unix_time, dt.microsecond, tzinfo_index,
-            fold
-        )
-
-    def _convert(self, dt):
-        """
-        Converts a timezone-aware datetime to local time.
-
-        :param dt: The datetime to convert.
-        :type dt: datetime
-        """
-        # if tzinfo is not set, something wrong happened
-        if dt.tzinfo is None:
-            raise ValueError(
-                'A datetime without a tzinfo cannot be converted. '
-                'Use _normalize() instead.'
-            )
-
-        return dt.astimezone(self)
-
-    def _to_local_time(self, unix_time, microseconds, tzinfo_index, fold):
-        """
-        Returns the local time information
-        as a tuple of date, time and keyword arguments (tzinfo and fold),
-        given a unix time and a tzinfo index.
-
-        :param unix_time: The timestamp of the transition time (UTC)
-        :type unix_time: int
-
-        :param microseconds: The microseconds value
-        :type microseconds: int
-
-        :param tzinfo_index: The index of the TimezoneInfo instance
-        :type tzinfo_index: int
-
-        :param fold: The fold value (if None, will be discarded)
-        :type fold: int or None
-        """
-        tzinfo = self._tzinfos[tzinfo_index]
-
-        local_time = _local_time(
-            unix_time,
-            tzinfo.offset,
-            microseconds
-        )
-
-        keywords = {
-            'tzinfo': tzinfo
+        self._transitions = tz.transitions
+        self._hint = {
+            True: None,
+            False: None
         }
 
-        if fold is not None:
-            keywords['fold'] = fold
+    @property
+    def name(self):  # type: () -> str
+        return self._name
 
-        return local_time, keywords
+    def convert(self,
+                dt,            # type: datetime
+                dst_rule=None  # type: Union[str, None]
+                ):             # type: (...) -> datetime
+        """
+        Converts a datetime in the current timezone.
 
-    def _get_diff(self, dt1, dt2):
-        diff = dt2 - dt1
+        If the datetime is naive, it will be normalized.
 
-        return diff.days * SECONDS_PER_DAY + diff.seconds
+        >>> from datetime import datetime
+        >>> from pendulum import timezone
+        >>> paris = timezone('Europe/Paris')
+        >>> dt = datetime(2013, 3, 31, 2, 30, fold=1)
+        >>> in_paris = paris.convert(dt)
+        >>> in_paris.isoformat()
+        '2013-03-31T03:30:00+02:00'
 
-    def _find_transition_index(self, dt, prop='_time'):
+        If the datetime is aware, it will be properly converted.
+
+        >>> new_york = timezone('America/New_York')
+        >>> in_new_york = new_york.convert(in_paris)
+        >>> in_new_york.isoformat()
+        '2013-03-30T21:30:00-04:00'
+        """
+        if dt.tzinfo is None:
+            return self._normalize(dt, dst_rule=dst_rule)
+
+        return self._convert(dt)
+
+    def datetime(self, year, month, day,
+                 hour=0, minute=0, second=0,
+                 microsecond=0
+                 ):  # type: (int, int, int, int, int, int, int) -> datetime
+        """
+        Return a normalized datetime for the current timezone.
+        """
+        if _HAS_FOLD:
+            return self.convert(
+                datetime(year, month, day,
+                         hour, minute, second, microsecond,
+                         fold=1)
+            )
+
+        return self.convert(
+            datetime(year, month, day,
+                     hour, minute, second, microsecond),
+            dst_rule=POST_TRANSITION
+        )
+
+    def _normalize(self,
+                   dt,            # type: datetime
+                   dst_rule=None  # type: Union[str, None]
+                   ):             # type: (...) -> datetime
+        sec = timestamp(dt)
+        fold = 0
+        transition = self._lookup_transition(sec)
+
+        if not _HAS_FOLD and dst_rule is None:
+            dst_rule = POST_TRANSITION
+
+        if dst_rule is None:
+            dst_rule = PRE_TRANSITION
+            if dt.fold == 1:
+                dst_rule = POST_TRANSITION
+
+        if sec < transition.local:
+            if transition.is_ambiguous(sec):
+                # Ambiguous time
+                if dst_rule == TRANSITION_ERROR:
+                    raise AmbiguousTime(dt)
+
+                # We set the fold attribute for later
+                if dst_rule == POST_TRANSITION:
+                    fold = 1
+            else:
+                transition = transition.previous
+
+        if transition.is_ambiguous(sec):
+            # Ambiguous time
+            if dst_rule == TRANSITION_ERROR:
+                raise AmbiguousTime(dt)
+
+            # We set the fold attribute for later
+            if dst_rule == POST_TRANSITION:
+                fold = 1
+        elif transition.is_missing(sec):
+            # Skipped time
+            if dst_rule == TRANSITION_ERROR:
+                raise NonExistingTime(dt)
+
+            # We adjust accordingly
+            if dst_rule == POST_TRANSITION:
+                sec += transition.fix
+                fold = 1
+            else:
+                sec -= transition.fix
+
+        kwargs = {
+            'tzinfo': self
+        }
+        if _HAS_FOLD or isinstance(dt, pendulum.DateTime):
+            kwargs['fold'] = fold
+
+        return dt.__class__(
+            *local_time(sec, 0, dt.microsecond),
+            **kwargs
+        )
+
+    def _convert(self, dt):  # type: (datetime) -> datetime
+        if dt.tzinfo is self:
+            return self._normalize(dt, dst_rule=POST_TRANSITION)
+
+        if not isinstance(dt.tzinfo, Timezone):
+            return dt.astimezone(self)
+
+        stamp = timestamp(dt)
+
+        if isinstance(dt.tzinfo, FixedTimezone):
+            offset = dt.tzinfo.offset
+        else:
+            transition = dt.tzinfo._lookup_transition(stamp)
+            offset = transition.ttype.offset
+
+            if stamp < transition.local:
+                if (
+                    transition.previous.is_ambiguous(stamp)
+                    and getattr(dt, 'fold', 1) == 0
+                ):
+                    pass
+                else:
+                    offset = transition.previous.ttype.offset
+
+        stamp -= offset
+
+        transition = self._lookup_transition(stamp, is_utc=True)
+        if stamp < transition.at:
+            transition = transition.previous
+
+        offset = transition.ttype.offset
+        stamp += offset
+        fold = int(not transition.ttype.is_dst())
+
+        kwargs = {
+            'tzinfo': self,
+        }
+
+        if _HAS_FOLD or isinstance(dt, pendulum.DateTime):
+            kwargs['fold'] = fold
+
+        return dt.__class__(
+            *local_time(stamp, 0, dt.microsecond),
+            **kwargs
+        )
+
+    def _lookup_transition(self,
+                           stamp,        # type: int
+                           is_utc=False  # type: bool
+                           ):            # type: (...) -> Transition
         lo, hi = 0, len(self._transitions)
-        hint = self._local_hint.get(prop)
+        hint = self._hint[is_utc]
         if hint:
-            if dt == hint[0]:
-                return hint[1]
-            elif dt < hint[0]:
+            if stamp == hint[0]:
+                return self._transitions[hint[1]]
+            elif stamp < hint[0]:
                 hi = hint[1]
             else:
                 lo = hint[1]
 
-        while lo < hi:
-            mid = (lo + hi) // 2
-            if dt < getattr(self._transitions[mid], prop):
-                hi = mid
-            else:
-                lo = mid + 1
-
-        self._local_hint[prop] = (dt, lo)
-
-        return lo
-
-    def _get_previous_transition_time(self, tr, dt, skipped=False):
-        """
-        Returns the time before the transition
-        as a (unix_time, tzinfo_index) tuple.
-
-        :param tr: The transition
-        :type tr: Transition
-
-        :param dt: The datetime
-        :type dt: datetime
-
-        :param skipped: Whether we are in a gap or not
-        :type skipped: bool
-
-        :rtype: tuple
-        """
-        diff = self._get_diff(tr.pre_time, dt)
-        if -1 < diff < 0 and tr.unix_time < 0:
-            diff -= 1
-
-        tzinfo_index = tr.pre_tzinfo_index
-
-        unix_time = tr.unix_time + diff
-
-        if skipped:
-            # If skipped time, we round down
-            # Only occurs when PRE_TRANSITION is used
-            forward = (self._tzinfos[tr.tzinfo_index].offset
-                       - self._tzinfos[tzinfo_index].offset)
-            unix_time -= forward
-
-        return unix_time, tzinfo_index
-
-    def tzname(self, dt):
-        if dt is None:
-            return None
-
-        if dt.tzinfo is self:
-            dt = self.convert(dt.replace(tzinfo=None))
+        if not is_utc:
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if stamp < self._transitions[mid].to:
+                    hi = mid
+                else:
+                    lo = mid + 1
         else:
-            dt = self.convert(dt)
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if stamp < self._transitions[mid].at:
+                    hi = mid
+                else:
+                    lo = mid + 1
 
-        return dt.tzinfo.abbrev
+        if lo >= len(self._transitions):
+            # Beyond last transition
+            lo = len(self._transitions) - 1
 
-    def utcoffset(self, dt):
-        if dt is None:
-            return None
+        self._hint[is_utc] = (stamp, lo)
 
-        if dt.tzinfo is self:
-            dt = self.convert(dt.replace(tzinfo=None))
+        return self._transitions[lo]
+
+    def utcoffset(self,
+                  dt  # type: Optional[datetime]
+                  ):  # type: (...) -> Union[timedelta, None]
+        transition = self._get_transition(dt)
+
+        return transition.utcoffset()
+
+    def dst(self,
+            dt  # type: Optional[datetime]
+            ):  # type: (...) -> timedelta
+        transition = self._get_transition(dt)
+
+        if not transition.ttype.is_dst():
+            return timedelta()
+
+        return timedelta(seconds=transition.fix)
+
+    def tzname(self,
+               dt  # type: Optional[datetime]
+               ):  # type: (...) -> Union[str, None]
+        transition = self._get_transition(dt)
+
+        return transition.ttype.abbreviation
+
+    def _get_transition(self, dt):  # type: (datetime) -> Transition
+        if dt.tzinfo is not None and dt.tzinfo is not self:
+            dt = dt - dt.utcoffset()
+
+            stamp = timestamp(dt)
+
+            transition = self._lookup_transition(stamp, is_utc=True)
         else:
-            dt = self.convert(dt)
+            stamp = timestamp(dt)
 
-        return dt.tzinfo.adjusted_offset
+            transition = self._lookup_transition(stamp)
 
-    def dst(self, dt):
-        if dt is None:
-            return None
+            if stamp < transition.local:
+                fold = getattr(dt, 'fold', 1)
+                if transition.is_ambiguous(stamp):
+                    if fold == 0:
+                        transition = transition.previous
+                elif transition.previous.is_ambiguous(stamp) and fold == 0:
+                    pass
+                else:
+                    transition = transition.previous
 
-        if dt.tzinfo is self:
-            dt = self.convert(dt.replace(tzinfo=None))
-        else:
-            dt = self.convert(dt)
+        return transition
 
-        return dt.tzinfo.dst_
+    def fromutc(self, dt):  # type: (datetime) -> datetime
+        stamp = timestamp(dt)
 
-    def fromutc(self, dt):
-        dt = dt.replace(tzinfo=None)
+        transition = self._lookup_transition(stamp, is_utc=True)
+        if stamp < transition.at:
+            transition = transition.previous
 
-        idx = self._find_utc_index(dt)
-        tr = self._transitions[idx]
-        tzinfo = self._tzinfos[tr._tzinfo_index]
+        stamp += transition.ttype.offset
 
-        return (dt + tzinfo.adjusted_offset).replace(tzinfo=tzinfo)
+        return dt.__class__(
+            *local_time(stamp, 0, dt.microsecond),
+            tzinfo=self
+        )
 
-    def _find_utc_index(self, dt):
-        lo, hi = 0, len(self._utc_transition_times)
-        hint = self._local_hint.get('_utc')
-        if hint:
-            if dt == hint[0]:
-                return hint[1]
-            elif dt < hint[0]:
-                hi = hint[1] + 1
-            else:
-                lo = hint[1]
+    def __repr__(self):  # type: () -> str
+        return "Timezone('{}')".format(self._name)
 
-        idx = max(0, bisect_right(self._utc_transition_times, dt, lo, hi) - 1)
-
-        self._local_hint['_utc'] = (dt, idx)
-
-        return idx
-
-    def __repr__(self):
-        return '<Timezone [{}]>'.format(self._name)
-
-    def __getinitargs__(self):
-        return (self._name, self._transitions,
-                self.__tzinfos, self._default_tzinfo_index,
-                self._utc_transition_times)
+    def __getinitargs__(self):  # type: () -> tuple
+        return self._name,
 
 
 class FixedTimezone(Timezone):
-    """
-    A timezone that has a fixed offset to UTC.
-    """
 
-    _cache = {}
-
-    def __init__(self, offset, name=None, transition_type=None):
-        """
-        :param offset: offset to UTC in seconds.
-        :type offset: int
-        """
+    def __init__(self, offset, name=None):
         sign = '-' if offset < 0 else '+'
 
         minutes = offset / 60
@@ -476,67 +311,70 @@ class FixedTimezone(Timezone):
         if not name:
             name = '{0}{1:02d}:{2:02d}'.format(sign, hour, minute)
 
-        if not transition_type:
-            transition_type = TransitionType(int(offset), False, '')
-
-        super(FixedTimezone, self).__init__(name, [], [], 0, (datetime(1970, 1, 1),))
-
-        self._tzinfos = (
-            TimezoneInfo(
-                self,
-                transition_type.utc_offset,
-                transition_type.is_dst,
-                None,
-                transition_type.abbrev,
-            ),
-        )
-        self._tzinfo = self._tzinfos[0]
-
+        self._name = name
         self._offset = offset
+        self._utcoffset = timedelta(seconds=offset)
 
-    @classmethod
-    def load(cls, name):
-        if name not in cls._cache:
-            cls._cache[name] = cls(name)
-
-        return cls._cache[name]
-
-    def _normalize(self, dt, dst_rule=Timezone.POST_TRANSITION):
-        return dt.replace(tzinfo=self._tzinfo)
-
-    def utcoffset(self, dt):
-        if dt is None:
-            return None
-
-        return self._tzinfo.adjusted_offset
-
-    def dst(self, dt):
-        if dt is None:
-            return None
-
-        return self._tzinfo.dst(dt)
-
-    def fromutc(self, dt):
-        dt = dt.replace(tzinfo=None)
-
-        return (dt + self._tzinfo.adjusted_offset).replace(tzinfo=self._tzinfo)
-
-    def __getinitargs__(self):
+    @property
+    def offset(self):  # type: () -> int
         return self._offset
 
+    def _normalize(self, dt, **_):  # type: (datetime, ...) -> datetime
+        if _HAS_FOLD:
+            dt = dt.__class__(
+                dt.year, dt.month, dt.day,
+                dt.hour, dt.minute, dt.second, dt.microsecond,
+                tzinfo=self,
+                fold=0
+            )
+        else:
+            dt = dt.__class__(
+                dt.year, dt.month, dt.day,
+                dt.hour, dt.minute, dt.second, dt.microsecond,
+                tzinfo=self
+            )
 
-class _UTC(FixedTimezone):
+        return dt
 
-    def __init__(self):
-        super(_UTC, self).__init__(0, 'UTC', TransitionType(0, False, 'GMT'))
+    def _convert(self, dt):  # type: (datetime) -> datetime
+        if dt.tzinfo is not self:
+            return dt.astimezone(self)
 
-        UTC._tz = self
+        return dt
 
-    def fromutc(self, dt):
-        return dt.replace(tzinfo=UTC)
+    def utcoffset(self,
+                  dt  # type: Optional[datetime]
+                  ):  # type: (...) -> timedelta
+        return self._utcoffset
 
-    def __getinitargs__(self):
-        return ()
+    def dst(self,
+            dt  # type: Optional[datetime]
+            ):  # type: (...) -> timedelta
+        return timedelta()
+
+    def fromutc(self, dt):  # type: (datetime) -> datetime
+        return (dt + self._utcoffset).replace(tzinfo=self)
+
+    def tzname(self,
+               dt  # type: Optional[datetime]
+               ):  # type: (...) -> Union[str, None]
+        return self._name
+
+    def __getinitargs__(self):  # type: () -> tuple
+        return self._offset, self._name
 
 
-UTCTimezone = _UTC()
+class TimezoneFile(Timezone):
+
+    def __init__(self, path):
+        tz = read_file(path)
+
+        self._name = ''
+        self._transitions = tz.transitions
+        self._hint = {
+            True: None,
+            False: None
+        }
+
+
+UTC = FixedTimezone(0, 'UTC')

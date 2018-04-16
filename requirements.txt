@@ -1,3 +1,0 @@
-tzlocal
-python-dateutil
-pytzdata>=2017.2.2
