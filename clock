@@ -2,8 +2,10 @@
 from __future__ import unicode_literals
 
 import glob
+import json
 import os
 
+from babel.core import get_global
 from babel.plural import (
     PluralRule, compile_zero,
     _GettextCompiler, _binary_compiler, _unary_compiler
@@ -236,9 +238,34 @@ class LocaleRecreate(Command):
         self.call('locale:create', [('locales', locales)])
 
 
+class WindowsTzDump(Command):
+    """
+    Dumps the mapping of Windows timezones to IANA timezones.
+
+    windows:tz:dump
+    """
+
+    MAPPING_DIR = os.path.join('pendulum', 'tz', 'data')
+
+    def handle(self):
+        raw_tznames = get_global('windows_zone_mapping')
+        sorted_names = sorted(list(raw_tznames.keys()))
+
+        tznames = {}
+        for name in sorted_names:
+            tznames[name] = raw_tznames[name]
+
+        mapping = json.dumps(tznames, indent=4)
+        mapping = 'windows_timezones = ' + mapping.replace('"', "'") + '\n'
+
+        with open(os.path.join(self.MAPPING_DIR, 'windows.py'), 'w') as f:
+            f.write(mapping)
+
+
 app = Application('Clock', __version__)
 app.add(LocaleCreate())
 app.add(LocaleRecreate())
+app.add(WindowsTzDump())
 
 
 if __name__ == '__main__':

@@ -51,9 +51,84 @@ def _get_system_timezone():  # type: () -> Timezone
 
 
 def _get_windows_timezone():  # type: () -> Timezone
-    from tzlocal.win32 import get_localzone_name
+    import winreg
 
-    return Timezone(get_localzone_name())
+    from .data.windows import windows_timezones
+
+    # Windows is special. It has unique time zone names (in several
+    # meanings of the word) available, but unfortunately, they can be
+    # translated to the language of the operating system, so we need to
+    # do a backwards lookup, by going through all time zones and see which
+    # one matches.
+    handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+
+    tz_local_key_name = r"SYSTEM\CurrentControlSet\Control\TimeZoneInformation"
+    localtz = winreg.OpenKey(handle, tz_local_key_name)
+
+    timezone_info = {}
+    size = winreg.QueryInfoKey(localtz)[1]
+    for i in range(size):
+        data = winreg.EnumValue(localtz, i)
+        timezone_info[data[0]] = data[1]
+
+    localtz.Close()
+
+    if 'TimeZoneKeyName' in timezone_info:
+        # Windows 7 (and Vista?)
+
+        # For some reason this returns a string with loads of NUL bytes at
+        # least on some systems. I don't know if this is a bug somewhere, I
+        # just work around it.
+        tzkeyname = timezone_info['TimeZoneKeyName'].split('\x00', 1)[0]
+    else:
+        # Windows 2000 or XP
+
+        # This is the localized name:
+        tzwin = timezone_info['StandardName']
+
+        # Open the list of timezones to look up the real name:
+        tz_key_name = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones"
+        tzkey = winreg.OpenKey(handle, tz_key_name)
+
+        # Now, match this value to Time Zone information
+        tzkeyname = None
+        for i in range(winreg.QueryInfoKey(tzkey)[0]):
+            subkey = winreg.EnumKey(tzkey, i)
+            sub = winreg.OpenKey(tzkey, subkey)
+
+            info = {}
+            size = winreg.QueryInfoKey(sub)[1]
+            for i in range(size):
+                data = winreg.EnumValue(sub, i)
+                info[data[0]] = data[1]
+
+            sub.Close()
+            try:
+                if info['Std'] == tzwin:
+                    tzkeyname = subkey
+                    break
+            except KeyError:
+                # This timezone didn't have proper configuration.
+                # Ignore it.
+                pass
+
+        tzkey.Close()
+        handle.Close()
+
+    if tzkeyname is None:
+        raise LookupError('Can not find Windows timezone configuration')
+
+    timezone = windows_timezones.get(tzkeyname)
+    if timezone is None:
+        # Nope, that didn't work. Try adding "Standard Time",
+        # it seems to work a lot of times:
+        timezone = windows_timezones.get(tzkeyname + " Standard Time")
+
+    # Return what we have.
+    if timezone is None:
+        raise LookupError('Unable to find timezone ' + tzkeyname)
+
+    return Timezone(timezone)
 
 
 def _get_darwin_timezone():  # type: () -> Timezone
