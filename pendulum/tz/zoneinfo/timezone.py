@@ -14,11 +14,13 @@ class Timezone:
     def __init__(self,
                  transitions,      # type: List[Transition]
                  posix_rule=None,  # type: Union[PosixTimezone, None]
+                 extended=True     # type: bool
                  ):
         self._posix_rule = posix_rule
         self._transitions = transitions
 
-        self._extends()
+        if extended:
+            self._extends()
 
     @property
     def transitions(self):  # type: () -> List[Transition]

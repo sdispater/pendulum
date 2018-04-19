@@ -20,7 +20,7 @@ timezones = pytzdata.timezones
 _tz_cache = {}
 
 
-def timezone(name):  # type: (Union[str, int]) -> _Timezone
+def timezone(name, extended=True):  # type: (Union[str, int]) -> _Timezone
     """
     Return a Timezone instance given its name.
     """
@@ -33,7 +33,7 @@ def timezone(name):  # type: (Union[str, int]) -> _Timezone
     if name in _tz_cache:
         return _tz_cache[name]
 
-    tz = _Timezone(name)
+    tz = _Timezone(name, extended=extended)
     _tz_cache[name] = tz
 
     return tz

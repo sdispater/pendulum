@@ -10,6 +10,15 @@ from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
 from ..conftest import assert_datetime
 
 
+@pytest.fixture(autouse=True)
+def setup():
+    pendulum.tz._tz_cache = {}
+
+    yield
+
+    pendulum.tz._tz_cache = {}
+
+
 @pytest.mark.skipif(not PY36, reason='fold attribute only present in Python 3.6+')
 def test_basic_convert():
     dt = datetime(2016, 6, 1, 12, 34, 56, 123456, fold=1)
@@ -486,6 +495,48 @@ def test_timezones_are_extended():
     assert_datetime(dt, 2134, 10, 31, 2, 30)
     assert dt.utcoffset().total_seconds() == 7200
     assert dt.dst() == timedelta(seconds=3600)
+
+    dt = tz.convert(
+        pendulum.naive(2134, 10, 31, 2, 30),
+        dst_rule=pendulum.POST_TRANSITION
+    )
+
+    assert_datetime(dt, 2134, 10, 31, 2, 30)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+
+def test_timezones_extension_can_be_disabled():
+    tz = pendulum.timezone('Europe/Paris', extended=False)
+    dt = tz.convert(pendulum.naive(2134, 2, 13, 1))
+
+    assert_datetime(dt, 2134, 2, 13, 1)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+    dt = tz.convert(
+        pendulum.naive(2134, 3, 28, 2, 30),
+        dst_rule=pendulum.POST_TRANSITION
+    )
+
+    assert_datetime(dt, 2134, 3, 28, 2, 30)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+    dt = tz.convert(pendulum.naive(2134, 7, 11, 2, 30))
+
+    assert_datetime(dt, 2134, 7, 11, 2, 30)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
+
+    dt = tz.convert(
+        pendulum.naive(2134, 10, 31, 2, 30),
+        dst_rule=pendulum.PRE_TRANSITION
+    )
+
+    assert_datetime(dt, 2134, 10, 31, 2, 30)
+    assert dt.utcoffset().total_seconds() == 3600
+    assert dt.dst() == timedelta()
 
     dt = tz.convert(
         pendulum.naive(2134, 10, 31, 2, 30),

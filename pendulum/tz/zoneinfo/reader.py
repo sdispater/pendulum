@@ -35,6 +35,9 @@ class Reader:
     Reads compiled zoneinfo TZif (\0, 2 or 3) files.
     """
 
+    def __init__(self, extend=True):  # type: (bool) -> None
+        self._extend = extend
+
     def read_for(self, timezone):  # type: (str) -> Timezone
         """
         Read the zoneinfo structure for a given timezone name.
@@ -147,7 +150,7 @@ class Reader:
                 Transition(0, types[0], None)
             )
 
-        return Timezone(transitions, posix_rule=trule)
+        return Timezone(transitions, posix_rule=trule, extended=self._extend)
 
     def _parse_header(self, fd):  # type: (...) -> header
         buff = self._check_read(fd, 44)

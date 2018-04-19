@@ -26,8 +26,8 @@ class Timezone(tzinfo):
     >>> tz = Timezone('Europe/Paris')
     """
 
-    def __init__(self, name):  # type: (str) -> None
-        tz = read(name)
+    def __init__(self, name, extended=True):  # type: (str) -> None
+        tz = read(name, extend=extended)
 
         self._name = name
         self._transitions = tz.transitions
