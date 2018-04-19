@@ -2,6 +2,14 @@ import sys
 import os
 import re
 
+try:
+    import _winreg as winreg
+except ImportError:
+    try:
+        import winreg
+    except ImportError:
+        winreg = None
+
 from contextlib import contextmanager
 from typing import Union
 
@@ -51,8 +59,6 @@ def _get_system_timezone():  # type: () -> Timezone
 
 
 def _get_windows_timezone():  # type: () -> Timezone
-    import winreg
-
     from .data.windows import windows_timezones
 
     # Windows is special. It has unique time zone names (in several
