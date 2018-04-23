@@ -18,6 +18,7 @@
 - `Interval` class has been renamed to `Duration`.
 - Changed and improved the timezone system.
 - Removed the `create()` helper.
+- Removed the `utcnow()` helper.
 - `strict` keyword argument for `parse` has been renamed to `exact`.
 - `at()` now supports setting partial time.
 - `local`, `utc` and `is_dst` are now methods rather than properties (`is_local()`, `is_utc()`, `is_dst()`).
