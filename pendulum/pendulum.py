@@ -569,6 +569,11 @@ class Pendulum(Date, datetime.datetime):
         return self.set(microsecond=microsecond)
 
     def set(self, **kwargs):
+        if 'tz' in kwargs:
+            kwargs['tzinfo'] = kwargs.pop('tz')
+
+            return self.replace(**kwargs)
+
         kwargs['tzinfo'] = True
 
         return self._tz.convert(self.replace(**kwargs))

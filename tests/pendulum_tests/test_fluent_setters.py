@@ -184,3 +184,19 @@ class FluentSettersTest(AbstractTestCase):
         d = Pendulum.create(2013, 3, 31, 2, 30)
 
         self.assertRaises(NonExistingTime, d.replace, tzinfo='Europe/Paris')
+
+    def test_set(self):
+        dt = pendulum.datetime(2016, 7, 2, 0, 41, 20)
+
+        assert dt.set(year=1995).year == 1995
+        assert dt.set(month=11).month == 11
+        assert dt.set(day=9).day == 9
+        assert dt.set(hour=12).hour == 12
+        assert dt.set(minute=34).minute == 34
+        assert dt.set(second=56).second == 56
+        assert dt.set(tz='Europe/Paris').timezone_name == 'Europe/Paris'
+
+        dt = pendulum.datetime(2013, 3, 31, 2, 30)
+        dt = dt.set(tz='Europe/Paris')
+
+        self.assertPendulum(dt, 2013, 3, 31, 3, 30)

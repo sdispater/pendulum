@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `set()` not acception the `tz` keyword argument.
+
+
 ## [1.5.0] - 2018-04-16
 
 ### Added
