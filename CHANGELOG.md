@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed `set()` not acception the `tz` keyword argument.
+- Fixed `datetime()` not setting the timezone to `UTC` by default.
 
 
 ## [1.5.0] - 2018-04-16

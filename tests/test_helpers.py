@@ -180,6 +180,7 @@ class HelpersTestCase(AbstractTestCase):
         dt = pendulum.datetime(2018, 4, 4, 12, 34, 56, 123456)
 
         self.assertPendulum(dt, 2018, 4, 4, 12, 34, 56, 123456)
+        assert dt.timezone_name == 'UTC'
 
         dt = pendulum.datetime(
             2013, 3, 31, 2, 30,

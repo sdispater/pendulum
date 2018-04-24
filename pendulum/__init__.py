@@ -90,6 +90,6 @@ def datetime(year, month, day,
 
     return Pendulum(
         year, month, day, hour, minute, second, microsecond,
-        tzinfo=tzinfo or tz,
+        tzinfo=tzinfo or tz or UTC,
         fold=fold
     )
