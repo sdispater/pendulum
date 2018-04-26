@@ -65,8 +65,6 @@ def test_precise_diff():
     tz = timezone('America/Toronto')
     dt1 = tz.datetime(2017, 3, 7)
     dt2 = tz.datetime(2017, 3, 13)
-    print(dt1)
-    print(dt2)
 
     diff = precise_diff(dt1, dt2)
     assert_diff(

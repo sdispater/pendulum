@@ -234,13 +234,19 @@ class Timezone(tzinfo):
     def utcoffset(self,
                   dt  # type: Optional[datetime]
                   ):  # type: (...) -> Union[timedelta, None]
+        if dt is None:
+            return
+
         transition = self._get_transition(dt)
 
         return transition.utcoffset()
 
     def dst(self,
             dt  # type: Optional[datetime]
-            ):  # type: (...) -> timedelta
+            ):  # type: (...) -> Union[timedelta, None]
+        if dt is None:
+            return
+
         transition = self._get_transition(dt)
 
         if not transition.ttype.is_dst():
@@ -251,6 +257,9 @@ class Timezone(tzinfo):
     def tzname(self,
                dt  # type: Optional[datetime]
                ):  # type: (...) -> Union[str, None]
+        if dt is None:
+            return
+
         transition = self._get_transition(dt)
 
         return transition.ttype.abbreviation

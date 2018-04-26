@@ -1,14 +1,17 @@
 from __future__ import absolute_import
+from __future__ import division
 
 import pendulum
 
 from datetime import timedelta
 
+from pendulum.utils._compat import PYPY
 from pendulum.utils._compat import decode
 
 from .constants import (
     SECONDS_PER_DAY, SECONDS_PER_HOUR,
-    SECONDS_PER_MINUTE
+    SECONDS_PER_MINUTE,
+    US_PER_SECOND
 )
 
 
@@ -88,6 +91,18 @@ class Duration(timedelta):
 
     def total_weeks(self):
         return self.total_days() / 7
+
+    if PYPY:
+        def total_seconds(self):
+            if hasattr(self, '_remaining_days'):
+                days = self._weeks * 7 + self._remaining_days
+            else:
+                days = self._days
+
+            return (
+                (days * SECONDS_PER_DAY + self._seconds) * US_PER_SECOND
+                + self._microseconds
+            ) / US_PER_SECOND
 
     @property
     def years(self):

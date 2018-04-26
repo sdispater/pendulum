@@ -16,16 +16,22 @@ class Time(FormattableMixing, time):
     Represents a time instance as hour, minute, second, microsecond.
     """
 
+    pass
     # String formatting
     def __repr__(self):
         us = ''
         if self.microsecond:
             us = ', {}'.format(self.microsecond)
 
+        tzinfo = ''
+        if self.tzinfo:
+            tzinfo = ', tzinfo={}'.format(repr(self.tzinfo))
+
         return (
-            '{}({}, {}, {}{})'.format(
+            '{}({}, {}, {}{}{})'.format(
                 self.__class__.__name__,
-                self.hour, self.minute, self.second, us
+                self.hour, self.minute, self.second, us,
+                tzinfo
             )
         )
 
@@ -272,7 +278,10 @@ class Time(FormattableMixing, time):
             tzinfo=t.tzinfo
         )
 
-    def _getstate(self, protocol=3):
+    def __getnewargs__(self):
+        return self,
+
+    def _get_state(self, protocol=3):
         tz = self.tzinfo
 
         return (
@@ -284,7 +293,7 @@ class Time(FormattableMixing, time):
         return self.__reduce_ex__(2)
 
     def __reduce_ex__(self, protocol):
-        return self.__class__, self._getstate(protocol)
+        return self.__class__, self._get_state(protocol)
 
 
 Time.min = Time(0, 0, 0)

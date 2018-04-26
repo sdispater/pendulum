@@ -111,7 +111,9 @@ def test_combine():
     assert p == dt
 
 
-def test_hash():
+def test_hash(p, dt):
+    assert hash(p) == hash(dt)
+
     dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
     dt2 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
     dt3 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='America/Toronto')

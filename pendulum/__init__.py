@@ -279,7 +279,7 @@ def duration(days=0,          # type: float
              weeks=0,         # type: float
              years=0,         # type: float
              months=0         # type: float
-             ):  # type: (...) -> DateTime
+             ):  # type: (...) -> Duration
     """
     Create a Duration instance.
     """

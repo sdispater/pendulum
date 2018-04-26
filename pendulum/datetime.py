@@ -1425,6 +1425,24 @@ class DateTime(datetime.datetime, Date):
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
 
+    def _cmp(self, other):
+        # Fix for pypy which compares using this method
+        # which would lead to infinite recursion if we didn't override
+        kwargs = {
+            'tzinfo': self.tz
+        }
+
+        if _HAS_FOLD:
+            kwargs['fold'] = self.fold
+
+        dt = datetime.datetime(
+            self.year, self.month, self.day,
+            self.hour, self.minute, self.second, self.microsecond,
+            **kwargs
+        )
+
+        return 0 if dt == other else 1 if dt > other else -1
+
 
 DateTime.min = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)
 DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999, tzinfo=UTC)
