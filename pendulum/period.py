@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import operator
 import pendulum
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from pendulum.utils._compat import _HAS_FOLD
 from pendulum.utils._compat import decode
@@ -343,6 +343,17 @@ class Period(Duration):
 
     def __str__(self):
         return self.__repr__()
+
+    def _cmp(self, other):
+        # Only needed for PyPy
+        assert isinstance(other, timedelta)
+
+        if isinstance(other, Period):
+            other = other.as_timedelta()
+
+        td = self.as_timedelta()
+
+        return 0 if td == other else 1 if td > other else -1
 
     def _getstate(self, protocol=3):
         start, end = self.start, self.end
