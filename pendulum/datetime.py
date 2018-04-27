@@ -1425,7 +1425,7 @@ class DateTime(datetime.datetime, Date):
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
 
-    def _cmp(self, other):
+    def _cmp(self, other, **kwargs):
         # Fix for pypy which compares using this method
         # which would lead to infinite recursion if we didn't override
         kwargs = {
