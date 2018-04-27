@@ -47,7 +47,7 @@ install:
   - python get-poetry.py --preview
   - poetry install -v
   - poetry build -v
-  - pip install dist/pendulum-$(sed -n "s/VERSION = '\(.*\)'/\1/p" /io/pendulum/version.py).tar.gz
+  - pip install dist/pendulum-$(sed -n "s/VERSION = '\(.*\)'/\1/p" pendulum/version.py).tar.gz
   - |
       if [ "$PENDULUM_EXTENSIONS" == "1" ]; then
         find dist/ -iname pendulum*.whl -exec unzip -o {} 'pendulum/*' -d . \;
