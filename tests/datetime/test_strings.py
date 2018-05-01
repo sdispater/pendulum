@@ -4,9 +4,9 @@ import pytest
 
 
 def test_to_string():
-    d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 0)
+    d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 0, tz='local')
     assert str(d) == d.to_iso8601_string()
-    d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 123456)
+    d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 123456, tz='local')
     assert str(d) == d.to_iso8601_string()
 
 
@@ -41,6 +41,11 @@ def test_to_cookie_string():
 def test_to_iso8601_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz='local')
     assert d.to_iso8601_string() == '1975-12-25T14:15:16-05:00'
+
+
+def test_to_iso8601_string_utc():
+    d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
+    assert d.to_iso8601_string() == '1975-12-25T14:15:16Z'
 
 
 def test_to_iso8601_extended_string():
