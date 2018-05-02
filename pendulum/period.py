@@ -265,30 +265,6 @@ class Period(Duration):
 
             i += amount
 
-    def intersect(self, *periods):
-        """
-        Return the Period intersection of the current Period
-        and the given periods.
-
-        :type periods: tuple of Period
-
-        :rtype: Period
-        """
-        start, end = self.start, self.end
-        has_intersection = False
-        for period in periods:
-            if period.end < start or period.start > end:
-                continue
-
-            has_intersection = True
-            start = max(start, period.start)
-            end = min(end, period.end)
-
-        if not has_intersection:
-            return None
-
-        return self.__class__(start, end)
-
     def as_interval(self):
         """
         Return the Period as an Duration.
