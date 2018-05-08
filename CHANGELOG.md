@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [2.0.0] - 2018-05-08
 
 ### Added
 
@@ -35,4 +35,5 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/1.x...2.0
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.0...master
+[2.0.0]: https://github.com/sdispater/pendulum/releases/tag/2.0.0
