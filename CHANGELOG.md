@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+## Fixed
+
+- Fixed behavior of the `YY` token in `from_format()`.
+
+
 ## [2.0.0] - 2018-05-08
 
 ### Added

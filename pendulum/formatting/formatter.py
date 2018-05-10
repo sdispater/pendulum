@@ -187,7 +187,7 @@ class Formatter:
 
     _PARSE_TOKENS = {
         'YYYY': lambda year: int(year),
-        'YY': lambda year: 1900 + int(year),
+        'YY': lambda year: int(year),
         'Q': lambda quarter: int(quarter),
         'MMMM': lambda month: month,
         'MMM': lambda month: month,
@@ -399,7 +399,7 @@ class Formatter:
         if not re.match(pattern, time):
             raise ValueError('String does not match format {}'.format(fmt))
 
-        re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale), time)
+        re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)
 
         return self._check_parsed(parsed, now)
 
@@ -526,21 +526,24 @@ class Formatter:
 
         return validated
 
-    def _get_parsed_values(self, m, parsed, locale
-                           ):  # type: (..., dict, Locale) -> None
+    def _get_parsed_values(self, m, parsed, locale, now
+                           ):  # type: (..., dict, Locale, pendulum.DateTime) -> None
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
                 self._get_parsed_locale_value(
                     token, m.group(index), parsed, locale
                 )
             else:
-                self._get_parsed_value(token, m.group(index), parsed)
+                self._get_parsed_value(token, m.group(index), parsed, now)
 
-    def _get_parsed_value(self, token, value, parsed
-                          ):  # type: (str, str, dict) -> None
+    def _get_parsed_value(self, token, value, parsed, now
+                          ):  # type: (str, str, dict, pendulum.DateTime) -> None
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if 'Y' in token:
+            if token == 'YY':
+                parsed_token = now.year // 100 * 100 + parsed_token
+
             parsed['year'] = parsed_token
         elif 'Q' == token:
             parsed['quarter'] = parsed_token
