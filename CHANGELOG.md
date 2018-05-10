@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fixed behavior of the `YY` token in `from_format()`.
+- Fixed errors on some systems when retrieving timezone from clock files.
 
 
 ## [2.0.0] - 2018-05-08
