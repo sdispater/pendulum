@@ -346,3 +346,9 @@ class Period(Duration):
 
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
+
+    def __hash__(self):
+        return hash((self.start, self.end, self._absolute))
+
+    def __eq__(self, other):
+        return (self.start, self.end, self._absolute) == (other.start, other.end, other._absolute)
