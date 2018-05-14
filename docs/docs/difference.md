@@ -79,7 +79,7 @@ You may also pass `True` as a 2nd parameter to remove the modifiers `ago`, `from
 # The instance is the date the comment was created
 # and its being compared to default now()
 >>> pendulum.now().subtract(days=1).diff_for_humans()
-'5 days ago'
+'1 day ago'
 
 >>> pendulum.now().diff_for_humans(pendulum.now().subtract(years=1))
 '1 year after'
