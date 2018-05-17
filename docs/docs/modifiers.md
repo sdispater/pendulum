@@ -28,13 +28,13 @@ It returns the middle date between itself and the provided `DateTime` argument.
 '2012-01-01 00:00:00'
 
 >>> dt.end_of('year')
-'2012-01-31 23:59:59'
+'2012-12-31 23:59:59'
 
 >>> dt.start_of('decade')
 '2010-01-01 00:00:00'
 
 >>> dt.end_of('decade')
-'2019-01-31 23:59:59'
+'2019-12-31 23:59:59'
 
 >>> dt.start_of('century')
 '2000-01-01 00:00:00'
