@@ -28,3 +28,25 @@ def test_dst_subtract():
     new_start = end - period
 
     assert new_start == start
+
+
+def test_naive_subtract():
+    start = pendulum.naive(2013, 3, 31, 1, 30)
+    end = start.add(hours=1)
+    period = end - start
+    new_end = start + period
+
+    assert new_end == end
+
+
+def test_negative_difference_subtract():
+    start = pendulum.datetime(2018, 5, 28, 12, 34, 56, 123456)
+    end = pendulum.datetime(2018, 1, 1)
+
+    print((start - end).in_words())
+
+    period = end - start
+    print(period.in_words())
+    new_end = start + period
+
+    assert new_end == end

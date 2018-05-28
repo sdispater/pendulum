@@ -144,7 +144,7 @@ class Period(Duration):
 
     @property
     def weeks(self):
-        return self._delta.days // 7
+        return abs(self._delta.days) // 7 * self._sign(self._delta.days)
 
     @property
     def days(self):

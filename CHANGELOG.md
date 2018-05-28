@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed the `weeks` property for negative `Period` instances.
+
+
 ## [2.0.1] - 2018-05-10
 
 ### Fixed
