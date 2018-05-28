@@ -7,7 +7,8 @@
 - Fixed the `weeks` property for negative `Period` instances.
 - Fixed `start_of()` methods not setting microseconds to 0.
 - Fixed errors on some systems when retrieving timezone from clock files.
-- Fix parsing of partial time.
+- Fixed parsing of partial time.
+- Fixed parsing not raising an error for week 53 for ordinary years.
 
 
 ## [2.0.1] - 2018-05-10

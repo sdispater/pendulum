@@ -51,6 +51,13 @@ def is_leap(year):
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
+def is_long_year(year):
+    def p(y):
+        return y + y//4 - y//100 + y//400
+
+    return p(year) % 7 == 4 or p(year - 1) % 7 == 3
+
+
 def week_day(year, month, day):
     if month < 3:
         year -= 1

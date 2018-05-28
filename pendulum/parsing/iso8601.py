@@ -7,7 +7,7 @@ from ..constants import (
     HOURS_PER_DAY, MINUTES_PER_HOUR, SECONDS_PER_MINUTE,
     MONTHS_OFFSETS
 )
-from ..helpers import week_day, days_in_year, is_leap
+from ..helpers import week_day, days_in_year, is_leap, is_long_year
 from ..tz.timezone import FixedTimezone
 from ..duration import Duration
 from .exceptions import ParserError
@@ -409,7 +409,7 @@ def _get_iso_8601_week(year, week, weekday):
     year = int(year)
     week = int(week)
 
-    if week > 53:
+    if week > 53 or week > 52 and not is_long_year(year):
         raise ParserError('Invalid week for week date')
 
     if weekday > 7:

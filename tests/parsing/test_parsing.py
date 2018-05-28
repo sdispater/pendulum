@@ -315,6 +315,20 @@ def test_iso8601_week_number():
     assert 0 == parsed.microsecond
     assert parsed.tzinfo is None
 
+    # Long Year
+    text = '2015W53'
+
+    parsed = parse(text)
+
+    assert 2015 == parsed.year
+    assert 12 == parsed.month
+    assert 28 == parsed.day
+    assert 0 == parsed.hour
+    assert 0 == parsed.minute
+    assert 0 == parsed.second
+    assert 0 == parsed.microsecond
+    assert parsed.tzinfo is None
+
     text = '2012-W05-5'
 
     parsed = parse(text)
@@ -628,6 +642,12 @@ def test_invalid():
         parse(text)
 
     text = '2012-W13-8'
+
+    with pytest.raises(ParserError):
+        parse(text)
+
+    # W53 in normal year (not long)
+    text = '2017W53'
 
     with pytest.raises(ParserError):
         parse(text)

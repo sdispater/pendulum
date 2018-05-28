@@ -93,8 +93,16 @@ const int DAY_OF_WEEK_TABLE[12] = {
 
 /* ------------------------------------------------------------------------- */
 
+int _p(int y) {
+    return y + y/4 - y/100 + y /400;
+}
+
 int _is_leap(int year) {
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+}
+
+int _is_long_year(int year) {
+    return (p(year) % 7 == 4) || (p(year - 1) % 7 == 3);
 }
 
 int _week_day(int year, int month, int day) {
@@ -103,7 +111,7 @@ int _week_day(int year, int month, int day) {
 
     y = year - (month < 3);
 
-    w = (y + y/4 - y/100 + y /400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7;
+    w = (_p(y) + DAY_OF_WEEK_TABLE[month - 1] + day) % 7;
 
     if (!w) {
         w = 7;
@@ -327,6 +335,22 @@ PyObject* is_leap(PyObject *self, PyObject *args) {
     leap = PyBool_FromLong(_is_leap(year));
 
     return leap;
+}
+
+PyObject* is_long_year(PyObject *self, PyObject *args) {
+    PyObject *is_long;
+    int year;
+
+    if (!PyArg_ParseTuple(args, "i", &year)) {
+        PyErr_SetString(
+            PyExc_ValueError, "Invalid parameters"
+        );
+        return NULL;
+    }
+
+    is_long = PyBool_FromLong(_is_long_year(year));
+
+    return is_long;
 }
 
 PyObject* week_day(PyObject *self, PyObject *args) {
@@ -819,6 +843,12 @@ static PyMethodDef helpers_methods[] = {
         (PyCFunction) is_leap,
         METH_VARARGS,
         PyDoc_STR("Checks if a year is a leap year.")
+    },
+    {
+        "is_long_year",
+        (PyCFunction) is_long_year,
+        METH_VARARGS,
+        PyDoc_STR("Checks if a year is a long year.")
     },
     {
         "week_day",

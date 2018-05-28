@@ -132,6 +132,11 @@ const char PARSER_ERRORS[17][80] = {
 
 /* ------------------------------------------------------------------------- */
 
+
+int p(int y) {
+    return y + y/4 - y/100 + y/400;
+}
+
 int is_leap(int year) {
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 }
@@ -142,7 +147,7 @@ int week_day(int year, int month, int day) {
 
     y = year - (month < 3);
 
-    w = (y + y/4 - y/100 + y /400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7;
+    w = (p(y) + DAY_OF_WEEK_TABLE[month - 1] + day) % 7;
 
     if (!w) {
         w = 7;
@@ -157,6 +162,10 @@ int days_in_year(int year) {
     }
 
     return DAYS_PER_N_YEAR;
+}
+
+int is_long_year(int year) {
+    return (p(year) % 7 == 4) || (p(year - 1) % 7 == 3);
 }
 
 
@@ -576,7 +585,7 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
         }
 
         // Checks
-        if (week > 53) {
+        if (week > 53 || week > 52 && !is_long_year(parsed->year)) {
             parsed->error = PARSER_INVALID_WEEK_NUMBER;
 
             return NULL;
