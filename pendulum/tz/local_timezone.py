@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from typing import Union
 
 from .timezone import Timezone, TimezoneFile
+from .zoneinfo.exceptions import InvalidTimezone
 
 
 _mock_local_timezone = None
@@ -200,15 +201,15 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
                 line = line[match.end():]
                 etctz = line[:end_re.search(line).start()]
 
-                parts = etctz.replace(' ', '_').split('/')[-2:]
+                parts = list(reversed(etctz.replace(' ', '_').split('/')))
+                tzpath = []
                 while parts:
-                    tzpath = '/'.join(parts)
-                    try:
-                        return Timezone(tzpath)
-                    except (ValueError, IOError, OSError):
-                        pass
+                    tzpath.insert(0, parts.pop(0))
 
-                    parts.pop(0)
+                    try:
+                        return Timezone('/'.join(tzpath))
+                    except InvalidTimezone:
+                        pass
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
