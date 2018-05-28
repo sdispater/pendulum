@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed the `weeks` property for negative `Period` instances.
+- Fixed `start_of()` methods not setting microseconds to 0.
 
 
 ## [2.0.1] - 2018-05-10

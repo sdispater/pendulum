@@ -844,7 +844,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.at(0, 0, 0)
+        return self.at(0, 0, 0, 0)
 
     def _end_of_day(self):
         """
@@ -860,7 +860,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.set(self.year, self.month, 1, 0, 0, 0)
+        return self.set(self.year, self.month, 1, 0, 0, 0, 0)
 
     def _end_of_month(self):
         """
@@ -879,7 +879,7 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        return self.set(self.year, 1, 1, 0, 0, 0)
+        return self.set(self.year, 1, 1, 0, 0, 0, 0)
 
     def _end_of_year(self):
         """
@@ -900,7 +900,7 @@ class DateTime(datetime.datetime, Date):
         :rtype: DateTime
         """
         year = self.year - self.year % YEARS_PER_DECADE
-        return self.set(year, 1, 1, 0, 0, 0)
+        return self.set(year, 1, 1, 0, 0, 0, 0)
 
     def _end_of_decade(self):
         """
@@ -924,7 +924,7 @@ class DateTime(datetime.datetime, Date):
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
-        return self.set(year, 1, 1, 0, 0, 0)
+        return self.set(year, 1, 1, 0, 0, 0, 0)
 
     def _end_of_century(self):
         """
