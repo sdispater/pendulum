@@ -135,4 +135,6 @@ def test_format():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz='Europe/Paris')
     assert '{}'.format(d) == '1975-12-25T14:15:16+01:00'
     assert '{:YYYY}'.format(d) == '1975'
-    assert '{:%Y}'.format(d) == '%1975'
+    assert '{:%Y}'.format(d) == '1975'
+    assert '{:%H:%M %d.%m.%Y}'.format(d) == '14:15 25.12.1975'
+

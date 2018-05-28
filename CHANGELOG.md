@@ -9,6 +9,7 @@
 - Fixed errors on some systems when retrieving timezone from clock files.
 - Fixed parsing of partial time.
 - Fixed parsing not raising an error for week 53 for ordinary years.
+- Fixed string formatting not supporting `strftime` format.
 
 
 ## [2.0.1] - 2018-05-10

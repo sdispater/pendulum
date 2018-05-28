@@ -44,4 +44,4 @@ def test_format():
     d = pendulum.Date(1975, 12, 25)
     assert '{}'.format(d) == '1975-12-25'
     assert '{:YYYY}'.format(d) == '1975'
-    assert '{:%Y}'.format(d) == '%1975'
+    assert '{:%Y}'.format(d) == '1975'

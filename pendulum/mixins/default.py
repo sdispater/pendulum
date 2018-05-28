@@ -31,6 +31,9 @@ class FormattableMixing(object):
 
     def __format__(self, format_spec):
         if len(format_spec) > 0:
+            if '%' in format_spec:
+                return self.strftime(format_spec)
+
             return self.format(format_spec)
 
         return str(self)
