@@ -28,7 +28,7 @@ COMMON = re.compile(
     # Time (optional)
     '(?P<time>'
     '    (?P<timesep>\ )?'  # Separator (space)
-    '    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?:(?P<second>\d{1,2})?'  # HH:mm:ss (optional mm and ss)
+    '    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?'  # HH:mm:ss (optional mm and ss)
     # Subsecond part (optional)
     '    (?P<subsecondsection>'
     '        (?:[.|,])'  # Subsecond separator (optional)
@@ -171,7 +171,10 @@ def _parse_common(text, **options):
 
     minute = int(m.group('minute'))
 
-    second = int(m.group('second'))
+    if m.group('second'):
+        second = int(m.group('second'))
+    else:
+        second = 0
 
     # Grabbing subseconds, if any
     microsecond = 0

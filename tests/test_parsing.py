@@ -66,6 +66,13 @@ def test_parse_exact():
     assert isinstance(dt, pendulum.Time)
     assert_time(dt, 12, 34, 56, 123456)
 
+    text = '13:00'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.Time)
+    assert_time(dt, 13, 0, 0)
+
 
 def test_parse_duration():
     text = 'P2Y3M4DT5H6M7S'
