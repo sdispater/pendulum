@@ -5,10 +5,6 @@ ru custom locale file.
 """
 
 translations = {
-    'units': {
-        'few_second': 'несколько секунд'
-    },
-
     # Relative time
     'ago': '{} назад',
     'from_now': 'через {}',
