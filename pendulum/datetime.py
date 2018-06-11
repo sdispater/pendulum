@@ -68,6 +68,21 @@ class DateTime(datetime.datetime, Date):
 
             return self
 
+    def __copy__(self):
+        return type(self)(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            self.second,
+            self.microsecond,
+            self.tzinfo
+        )
+
+    def __deepcopy__(self, memo=None):
+        return self.__copy__()
+
     @classmethod
     def now(cls, tz=None):  # type: (Union[str, Timezone, None]) -> DateTime
         """
