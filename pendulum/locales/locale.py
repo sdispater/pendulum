@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import os
 import re
 
-from importlib import import_module
-
-from pendulum.utils._compat import basestring
-from pendulum.utils._compat import decode
+from pendulum.utils._compat import basestring, decode
 
 from . import index
 
@@ -32,17 +28,13 @@ class Locale:
         if locale in cls._cache:
             return cls._cache[locale]
 
-        # Checking locale existence
-        actual_locale = locale
-        while not getattr(index, actual_locale, False):
-            if actual_locale == locale:
-                raise ValueError('Locale [{}] does not exist.'.format(locale))
+        # Get locale module from `index.py`
+        m = getattr(index, locale,
+                    getattr(index, locale.split('_')[0], None))
+        if not m:
+            raise ValueError('Locale [{}] does not exist.'.format(locale))
 
-            actual_locale = actual_locale.split('_')[0]
-
-        m = import_module('pendulum.locales.{}.locale'.format(actual_locale))
-
-        cls._cache[locale] = cls(locale, m.locale)
+        cls._cache[locale] = cls(locale, m.locale.locale)
 
         return cls._cache[locale]
 
