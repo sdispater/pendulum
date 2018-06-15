@@ -8,6 +8,8 @@ from importlib import import_module
 from pendulum.utils._compat import basestring
 from pendulum.utils._compat import decode
 
+from . import index
+
 
 class Locale:
     """
@@ -32,8 +34,7 @@ class Locale:
 
         # Checking locale existence
         actual_locale = locale
-        locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
-        while not os.path.exists(locale_path):
+        while not getattr(index, actual_locale):
             if actual_locale == locale:
                 raise ValueError('Locale [{}] does not exist.'.format(locale))
 

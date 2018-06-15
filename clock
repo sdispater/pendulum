@@ -163,8 +163,8 @@ translations = {{}}
             custom = os.path.join(dest_dir, 'custom.py')
 
             if not os.path.exists(init):
-                with open(init, 'w'):
-                    os.utime(init)
+                with open(init, 'w') as fw:
+                    fw.write('from . import locale, custom')
 
             with open(main, 'w') as fw:
                 fw.write(result)

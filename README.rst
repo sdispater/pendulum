@@ -205,6 +205,7 @@ If the locale does not exist you will need to create it by using the ``clock`` u
 
     ./clock locale:dump <your-locale>
 
+
 It will generate a directory in ``pendulum/locales`` named after your locale, with the following
 structure:
 
@@ -220,5 +221,7 @@ the CLDR database.
 The ``custom.py`` file is the one you want to modify. It contains the data needed
 by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locale/en/custom.py>`_
 data as a reference to see which data is needed.
+
+You need explicit import created locale module in `locale/index.py` to enable it.
 
 You should also add tests for the created or modified locale.
