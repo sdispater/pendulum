@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.0.3] - 2018-06-15
+
+### Fixed
+
+- Fixed locale discover failure when work with `pyinstaller`, `pyinstaller#3528<https://github.com/pyinstaller/pyinstaller/issues/3528/>`\_ .
+
 ## [2.0.2] - 2018-05-29
 
 ### Fixed
@@ -11,14 +17,12 @@
 - Fixed parsing not raising an error for week 53 for ordinary years.
 - Fixed string formatting not supporting `strftime` format.
 
-
 ## [2.0.1] - 2018-05-10
 
 ### Fixed
 
 - Fixed behavior of the `YY` token in `from_format()`.
 - Fixed errors on some systems when retrieving timezone from clock files.
-
 
 ## [2.0.0] - 2018-05-08
 
@@ -53,9 +57,8 @@
 - `diff_for_humans()` now returns `a few seconds` where appropriate.
 - Removed `Period.intersect()`.
 
-
-
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.2...master
+[unreleased]: https://github.com/sdispater/pendulum/compare/2.0.3...master
+[2.0.3]: https://github.com/sdispater/pendulum/releases/tag/2.0.3
 [2.0.2]: https://github.com/sdispater/pendulum/releases/tag/2.0.2
 [2.0.1]: https://github.com/sdispater/pendulum/releases/tag/2.0.1
 [2.0.0]: https://github.com/sdispater/pendulum/releases/tag/2.0.0
