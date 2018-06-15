@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fixed locale discover failure when work with `pyinstaller`, `pyinstaller#3528<https://github.com/pyinstaller/pyinstaller/issues/3528/>`\_ .
+- Fixed locale discover failure when work with `pyinstaller`. [pyinstaller#3528](https://github.com/pyinstaller/pyinstaller/issues/3528/)
 
 ## [2.0.2] - 2018-05-29
 

@@ -222,6 +222,6 @@ The ``custom.py`` file is the one you want to modify. It contains the data neede
 by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locale/en/custom.py>`_
 data as a reference to see which data is needed.
 
-You need explicit import created locale module in `locale/index.py` to enable it.
+You need explicit import created locale module in ``locale/index.py`` to enable it.
 
 You should also add tests for the created or modified locale.
