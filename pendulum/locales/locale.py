@@ -34,7 +34,7 @@ class Locale:
 
         # Checking locale existence
         actual_locale = locale
-        while not getattr(index, actual_locale):
+        while not getattr(index, actual_locale, False):
             if actual_locale == locale:
                 raise ValueError('Locale [{}] does not exist.'.format(locale))
 
