@@ -115,6 +115,14 @@ def test_precise_diff_timezone():
         days=1, hours=5
     )
 
+    # Issue238
+    dt1 = timezone('UTC').datetime(2018, 6, 20, 1, 30)
+    dt2 = timezone('Asia/ShangHai').datetime(2018, 6, 20, 10, 30) # UTC+8
+    diff = precise_diff(dt1, dt2)
+    assert_diff(
+        diff,
+        hours=1
+    )
 
 def test_week_day():
     assert 5 == week_day(2017, 6, 2)

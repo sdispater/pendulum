@@ -31,3 +31,7 @@ profile.html
 /wheelhouse
 /docs/site/*
 pyproject.lock
+
+# editor
+
+.vscode

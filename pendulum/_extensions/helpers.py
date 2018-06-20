@@ -282,10 +282,6 @@ def precise_diff(d1, d2):
             hour_diff += 24
             d_diff -= 1
 
-    if d1 > d2:
-        d1, d2 = d2, d1
-        sign = -1
-
     y_diff = d2.year - d1.year
     m_diff = d2.month - d1.month
     d_diff += d2.day - d1.day
