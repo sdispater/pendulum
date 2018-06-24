@@ -201,30 +201,28 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
                 line = line[match.end():]
                 etctz = line[:end_re.search(line).start()]
 
-                parts = list(reversed(etctz.replace(' ', '_').split('/')))
+                parts = list(reversed(etctz.replace(' ', '_').split(os.path.sep)))
                 tzpath = []
                 while parts:
                     tzpath.insert(0, parts.pop(0))
 
                     try:
-                        return Timezone('/'.join(tzpath))
+                        return Timezone(os.path.join(*tzpath))
                     except InvalidTimezone:
                         pass
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
-    tzpath = os.path.join(_root, 'etc/localtime')
+    tzpath = os.path.join(_root, 'etc', 'localtime')
     if os.path.exists(tzpath) and os.path.islink(tzpath):
-        tzpath = os.path.realpath(tzpath)
-        parts = tzpath.split('/')[-2:]
+        parts = list(reversed(os.path.realpath(tzpath).replace(' ', '_').split(os.path.sep)))
+        tzpath = []
         while parts:
-            tzpath = '/'.join(parts)
+            tzpath.insert(0, parts.pop(0))
             try:
-                return Timezone(tzpath)
-            except (ValueError, IOError, OSError):
+                return Timezone(os.path.join(*tzpath))
+            except InvalidTimezone:
                 pass
-
-            parts.pop(0)
 
     # No explicit setting existed. Use localtime
     for filename in ('etc/localtime', 'usr/local/etc/localtime'):
