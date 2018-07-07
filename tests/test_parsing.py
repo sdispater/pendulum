@@ -43,7 +43,14 @@ def test_parse_with_timezone():
     assert 7200 == dt.offset
 
 
-def test_parse_exact():
+def test_parse_exact_datetime():
+    text = '2016-10-16T12:34:56.123456'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.DateTime)
+    assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
+
     text = '2016-10-16T12:34:56.123456+01:30'
 
     dt = pendulum.parse(text, exact=True)
@@ -52,6 +59,8 @@ def test_parse_exact():
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
     assert 5400 == dt.offset
 
+
+def test_parse_exact_date():
     text = '2016-10-16'
 
     dt = pendulum.parse(text, exact=True)
@@ -59,6 +68,22 @@ def test_parse_exact():
     assert isinstance(dt, pendulum.Date)
     assert_date(dt, 2016, 10, 16)
 
+    text = '2016-05'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.Date)
+    assert_date(dt, 2016, 5, 1)
+
+    text = '2000'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.Date)
+    assert_date(dt, 2000, 1, 1)
+
+
+def test_parse_exact_time():
     text = '12:34:56.123456'
 
     dt = pendulum.parse(text, exact=True)
@@ -66,12 +91,26 @@ def test_parse_exact():
     assert isinstance(dt, pendulum.Time)
     assert_time(dt, 12, 34, 56, 123456)
 
+    text = '08:55:17'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.Time)
+    assert_time(dt, 8, 55, 17)
+
     text = '13:00'
 
     dt = pendulum.parse(text, exact=True)
 
     assert isinstance(dt, pendulum.Time)
     assert_time(dt, 13, 0, 0)
+
+    text = '20'
+
+    dt = pendulum.parse(text, exact=True)
+
+    assert isinstance(dt, pendulum.Time)
+    assert_time(dt, 20, 0, 0)
 
 
 def test_parse_duration():
