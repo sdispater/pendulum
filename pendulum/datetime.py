@@ -452,36 +452,43 @@ class DateTime(datetime.datetime, Date):
         )
 
     # Comparisons
-    def closest(self, dt1, dt2):
-        """
-        Get the closest date from the instance.
-
-        :type dt1: DateTime or datetime
-        :type dt2: DateTime or datetime
-
-        :rtype: DateTime
-        """
-        if dt1 < dt2:
-            return pendulum.instance(dt1)
-
-        return pendulum.instance(dt2)
-
-    def farthest(self, dt1, dt2):
+    def closest(self, dt1, dt2, *dts):
+        from functools import reduce
         """
         Get the farthest date from the instance.
 
         :type dt1: datetime.datetime
         :type dt2: datetime.datetime
+        :type dts: list[datetime.datetime,]
+
+        :rtype: DateTime
+        """
+        dt1 = pendulum.instance(dt1)
+        dt2 = pendulum.instance(dt2)
+        dts = [dt1, dt2] + [pendulum.instance(x) for x in dts]
+        dts = [(abs(self - dt), dt) for dt in dts]
+
+        return min(dts)[1]
+
+    def farthest(self, dt1, dt2, *dts):
+        from functools import reduce
+        """
+        Get the farthest date from the instance.
+
+        :type dt1: datetime.datetime
+        :type dt2: datetime.datetime
+        :type dts: list[datetime.datetime,]
 
         :rtype: DateTime
         """
         dt1 = pendulum.instance(dt1)
         dt2 = pendulum.instance(dt2)
 
-        if dt1 > dt2:
-            return dt1
+        dts = [dt1, dt2] + [pendulum.instance(x) for x in dts]
+        dts = [(abs(self - dt), dt) for dt in dts]
 
-        return dt2
+        return max(dts)[1]
+
 
     def is_future(self):
         """
