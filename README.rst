@@ -203,7 +203,7 @@ If the locale does not exist you will need to create it by using the ``clock`` u
 
 .. code-block:: bash
 
-    ./clock locale:dump <your-locale>
+    ./clock locale:create <your-locale>
 
 It will generate a directory in ``pendulum/locales`` named after your locale, with the following
 structure:
@@ -218,7 +218,7 @@ The ``locale.py`` file must not be modified. It contains the translations provid
 the CLDR database.
 
 The ``custom.py`` file is the one you want to modify. It contains the data needed
-by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locale/en/custom.py>`_
+by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locales/en/custom.py>`_
 data as a reference to see which data is needed.
 
 You should also add tests for the created or modified locale.
