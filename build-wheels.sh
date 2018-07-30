@@ -1,7 +1,7 @@
 #!/bin/bash
-PYTHON_VERSIONS="cp27-cp27m cp34-cp34m cp35-cp35m cp36-cp36m"
+PYTHON_VERSIONS="cp27-cp27m cp34-cp34m cp35-cp35m cp36-cp36m cp37-cp37m"
 
-POETRY_PYTHON="cp36-cp36m"
+POETRY_PYTHON="cp37-cp37m"
 POETRY_VENV="/opt/python/poetry"
 echo "Create Poetry's virtualenv"
 /opt/python/${POETRY_PYTHON}/bin/pip install virtualenv
