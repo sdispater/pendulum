@@ -265,12 +265,26 @@ def test_closest():
     closest = instance.closest(dt2, dt1)
     assert closest == dt1
 
+    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
+        hours=x) for x in range(4)]
+    closest = instance.closest(*dts)
+    assert closest == dts[0]
+
+    closest = instance.closest(*(dts[::-1]))
+    assert closest == dts[0]
+
 
 def test_closest_with_datetime():
     instance = pendulum.datetime(2015, 5, 28, 12, 0, 0)
     dt1 = datetime(2015, 5, 28, 11, 0, 0)
     dt2 = datetime(2015, 5, 28, 14, 0, 0)
     closest = instance.closest(dt1, dt2)
+    assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
+
+    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
+        hours=x) for x in range(4)]
+    closest = instance.closest(dt1, dt2, *dts)
+
     assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
 
 
@@ -286,28 +300,48 @@ def test_farthest():
     instance = pendulum.datetime(2015, 5, 28, 12, 0, 0)
     dt1 = pendulum.datetime(2015, 5, 28, 11, 0, 0)
     dt2 = pendulum.datetime(2015, 5, 28, 14, 0, 0)
-    closest = instance.farthest(dt1, dt2)
-    assert closest == dt2
+    farthest = instance.farthest(dt1, dt2)
+    assert farthest == dt2
 
-    closest = instance.farthest(dt2, dt1)
-    assert closest == dt2
+    farthest = instance.farthest(dt2, dt1)
+    assert farthest == dt2
+
+    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
+        hours=x) for x in range(4)]
+    farthest = instance.farthest(*dts)
+    assert farthest == dts[-1]
+
+    farthest = instance.farthest(*(dts[::-1]))
+    assert farthest == dts[-1]
+
+    f = pendulum.datetime(2010, 1, 1, 0, 0, 0)
+    assert f == instance.farthest(f, *(dts))
 
 
 def test_farthest_with_datetime():
     instance = pendulum.datetime(2015, 5, 28, 12, 0, 0)
     dt1 = datetime(2015, 5, 28, 11, 0, 0, tzinfo= pendulum.UTC)
     dt2 = datetime(2015, 5, 28, 14, 0, 0, tzinfo= pendulum.UTC)
-    closest = instance.farthest(dt1, dt2)
+    farthest = instance.farthest(dt1, dt2)
+    assert_datetime(farthest, 2015, 5, 28, 14, 0, 0)
 
-    assert_datetime(closest, 2015, 5, 28, 14, 0, 0)
+    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
+        hours=x) for x in range(4)]
+    farthest = instance.farthest(dt1, dt2, *dts)
+
+    assert_datetime(farthest, 2015, 5, 28, 19, 0, 0)
 
 
 def test_farthest_with_equals():
     instance = pendulum.datetime(2015, 5, 28, 12, 0, 0)
     dt1 = pendulum.datetime(2015, 5, 28, 12, 0, 0)
     dt2 = pendulum.datetime(2015, 5, 28, 14, 0, 0)
-    closest = instance.farthest(dt1, dt2)
-    assert closest == dt2
+    farthest = instance.farthest(dt1, dt2)
+    assert farthest == dt2
+
+    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x) for x in range(4)]
+    farthest = instance.farthest(dt1, dt2, *dts)
+    assert farthest == dts[-1]
 
 
 def test_is_same_day():
