@@ -6,6 +6,9 @@
 
 - Fixed handling of `pytz` timezones.
 - Fixed some formatter's tokens handling.
+- Fixed errors on some systems when retrieving timezone from localtime files.
+- Fixed `diff` methods.
+- Fixed `closest()/farthest()` methods.
 
 
 ## [2.0.2] - 2018-05-29
