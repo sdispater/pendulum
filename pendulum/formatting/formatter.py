@@ -96,6 +96,9 @@ class Formatter:
         # Day of Week
         'd': lambda dt: '{:d}'.format(dt.day_of_week),
 
+        # Day of ISO Week
+        'E': lambda dt: '{:d}'.format(dt.isoweekday()),
+
         # Hour
         'HH': lambda dt: '{:02d}'.format(dt.hour),
         'H': lambda dt: '{:d}'.format(dt.hour),
@@ -321,7 +324,9 @@ class Formatter:
             return locale.get('translations.months.abbreviated')[dt.month]
         elif token == 'MMMM':
             return locale.get('translations.months.wide')[dt.month]
-        elif token in ('dd', 'ddd'):
+        elif token == 'dd':
+            return locale.get('translations.days.short')[dt.day_of_week]
+        elif token == 'ddd':
             return locale.get('translations.days.abbreviated')[dt.day_of_week]
         elif token == 'dddd':
             return locale.get('translations.days.wide')[dt.day_of_week]

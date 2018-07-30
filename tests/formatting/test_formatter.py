@@ -9,7 +9,7 @@ from pendulum.locales.locale import Locale
 @pytest.fixture(autouse=True)
 def setup():
     Locale._cache['dummy'] = {}
-    
+
     yield
 
     del Locale._cache['dummy']
@@ -100,15 +100,21 @@ def test_day_of_week():
     d = pendulum.datetime(2016, 8, 28)
     assert f.format(d, 'd') == '0'
 
-    assert f.format(d, 'dd') == 'Sun'
+    assert f.format(d, 'dd') == 'Su'
     assert f.format(d, 'ddd') == 'Sun'
     assert f.format(d, 'dddd') == 'Sunday'
 
-    assert f.format(d, 'dd', locale='fr') == 'dim.'
+    assert f.format(d, 'dd', locale='fr') == 'di'
     assert f.format(d, 'ddd', locale='fr') == 'dim.'
     assert f.format(d, 'dddd', locale='fr') == 'dimanche'
 
     assert f.format(d, 'do') == '0th'
+
+
+def test_day_of_iso_week():
+    f = Formatter()
+    d = pendulum.datetime(2016, 8, 28)
+    assert f.format(d, 'E') == '7'
 
 
 def test_am_pm():
