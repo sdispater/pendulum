@@ -70,7 +70,7 @@ def _safe_timezone(obj):
     elif isinstance(obj, _datetime.tzinfo):
         # pytz
         if hasattr(obj, 'localize'):
-            obj = timezone(obj.zone)
+            obj = obj.zone
         else:
             offset = obj.utcoffset(None)
 

@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed handling of `pytz` timezones.
+
+
 ## [2.0.2] - 2018-05-29
 
 ### Fixed
