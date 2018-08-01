@@ -102,7 +102,7 @@ int _is_leap(int year) {
 }
 
 int _is_long_year(int year) {
-    return (p(year) % 7 == 4) || (p(year - 1) % 7 == 3);
+    return (_p(year) % 7 == 4) || (_p(year - 1) % 7 == 3);
 }
 
 int _week_day(int year, int month, int day) {
