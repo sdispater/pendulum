@@ -2,7 +2,7 @@
 
 Pendulum provides helpers that returns a new instance with some attributes
 modified compared to the original instance.
-However, none of these helpers, with the exception of explicitely setting the
+However, none of these helpers, with the exception of explicitly setting the
 timezone, will change the timezone of the instance. Specifically,
 setting the timestamp will not set the corresponding timezone to UTC.
 
