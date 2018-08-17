@@ -5,12 +5,12 @@ from .transition_type import TransitionType
 
 
 class Transition:
-
-    def __init__(self,
-                 at,       # type: int
-                 ttype,    # type: TransitionType
-                 previous  # type: Union['Transition', None]
-                 ):
+    def __init__(
+        self,
+        at,  # type: int
+        ttype,  # type: TransitionType
+        previous,  # type: Union['Transition', None]
+    ):
         self._at = at
 
         if previous:
@@ -37,7 +37,7 @@ class Transition:
     @property
     def local(self):  # type: () -> int
         return self._local
-    
+
     @property
     def to(self):  # type: () -> int
         return self._to
@@ -71,6 +71,4 @@ class Transition:
         return self.previous.local <= stamp < self.local
 
     def __repr__(self):  # type: () -> str
-        return 'Transition({} -> {}, {})'.format(
-            self._local, self._to, self._ttype
-        )
+        return "Transition({} -> {}, {})".format(self._local, self._to, self._ttype)

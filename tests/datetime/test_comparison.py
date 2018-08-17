@@ -9,7 +9,7 @@ from ..conftest import assert_datetime
 def test_equal_to_true():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
     d2 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
-    d3 = datetime(2000, 1, 1, 1, 2, 3, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 1, 1, 2, 3, tzinfo=pendulum.UTC)
 
     assert d2 == d1
     assert d3 == d1
@@ -18,26 +18,25 @@ def test_equal_to_true():
 def test_equal_to_false():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
     d2 = pendulum.datetime(2000, 1, 2, 1, 2, 3)
-    d3 = datetime(2000, 1, 2, 1, 2, 3, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 2, 1, 2, 3, tzinfo=pendulum.UTC)
 
     assert d2 != d1
     assert d3 != d1
 
 
 def test_equal_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 0, tz='America/Vancouver')
-    d3 = datetime(2000, 1, 1, 12, 0, 0,
-                  tzinfo= pendulum.timezone('America/Toronto'))
+    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 0, tz="America/Vancouver")
+    d3 = datetime(2000, 1, 1, 12, 0, 0, tzinfo=pendulum.timezone("America/Toronto"))
 
     assert d2 == d1
     assert d3 == d1
 
 
 def test_equal_with_timezone_false():
-    d1 = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, tz='America/Vancouver')
-    d3 = datetime(2000, 1, 1, tzinfo= pendulum.timezone('America/Toronto'))
+    d1 = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, tz="America/Vancouver")
+    d3 = datetime(2000, 1, 1, tzinfo=pendulum.timezone("America/Toronto"))
 
     assert d2 != d1
     assert d3 == d1
@@ -46,7 +45,7 @@ def test_equal_with_timezone_false():
 def test_not_equal_to_true():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
     d2 = pendulum.datetime(2000, 1, 2, 1, 2, 3)
-    d3 = datetime(2000, 1, 2, 1, 2, 3, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 2, 1, 2, 3, tzinfo=pendulum.UTC)
 
     assert d2 != d1
     assert d3 != d1
@@ -55,16 +54,16 @@ def test_not_equal_to_true():
 def test_not_equal_to_false():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
     d2 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
-    d3 = datetime(2000, 1, 1, 1, 2, 3, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 1, 1, 2, 3, tzinfo=pendulum.UTC)
 
     assert d2 == d1
     assert d3 == d1
 
 
 def test_not_equal_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, tz='America/Vancouver')
-    d3 = datetime(2000, 1, 1, tzinfo= pendulum.timezone('America/Toronto'))
+    d1 = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, tz="America/Vancouver")
+    d3 = datetime(2000, 1, 1, tzinfo=pendulum.timezone("America/Toronto"))
 
     assert d2 != d1
     assert d3 == d1
@@ -79,7 +78,7 @@ def test_not_equal_to_none():
 def test_greater_than_true():
     d1 = pendulum.datetime(2000, 1, 1)
     d2 = pendulum.datetime(1999, 12, 31)
-    d3 = datetime(1999, 12, 31, tzinfo= pendulum.UTC)
+    d3 = datetime(1999, 12, 31, tzinfo=pendulum.UTC)
 
     assert d1 > d2
     assert d1 > d3
@@ -88,25 +87,25 @@ def test_greater_than_true():
 def test_greater_than_false():
     d1 = pendulum.datetime(2000, 1, 1)
     d2 = pendulum.datetime(2000, 1, 2)
-    d3 = datetime(2000, 1, 2, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 2, tzinfo=pendulum.UTC)
 
     assert not d1 > d2
     assert not d1 > d3
 
 
 def test_greater_than_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz='America/Vancouver')
-    d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 8, 59, 59))
+    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz="America/Vancouver")
+    d3 = pytz.timezone("America/Vancouver").localize(datetime(2000, 1, 1, 8, 59, 59))
 
     assert d1 > d2
     assert d1 > d3
 
 
 def test_greater_than_with_timezone_false():
-    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz='America/Vancouver')
-    d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 9, 0, 1))
+    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz="America/Vancouver")
+    d3 = pytz.timezone("America/Vancouver").localize(datetime(2000, 1, 1, 9, 0, 1))
 
     assert not d1 > d2
     assert not d1 > d3
@@ -115,7 +114,7 @@ def test_greater_than_with_timezone_false():
 def test_greater_than_or_equal_true():
     d1 = pendulum.datetime(2000, 1, 1)
     d2 = pendulum.datetime(1999, 12, 31)
-    d3 = datetime(1999, 12, 31, tzinfo= pendulum.UTC)
+    d3 = datetime(1999, 12, 31, tzinfo=pendulum.UTC)
 
     assert d1 >= d2
     assert d1 >= d3
@@ -124,7 +123,7 @@ def test_greater_than_or_equal_true():
 def test_greater_than_or_equal_true_equal():
     d1 = pendulum.datetime(2000, 1, 1)
     d2 = pendulum.datetime(2000, 1, 1)
-    d3 = datetime(2000, 1, 1, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 1, tzinfo=pendulum.UTC)
 
     assert d1 >= d2
     assert d1 >= d3
@@ -133,25 +132,25 @@ def test_greater_than_or_equal_true_equal():
 def test_greater_than_or_equal_false():
     d1 = pendulum.datetime(2000, 1, 1)
     d2 = pendulum.datetime(2000, 1, 2)
-    d3 = datetime(2000, 1, 2, tzinfo= pendulum.UTC)
+    d3 = datetime(2000, 1, 2, tzinfo=pendulum.UTC)
 
     assert not d1 >= d2
     assert not d1 >= d3
 
 
 def test_greater_than_or_equal_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz='America/Vancouver')
-    d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 8, 59, 59))
+    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz="America/Vancouver")
+    d3 = pytz.timezone("America/Vancouver").localize(datetime(2000, 1, 1, 8, 59, 59))
 
     assert d1 >= d2
     assert d1 >= d3
 
 
 def test_greater_than_or_equal_with_timezone_false():
-    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz='America/Vancouver')
-    d3 = pytz.timezone('America/Vancouver').localize(datetime(2000, 1, 1, 9, 0, 1))
+    d1 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d2 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz="America/Vancouver")
+    d3 = pytz.timezone("America/Vancouver").localize(datetime(2000, 1, 1, 9, 0, 1))
 
     assert not d1 >= d2
     assert not d1 >= d3
@@ -176,18 +175,18 @@ def test_less_than_false():
 
 
 def test_less_than_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz='America/Vancouver')
-    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
+    d1 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz="America/Vancouver")
+    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d3 = pytz.timezone("America/Toronto").localize(datetime(2000, 1, 1, 12, 0, 0))
 
     assert d1 < d2
     assert d1 < d3
 
 
 def test_less_than_with_timezone_false():
-    d1 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz='America/Vancouver')
-    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
+    d1 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz="America/Vancouver")
+    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d3 = pytz.timezone("America/Toronto").localize(datetime(2000, 1, 1, 12, 0, 0))
 
     assert not d1 < d2
     assert not d1 < d3
@@ -221,18 +220,18 @@ def test_less_than_or_equal_false():
 
 
 def test_less_than_or_equal_with_timezone_true():
-    d1 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz='America/Vancouver')
-    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
+    d1 = pendulum.datetime(2000, 1, 1, 8, 59, 59, tz="America/Vancouver")
+    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d3 = pytz.timezone("America/Toronto").localize(datetime(2000, 1, 1, 12, 0, 0))
 
     assert d1 <= d2
     assert d1 <= d3
 
 
 def test_less_than_or_equal_with_timezone_false():
-    d1 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz='America/Vancouver')
-    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz='America/Toronto')
-    d3 = pytz.timezone('America/Toronto').localize(datetime(2000, 1, 1, 12, 0, 0))
+    d1 = pendulum.datetime(2000, 1, 1, 9, 0, 1, tz="America/Vancouver")
+    d2 = pendulum.datetime(2000, 1, 1, 12, 0, 0, tz="America/Toronto")
+    d3 = pytz.timezone("America/Toronto").localize(datetime(2000, 1, 1, 12, 0, 0))
 
     assert not d1 <= d2
     assert not d1 <= d3
@@ -265,8 +264,10 @@ def test_closest():
     closest = instance.closest(dt2, dt1)
     assert closest == dt1
 
-    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
-        hours=x) for x in range(4)]
+    dts = [
+        pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
+        for x in range(4)
+    ]
     closest = instance.closest(*dts)
     assert closest == dts[0]
 
@@ -281,8 +282,10 @@ def test_closest_with_datetime():
     closest = instance.closest(dt1, dt2)
     assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
 
-    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
-        hours=x) for x in range(4)]
+    dts = [
+        pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
+        for x in range(4)
+    ]
     closest = instance.closest(dt1, dt2, *dts)
 
     assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
@@ -306,8 +309,10 @@ def test_farthest():
     farthest = instance.farthest(dt2, dt1)
     assert farthest == dt2
 
-    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
-        hours=x) for x in range(4)]
+    dts = [
+        pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
+        for x in range(4)
+    ]
     farthest = instance.farthest(*dts)
     assert farthest == dts[-1]
 
@@ -320,13 +325,15 @@ def test_farthest():
 
 def test_farthest_with_datetime():
     instance = pendulum.datetime(2015, 5, 28, 12, 0, 0)
-    dt1 = datetime(2015, 5, 28, 11, 0, 0, tzinfo= pendulum.UTC)
-    dt2 = datetime(2015, 5, 28, 14, 0, 0, tzinfo= pendulum.UTC)
+    dt1 = datetime(2015, 5, 28, 11, 0, 0, tzinfo=pendulum.UTC)
+    dt2 = datetime(2015, 5, 28, 14, 0, 0, tzinfo=pendulum.UTC)
     farthest = instance.farthest(dt1, dt2)
     assert_datetime(farthest, 2015, 5, 28, 14, 0, 0)
 
-    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(
-        hours=x) for x in range(4)]
+    dts = [
+        pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
+        for x in range(4)
+    ]
     farthest = instance.farthest(dt1, dt2, *dts)
 
     assert_datetime(farthest, 2015, 5, 28, 19, 0, 0)
@@ -339,7 +346,10 @@ def test_farthest_with_equals():
     farthest = instance.farthest(dt1, dt2)
     assert farthest == dt2
 
-    dts = [pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x) for x in range(4)]
+    dts = [
+        pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
+        for x in range(4)
+    ]
     farthest = instance.farthest(dt1, dt2, *dts)
     assert farthest == dts[-1]
 
@@ -360,5 +370,5 @@ def test_is_same_day():
 def test_comparison_to_unsupported():
     dt1 = pendulum.now()
 
-    assert dt1 != 'test'
-    assert dt1 not in ['test']
+    assert dt1 != "test"
+    assert dt1 not in ["test"]

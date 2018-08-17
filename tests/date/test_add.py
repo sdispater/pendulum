@@ -26,7 +26,7 @@ def test_add_months_positive():
 def test_add_months_zero():
     assert pendulum.date(1975, 12, 1).add(months=0).month == 12
 
-    
+
 def test_add_months_negative():
     assert pendulum.date(1975, 12, 1).add(months=-1).month == 11
 

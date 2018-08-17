@@ -18,24 +18,25 @@ from ..constants import (
     TM_JANUARY,
     DAY_OF_WEEK_TABLE,
     DAYS_PER_L_YEAR,
-    DAYS_PER_N_YEAR
+    DAYS_PER_N_YEAR,
 )
 
 
-class PreciseDiff(namedtuple('PreciseDiff',
-                             'years months days '
-                             'hours minutes seconds microseconds '
-                             'total_days')):
-
+class PreciseDiff(
+    namedtuple(
+        "PreciseDiff",
+        "years months days " "hours minutes seconds microseconds " "total_days",
+    )
+):
     def __repr__(self):
         return (
-            '{years} years '
-            '{months} months '
-            '{days} days '
-            '{hours} hours '
-            '{minutes} minutes '
-            '{seconds} seconds '
-            '{microseconds} microseconds'
+            "{years} years "
+            "{months} months "
+            "{days} days "
+            "{hours} hours "
+            "{minutes} minutes "
+            "{seconds} seconds "
+            "{microseconds} microseconds"
         ).format(
             years=self.years,
             months=self.months,
@@ -43,7 +44,7 @@ class PreciseDiff(namedtuple('PreciseDiff',
             hours=self.hours,
             minutes=self.minutes,
             seconds=self.seconds,
-            microseconds=self.microseconds
+            microseconds=self.microseconds,
         )
 
 
@@ -53,7 +54,7 @@ def is_leap(year):
 
 def is_long_year(year):
     def p(y):
-        return y + y//4 - y//100 + y//400
+        return y + y // 4 - y // 100 + y // 400
 
     return p(year) % 7 == 4 or p(year - 1) % 7 == 3
 
@@ -62,7 +63,14 @@ def week_day(year, month, day):
     if month < 3:
         year -= 1
 
-    w = (year + year//4 - year//100 + year//400 + DAY_OF_WEEK_TABLE[month - 1] + day) % 7
+    w = (
+        year
+        + year // 4
+        - year // 100
+        + year // 400
+        + DAY_OF_WEEK_TABLE[month - 1]
+        + day
+    ) % 7
 
     if not w:
         w = 7
@@ -171,10 +179,7 @@ def local_time(unix_time, utc_offset, microseconds):
     minute = seconds // SECS_PER_MIN
     second = seconds % SECS_PER_MIN
 
-    return (
-        year, month, day,
-        hour, minute, second, microseconds
-    )
+    return (year, month, day, hour, minute, second, microseconds)
 
 
 def precise_diff(d1, d2):
@@ -192,17 +197,19 @@ def precise_diff(d1, d2):
     sign = 1
 
     if d1 == d2:
-        return PreciseDiff(
-            0, 0, 0, 0, 0, 0, 0, 0
-        )
+        return PreciseDiff(0, 0, 0, 0, 0, 0, 0, 0)
 
     tzinfo1 = d1.tzinfo if isinstance(d1, datetime.datetime) else None
     tzinfo2 = d2.tzinfo if isinstance(d2, datetime.datetime) else None
 
-    if (tzinfo1 is None and tzinfo2 is not None
-        or tzinfo2 is None and tzinfo1 is not None):
+    if (
+        tzinfo1 is None
+        and tzinfo2 is not None
+        or tzinfo2 is None
+        and tzinfo1 is not None
+    ):
         raise ValueError(
-            'Comparison between naive and aware datetimes is not supported'
+            "Comparison between naive and aware datetimes is not supported"
         )
 
     if d1 > d2:
@@ -214,9 +221,8 @@ def precise_diff(d1, d2):
     min_diff = 0
     sec_diff = 0
     mic_diff = 0
-    total_days = (
-        _day_number(d2.year, d2.month, d2.day)
-        - _day_number(d1.year, d1.month, d1.day)
+    total_days = _day_number(d2.year, d2.month, d2.day) - _day_number(
+        d1.year, d1.month, d1.day
     )
     in_same_tz = False
     tz1 = None
@@ -225,16 +231,16 @@ def precise_diff(d1, d2):
     # Trying to figure out the timezone names
     # If we can't find them, we assume different timezones
     if tzinfo1 and tzinfo2:
-        if hasattr(tzinfo1, 'name'):
+        if hasattr(tzinfo1, "name"):
             # Pendulum timezone
             tz1 = tzinfo1.name
-        elif hasattr(tzinfo1, 'zone'):
+        elif hasattr(tzinfo1, "zone"):
             # pytz timezone
             tz1 = tzinfo1.zone
 
-        if hasattr(tzinfo2, 'name'):
+        if hasattr(tzinfo2, "name"):
             tz2 = tzinfo2.name
-        elif hasattr(tzinfo2, 'zone'):
+        elif hasattr(tzinfo2, "zone"):
             tz2 = tzinfo2.zone
 
         in_same_tz = tz1 == tz2 and tz1 is not None
@@ -331,7 +337,7 @@ def precise_diff(d1, d2):
         sign * min_diff,
         sign * sec_diff,
         sign * mic_diff,
-        sign * total_days
+        sign * total_days,
     )
 
 
@@ -341,7 +347,9 @@ def _day_number(year, month, day):
 
     return (
         365 * year
-        + year // 4 - year // 100 + year // 400
+        + year // 4
+        - year // 100
+        + year // 400
         + (month * 306 + 5) // 10
         + (day - 1)
     )

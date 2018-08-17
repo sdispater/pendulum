@@ -6,9 +6,7 @@ from datetime import time, timedelta
 
 from .duration import Duration, AbsoluteDuration
 from .mixins.default import FormattableMixing
-from .constants import (
-    USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
-)
+from .constants import USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
 
 
 class Time(FormattableMixing, time):
@@ -19,20 +17,16 @@ class Time(FormattableMixing, time):
     pass
     # String formatting
     def __repr__(self):
-        us = ''
+        us = ""
         if self.microsecond:
-            us = ', {}'.format(self.microsecond)
+            us = ", {}".format(self.microsecond)
 
-        tzinfo = ''
+        tzinfo = ""
         if self.tzinfo:
-            tzinfo = ', tzinfo={}'.format(repr(self.tzinfo))
+            tzinfo = ", tzinfo={}".format(repr(self.tzinfo))
 
-        return (
-            '{}({}, {}, {}{}{})'.format(
-                self.__class__.__name__,
-                self.hour, self.minute, self.second, us,
-                tzinfo
-            )
+        return "{}({}, {}, {}{}{})".format(
+            self.__class__.__name__, self.hour, self.minute, self.second, us, tzinfo
         )
 
     # Comparisons
@@ -93,14 +87,13 @@ class Time(FormattableMixing, time):
         """
         from .datetime import DateTime
 
-        return DateTime.EPOCH.at(
-            self.hour, self.minute, self.second, self.microsecond
-        ).add(
-            hours=hours,
-            minutes=minutes,
-            seconds=seconds,
-            microseconds=microseconds
-        ).time()
+        return (
+            DateTime.EPOCH.at(self.hour, self.minute, self.second, self.microsecond)
+            .add(
+                hours=hours, minutes=minutes, seconds=seconds, microseconds=microseconds
+            )
+            .time()
+        )
 
     def subtract(self, hours=0, minutes=0, seconds=0, microseconds=0):
         """
@@ -122,14 +115,13 @@ class Time(FormattableMixing, time):
         """
         from .datetime import DateTime
 
-        return DateTime.EPOCH.at(
-            self.hour, self.minute, self.second, self.microsecond
-        ).subtract(
-            hours=hours,
-            minutes=minutes,
-            seconds=seconds,
-            microseconds=microseconds
-        ).time()
+        return (
+            DateTime.EPOCH.at(self.hour, self.minute, self.second, self.microsecond)
+            .subtract(
+                hours=hours, minutes=minutes, seconds=seconds, microseconds=microseconds
+            )
+            .time()
+        )
 
     def add_timedelta(self, delta):
         """
@@ -141,12 +133,9 @@ class Time(FormattableMixing, time):
         :rtype: Time
         """
         if delta.days:
-            raise TypeError('Cannot add timedelta with days to Time.')
+            raise TypeError("Cannot add timedelta with days to Time.")
 
-        return self.add(
-            seconds=delta.seconds,
-            microseconds=delta.microseconds
-        )
+        return self.add(seconds=delta.seconds, microseconds=delta.microseconds)
 
     def subtract_timedelta(self, delta):
         """
@@ -158,12 +147,9 @@ class Time(FormattableMixing, time):
         :rtype: Time
         """
         if delta.days:
-            raise TypeError('Cannot subtract timedelta with days to Time.')
+            raise TypeError("Cannot subtract timedelta with days to Time.")
 
-        return self.subtract(
-            seconds=delta.seconds,
-            microseconds=delta.microseconds
-        )
+        return self.subtract(seconds=delta.seconds, microseconds=delta.microseconds)
 
     def __add__(self, other):
         if not isinstance(other, timedelta):
@@ -180,9 +166,11 @@ class Time(FormattableMixing, time):
 
         if isinstance(other, time):
             if other.tzinfo is not None:
-                raise TypeError('Cannot subtract aware times to or from Time.')
+                raise TypeError("Cannot subtract aware times to or from Time.")
 
-            other = self.__class__(other.hour, other.minute, other.second, other.microsecond)
+            other = self.__class__(
+                other.hour, other.minute, other.second, other.microsecond
+            )
 
         return other.diff(self, False)
 
@@ -192,9 +180,11 @@ class Time(FormattableMixing, time):
 
         if isinstance(other, time):
             if other.tzinfo is not None:
-                raise TypeError('Cannot subtract aware times to or from Time.')
+                raise TypeError("Cannot subtract aware times to or from Time.")
 
-            other = self.__class__(other.hour, other.minute, other.second, other.microsecond)
+            other = self.__class__(
+                other.hour, other.minute, other.second, other.microsecond
+            )
 
         return other.__sub__(self)
 
@@ -217,15 +207,11 @@ class Time(FormattableMixing, time):
             dt = self.__class__(dt.hour, dt.minute, dt.second, dt.microsecond)
 
         us1 = (
-            self.hour * SECS_PER_HOUR
-            + self.minute * SECS_PER_MIN
-            + self.second
+            self.hour * SECS_PER_HOUR + self.minute * SECS_PER_MIN + self.second
         ) * USECS_PER_SEC
 
         us2 = (
-            dt.hour * SECS_PER_HOUR
-            + dt.minute * SECS_PER_MIN
-            + dt.second
+            dt.hour * SECS_PER_HOUR + dt.minute * SECS_PER_MIN + dt.second
         ) * USECS_PER_SEC
 
         klass = Duration
@@ -259,8 +245,9 @@ class Time(FormattableMixing, time):
 
     # Compatibility methods
 
-    def replace(self, hour=None, minute=None, second=None, microsecond=None,
-                tzinfo=True):
+    def replace(
+        self, hour=None, minute=None, second=None, microsecond=None, tzinfo=True
+    ):
         if tzinfo is True:
             tzinfo = self.tzinfo
 
@@ -269,25 +256,18 @@ class Time(FormattableMixing, time):
         second = second if second is not None else self.second
         microsecond = microsecond if microsecond is not None else self.microsecond
 
-        t = super(Time, self).replace(
-            hour, minute, second, microsecond,
-            tzinfo=tzinfo
-        )
+        t = super(Time, self).replace(hour, minute, second, microsecond, tzinfo=tzinfo)
         return self.__class__(
-            t.hour, t.minute, t.second, t.microsecond,
-            tzinfo=t.tzinfo
+            t.hour, t.minute, t.second, t.microsecond, tzinfo=t.tzinfo
         )
 
     def __getnewargs__(self):
-        return self,
+        return (self,)
 
     def _get_state(self, protocol=3):
         tz = self.tzinfo
 
-        return (
-            self.hour, self.minute, self.second, self.microsecond,
-            tz
-        )
+        return (self.hour, self.minute, self.second, self.microsecond, tz)
 
     def __reduce__(self):
         return self.__reduce_ex__(2)

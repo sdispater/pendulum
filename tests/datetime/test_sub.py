@@ -103,8 +103,7 @@ def test_subtract_timedelta():
 
 def test_subtract_duration():
     duration = pendulum.duration(
-        years=2, months=3,
-        days=6, seconds=16, microseconds=654321
+        years=2, months=3, days=6, seconds=16, microseconds=654321
     )
     d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 777777)
 
@@ -119,107 +118,107 @@ def test_subtract_duration():
 
 
 def test_subtract_time_to_new_transition_skipped():
-    dt = pendulum.datetime(2013, 3, 31, 3, 0, 0, 0, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 3, 0, 0, 0, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 3, 31, 3, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
     dt = dt.subtract(microseconds=1)
 
     assert_datetime(dt, 2013, 3, 31, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
-    dt = pendulum.datetime(2013, 3, 10, 3, 0, 0, 0, tz='America/New_York')
+    dt = pendulum.datetime(2013, 3, 10, 3, 0, 0, 0, tz="America/New_York")
 
     assert_datetime(dt, 2013, 3, 10, 3, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
     dt = dt.subtract(microseconds=1)
 
     assert_datetime(dt, 2013, 3, 10, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
-    dt = pendulum.datetime(1957, 4, 28, 3, 0, 0, 0, tz='America/New_York')
+    dt = pendulum.datetime(1957, 4, 28, 3, 0, 0, 0, tz="America/New_York")
 
     assert_datetime(dt, 1957, 4, 28, 3, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
     dt = dt.subtract(microseconds=1)
 
     assert_datetime(dt, 1957, 4, 28, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
 
 def test_subtract_time_to_new_transition_skipped_big():
-    dt = pendulum.datetime(2013, 3, 31, 3, 0, 0, 0, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 3, 0, 0, 0, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 3, 31, 3, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
     dt = dt.subtract(days=1)
 
     assert_datetime(dt, 2013, 3, 30, 3, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
 
 def test_subtract_time_to_new_transition_repeated():
-    dt = pendulum.datetime(2013, 10, 27, 2, 0, 0, 0, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 2, 0, 0, 0, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 10, 27, 2, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
     dt = dt.subtract(microseconds=1)
 
     assert_datetime(dt, 2013, 10, 27, 2, 59, 59, 999999)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
-    dt = pendulum.datetime(2013, 11, 3, 1, 0, 0, 0, tz='America/New_York')
+    dt = pendulum.datetime(2013, 11, 3, 1, 0, 0, 0, tz="America/New_York")
 
     assert_datetime(dt, 2013, 11, 3, 1, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
     dt = dt.subtract(microseconds=1)
 
     assert_datetime(dt, 2013, 11, 3, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
 
 def test_subtract_time_to_new_transition_repeated_big():
-    dt = pendulum.datetime(2013, 10, 27, 2, 0, 0, 0, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 2, 0, 0, 0, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 10, 27, 2, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
     dt = dt.subtract(days=1)
 
     assert_datetime(dt, 2013, 10, 26, 2, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
@@ -228,7 +227,7 @@ def test_subtract_invalid_type():
     d = pendulum.datetime(1975, 5, 21, 0, 0, 0)
 
     with pytest.raises(TypeError):
-        d - 'ab'
+        d - "ab"
 
     with pytest.raises(TypeError):
-        'ab' - d
+        "ab" - d

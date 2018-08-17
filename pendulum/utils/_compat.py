@@ -2,12 +2,12 @@ import sys
 
 PY2 = sys.version_info < (3, 0)
 PY36 = sys.version_info >= (3, 6)
-PYPY = hasattr(sys, 'pypy_version_info')
+PYPY = hasattr(sys, "pypy_version_info")
 
 _HAS_FOLD = PY36
 
 
-try:               # Python 2
+try:  # Python 2
     long = long
     unicode = unicode
     basestring = basestring
@@ -24,7 +24,7 @@ def decode(string, encodings=None):
     if PY2 and isinstance(string, unicode):
         return string
 
-    encodings = encodings or ['utf-8', 'latin1', 'ascii']
+    encodings = encodings or ["utf-8", "latin1", "ascii"]
 
     for encoding in encodings:
         try:
@@ -32,7 +32,7 @@ def decode(string, encodings=None):
         except (UnicodeEncodeError, UnicodeDecodeError):
             pass
 
-    return string.decode(encodings[0], errors='ignore')
+    return string.decode(encodings[0], errors="ignore")
 
 
 def encode(string, encodings=None):
@@ -42,7 +42,7 @@ def encode(string, encodings=None):
     if PY2 and isinstance(string, str):
         return string
 
-    encodings = encodings or ['utf-8', 'latin1', 'ascii']
+    encodings = encodings or ["utf-8", "latin1", "ascii"]
 
     for encoding in encodings:
         try:
@@ -50,4 +50,4 @@ def encode(string, encodings=None):
         except (UnicodeEncodeError, UnicodeDecodeError):
             pass
 
-    return string.encode(encodings[0], errors='ignore')
+    return string.encode(encodings[0], errors="ignore")

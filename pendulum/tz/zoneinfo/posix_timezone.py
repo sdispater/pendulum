@@ -11,26 +11,26 @@ from pendulum.constants import MONTHS_OFFSETS, SECS_PER_DAY
 from .exceptions import InvalidPosixSpec
 
 _spec = re.compile(
-    '^'
-    '(?P<std_abbr><.*?>|[^-+,\d]{3,})'
-    '(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)'
-    '(?P<dst_info>'
-    '    (?P<dst_abbr><.*?>|[^-+,\d]{3,})'
-    '    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?'
-    ')?'
-    '(?:,(?P<rules>'
-    '    (?P<dst_start>'
-    '        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])'
-    '        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?'
-    '    )'
-    '    ,'
-    '    (?P<dst_end>'
-    '        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])'
-    '        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?'
-    '    )'    
-    '))?'
-    '$',
-    re.VERBOSE
+    "^"
+    "(?P<std_abbr><.*?>|[^-+,\d]{3,})"
+    "(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)"
+    "(?P<dst_info>"
+    "    (?P<dst_abbr><.*?>|[^-+,\d]{3,})"
+    "    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?"
+    ")?"
+    "(?:,(?P<rules>"
+    "    (?P<dst_start>"
+    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+    "        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+    "    )"
+    "    ,"
+    "    (?P<dst_end>"
+    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+    "        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+    "    )"
+    "))?"
+    "$",
+    re.VERBOSE,
 )
 
 
@@ -44,40 +44,36 @@ def posix_spec(spec):  # type: (str) -> PosixTimezone
 def _posix_spec(spec):  # type: (str) -> PosixTimezone
     m = _spec.match(spec)
     if not m:
-        raise ValueError('Invalid posix spec')
+        raise ValueError("Invalid posix spec")
 
-    std_abbr = _parse_abbr(m.group('std_abbr'))
-    std_offset = _parse_offset(m.group('std_offset'))
+    std_abbr = _parse_abbr(m.group("std_abbr"))
+    std_offset = _parse_offset(m.group("std_offset"))
 
     dst_abbr = None
     dst_offset = None
-    if m.group('dst_info'):
-        dst_abbr = _parse_abbr(m.group('dst_abbr'))
-        if m.group('dst_offset'):
-            dst_offset = _parse_offset(m.group('dst_offset'))
+    if m.group("dst_info"):
+        dst_abbr = _parse_abbr(m.group("dst_abbr"))
+        if m.group("dst_offset"):
+            dst_offset = _parse_offset(m.group("dst_offset"))
         else:
             dst_offset = std_offset + 3600
 
     dst_start = None
     dst_end = None
-    if m.group('rules'):
-        dst_start = _parse_rule(m.group('dst_start'))
-        dst_end = _parse_rule(m.group('dst_end'))
+    if m.group("rules"):
+        dst_start = _parse_rule(m.group("dst_start"))
+        dst_end = _parse_rule(m.group("dst_end"))
 
-    return PosixTimezone(
-        std_abbr, std_offset,
-        dst_abbr, dst_offset,
-        dst_start, dst_end
-    )
+    return PosixTimezone(std_abbr, std_offset, dst_abbr, dst_offset, dst_start, dst_end)
 
 
 def _parse_abbr(text):  # type: (str) -> Union[str, None]
-    return text.lstrip('<').rstrip('>')
+    return text.lstrip("<").rstrip(">")
 
 
 def _parse_offset(text, sign=-1):  # type: (str, int) -> int
-    if text.startswith(('+', '-')):
-        if text.startswith('-'):
+    if text.startswith(("+", "-")):
+        if text.startswith("-"):
             sign *= -1
 
         text = text[1:]
@@ -85,7 +81,7 @@ def _parse_offset(text, sign=-1):  # type: (str, int) -> int
     minutes = 0
     seconds = 0
 
-    parts = text.split(':')
+    parts = text.split(":")
     hours = int(parts[0])
 
     if len(parts) > 1:
@@ -101,36 +97,35 @@ def _parse_rule(rule):  # type: (str) -> PosixTransition
     klass = NPosixTransition
     args = ()
 
-    if rule.startswith('M'):
+    if rule.startswith("M"):
         rule = rule[1:]
-        parts = rule.split('.')
+        parts = rule.split(".")
         month = int(parts[0])
         week = int(parts[1])
-        day = int(parts[2].split('/')[0])
+        day = int(parts[2].split("/")[0])
 
         args += (month, week, day)
         klass = MPosixTransition
-    elif rule.startswith('J'):
+    elif rule.startswith("J"):
         rule = rule[1:]
-        args += int(rule.split('/')[0]),
+        args += (int(rule.split("/")[0]),)
         klass = JPosixTransition
     else:
-        args += int(rule.split('/')[0]),
+        args += (int(rule.split("/")[0]),)
 
     # Checking offset
-    parts = rule.split('/')
+    parts = rule.split("/")
     if len(parts) > 1:
         offset = _parse_offset(parts[-1], sign=1)
     else:
         offset = 7200
 
-    args += offset,
+    args += (offset,)
 
     return klass(*args)
 
 
 class PosixTransition(object):
-
     def __init__(self, offset):  # type: (int) -> None
         self._offset = offset
 
@@ -143,7 +138,6 @@ class PosixTransition(object):
 
 
 class JPosixTransition(PosixTransition):
-
     def __init__(self, day, offset):  # type: (int, int) -> None
         self._day = day
 
@@ -165,7 +159,6 @@ class JPosixTransition(PosixTransition):
 
 
 class NPosixTransition(PosixTransition):
-
     def __init__(self, day, offset):  # type: (int, int) -> None
         self._day = day
 
@@ -185,7 +178,6 @@ class NPosixTransition(PosixTransition):
 
 
 class MPosixTransition(PosixTransition):
-
     def __init__(self, month, week, weekday, offset):
         # type: (int, int, int, int) -> None
         self._month = month
@@ -235,14 +227,15 @@ class PosixTimezone:
     The standard abbreviation and offset are always given.
     """
 
-    def __init__(self,
-                 std_abbr,        # type: str
-                 std_offset,      # type: int
-                 dst_abbr,        # type: Union[str, None] = None
-                 dst_offset,      # type: Union[str, None] = None
-                 dst_start=None,  # type: Union[PosixTransition, None]
-                 dst_end=None     # type: Union[PosixTransition, None]
-                 ):
+    def __init__(
+        self,
+        std_abbr,  # type: str
+        std_offset,  # type: int
+        dst_abbr,  # type: Union[str, None] = None
+        dst_offset,  # type: Union[str, None] = None
+        dst_start=None,  # type: Union[PosixTransition, None]
+        dst_end=None,  # type: Union[PosixTransition, None]
+    ):
         self._std_abbr = std_abbr
         self._std_offset = std_offset
         self._dst_abbr = dst_abbr

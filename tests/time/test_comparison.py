@@ -179,5 +179,5 @@ def test_farthest_with_equals():
 def test_comparison_to_unsupported():
     t1 = pendulum.now().time()
 
-    assert t1 != 'test'
-    assert t1 not in ['test']
+    assert t1 != "test"
+    assert t1 not in ["test"]

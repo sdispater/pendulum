@@ -51,9 +51,9 @@ def test_local_timezone(mock):  # type: (Timezone) -> None
 
 
 def _get_system_timezone():  # type: () -> Timezone
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         return _get_windows_timezone()
-    elif 'darwin' in sys.platform:
+    elif "darwin" in sys.platform:
         return _get_darwin_timezone()
 
     return _get_unix_timezone()
@@ -80,18 +80,18 @@ def _get_windows_timezone():  # type: () -> Timezone
 
     localtz.Close()
 
-    if 'TimeZoneKeyName' in timezone_info:
+    if "TimeZoneKeyName" in timezone_info:
         # Windows 7 (and Vista?)
 
         # For some reason this returns a string with loads of NUL bytes at
         # least on some systems. I don't know if this is a bug somewhere, I
         # just work around it.
-        tzkeyname = timezone_info['TimeZoneKeyName'].split('\x00', 1)[0]
+        tzkeyname = timezone_info["TimeZoneKeyName"].split("\x00", 1)[0]
     else:
         # Windows 2000 or XP
 
         # This is the localized name:
-        tzwin = timezone_info['StandardName']
+        tzwin = timezone_info["StandardName"]
 
         # Open the list of timezones to look up the real name:
         tz_key_name = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones"
@@ -111,7 +111,7 @@ def _get_windows_timezone():  # type: () -> Timezone
 
             sub.Close()
             try:
-                if info['Std'] == tzwin:
+                if info["Std"] == tzwin:
                     tzkeyname = subkey
                     break
             except KeyError:
@@ -123,7 +123,7 @@ def _get_windows_timezone():  # type: () -> Timezone
         handle.Close()
 
     if tzkeyname is None:
-        raise LookupError('Can not find Windows timezone configuration')
+        raise LookupError("Can not find Windows timezone configuration")
 
     timezone = windows_timezones.get(tzkeyname)
     if timezone is None:
@@ -133,7 +133,7 @@ def _get_windows_timezone():  # type: () -> Timezone
 
     # Return what we have.
     if timezone is None:
-        raise LookupError('Unable to find timezone ' + tzkeyname)
+        raise LookupError("Unable to find timezone " + tzkeyname)
 
     return Timezone(timezone)
 
@@ -141,13 +141,13 @@ def _get_windows_timezone():  # type: () -> Timezone
 def _get_darwin_timezone():  # type: () -> Timezone
     # link will be something like /usr/share/zoneinfo/America/Los_Angeles.
     link = os.readlink("/etc/localtime")
-    tzname = link[link.rfind("zoneinfo/") + 9:]
+    tzname = link[link.rfind("zoneinfo/") + 9 :]
 
     return Timezone(tzname)
 
 
-def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
-    tzenv = os.environ.get('TZ')
+def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
+    tzenv = os.environ.get("TZ")
     if tzenv:
         try:
             return _tz_from_env(tzenv)
@@ -156,37 +156,37 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
 
     # Now look for distribution specific configuration files
     # that contain the timezone name.
-    tzpath = os.path.join(_root, 'etc/timezone')
+    tzpath = os.path.join(_root, "etc/timezone")
     if os.path.exists(tzpath):
-        with open(tzpath, 'rb') as tzfile:
+        with open(tzpath, "rb") as tzfile:
             data = tzfile.read()
 
             # Issue #3 was that /etc/timezone was a zoneinfo file.
             # That's a misconfiguration, but we need to handle it gracefully:
-            if data[:5] != 'TZif2':
+            if data[:5] != "TZif2":
                 etctz = data.strip().decode()
                 # Get rid of host definitions and comments:
-                if ' ' in etctz:
-                    etctz, dummy = etctz.split(' ', 1)
-                if '#' in etctz:
-                    etctz, dummy = etctz.split('#', 1)
+                if " " in etctz:
+                    etctz, dummy = etctz.split(" ", 1)
+                if "#" in etctz:
+                    etctz, dummy = etctz.split("#", 1)
 
-                return Timezone(etctz.replace(' ', '_'))
+                return Timezone(etctz.replace(" ", "_"))
 
     # CentOS has a ZONE setting in /etc/sysconfig/clock,
     # OpenSUSE has a TIMEZONE setting in /etc/sysconfig/clock and
     # Gentoo has a TIMEZONE setting in /etc/conf.d/clock
     # We look through these files for a timezone:
-    zone_re = re.compile('\s*ZONE\s*=\s*\"')
-    timezone_re = re.compile('\s*TIMEZONE\s*=\s*\"')
-    end_re = re.compile('\"')
+    zone_re = re.compile('\s*ZONE\s*=\s*"')
+    timezone_re = re.compile('\s*TIMEZONE\s*=\s*"')
+    end_re = re.compile('"')
 
-    for filename in ('etc/sysconfig/clock', 'etc/conf.d/clock'):
+    for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):
         tzpath = os.path.join(_root, filename)
         if not os.path.exists(tzpath):
             continue
 
-        with open(tzpath, 'rt') as tzfile:
+        with open(tzpath, "rt") as tzfile:
             data = tzfile.readlines()
 
         for line in data:
@@ -198,10 +198,10 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
 
             if match is not None:
                 # Some setting existed
-                line = line[match.end():]
-                etctz = line[:end_re.search(line).start()]
+                line = line[match.end() :]
+                etctz = line[: end_re.search(line).start()]
 
-                parts = list(reversed(etctz.replace(' ', '_').split(os.path.sep)))
+                parts = list(reversed(etctz.replace(" ", "_").split(os.path.sep)))
                 tzpath = []
                 while parts:
                     tzpath.insert(0, parts.pop(0))
@@ -213,9 +213,11 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
-    tzpath = os.path.join(_root, 'etc', 'localtime')
+    tzpath = os.path.join(_root, "etc", "localtime")
     if os.path.exists(tzpath) and os.path.islink(tzpath):
-        parts = list(reversed(os.path.realpath(tzpath).replace(' ', '_').split(os.path.sep)))
+        parts = list(
+            reversed(os.path.realpath(tzpath).replace(" ", "_").split(os.path.sep))
+        )
         tzpath = []
         while parts:
             tzpath.insert(0, parts.pop(0))
@@ -225,7 +227,7 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
                 pass
 
     # No explicit setting existed. Use localtime
-    for filename in ('etc/localtime', 'usr/local/etc/localtime'):
+    for filename in ("etc/localtime", "usr/local/etc/localtime"):
         tzpath = os.path.join(_root, filename)
 
         if not os.path.exists(tzpath):
@@ -233,11 +235,11 @@ def _get_unix_timezone(_root='/'):  # type: (str) -> Timezone
 
         return TimezoneFile(tzpath)
 
-    raise RuntimeError('Unable to find any timezone configuration')
+    raise RuntimeError("Unable to find any timezone configuration")
 
 
 def _tz_from_env(tzenv):  # type: (str) -> Timezone
-    if tzenv[0] == ':':
+    if tzenv[0] == ":":
         tzenv = tzenv[1:]
 
     # TZ specifies a file

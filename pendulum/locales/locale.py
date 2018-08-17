@@ -35,11 +35,11 @@ class Locale:
         locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
         while not os.path.exists(locale_path):
             if actual_locale == locale:
-                raise ValueError('Locale [{}] does not exist.'.format(locale))
+                raise ValueError("Locale [{}] does not exist.".format(locale))
 
-            actual_locale = actual_locale.split('_')[0]
+            actual_locale = actual_locale.split("_")[0]
 
-        m = import_module('pendulum.locales.{}.locale'.format(actual_locale))
+        m = import_module("pendulum.locales.{}.locale".format(actual_locale))
 
         cls._cache[locale] = cls(locale, m.locale)
 
@@ -47,9 +47,9 @@ class Locale:
 
     @classmethod
     def normalize_locale(cls, locale):
-        m = re.match('([a-z]{2})[-_]([a-z]{2})', locale, re.I)
+        m = re.match("([a-z]{2})[-_]([a-z]{2})", locale, re.I)
         if m:
-            return '{}_{}'.format(m.group(1).lower(), m.group(2).lower())
+            return "{}_{}".format(m.group(1).lower(), m.group(2).lower())
         else:
             return locale.lower()
 
@@ -57,7 +57,7 @@ class Locale:
         if key in self._key_cache:
             return self._key_cache[key]
 
-        parts = key.split('.')
+        parts = key.split(".")
         try:
             result = self._data[parts[0]]
             for part in parts[1:]:
@@ -73,21 +73,21 @@ class Locale:
         return self._key_cache[key]
 
     def translation(self, key):
-        return self.get('translations.{}'.format(key))
+        return self.get("translations.{}".format(key))
 
     def plural(self, number):
-        return decode(self._data['plural'](number))
+        return decode(self._data["plural"](number))
 
     def ordinal(self, number):
-        return decode(self._data['ordinal'](number))
+        return decode(self._data["ordinal"](number))
 
     def ordinalize(self, number):
-        ordinal = self.get('custom.ordinal.{}'.format(self.ordinal(number)))
+        ordinal = self.get("custom.ordinal.{}".format(self.ordinal(number)))
 
         if not ordinal:
-            return decode('{}'.format(number))
+            return decode("{}".format(number))
 
-        return decode('{}{}'.format(number, ordinal))
+        return decode("{}{}".format(number, ordinal))
 
     def match_translation(self, key, value):
         translations = self.translation(key)

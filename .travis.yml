@@ -1,6 +1,15 @@
 language: python
 
-matrix:
+stages:
+  - linting
+  - test
+
+cache:
+  pip: true
+  directories:
+    - $HOME/.cache/pypoetry
+
+jobs:
   fast_finish: true
   include:
     - python: 2.7
@@ -25,14 +34,17 @@ matrix:
       env: PENDULUM_EXTENSIONS=0
     - python: pypy
     - python: pypy3
+
+    - stage: linting
+      python: "3.6"
+      install:
+        - pip install pre-commit
+        - pre-commit install-hooks
+      script:
+        - pre-commit run --all-files
   allow_failures:
     - python: pypy
     - python: pypy3
-
-cache:
-  pip: true
-  directories:
-    - $HOME/.cache/pypoetry
 
 before_install:
   - pip install codecov

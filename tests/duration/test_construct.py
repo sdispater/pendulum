@@ -55,8 +55,7 @@ def test_minutes():
 
 def test_all():
     pi = pendulum.duration(
-        years=2, months=3,
-        days=1177, seconds=7284, microseconds=1000000
+        years=2, months=3, days=1177, seconds=7284, microseconds=1000000
     )
     assert_duration(pi, 2, 3, 168, 1, 2, 1, 25)
     assert 1997 == pi.days

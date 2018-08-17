@@ -68,7 +68,7 @@ def test_accuracy():
 
 
 def test_dst_transition():
-    start = pendulum.datetime(2017, 3, 7, tz='America/Toronto')
+    start = pendulum.datetime(2017, 3, 7, tz="America/Toronto")
     end = start.add(days=6)
     period = end - start
 
@@ -104,16 +104,16 @@ def test_timedelta_behavior():
 
 
 def test_different_timezones_same_time():
-    dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz='Europe/Paris')
-    dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz='Europe/Paris')
+    dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz="Europe/Paris")
+    dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz="Europe/Paris")
     period = dt2 - dt1
 
-    assert period.in_words() == '1 day'
+    assert period.in_words() == "1 day"
     assert period.in_hours() == 23
 
-    dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz='Europe/Paris')
-    dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz='America/Toronto')
+    dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz="Europe/Paris")
+    dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz="America/Toronto")
     period = dt2 - dt1
 
-    assert period.in_words() == '1 day 5 hours'
+    assert period.in_words() == "1 day 5 hours"
     assert period.in_hours() == 29

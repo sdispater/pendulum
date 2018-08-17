@@ -10,12 +10,12 @@ from .transition_type import TransitionType
 
 
 class Timezone:
-
-    def __init__(self,
-                 transitions,      # type: List[Transition]
-                 posix_rule=None,  # type: Union[PosixTimezone, None]
-                 extended=True     # type: bool
-                 ):
+    def __init__(
+        self,
+        transitions,  # type: List[Transition]
+        posix_rule=None,  # type: Union[PosixTimezone, None]
+        extended=True,  # type: bool
+    ):
         self._posix_rule = posix_rule
         self._transitions = transitions
 
@@ -40,18 +40,13 @@ class Timezone:
             # std only
             # The future specification should match the last/default transition
             ttype = self._transitions[-1].ttype
-            if not self._check_ttype(
-                ttype,
-                posix.std_offset,
-                False,
-                posix.std_abbr
-            ):
-                raise ValueError('Posix spec does not match last transition')
+            if not self._check_ttype(ttype, posix.std_offset, False, posix.std_abbr):
+                raise ValueError("Posix spec does not match last transition")
 
             return
 
         if len(self._transitions) < 2:
-            raise ValueError('Too few transitions for POSIX spec')
+            raise ValueError("Too few transitions for POSIX spec")
 
         # Extend the transitions for an additional 400 years
         # using the future specification
@@ -114,16 +109,15 @@ class Timezone:
             tr = Transition(jan1_time + tr0_offset - tt1.offset, tt0, tr)
             self._transitions.append(tr)
 
-    def _check_ttype(self,
-                     ttype,   # type: TransitionType
-                     offset,  # type: int
-                     is_dst,  # type: bool
-                     abbr     # type: str
-                     ):       # type: (...) -> bool
+    def _check_ttype(
+        self,
+        ttype,  # type: TransitionType
+        offset,  # type: int
+        is_dst,  # type: bool
+        abbr,  # type: str
+    ):  # type: (...) -> bool
         return (
             ttype.offset == offset
             and ttype.is_dst() == is_dst
             and ttype.abbreviation == abbr
         )
-
-

@@ -225,5 +225,5 @@ def test_is_same_day():
 def test_comparison_to_unsupported():
     dt1 = pendulum.Date.today()
 
-    assert not dt1 == 'test'
-    assert not dt1 in ['test']
+    assert not dt1 == "test"
+    assert not dt1 in ["test"]

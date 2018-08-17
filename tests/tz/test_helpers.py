@@ -6,19 +6,19 @@ from pendulum.tz.zoneinfo.exceptions import InvalidTimezone
 
 
 def test_timezone_with_name():
-    tz = timezone('Europe/Paris')
+    tz = timezone("Europe/Paris")
 
     assert isinstance(tz, Timezone)
-    assert tz.name == 'Europe/Paris'
+    assert tz.name == "Europe/Paris"
 
 
 def test_timezone_with_invalid_name():
     with pytest.raises(InvalidTimezone):
-        timezone('Invalid')
+        timezone("Invalid")
 
 
 def test_timezone_with_offset():
     tz = timezone(-19800)
 
     assert isinstance(tz, FixedTimezone)
-    assert tz.name == '-05:30'
+    assert tz.name == "-05:30"

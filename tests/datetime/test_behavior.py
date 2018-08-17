@@ -11,17 +11,17 @@ from pendulum import timezone
 
 @pytest.fixture
 def p():
-    return pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    return pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz="Europe/Paris")
 
 
 @pytest.fixture
 def p1(p):
-    return p.in_tz('America/New_York')
+    return p.in_tz("America/New_York")
 
 
 @pytest.fixture
 def dt():
-    tz = timezone('Europe/Paris')
+    tz = timezone("Europe/Paris")
 
     return tz.convert(datetime(2016, 8, 27, 12, 34, 56, 123456))
 
@@ -114,16 +114,16 @@ def test_combine():
 def test_hash(p, dt):
     assert hash(p) == hash(dt)
 
-    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
-    dt2 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
-    dt3 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='America/Toronto')
+    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz="Europe/Paris")
+    dt2 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz="Europe/Paris")
+    dt3 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz="America/Toronto")
 
     assert hash(dt1) == hash(dt2)
     assert hash(dt1) != hash(dt3)
 
 
 def test_pickle():
-    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz='Europe/Paris')
+    dt1 = pendulum.datetime(2016, 8, 27, 12, 34, 56, 123456, tz="Europe/Paris")
     s = pickle.dumps(dt1)
     dt2 = pickle.loads(s)
 
@@ -139,25 +139,25 @@ def test_pickle_with_integer_tzinfo():
 
 
 def test_proper_dst():
-    dt = pendulum.datetime(1941, 7, 1, tz='Europe/Amsterdam')
+    dt = pendulum.datetime(1941, 7, 1, tz="Europe/Amsterdam")
 
     assert dt.dst() == timedelta(0, 6000)
 
 
 def test_deepcopy():
-    dt = pendulum.datetime(1941, 7, 1, tz='Europe/Amsterdam')
+    dt = pendulum.datetime(1941, 7, 1, tz="Europe/Amsterdam")
 
     assert dt == deepcopy(dt)
 
 
 def test_pickle_timezone():
-    dt1 = pendulum.timezone('Europe/Amsterdam')
+    dt1 = pendulum.timezone("Europe/Amsterdam")
     s = pickle.dumps(dt1)
     dt2 = pickle.loads(s)
 
     assert isinstance(dt2, Timezone)
 
-    dt1 = pendulum.timezone('UTC')
+    dt1 = pendulum.timezone("UTC")
     s = pickle.dumps(dt1)
     dt2 = pickle.loads(s)
 

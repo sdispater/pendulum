@@ -8,12 +8,12 @@ from pendulum import Time
 
 @pytest.fixture()
 def p():
-    return pendulum.Time(12, 34, 56, 123456, tzinfo=pendulum.timezone('Europe/Paris'))
+    return pendulum.Time(12, 34, 56, 123456, tzinfo=pendulum.timezone("Europe/Paris"))
 
 
 @pytest.fixture()
 def d():
-    return time(12, 34, 56, 123456, tzinfo=pendulum.timezone('Europe/Paris'))
+    return time(12, 34, 56, 123456, tzinfo=pendulum.timezone("Europe/Paris"))
 
 
 def test_hash(p, d):

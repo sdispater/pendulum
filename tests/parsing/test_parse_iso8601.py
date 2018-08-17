@@ -11,161 +11,157 @@ except ImportError:
 
 def test_parse_iso8601():
     # Date
-    assert date(2016, 1, 1) == parse_iso8601('2016')
-    assert date(2016, 10, 1) == parse_iso8601('2016-10')
-    assert date(2016, 10, 6) == parse_iso8601('2016-10-06')
-    assert date(2016, 10, 6) == parse_iso8601('20161006')
+    assert date(2016, 1, 1) == parse_iso8601("2016")
+    assert date(2016, 10, 1) == parse_iso8601("2016-10")
+    assert date(2016, 10, 6) == parse_iso8601("2016-10-06")
+    assert date(2016, 10, 6) == parse_iso8601("20161006")
 
     # Time
-    assert time(20, 16, 10, 0) == parse_iso8601('201610')
+    assert time(20, 16, 10, 0) == parse_iso8601("201610")
 
     # Datetime
-    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601('2016-10-06T12:34:56.123456')
-    assert datetime(2016, 10, 6, 12, 34, 56, 123000) == parse_iso8601('2016-10-06T12:34:56.123')
-    assert datetime(2016, 10, 6, 12, 34, 56, 123) == parse_iso8601('2016-10-06T12:34:56.000123')
-    assert datetime(2016, 10, 6, 12, 0, 0, 0) == parse_iso8601('2016-10-06T12')
-    assert datetime(2016, 10, 6, 12, 34, 56, 0) == parse_iso8601('2016-10-06T123456')
-    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601('2016-10-06T123456.123456')
-    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601('20161006T123456.123456')
-    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601('20161006 123456.123456')
+    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601(
+        "2016-10-06T12:34:56.123456"
+    )
+    assert datetime(2016, 10, 6, 12, 34, 56, 123000) == parse_iso8601(
+        "2016-10-06T12:34:56.123"
+    )
+    assert datetime(2016, 10, 6, 12, 34, 56, 123) == parse_iso8601(
+        "2016-10-06T12:34:56.000123"
+    )
+    assert datetime(2016, 10, 6, 12, 0, 0, 0) == parse_iso8601("2016-10-06T12")
+    assert datetime(2016, 10, 6, 12, 34, 56, 0) == parse_iso8601("2016-10-06T123456")
+    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601(
+        "2016-10-06T123456.123456"
+    )
+    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601(
+        "20161006T123456.123456"
+    )
+    assert datetime(2016, 10, 6, 12, 34, 56, 123456) == parse_iso8601(
+        "20161006 123456.123456"
+    )
 
     # Datetime with offset
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456+05:30')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456+0530')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456-05:30')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456-0530')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(18000))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456+05')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456-05')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000))
-        ==
-        parse_iso8601('20161006T123456,123456-05')
-    )
-    assert (
-        datetime(2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(+19800))
-        ==
-        parse_iso8601('2016-10-06T12:34:56.123456789+05:30')
-    )
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456+05:30")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(19800)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456+0530")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456-05:30")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-19800)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456-0530")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(18000)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456+05")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456-05")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(-18000)
+    ) == parse_iso8601("20161006T123456,123456-05")
+    assert datetime(
+        2016, 10, 6, 12, 34, 56, 123456, FixedTimezone(+19800)
+    ) == parse_iso8601("2016-10-06T12:34:56.123456789+05:30")
 
     # Ordinal date
-    assert date(2012, 1, 7) == parse_iso8601('2012-007')
-    assert date(2012, 1, 7) == parse_iso8601('2012007')
-    assert date(2017, 3, 20) == parse_iso8601('2017-079')
+    assert date(2012, 1, 7) == parse_iso8601("2012-007")
+    assert date(2012, 1, 7) == parse_iso8601("2012007")
+    assert date(2017, 3, 20) == parse_iso8601("2017-079")
 
     # Week date
-    assert date(2012, 1, 30) == parse_iso8601('2012-W05')
-    assert date(2008, 9, 27) == parse_iso8601('2008-W39-6')
-    assert date(2010, 1, 3) == parse_iso8601('2009-W53-7')
-    assert date(2008, 12, 29) == parse_iso8601('2009-W01-1')
+    assert date(2012, 1, 30) == parse_iso8601("2012-W05")
+    assert date(2008, 9, 27) == parse_iso8601("2008-W39-6")
+    assert date(2010, 1, 3) == parse_iso8601("2009-W53-7")
+    assert date(2008, 12, 29) == parse_iso8601("2009-W01-1")
 
     # Week date wth time
-    assert datetime(2008, 9, 27, 9, 0, 0, 0) == parse_iso8601('2008-W39-6T09')
+    assert datetime(2008, 9, 27, 9, 0, 0, 0) == parse_iso8601("2008-W39-6T09")
 
 
 def test_parse_ios8601_invalid():
     # Invalid month
     with pytest.raises(ValueError):
-        parse_iso8601('20161306T123456')
+        parse_iso8601("20161306T123456")
 
     # Invalid day
     with pytest.raises(ValueError):
-        parse_iso8601('20161033T123456')
+        parse_iso8601("20161033T123456")
 
     # Invalid day for month
     with pytest.raises(ValueError):
-        parse_iso8601('20161131T123456')
+        parse_iso8601("20161131T123456")
 
     # Invalid hour
     with pytest.raises(ValueError):
-        parse_iso8601('20161006T243456')
+        parse_iso8601("20161006T243456")
 
     # Invalid minute
     with pytest.raises(ValueError):
-        parse_iso8601('20161006T126056')
+        parse_iso8601("20161006T126056")
 
     # Invalid second
     with pytest.raises(ValueError):
-        parse_iso8601('20161006T123460')
+        parse_iso8601("20161006T123460")
 
     # Extraneous separator
     with pytest.raises(ValueError):
-        parse_iso8601('20140203 04:05:.123456')
+        parse_iso8601("20140203 04:05:.123456")
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-19 14:')
+        parse_iso8601("2009-05-19 14:")
 
     # Invalid ordinal
     with pytest.raises(ValueError):
-        parse_iso8601('2009367')
+        parse_iso8601("2009367")
     with pytest.raises(ValueError):
-        parse_iso8601('2009-367')
+        parse_iso8601("2009-367")
     with pytest.raises(ValueError):
-        parse_iso8601('2015-366')
+        parse_iso8601("2015-366")
     with pytest.raises(ValueError):
-        parse_iso8601('2015-000')
+        parse_iso8601("2015-000")
 
     # Invalid date
     with pytest.raises(ValueError):
-        parse_iso8601('2009-')
+        parse_iso8601("2009-")
 
     # Invalid time
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-19T14:3924')
+        parse_iso8601("2009-05-19T14:3924")
     with pytest.raises(ValueError):
-        parse_iso8601('2010-02-18T16.5:23.35:48')
+        parse_iso8601("2010-02-18T16.5:23.35:48")
     with pytest.raises(ValueError):
-        parse_iso8601('2010-02-18T16:23.35:48.45')
+        parse_iso8601("2010-02-18T16:23.35:48.45")
     with pytest.raises(ValueError):
-        parse_iso8601('2010-02-18T16:23.33.600')
+        parse_iso8601("2010-02-18T16:23.33.600")
 
     # Invalid offset
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-19 14:39:22+063')
+        parse_iso8601("2009-05-19 14:39:22+063")
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-19 14:39:22+06a00')
+        parse_iso8601("2009-05-19 14:39:22+06a00")
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-19 14:39:22+0:6:00')
+        parse_iso8601("2009-05-19 14:39:22+0:6:00")
 
     # Missing time separator
     with pytest.raises(ValueError):
-        parse_iso8601('2009-05-1914:39')
+        parse_iso8601("2009-05-1914:39")
 
     # Invalid week date
     with pytest.raises(ValueError):
-        parse_iso8601('2012-W63')
+        parse_iso8601("2012-W63")
     with pytest.raises(ValueError):
-        parse_iso8601('2012-W12-9')
+        parse_iso8601("2012-W12-9")
     with pytest.raises(ValueError):
-        parse_iso8601('2012W12-3')  # Missing separator
+        parse_iso8601("2012W12-3")  # Missing separator
     with pytest.raises(ValueError):
-        parse_iso8601('2012-W123')  # Missing separator
+        parse_iso8601("2012-W123")  # Missing separator
 
 
 def test_parse_ios8601_duration():
-    text = 'P2Y3M4DT5H6M7S'
+    text = "P2Y3M4DT5H6M7S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 2
@@ -177,7 +173,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 7
     assert parsed.microseconds == 0
 
-    text = 'P1Y2M3DT4H5M6.5S'
+    text = "P1Y2M3DT4H5M6.5S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -189,7 +185,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
-    text = 'P1Y2M3DT4H5M6,5S'
+    text = "P1Y2M3DT4H5M6,5S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -201,7 +197,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
-    text = 'P1Y2M3D'
+    text = "P1Y2M3D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -213,7 +209,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1Y2M3.5D'
+    text = "P1Y2M3.5D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -225,7 +221,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1Y2M3,5D'
+    text = "P1Y2M3,5D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -237,7 +233,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'PT4H54M6.5S'
+    text = "PT4H54M6.5S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -249,7 +245,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
-    text = 'PT4H54M6,5S'
+    text = "PT4H54M6,5S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -261,7 +257,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 6
     assert parsed.microseconds == 500000
 
-    text = 'P1Y'
+    text = "P1Y"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 1
@@ -273,15 +269,15 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1.5Y'
+    text = "P1.5Y"
     with pytest.raises(ValueError):
         parse_iso8601(text)
 
-    text = 'P1,5Y'
+    text = "P1,5Y"
     with pytest.raises(ValueError):
         parse_iso8601(text)
 
-    text = 'P1M'
+    text = "P1M"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -293,15 +289,15 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1.5M'
+    text = "P1.5M"
     with pytest.raises(ValueError):
         parse_iso8601(text)
 
-    text = 'P1,5M'
+    text = "P1,5M"
     with pytest.raises(ValueError):
         parse_iso8601(text)
 
-    text = 'P1W'
+    text = "P1W"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -313,7 +309,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1.5W'
+    text = "P1.5W"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -325,7 +321,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1,5W'
+    text = "P1,5W"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -337,7 +333,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1D'
+    text = "P1D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -349,7 +345,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1.5D'
+    text = "P1.5D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -361,7 +357,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'P1,5D'
+    text = "P1,5D"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -373,7 +369,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'PT1H'
+    text = "PT1H"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -385,7 +381,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'PT1.5H'
+    text = "PT1.5H"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -397,7 +393,7 @@ def test_parse_ios8601_duration():
     assert parsed.remaining_seconds == 0
     assert parsed.microseconds == 0
 
-    text = 'PT1,5H'
+    text = "PT1,5H"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 0
@@ -410,7 +406,7 @@ def test_parse_ios8601_duration():
     assert parsed.microseconds == 0
 
     # Double digit with 0
-    text = 'P2Y30M4DT5H6M7S'
+    text = "P2Y30M4DT5H6M7S"
     parsed = parse_iso8601(text)
 
     assert parsed.years == 2
@@ -424,41 +420,41 @@ def test_parse_ios8601_duration():
 
     # No P operator
     with pytest.raises(ValueError):
-        parse_iso8601('2Y3M4DT5H6M7S')
+        parse_iso8601("2Y3M4DT5H6M7S")
 
     # Week and other units combined
     with pytest.raises(ValueError):
-        parse_iso8601('P1Y2W')
+        parse_iso8601("P1Y2W")
 
     # Invalid units order
     with pytest.raises(ValueError):
-        parse_iso8601('P1S')
+        parse_iso8601("P1S")
 
     with pytest.raises(ValueError):
-        parse_iso8601('P1D1S')
+        parse_iso8601("P1D1S")
 
     with pytest.raises(ValueError):
-        parse_iso8601('1Y2M3D1SPT1M')
+        parse_iso8601("1Y2M3D1SPT1M")
 
     with pytest.raises(ValueError):
-        parse_iso8601('P1Y2M3D2MT1S')
+        parse_iso8601("P1Y2M3D2MT1S")
 
     with pytest.raises(ValueError):
-        parse_iso8601('P2M3D1ST1Y1M')
+        parse_iso8601("P2M3D1ST1Y1M")
 
     with pytest.raises(ValueError):
-        parse_iso8601('P1Y2M2MT3D1S')
+        parse_iso8601("P1Y2M2MT3D1S")
 
     with pytest.raises(ValueError):
-        parse_iso8601('P1D1Y1M')
+        parse_iso8601("P1D1Y1M")
 
     with pytest.raises(ValueError):
-        parse_iso8601('PT1S1H')
+        parse_iso8601("PT1S1H")
 
     # Invalid
     with pytest.raises(ValueError):
-        parse_iso8601('P1Dasdfasdf')
+        parse_iso8601("P1Dasdfasdf")
 
     # Invalid fractional
     with pytest.raises(ValueError):
-        parse_iso8601('P2Y3M4DT5.5H6M7S')
+        parse_iso8601("P2Y3M4DT5.5H6M7S")

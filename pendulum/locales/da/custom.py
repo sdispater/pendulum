@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 """
 da custom locale file.
 """
 
 translations = {
     # Relative time
-    'after': '{0} efter',
-    'before': '{0} før',
-
+    "after": "{0} efter",
+    "before": "{0} før",
     # Date formats
-    'date_formats': {
-        'LTS': 'HH:mm:ss',
-        'LT': 'HH:mm',
-        'LLLL': 'dddd [d.] D. MMMM YYYY HH:mm',
-        'LLL': 'D. MMMM YYYY HH:mm',
-        'LL': 'D. MMMM YYYY',
-        'L': 'DD/MM/YYYY',
+    "date_formats": {
+        "LTS": "HH:mm:ss",
+        "LT": "HH:mm",
+        "LLLL": "dddd [d.] D. MMMM YYYY HH:mm",
+        "LLL": "D. MMMM YYYY HH:mm",
+        "LL": "D. MMMM YYYY",
+        "L": "DD/MM/YYYY",
     },
 }
-

@@ -6,7 +6,7 @@ import pendulum
 def test_timezones():
     zones = pendulum.timezones
 
-    assert 'America/Argentina/Buenos_Aires' in zones
+    assert "America/Argentina/Buenos_Aires" in zones
 
 
 def test_timezones_are_loadable():

@@ -10,15 +10,23 @@ from typing import Union
 
 try:
     from ._extensions._helpers import (
-        local_time, precise_diff,
-        is_leap, is_long_year, week_day, days_in_year,
-        timestamp
+        local_time,
+        precise_diff,
+        is_leap,
+        is_long_year,
+        week_day,
+        days_in_year,
+        timestamp,
     )
 except ImportError:
     from ._extensions.helpers import (
-        local_time, precise_diff,
-        is_leap, is_long_year, week_day, days_in_year,
-        timestamp
+        local_time,
+        precise_diff,
+        is_leap,
+        is_long_year,
+        week_day,
+        days_in_year,
+        timestamp,
     )
 
 from .constants import DAYS_PER_MONTHS
@@ -29,24 +37,28 @@ from .locales.locale import Locale
 difference_formatter = DifferenceFormatter()
 
 
-def add_duration(dt,         # type:  Union[datetime, date]
-                 years=0,    # type: int
-                 months=0,   # type: int
-                 weeks=0,    # type: int
-                 days=0,     # type: int
-                 hours=0,    # type: int
-                 minutes=0,  # type: int
-                 seconds=0,  # type: int
-                 microseconds=0
-                 ):  # type: (...) -> Union[datetime, date]
+def add_duration(
+    dt,  # type:  Union[datetime, date]
+    years=0,  # type: int
+    months=0,  # type: int
+    weeks=0,  # type: int
+    days=0,  # type: int
+    hours=0,  # type: int
+    minutes=0,  # type: int
+    seconds=0,  # type: int
+    microseconds=0,
+):  # type: (...) -> Union[datetime, date]
     """
     Adds a duration to a date/datetime instance.
     """
     days += weeks * 7
 
-    if (isinstance(dt, date) and not isinstance(dt, datetime)
-            and any([hours, minutes, seconds, microseconds])):
-        raise RuntimeError('Time elements cannot be added to a date instance.')
+    if (
+        isinstance(dt, date)
+        and not isinstance(dt, datetime)
+        and any([hours, minutes, seconds, microseconds])
+    ):
+        raise RuntimeError("Time elements cannot be added to a date instance.")
 
     # Normalizing
     if abs(microseconds) > 999999:
@@ -100,7 +112,7 @@ def add_duration(dt,         # type:  Union[datetime, date]
         hours=hours,
         minutes=minutes,
         seconds=seconds,
-        microseconds=microseconds
+        microseconds=microseconds,
     )
 
 
@@ -116,6 +128,7 @@ def _sign(x):
 
 
 # Global helpers
+
 
 @contextmanager
 def test(mock):
@@ -154,13 +167,13 @@ def get_locale():
 
 def week_starts_at(wday):
     if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
-        raise ValueError('Invalid week day as start of week.')
+        raise ValueError("Invalid week day as start of week.")
 
     pendulum._WEEK_STARTS_AT = wday
 
 
 def week_ends_at(wday):
     if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
-        raise ValueError('Invalid week day as start of week.')
+        raise ValueError("Invalid week day as start of week.")
 
     pendulum._WEEK_ENDS_AT = wday

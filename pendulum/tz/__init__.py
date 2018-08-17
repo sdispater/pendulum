@@ -10,9 +10,9 @@ from .timezone import Timezone as _Timezone
 from .timezone import FixedTimezone as _FixedTimezone
 from .timezone import UTC
 
-PRE_TRANSITION = 'pre'
-POST_TRANSITION = 'post'
-TRANSITION_ERROR = 'error'
+PRE_TRANSITION = "pre"
+POST_TRANSITION = "post"
+TRANSITION_ERROR = "error"
 
 timezones = pytzdata.timezones
 
@@ -27,7 +27,7 @@ def timezone(name, extended=True):  # type: (Union[str, int]) -> _Timezone
     if isinstance(name, int):
         return fixed_timezone(name)
 
-    if name.lower() == 'utc':
+    if name.lower() == "utc":
         return UTC
 
     if name in _tz_cache:

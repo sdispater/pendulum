@@ -16,17 +16,11 @@ from .posix_timezone import posix_spec, PosixTimezone
 from .transition_type import TransitionType
 
 
-_offset = namedtuple('offset', 'utc_total_offset is_dst abbr_idx')
+_offset = namedtuple("offset", "utc_total_offset is_dst abbr_idx")
 
 header = namedtuple(
-    'header',
-    'version '
-    'utclocals '
-    'stdwalls '
-    'leaps '
-    'transitions '
-    'types '
-    'abbr_size'
+    "header",
+    "version " "utclocals " "stdwalls " "leaps " "transitions " "types " "abbr_size",
 )
 
 
@@ -58,9 +52,9 @@ class Reader:
         :param file_path: The path of a zoneinfo file.
         """
         if not os.path.exists(file_path):
-            raise InvalidZoneinfoFile('The tzinfo file does not exist')
+            raise InvalidZoneinfoFile("The tzinfo file does not exist")
 
-        with open(file_path, 'rb') as fd:
+        with open(file_path, "rb") as fd:
             return self._parse(fd)
 
     def _check_read(self, fd, nbytes):  # type: (...) -> bytes
@@ -72,10 +66,8 @@ class Reader:
 
         if not result or len(result) != nbytes:
             raise InvalidZoneinfoFile(
-                'Expected {} bytes reading {}, '
-                'but got {}'.format(
-                    nbytes, fd.name, len(result) if result else 0
-                )
+                "Expected {} bytes reading {}, "
+                "but got {}".format(nbytes, fd.name, len(result) if result else 0)
             )
 
         if PY2:
@@ -99,7 +91,7 @@ class Reader:
                 + hdr.leaps * 4
                 + hdr.stdwalls
                 + hdr.utclocals,
-                1
+                1,
             )
 
             # Parse the second header
@@ -107,7 +99,7 @@ class Reader:
 
             if hdr.version != 2 and hdr.version != 3:
                 raise InvalidZoneinfoFile(
-                    'Header versions mismatch for file {}'.format(fd.name)
+                    "Header versions mismatch for file {}".format(fd.name)
                 )
 
             # Parse the v2 data
@@ -116,12 +108,7 @@ class Reader:
             types = self._parse_types(fd, hdr.types)
             abbrs = self._parse_abbrs(fd, hdr.abbr_size, types)
 
-            fd.seek(
-                hdr.leaps * 8
-                + hdr.stdwalls
-                + hdr.utclocals,
-                1
-            )
+            fd.seek(hdr.leaps * 8 + hdr.stdwalls + hdr.utclocals, 1)
 
             trule = self._parse_posix_tz(fd)
         else:
@@ -133,8 +120,7 @@ class Reader:
             trule = None
 
         types = [
-            TransitionType(off, is_dst, abbrs[abbr])
-            for off, is_dst, abbr in types
+            TransitionType(off, is_dst, abbrs[abbr]) for off, is_dst, abbr in types
         ]
 
         transitions = []
@@ -146,35 +132,26 @@ class Reader:
             previous = transition
 
         if not transitions:
-            transitions.append(
-                Transition(0, types[0], None)
-            )
+            transitions.append(Transition(0, types[0], None))
 
         return Timezone(transitions, posix_rule=trule, extended=self._extend)
 
     def _parse_header(self, fd):  # type: (...) -> header
         buff = self._check_read(fd, 44)
 
-        if buff[:4] != b'TZif':
+        if buff[:4] != b"TZif":
             raise InvalidZoneinfoFile(
                 'The file "{}" has an invalid header.'.format(fd.name)
             )
 
-        version = {
-            0x00: 1,
-            0x32: 2,
-            0x33: 3
-        }.get(buff[4])
+        version = {0x00: 1, 0x32: 2, 0x33: 3}.get(buff[4])
 
         if version is None:
             raise InvalidZoneinfoFile(
                 'The file "{}" has an invalid version.'.format(fd.name)
             )
 
-        hdr = header(
-            version,
-            *unpack('>6l', buff[20:44])
-        )
+        hdr = header(version, *unpack(">6l", buff[20:44]))
 
         return hdr
 
@@ -182,7 +159,7 @@ class Reader:
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 8)
-            trans.append(unpack('>q', buff)[0])
+            trans.append(unpack(">q", buff)[0])
 
         return trans
 
@@ -190,50 +167,45 @@ class Reader:
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 4)
-            trans.append(unpack('>i', buff)[0])
+            trans.append(unpack(">i", buff)[0])
 
         return trans
 
     def _parse_type_idx(self, fd, n):  # type: (..., int) -> List[int]
         buff = self._check_read(fd, n)
 
-        return list(unpack('{}B'.format(n), buff))
+        return list(unpack("{}B".format(n), buff))
 
     def _parse_types(self, fd, n):  # type: (..., int) -> List[tuple]
         types = []
 
         for _ in range(n):
             buff = self._check_read(fd, 6)
-            offset = unpack('>l', buff[:4])[0]
+            offset = unpack(">l", buff[:4])[0]
             is_dst = buff[4] == 1
             types.append((offset, is_dst, buff[5]))
 
         return types
 
-    def _parse_abbrs(self,
-                     fd,
-                     n,     # type: int
-                     types  # type: List[tuple]
-                     ):     # type: (...) -> Dict[int, str]
+    def _parse_abbrs(
+        self, fd, n, types  # type: int  # type: List[tuple]
+    ):  # type: (...) -> Dict[int, str]
         abbrs = {}
         buff = self._check_read(fd, n)
 
         for offset, is_dst, idx in types:
             if idx not in abbrs:
-                abbr = buff[idx:buff.find(b'\0', idx)].decode('utf-8')
+                abbr = buff[idx : buff.find(b"\0", idx)].decode("utf-8")
                 abbrs[idx] = abbr
 
         return abbrs
 
     def _parse_posix_tz(self, fd):  # type: (...) -> PosixTimezone
-        s = fd.read().decode('utf-8')
+        s = fd.read().decode("utf-8")
 
-        if not s.startswith('\n') or not s.endswith('\n'):
-            raise InvalidZoneinfoFile(
-                'Invalid posix rule in file "{}"'.format(fd.name)
-            )
+        if not s.startswith("\n") or not s.endswith("\n"):
+            raise InvalidZoneinfoFile('Invalid posix rule in file "{}"'.format(fd.name))
 
         s = s.strip()
 
         return posix_spec(s)
-

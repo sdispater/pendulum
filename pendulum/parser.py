@@ -15,7 +15,7 @@ from .tz import UTC
 
 def parse(text, **options):
     # Use the mock now value if it exists
-    options['now'] = options.get('now', pendulum.get_test_now())
+    options["now"] = options.get("now", pendulum.get_test_now())
 
     return _parse(text, **options)
 
@@ -30,16 +30,21 @@ def _parse(text, **options):
     :rtype: mixed
     """
     # Handling special cases
-    if text == 'now':
+    if text == "now":
         return pendulum.now()
 
     parsed = base_parse(text, **options)
 
     if isinstance(parsed, datetime.datetime):
         return pendulum.datetime(
-            parsed.year, parsed.month, parsed.day,
-            parsed.hour, parsed.minute, parsed.second, parsed.microsecond,
-            tz=parsed.tzinfo or options.get('tz', UTC)
+            parsed.year,
+            parsed.month,
+            parsed.day,
+            parsed.hour,
+            parsed.minute,
+            parsed.second,
+            parsed.microsecond,
+            tz=parsed.tzinfo or options.get("tz", UTC),
         )
 
     if isinstance(parsed, datetime.date):
@@ -55,41 +60,53 @@ def _parse(text, **options):
             duration = parsed.duration
 
             if parsed.start is not None:
-                dt = pendulum.instance(parsed.start, tz=options.get('tz', UTC))
+                dt = pendulum.instance(parsed.start, tz=options.get("tz", UTC))
 
                 return pendulum.period(
-                    dt, dt.add(
-                        years=duration.years, months=duration.months,
-                        weeks=duration.weeks, days=duration.remaining_days,
-                        hours=duration.hours, minutes=duration.minutes,
+                    dt,
+                    dt.add(
+                        years=duration.years,
+                        months=duration.months,
+                        weeks=duration.weeks,
+                        days=duration.remaining_days,
+                        hours=duration.hours,
+                        minutes=duration.minutes,
                         seconds=duration.remaining_seconds,
-                        microseconds=duration.microseconds
-                    )
+                        microseconds=duration.microseconds,
+                    ),
                 )
 
-            dt = pendulum.instance(parsed.end, tz=options.get('tz', UTC))
+            dt = pendulum.instance(parsed.end, tz=options.get("tz", UTC))
 
             return pendulum.period(
                 dt.subtract(
-                    years=duration.years, months=duration.months,
-                    weeks=duration.weeks, days=duration.remaining_days,
-                    hours=duration.hours, minutes=duration.minutes,
+                    years=duration.years,
+                    months=duration.months,
+                    weeks=duration.weeks,
+                    days=duration.remaining_days,
+                    hours=duration.hours,
+                    minutes=duration.minutes,
                     seconds=duration.remaining_seconds,
-                    microseconds=duration.microseconds
+                    microseconds=duration.microseconds,
                 ),
-                dt
+                dt,
             )
 
         return pendulum.period(
-            pendulum.instance(parsed.start, tz=options.get('tz', UTC)),
-            pendulum.instance(parsed.end, tz=options.get('tz', UTC))
+            pendulum.instance(parsed.start, tz=options.get("tz", UTC)),
+            pendulum.instance(parsed.end, tz=options.get("tz", UTC)),
         )
 
     if CDuration and isinstance(parsed, CDuration):
         return pendulum.duration(
-            years=parsed.years, months=parsed.months, weeks=parsed.weeks, days=parsed.days,
-            hours=parsed.hours, minutes=parsed.minutes, seconds=parsed.seconds,
-            microseconds=parsed.microseconds
+            years=parsed.years,
+            months=parsed.months,
+            weeks=parsed.weeks,
+            days=parsed.days,
+            hours=parsed.hours,
+            minutes=parsed.minutes,
+            seconds=parsed.seconds,
+            microseconds=parsed.microseconds,
         )
 
     return parsed

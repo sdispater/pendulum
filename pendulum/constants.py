@@ -21,18 +21,18 @@ SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR
 US_PER_SECOND = 1000000
 
 # Formats
-ATOM = 'YYYY-MM-DDTHH:mm:ssZ'
-COOKIE = 'dddd, DD-MMM-YYYY HH:mm:ss zz'
-ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ'
-ISO8601_EXTENDED = 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ'
-RFC822 = 'ddd, DD MMM YY HH:mm:ss ZZ'
-RFC850 = 'dddd, DD-MMM-YY HH:mm:ss zz'
-RFC1036 = 'ddd, DD MMM YY HH:mm:ss ZZ'
-RFC1123 = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
-RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
+ATOM = "YYYY-MM-DDTHH:mm:ssZ"
+COOKIE = "dddd, DD-MMM-YYYY HH:mm:ss zz"
+ISO8601 = "YYYY-MM-DDTHH:mm:ssZ"
+ISO8601_EXTENDED = "YYYY-MM-DDTHH:mm:ss.SSSSSSZ"
+RFC822 = "ddd, DD MMM YY HH:mm:ss ZZ"
+RFC850 = "dddd, DD-MMM-YY HH:mm:ss zz"
+RFC1036 = "ddd, DD MMM YY HH:mm:ss ZZ"
+RFC1123 = "ddd, DD MMM YYYY HH:mm:ss ZZ"
+RFC2822 = "ddd, DD MMM YYYY HH:mm:ss ZZ"
 RFC3339 = ISO8601
 RFC3339_EXTENDED = ISO8601_EXTENDED
-RSS = 'ddd, DD MMM YYYY HH:mm:ss ZZ'
+RSS = "ddd, DD MMM YYYY HH:mm:ss ZZ"
 W3C = ISO8601
 
 
@@ -54,31 +54,25 @@ SECS_PER_400_YEARS = 146097 * SECS_PER_DAY
 # do not begin with a leap year and those that do respectively.
 SECS_PER_100_YEARS = (
     (76 * DAYS_PER_N_YEAR + 24 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
-    (75 * DAYS_PER_N_YEAR + 25 * DAYS_PER_L_YEAR) * SECS_PER_DAY
+    (75 * DAYS_PER_N_YEAR + 25 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
 )
 
 # The number of seconds in an aligned 4-year chunk, for those that
 # do not begin with a leap year and those that do respectively.
 SECS_PER_4_YEARS = (
     (4 * DAYS_PER_N_YEAR + 0 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
-    (3 * DAYS_PER_N_YEAR + 1 * DAYS_PER_L_YEAR) * SECS_PER_DAY
+    (3 * DAYS_PER_N_YEAR + 1 * DAYS_PER_L_YEAR) * SECS_PER_DAY,
 )
 
 # The number of seconds in non-leap and leap years respectively.
-SECS_PER_YEAR = (
-    DAYS_PER_N_YEAR * SECS_PER_DAY,
-    DAYS_PER_L_YEAR * SECS_PER_DAY
-)
+SECS_PER_YEAR = (DAYS_PER_N_YEAR * SECS_PER_DAY, DAYS_PER_L_YEAR * SECS_PER_DAY)
 
-DAYS_PER_YEAR = (
-    DAYS_PER_N_YEAR,
-    DAYS_PER_L_YEAR
-)
+DAYS_PER_YEAR = (DAYS_PER_N_YEAR, DAYS_PER_L_YEAR)
 
 # The month lengths in non-leap and leap years respectively.
 DAYS_PER_MONTHS = (
     (-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),
-    (-1, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    (-1, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),
 )
 
 # The day offsets of the beginning of each (1-based) month in non-leap
@@ -86,12 +80,10 @@ DAYS_PER_MONTHS = (
 # For example, in a leap year there are 335 days before December.
 MONTHS_OFFSETS = (
     (-1, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365),
-    (-1, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366)
+    (-1, 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366),
 )
 
-DAY_OF_WEEK_TABLE = (
-    0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4
-)
+DAY_OF_WEEK_TABLE = (0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4)
 
 TM_SUNDAY = 0
 TM_MONDAY = 1

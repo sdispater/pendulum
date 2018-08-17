@@ -5,7 +5,6 @@ from pendulum.utils._compat import encode
 
 
 class TransitionType:
-
     def __init__(self, offset, is_dst, abbr):
         self._offset = offset
         self._is_dst = is_dst
@@ -31,6 +30,6 @@ class TransitionType:
         return self._utcoffset
 
     def __repr__(self):  # type: () -> str
-        return 'TransitionType({}, {}, {})'.format(
+        return "TransitionType({}, {}, {})".format(
             self._offset, self._is_dst, self._abbr
         )

@@ -11,9 +11,17 @@ from .helpers import add_duration
 from .period import Period
 from .mixins.default import FormattableMixing
 from .constants import (
-    DAYS_PER_WEEK, YEARS_PER_DECADE, YEARS_PER_CENTURY,
+    DAYS_PER_WEEK,
+    YEARS_PER_DECADE,
+    YEARS_PER_CENTURY,
     MONTHS_PER_YEAR,
-    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY,
 )
 from .exceptions import PendulumException
 
@@ -22,25 +30,21 @@ class Date(FormattableMixing, date):
 
     # Names of days of the week
     _days = {
-        SUNDAY: 'Sunday',
-        MONDAY: 'Monday',
-        TUESDAY: 'Tuesday',
-        WEDNESDAY: 'Wednesday',
-        THURSDAY: 'Thursday',
-        FRIDAY: 'Friday',
-        SATURDAY: 'Saturday'
+        SUNDAY: "Sunday",
+        MONDAY: "Monday",
+        TUESDAY: "Tuesday",
+        WEDNESDAY: "Wednesday",
+        THURSDAY: "Thursday",
+        FRIDAY: "Friday",
+        SATURDAY: "Saturday",
     }
 
-    _MODIFIERS_VALID_UNITS = [
-        'day', 'week', 'month', 'year', 'decade', 'century'
-    ]
+    _MODIFIERS_VALID_UNITS = ["day", "week", "month", "year", "decade", "century"]
 
     # Getters/Setters
 
     def set(self, year=None, month=None, day=None):
-        return self.replace(
-            year=year, month=month, day=day
-        )
+        return self.replace(year=year, month=month, day=day)
 
     @property
     def day_of_week(self):
@@ -60,11 +64,7 @@ class Date(FormattableMixing, date):
         """
         k = 1 if self.is_leap_year() else 2
 
-        return (
-            (275 * self.month) // 9
-            - k * ((self.month + 9) // 12)
-            + self.day - 30
-        )
+        return (275 * self.month) // 9 - k * ((self.month + 9) // 12) + self.day - 30
 
     @property
     def week_of_year(self):
@@ -94,7 +94,7 @@ class Date(FormattableMixing, date):
 
         :rtype: str
         """
-        return self.strftime('%Y-%m-%d')
+        return self.strftime("%Y-%m-%d")
 
     def to_formatted_date_string(self):
         """
@@ -102,13 +102,13 @@ class Date(FormattableMixing, date):
 
         :rtype: str
         """
-        return self.strftime('%b %d, %Y')
+        return self.strftime("%b %d, %Y")
 
     def __repr__(self):
         return (
-            '{klass}('
-            '{year}, {month}, {day}'
-            ')'.format(
+            "{klass}("
+            "{year}, {month}, {day}"
+            ")".format(
                 klass=self.__class__.__name__,
                 year=self.year,
                 month=self.month,
@@ -236,7 +236,7 @@ class Date(FormattableMixing, date):
             years=years,
             months=months,
             weeks=weeks,
-            days=days
+            days=days,
         )
 
         return self.__class__(dt.year, dt.month, dt.day)
@@ -259,9 +259,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.add(
-            years=-years, months=-months, weeks=-weeks, days=-days
-        )
+        return self.add(years=-years, months=-months, weeks=-weeks, days=-days)
 
     def _add_timedelta(self, delta):
         """
@@ -277,7 +275,7 @@ class Date(FormattableMixing, date):
                 years=delta.years,
                 months=delta.months,
                 weeks=delta.weeks,
-                days=delta.remaining_days
+                days=delta.remaining_days,
             )
 
         return self.add(days=delta.days)
@@ -296,7 +294,7 @@ class Date(FormattableMixing, date):
                 years=delta.years,
                 months=delta.months,
                 weeks=delta.weeks,
-                days=delta.remaining_days
+                days=delta.remaining_days,
             )
 
         return self.subtract(days=delta.days)
@@ -397,7 +395,7 @@ class Date(FormattableMixing, date):
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError('Invalid unit "{}" for start_of()'.format(unit))
 
-        return getattr(self, '_start_of_{}'.format(unit))()
+        return getattr(self, "_start_of_{}".format(unit))()
 
     def end_of(self, unit):
         """
@@ -418,7 +416,7 @@ class Date(FormattableMixing, date):
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError('Invalid unit "%s" for end_of()' % unit)
 
-        return getattr(self, '_end_of_%s' % unit)()
+        return getattr(self, "_end_of_%s" % unit)()
 
     def _start_of_day(self):
         """
@@ -450,9 +448,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.set(
-            self.year, self.month, self.days_in_month
-        )
+        return self.set(self.year, self.month, self.days_in_month)
 
     def _start_of_year(self):
         """
@@ -521,7 +517,7 @@ class Date(FormattableMixing, date):
         if self.day_of_week != pendulum._WEEK_STARTS_AT:
             dt = self.previous(pendulum._WEEK_STARTS_AT)
 
-        return dt.start_of('day')
+        return dt.start_of("day")
 
     def _end_of_week(self):
         """
@@ -534,7 +530,7 @@ class Date(FormattableMixing, date):
         if self.day_of_week != pendulum._WEEK_ENDS_AT:
             dt = self.next(pendulum._WEEK_ENDS_AT)
 
-        return dt.end_of('day')
+        return dt.end_of("day")
 
     def next(self, day_of_week=None):
         """
@@ -552,7 +548,7 @@ class Date(FormattableMixing, date):
             day_of_week = self.day_of_week
 
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
-            raise ValueError('Invalid day of week')
+            raise ValueError("Invalid day of week")
 
         dt = self.add(days=1)
         while dt.day_of_week != day_of_week:
@@ -576,7 +572,7 @@ class Date(FormattableMixing, date):
             day_of_week = self.day_of_week
 
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
-            raise ValueError('Invalid day of week')
+            raise ValueError("Invalid day of week")
 
         dt = self.subtract(days=1)
         while dt.day_of_week != day_of_week:
@@ -600,10 +596,10 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        if unit not in ['month', 'quarter', 'year']:
+        if unit not in ["month", "quarter", "year"]:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
-        return getattr(self, '_first_of_{}'.format(unit))(day_of_week)
+        return getattr(self, "_first_of_{}".format(unit))(day_of_week)
 
     def last_of(self, unit, day_of_week=None):
         """
@@ -621,10 +617,10 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        if unit not in ['month', 'quarter', 'year']:
+        if unit not in ["month", "quarter", "year"]:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
-        return getattr(self, '_last_of_{}'.format(unit))(day_of_week)
+        return getattr(self, "_last_of_{}".format(unit))(day_of_week)
 
     def nth_of(self, unit, nth, day_of_week):
         """
@@ -645,13 +641,16 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        if unit not in ['month', 'quarter', 'year']:
+        if unit not in ["month", "quarter", "year"]:
             raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
 
-        dt = getattr(self, '_nth_of_{}'.format(unit))(nth, day_of_week)
+        dt = getattr(self, "_nth_of_{}".format(unit))(nth, day_of_week)
         if dt is False:
-            raise PendulumException('Unable to find occurence {} of {} in {}'.format(
-                                     nth, self._days[day_of_week], unit))
+            raise PendulumException(
+                "Unable to find occurence {} of {} in {}".format(
+                    nth, self._days[day_of_week], unit
+                )
+            )
 
         return dt
 
@@ -724,14 +723,14 @@ class Date(FormattableMixing, date):
         :rtype: Date
         """
         if nth == 1:
-            return self.first_of('month', day_of_week)
+            return self.first_of("month", day_of_week)
 
-        dt = self.first_of('month')
-        check = dt.format('YYYY-MM')
+        dt = self.first_of("month")
+        check = dt.format("YYYY-MM")
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
-        if dt.format('YYYY-MM') == check:
+        if dt.format("YYYY-MM") == check:
             return self.set(day=dt.day)
 
         return False
@@ -747,7 +746,9 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.set(self.year, self.quarter * 3 - 2, 1).first_of('month', day_of_week)
+        return self.set(self.year, self.quarter * 3 - 2, 1).first_of(
+            "month", day_of_week
+        )
 
     def _last_of_quarter(self, day_of_week=None):
         """
@@ -760,7 +761,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.set(self.year, self.quarter * 3, 1).last_of('month', day_of_week)
+        return self.set(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
     def _nth_of_quarter(self, nth, day_of_week):
         """
@@ -777,12 +778,12 @@ class Date(FormattableMixing, date):
         :rtype: Date
         """
         if nth == 1:
-            return self.first_of('quarter', day_of_week)
+            return self.first_of("quarter", day_of_week)
 
         dt = self.replace(self.year, self.quarter * 3, 1)
         last_month = dt.month
         year = dt.year
-        dt = dt.first_of('quarter')
+        dt = dt.first_of("quarter")
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
@@ -802,7 +803,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.set(month=1).first_of('month', day_of_week)
+        return self.set(month=1).first_of("month", day_of_week)
 
     def _last_of_year(self, day_of_week=None):
         """
@@ -815,7 +816,7 @@ class Date(FormattableMixing, date):
 
         :rtype: Date
         """
-        return self.set(month=MONTHS_PER_YEAR).last_of('month', day_of_week)
+        return self.set(month=MONTHS_PER_YEAR).last_of("month", day_of_week)
 
     def _nth_of_year(self, nth, day_of_week):
         """
@@ -832,9 +833,9 @@ class Date(FormattableMixing, date):
         :rtype: Date
         """
         if nth == 1:
-            return self.first_of('year', day_of_week)
+            return self.first_of("year", day_of_week)
 
-        dt = self.first_of('year')
+        dt = self.first_of("year")
         year = dt.year
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)

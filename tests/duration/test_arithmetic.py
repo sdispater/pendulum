@@ -16,7 +16,9 @@ def test_multiply():
     assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 1, 5, 0, 1, 9, 44444)
 
-    it = pendulum.duration(years=2, months=3, weeks=4, days=6, seconds=34, microseconds=522222)
+    it = pendulum.duration(
+        years=2, months=3, weeks=4, days=6, seconds=34, microseconds=522222
+    )
     mul = 2 * it
 
     assert isinstance(mul, pendulum.Duration)

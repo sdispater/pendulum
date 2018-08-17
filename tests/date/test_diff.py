@@ -102,255 +102,255 @@ def test_diff_in_weeks_ensure_is_truncated():
 
 
 def test_diff_for_humans_now_and_day(today):
-    assert '1 day ago' == today.subtract(days=1).diff_for_humans()
+    assert "1 day ago" == today.subtract(days=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_days(today):
-    assert '2 days ago' == today.subtract(days=2).diff_for_humans()
+    assert "2 days ago" == today.subtract(days=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_week(today):
-    assert '6 days ago' == today.subtract(days=6).diff_for_humans()
+    assert "6 days ago" == today.subtract(days=6).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_week(today):
-    assert '1 week ago' == today.subtract(weeks=1).diff_for_humans()
+    assert "1 week ago" == today.subtract(weeks=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_weeks(today):
-    assert '2 weeks ago' == today.subtract(weeks=2).diff_for_humans()
+    assert "2 weeks ago" == today.subtract(weeks=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_month(today):
-    assert '3 weeks ago' == today.subtract(weeks=3).diff_for_humans()
+    assert "3 weeks ago" == today.subtract(weeks=3).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_month():
     with pendulum.test(pendulum.datetime(2016, 3, 1)):
         today = pendulum.today().date()
 
-        assert '4 weeks ago' == today.subtract(weeks=4).diff_for_humans()
-        assert '1 month ago' == today.subtract(months=1).diff_for_humans()
+        assert "4 weeks ago" == today.subtract(weeks=4).diff_for_humans()
+        assert "1 month ago" == today.subtract(months=1).diff_for_humans()
 
     with pendulum.test(pendulum.datetime(2017, 2, 28)):
         today = pendulum.today().date()
 
-        assert '1 month ago' == today.subtract(weeks=4).diff_for_humans()
+        assert "1 month ago" == today.subtract(weeks=4).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_months(today):
-    assert '2 months ago' == today.subtract(months=2).diff_for_humans()
+    assert "2 months ago" == today.subtract(months=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_year(today):
-    assert '11 months ago' == today.subtract(months=11).diff_for_humans()
+    assert "11 months ago" == today.subtract(months=11).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_year(today):
-    assert '1 year ago' == today.subtract(years=1).diff_for_humans()
+    assert "1 year ago" == today.subtract(years=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_years(today):
-    assert '2 years ago' == today.subtract(years=2).diff_for_humans()
+    assert "2 years ago" == today.subtract(years=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_day(today):
-    assert 'in 1 day' == today.add(days=1).diff_for_humans()
+    assert "in 1 day" == today.add(days=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_days(today):
-    assert 'in 2 days' == today.add(days=2).diff_for_humans()
+    assert "in 2 days" == today.add(days=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_week(today):
-    assert 'in 6 days' == today.add(days=6).diff_for_humans()
+    assert "in 6 days" == today.add(days=6).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_week(today):
-    assert 'in 1 week' == today.add(weeks=1).diff_for_humans()
+    assert "in 1 week" == today.add(weeks=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_weeks(today):
-    assert 'in 2 weeks' == today.add(weeks=2).diff_for_humans()
+    assert "in 2 weeks" == today.add(weeks=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_month(today):
-    assert 'in 3 weeks' == today.add(weeks=3).diff_for_humans()
+    assert "in 3 weeks" == today.add(weeks=3).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_month():
     with pendulum.test(pendulum.datetime(2016, 3, 1)):
         today = pendulum.today().date()
 
-        assert 'in 4 weeks' == today.add(weeks=4).diff_for_humans()
-        assert 'in 1 month' == today.add(months=1).diff_for_humans()
+        assert "in 4 weeks" == today.add(weeks=4).diff_for_humans()
+        assert "in 1 month" == today.add(months=1).diff_for_humans()
 
     with pendulum.test(pendulum.datetime(2017, 3, 31)):
         today = pendulum.today().date()
 
-        assert 'in 1 month' == today.add(months=1).diff_for_humans()
+        assert "in 1 month" == today.add(months=1).diff_for_humans()
 
     with pendulum.test(pendulum.datetime(2017, 4, 30)):
         today = pendulum.today().date()
 
-        assert 'in 1 month' == today.add(months=1).diff_for_humans()
+        assert "in 1 month" == today.add(months=1).diff_for_humans()
 
     with pendulum.test(pendulum.datetime(2017, 1, 31)):
         today = pendulum.today().date()
 
-        assert 'in 1 month' == today.add(weeks=4).diff_for_humans()
+        assert "in 1 month" == today.add(weeks=4).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_months(today):
-    assert 'in 2 months' == today.add(months=2).diff_for_humans()
+    assert "in 2 months" == today.add(months=2).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_nearly_future_year(today):
-    assert 'in 11 months' == today.add(months=11).diff_for_humans()
+    assert "in 11 months" == today.add(months=11).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_year(today):
-    assert 'in 1 year' == today.add(years=1).diff_for_humans()
+    assert "in 1 year" == today.add(years=1).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_years(today):
-    assert 'in 2 years' == today.add(years=2).diff_for_humans()
+    assert "in 2 years" == today.add(years=2).diff_for_humans()
 
 
 def test_diff_for_humans_other_and_day(today):
-    assert '1 day before' == today.diff_for_humans(today.add(days=1))
+    assert "1 day before" == today.diff_for_humans(today.add(days=1))
 
 
 def test_diff_for_humans_other_and_days(today):
-    assert '2 days before' == today.diff_for_humans(today.add(days=2))
+    assert "2 days before" == today.diff_for_humans(today.add(days=2))
 
 
 def test_diff_for_humans_other_and_nearly_week(today):
-    assert '6 days before' == today.diff_for_humans(today.add(days=6))
+    assert "6 days before" == today.diff_for_humans(today.add(days=6))
 
 
 def test_diff_for_humans_other_and_week(today):
-    assert '1 week before' == today.diff_for_humans(today.add(weeks=1))
+    assert "1 week before" == today.diff_for_humans(today.add(weeks=1))
 
 
 def test_diff_for_humans_other_and_weeks(today):
-    assert '2 weeks before' == today.diff_for_humans(today.add(weeks=2))
+    assert "2 weeks before" == today.diff_for_humans(today.add(weeks=2))
 
 
 def test_diff_for_humans_other_and_nearly_month(today):
-    assert '3 weeks before' == today.diff_for_humans(today.add(weeks=3))
+    assert "3 weeks before" == today.diff_for_humans(today.add(weeks=3))
 
 
 def test_diff_for_humans_other_and_month():
     with pendulum.test(pendulum.datetime(2016, 3, 1)):
         today = pendulum.today().date()
 
-        assert '4 weeks before' == today.diff_for_humans(today.add(weeks=4))
-        assert '1 month before' == today.diff_for_humans(today.add(months=1))
+        assert "4 weeks before" == today.diff_for_humans(today.add(weeks=4))
+        assert "1 month before" == today.diff_for_humans(today.add(months=1))
 
     with pendulum.test(pendulum.datetime(2017, 3, 31)):
         today = pendulum.today().date()
 
-        assert '1 month before' == today.diff_for_humans(today.add(months=1))
+        assert "1 month before" == today.diff_for_humans(today.add(months=1))
 
     with pendulum.test(pendulum.datetime(2017, 4, 30)):
         today = pendulum.today().date()
 
-        assert '1 month before' == today.diff_for_humans(today.add(months=1))
+        assert "1 month before" == today.diff_for_humans(today.add(months=1))
 
     with pendulum.test(pendulum.datetime(2017, 1, 31)):
         today = pendulum.today().date()
 
-        assert '1 month before' == today.diff_for_humans(today.add(weeks=4))
+        assert "1 month before" == today.diff_for_humans(today.add(weeks=4))
 
 
 def test_diff_for_humans_other_and_months(today):
-    assert '2 months before' == today.diff_for_humans(today.add(months=2))
+    assert "2 months before" == today.diff_for_humans(today.add(months=2))
 
 
 def test_diff_for_humans_other_and_nearly_year(today):
-    assert '11 months before' == today.diff_for_humans(today.add(months=11))
+    assert "11 months before" == today.diff_for_humans(today.add(months=11))
 
 
 def test_diff_for_humans_other_and_year(today):
-    assert '1 year before' == today.diff_for_humans(today.add(years=1))
+    assert "1 year before" == today.diff_for_humans(today.add(years=1))
 
 
 def test_diff_for_humans_other_and_years(today):
-    assert '2 years before' == today.diff_for_humans(today.add(years=2))
+    assert "2 years before" == today.diff_for_humans(today.add(years=2))
 
 
 def test_diff_for_humans_other_and_future_day(today):
-    assert '1 day after' == today.diff_for_humans(today.subtract(days=1))
+    assert "1 day after" == today.diff_for_humans(today.subtract(days=1))
 
 
 def test_diff_for_humans_other_and_future_days(today):
-    assert '2 days after' == today.diff_for_humans(today.subtract(days=2))
+    assert "2 days after" == today.diff_for_humans(today.subtract(days=2))
 
 
 def test_diff_for_humans_other_and_nearly_future_week(today):
-    assert '6 days after' == today.diff_for_humans(today.subtract(days=6))
+    assert "6 days after" == today.diff_for_humans(today.subtract(days=6))
 
 
 def test_diff_for_humans_other_and_future_week(today):
-    assert '1 week after' == today.diff_for_humans(today.subtract(weeks=1))
+    assert "1 week after" == today.diff_for_humans(today.subtract(weeks=1))
 
 
 def test_diff_for_humans_other_and_future_weeks(today):
-    assert '2 weeks after' == today.diff_for_humans(today.subtract(weeks=2))
+    assert "2 weeks after" == today.diff_for_humans(today.subtract(weeks=2))
 
 
 def test_diff_for_humans_other_and_nearly_future_month(today):
-    assert '3 weeks after' == today.diff_for_humans(today.subtract(weeks=3))
+    assert "3 weeks after" == today.diff_for_humans(today.subtract(weeks=3))
 
 
 def test_diff_for_humans_other_and_future_month():
     with pendulum.test(pendulum.datetime(2016, 3, 1)):
         today = pendulum.today().date()
 
-        assert '4 weeks after' == today.diff_for_humans(today.subtract(weeks=4))
-        assert '1 month after' == today.diff_for_humans(today.subtract(months=1))
+        assert "4 weeks after" == today.diff_for_humans(today.subtract(weeks=4))
+        assert "1 month after" == today.diff_for_humans(today.subtract(months=1))
 
     with pendulum.test(pendulum.datetime(2017, 2, 28)):
         today = pendulum.today().date()
 
-        assert '1 month after' == today.diff_for_humans(today.subtract(weeks=4))
+        assert "1 month after" == today.diff_for_humans(today.subtract(weeks=4))
 
 
 def test_diff_for_humans_other_and_future_months(today):
-    assert '2 months after' == today.diff_for_humans(today.subtract(months=2))
+    assert "2 months after" == today.diff_for_humans(today.subtract(months=2))
 
 
 def test_diff_for_humans_other_and_nearly_future_year(today):
-    assert '11 months after' == today.diff_for_humans(today.subtract(months=11))
+    assert "11 months after" == today.diff_for_humans(today.subtract(months=11))
 
 
 def test_diff_for_humans_other_and_future_year(today):
-    assert '1 year after' == today.diff_for_humans(today.subtract(years=1))
+    assert "1 year after" == today.diff_for_humans(today.subtract(years=1))
 
 
 def test_diff_for_humans_other_and_future_years(today):
-    assert '2 years after' == today.diff_for_humans(today.subtract(years=2))
+    assert "2 years after" == today.diff_for_humans(today.subtract(years=2))
 
 
 def test_diff_for_humans_absolute_days(today):
-    assert '2 days' == today.diff_for_humans(today.subtract(days=2), True)
-    assert '2 days' == today.diff_for_humans(today.add(days=2), True)
+    assert "2 days" == today.diff_for_humans(today.subtract(days=2), True)
+    assert "2 days" == today.diff_for_humans(today.add(days=2), True)
 
 
 def test_diff_for_humans_absolute_weeks(today):
-    assert '2 weeks' == today.diff_for_humans(today.subtract(weeks=2), True)
-    assert '2 weeks' == today.diff_for_humans(today.add(weeks=2), True)
+    assert "2 weeks" == today.diff_for_humans(today.subtract(weeks=2), True)
+    assert "2 weeks" == today.diff_for_humans(today.add(weeks=2), True)
 
 
 def test_diff_for_humans_absolute_months(today):
-    assert '2 months' == today.diff_for_humans(today.subtract(months=2), True)
-    assert '2 months' == today.diff_for_humans(today.add(months=2), True)
+    assert "2 months" == today.diff_for_humans(today.subtract(months=2), True)
+    assert "2 months" == today.diff_for_humans(today.add(months=2), True)
 
 
 def test_diff_for_humans_absolute_years(today):
-    assert '1 year' == today.diff_for_humans(today.subtract(years=1), True)
-    assert '1 year' == today.diff_for_humans(today.add(years=1), True)
+    assert "1 year" == today.diff_for_humans(today.subtract(years=1), True)
+    assert "1 year" == today.diff_for_humans(today.add(years=1), True)
 
 
 def test_subtraction():

@@ -21,11 +21,13 @@ class Period(Duration):
 
     def __new__(cls, start, end, absolute=False):
         if isinstance(start, datetime) and isinstance(end, datetime):
-            if start.tzinfo is None and end.tzinfo is not None \
-                    or start.tzinfo is not None and end.tzinfo is None:
-                raise TypeError(
-                    "can't compare offset-naive and offset-aware datetimes"
-                )
+            if (
+                start.tzinfo is None
+                and end.tzinfo is not None
+                or start.tzinfo is not None
+                and end.tzinfo is None
+            ):
+                raise TypeError("can't compare offset-naive and offset-aware datetimes")
 
         if absolute and start > end:
             end, start = start, end
@@ -35,16 +37,26 @@ class Period(Duration):
         if isinstance(start, pendulum.DateTime):
             if _HAS_FOLD:
                 _start = datetime(
-                    start.year, start.month, start.day,
-                    start.hour, start.minute, start.second, start.microsecond,
+                    start.year,
+                    start.month,
+                    start.day,
+                    start.hour,
+                    start.minute,
+                    start.second,
+                    start.microsecond,
                     tzinfo=start.tzinfo,
-                    fold=start.fold
+                    fold=start.fold,
                 )
             else:
                 _start = datetime(
-                    start.year, start.month, start.day,
-                    start.hour, start.minute, start.second, start.microsecond,
-                    tzinfo=start.tzinfo
+                    start.year,
+                    start.month,
+                    start.day,
+                    start.hour,
+                    start.minute,
+                    start.second,
+                    start.microsecond,
+                    tzinfo=start.tzinfo,
                 )
         elif isinstance(start, pendulum.Date):
             _start = date(start.year, start.month, start.day)
@@ -52,16 +64,26 @@ class Period(Duration):
         if isinstance(end, pendulum.DateTime):
             if _HAS_FOLD:
                 _end = datetime(
-                    end.year, end.month, end.day,
-                    end.hour, end.minute, end.second, end.microsecond,
+                    end.year,
+                    end.month,
+                    end.day,
+                    end.hour,
+                    end.minute,
+                    end.second,
+                    end.microsecond,
                     tzinfo=end.tzinfo,
-                    fold=end.fold
+                    fold=end.fold,
                 )
             else:
                 _end = datetime(
-                    end.year, end.month, end.day,
-                    end.hour, end.minute, end.second, end.microsecond,
-                    tzinfo=end.tzinfo
+                    end.year,
+                    end.month,
+                    end.day,
+                    end.hour,
+                    end.minute,
+                    end.second,
+                    end.microsecond,
+                    tzinfo=end.tzinfo,
                 )
         elif isinstance(end, pendulum.Date):
             _end = date(end.year, end.month, end.day)
@@ -69,7 +91,8 @@ class Period(Duration):
         # Fixing issues with datetime.__sub__()
         # not handling offsets if the tzinfo is the same
         if (
-            isinstance(_start, datetime) and isinstance(_end, datetime)
+            isinstance(_start, datetime)
+            and isinstance(_end, datetime)
             and _start.tzinfo is _end.tzinfo
         ):
             if _start.tzinfo is not None:
@@ -80,9 +103,7 @@ class Period(Duration):
 
         delta = _end - _start
 
-        return super(Period, cls).__new__(
-            cls, seconds=delta.total_seconds()
-        )
+        return super(Period, cls).__new__(cls, seconds=delta.total_seconds())
 
     def __init__(self, start, end, absolute=False):
         super(Period, self).__init__()
@@ -97,9 +118,14 @@ class Period(Duration):
         else:
             if isinstance(start, pendulum.DateTime):
                 _start = datetime(
-                    start.year, start.month, start.day,
-                    start.hour, start.minute, start.second, start.microsecond,
-                    tzinfo=start.tzinfo
+                    start.year,
+                    start.month,
+                    start.day,
+                    start.hour,
+                    start.minute,
+                    start.second,
+                    start.microsecond,
+                    tzinfo=start.tzinfo,
                 )
             else:
                 _start = date(start.year, start.month, start.day)
@@ -114,9 +140,14 @@ class Period(Duration):
         else:
             if isinstance(end, pendulum.DateTime):
                 _end = datetime(
-                    end.year, end.month, end.day,
-                    end.hour, end.minute, end.second, end.microsecond,
-                    tzinfo=end.tzinfo
+                    end.year,
+                    end.month,
+                    end.day,
+                    end.hour,
+                    end.minute,
+                    end.second,
+                    end.microsecond,
+                    tzinfo=end.tzinfo,
                 )
             else:
                 _end = date(end.year, end.month, end.day)
@@ -198,7 +229,7 @@ class Period(Duration):
     def in_days(self):
         return self._delta.total_days
 
-    def in_words(self, locale=None, separator=' '):
+    def in_words(self, locale=None, separator=" "):
         """
         Get the current interval in words in the current locale.
 
@@ -213,13 +244,13 @@ class Period(Duration):
         :rtype: str
         """
         periods = [
-            ('year', self.years),
-            ('month', self.months),
-            ('week', self.weeks),
-            ('day', self.remaining_days),
-            ('hour', self.hours),
-            ('minute', self.minutes),
-            ('second', self.remaining_seconds)
+            ("year", self.years),
+            ("month", self.months),
+            ("week", self.weeks),
+            ("day", self.remaining_days),
+            ("hour", self.hours),
+            ("minute", self.minutes),
+            ("second", self.remaining_seconds),
         ]
 
         if locale is None:
@@ -231,28 +262,22 @@ class Period(Duration):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    'units.{}.{}'.format(
-                        unit, locale.plural(abs(count))
-                    )
+                    "units.{}.{}".format(unit, locale.plural(abs(count)))
                 )
                 parts.append(translation.format(count))
 
         if not parts and abs(self.microseconds) > 0:
-            translation = locale.translation(
-                'units.second.{}'.format(locale.plural(1))
-            )
+            translation = locale.translation("units.second.{}".format(locale.plural(1)))
             us = abs(self.microseconds) / 1e6
-            parts.append(
-                translation.format('{:.2f}').format(us)
-            )
+            parts.append(translation.format("{:.2f}").format(us))
 
         return decode(separator.join(parts))
 
     def range(self, unit, amount=1):
-        method = 'add'
+        method = "add"
         op = operator.le
         if not self._absolute and self.invert:
-            method = 'subtract'
+            method = "subtract"
             op = operator.ge
 
         start, end = self.start, self.end
@@ -274,7 +299,7 @@ class Period(Duration):
         return Duration(seconds=self.total_seconds())
 
     def __iter__(self):
-        return self.range('days')
+        return self.range("days")
 
     def __contains__(self, item):
         return self.start <= item <= self.end
@@ -313,9 +338,7 @@ class Period(Duration):
         return self.__class__(self.start, self.end, True)
 
     def __repr__(self):
-        return '<Period [{} -> {}]>'.format(
-            self._start, self._end
-        )
+        return "<Period [{} -> {}]>".format(self._start, self._end)
 
     def __str__(self):
         return self.__repr__()
@@ -337,9 +360,7 @@ class Period(Duration):
         if self._invert and self._absolute:
             end, start = start, end
 
-        return (
-            start, end, self._absolute
-        )
+        return (start, end, self._absolute)
 
     def __reduce__(self):
         return self.__reduce_ex__(2)
@@ -351,4 +372,8 @@ class Period(Duration):
         return hash((self.start, self.end, self._absolute))
 
     def __eq__(self, other):
-        return (self.start, self.end, self._absolute) == (other.start, other.end, other._absolute)
+        return (self.start, self.end, self._absolute) == (
+            other.start,
+            other.end,
+            other._absolute,
+        )

@@ -48,7 +48,7 @@ def test_microsecond():
 
 def test_tzinfo():
     d = pendulum.now()
-    assert d.tzinfo.name == timezone('America/Toronto').name
+    assert d.tzinfo.name == timezone("America/Toronto").name
 
 
 def test_day_of_week():
@@ -83,8 +83,9 @@ def test_int_timestamp():
     assert d.add(minutes=1, microseconds=123456).int_timestamp == 60
 
 
-@pytest.mark.skipif(struct.calcsize("P") * 8 == 32,
-                    reason='Test only available for 64bit systems')
+@pytest.mark.skipif(
+    struct.calcsize("P") * 8 == 32, reason="Test only available for 64bit systems"
+)
 def test_int_timestamp_accuracy():
     d = pendulum.datetime(3000, 10, 1, 12, 23, 10, 999999)
 
@@ -98,46 +99,46 @@ def test_age():
 
 
 def test_local():
-    assert pendulum.datetime(2012, 1, 1, tz='America/Toronto').is_local()
-    assert pendulum.datetime(2012, 1, 1, tz='America/New_York').is_local()
-    assert not pendulum.datetime(2012, 1, 1, tz='UTC').is_local()
-    assert not pendulum.datetime(2012, 1, 1, tz='Europe/London').is_local()
+    assert pendulum.datetime(2012, 1, 1, tz="America/Toronto").is_local()
+    assert pendulum.datetime(2012, 1, 1, tz="America/New_York").is_local()
+    assert not pendulum.datetime(2012, 1, 1, tz="UTC").is_local()
+    assert not pendulum.datetime(2012, 1, 1, tz="Europe/London").is_local()
 
 
 def test_utc():
-    assert not pendulum.datetime(2012, 1, 1, tz='America/Toronto').is_utc()
-    assert not pendulum.datetime(2012, 1, 1, tz='Europe/Paris').is_utc()
-    assert pendulum.datetime(2012, 1, 1, tz='UTC').is_utc()
-    assert not pendulum.datetime(2012, 1, 1, tz='GMT').is_utc()
+    assert not pendulum.datetime(2012, 1, 1, tz="America/Toronto").is_utc()
+    assert not pendulum.datetime(2012, 1, 1, tz="Europe/Paris").is_utc()
+    assert pendulum.datetime(2012, 1, 1, tz="UTC").is_utc()
+    assert not pendulum.datetime(2012, 1, 1, tz="GMT").is_utc()
 
 
 def test_is_dst():
-    assert not pendulum.datetime(2012, 1, 1, tz='America/Toronto').is_dst()
-    assert pendulum.datetime(2012, 7, 1, tz='America/Toronto').is_dst()
+    assert not pendulum.datetime(2012, 1, 1, tz="America/Toronto").is_dst()
+    assert pendulum.datetime(2012, 7, 1, tz="America/Toronto").is_dst()
 
 
 def test_offset_with_dst():
-    assert pendulum.datetime(2012, 1, 1, tz='America/Toronto').offset == -18000
+    assert pendulum.datetime(2012, 1, 1, tz="America/Toronto").offset == -18000
 
 
 def test_offset_no_dst():
-    assert pendulum.datetime(2012, 6, 1, tz='America/Toronto').offset == -14400
+    assert pendulum.datetime(2012, 6, 1, tz="America/Toronto").offset == -14400
 
 
 def test_offset_for_gmt():
-    assert pendulum.datetime(2012, 6, 1, tz='GMT').offset == 0
+    assert pendulum.datetime(2012, 6, 1, tz="GMT").offset == 0
 
 
 def test_offset_hours_with_dst():
-    assert pendulum.datetime(2012, 1, 1, tz='America/Toronto').offset_hours == -5
+    assert pendulum.datetime(2012, 1, 1, tz="America/Toronto").offset_hours == -5
 
 
 def test_offset_hours_no_dst():
-    assert pendulum.datetime(2012, 6, 1, tz='America/Toronto').offset_hours == -4
+    assert pendulum.datetime(2012, 6, 1, tz="America/Toronto").offset_hours == -4
 
 
 def test_offset_hours_for_gmt():
-    assert pendulum.datetime(2012, 6, 1, tz='GMT').offset_hours == 0
+    assert pendulum.datetime(2012, 6, 1, tz="GMT").offset_hours == 0
 
 
 def test_offset_hours_float():
@@ -173,27 +174,27 @@ def test_week_of_year_last_week():
 
 
 def test_timezone():
-    d = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
-    assert d.timezone.name == 'America/Toronto'
+    d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    assert d.timezone.name == "America/Toronto"
 
     d = pendulum.datetime(2000, 1, 1, tz=-5)
-    assert d.timezone.name == '-05:00'
+    assert d.timezone.name == "-05:00"
 
 
 def test_tz():
-    d = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
-    assert d.tz.name == 'America/Toronto'
+    d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    assert d.tz.name == "America/Toronto"
 
     d = pendulum.datetime(2000, 1, 1, tz=-5)
-    assert d.tz.name == '-05:00'
+    assert d.tz.name == "-05:00"
 
 
 def test_timezone_name():
-    d = pendulum.datetime(2000, 1, 1, tz='America/Toronto')
-    assert d.timezone_name == 'America/Toronto'
+    d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    assert d.timezone_name == "America/Toronto"
 
     d = pendulum.datetime(2000, 1, 1, tz=-5)
-    assert d.timezone_name == '-05:00'
+    assert d.timezone_name == "-05:00"
 
 
 def test_is_future():

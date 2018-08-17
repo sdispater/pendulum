@@ -14,38 +14,37 @@ except ImportError:
 
 COMMON = re.compile(
     # Date (optional)
-    '^'
-    '(?P<date>'
-    '    (?P<classic>'  # Classic date (YYYY-MM-DD)
-    '        (?P<year>\d{4})'  # Year
-    '        (?P<monthday>'
-    '            (?P<monthsep>[/:])?(?P<month>\d{2})'  # Month (optional)
-    '            ((?P<daysep>[/:])?(?P<day>\d{2}))'  # Day (optional)
-    '        )?'
-    '    )'
-    ')?'
-
+    "^"
+    "(?P<date>"
+    "    (?P<classic>"  # Classic date (YYYY-MM-DD)
+    "        (?P<year>\d{4})"  # Year
+    "        (?P<monthday>"
+    "            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
+    "            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
+    "        )?"
+    "    )"
+    ")?"
     # Time (optional)
-    '(?P<time>'
-    '    (?P<timesep>\ )?'  # Separator (space)
-    '    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?'  # HH:mm:ss (optional mm and ss)
+    "(?P<time>"
+    "    (?P<timesep>\ )?"  # Separator (space)
+    "    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
     # Subsecond part (optional)
-    '    (?P<subsecondsection>'
-    '        (?:[.|,])'  # Subsecond separator (optional)
-    '        (?P<subsecond>\d{1,9})'  # Subsecond
-    '    )?'
-    ')?'
-    '$',
-    re.VERBOSE
+    "    (?P<subsecondsection>"
+    "        (?:[.|,])"  # Subsecond separator (optional)
+    "        (?P<subsecond>\d{1,9})"  # Subsecond
+    "    )?"
+    ")?"
+    "$",
+    re.VERBOSE,
 )
 
 
 DEFAULT_OPTIONS = {
-    'day_first': False,
-    'year_first': True,
-    'strict': True,
-    'exact': False,
-    'now': None
+    "day_first": False,
+    "year_first": True,
+    "strict": True,
+    "exact": False,
+    "now": None,
 }
 
 
@@ -73,21 +72,23 @@ def _normalize(parsed, **options):
 
     :rtype: Parsed
     """
-    if options.get('exact'):
+    if options.get("exact"):
         return parsed
 
     if isinstance(parsed, time):
-        now = options['now'] or datetime.now()
+        now = options["now"] or datetime.now()
 
         return datetime(
-            now.year, now.month, now.day,
-            parsed.hour, parsed.minute, parsed.second,
-            parsed.microsecond
+            now.year,
+            now.month,
+            now.day,
+            parsed.hour,
+            parsed.minute,
+            parsed.second,
+            parsed.microsecond,
         )
     elif isinstance(parsed, date) and not isinstance(parsed, datetime):
-        return datetime(
-            parsed.year, parsed.month, parsed.day
-        )
+        return datetime(parsed.year, parsed.month, parsed.day)
 
     return parsed
 
@@ -112,17 +113,15 @@ def _parse(text, **options):
     # We couldn't parse the string
     # so we fallback on the dateutil parser
     # If not strict
-    if options.get('strict', True):
-        raise ParserError('Unable to parse string [{}]'.format(text))
+    if options.get("strict", True):
+        raise ParserError("Unable to parse string [{}]".format(text))
 
     try:
         dt = parser.parse(
-            text,
-            dayfirst=options['day_first'],
-            yearfirst=options['year_first']
+            text, dayfirst=options["day_first"], yearfirst=options["year_first"]
         )
     except ValueError:
-        raise ParserError('Invalid date string: {}'.format(text))
+        raise ParserError("Invalid date string: {}".format(text))
 
     return dt
 
@@ -143,46 +142,46 @@ def _parse_common(text, **options):
     day = 1
 
     if not m:
-        raise ParserError('Invalid datetime string')
+        raise ParserError("Invalid datetime string")
 
-    if m.group('date'):
+    if m.group("date"):
         # A date has been specified
         has_date = True
 
-        year = int(m.group('year'))
+        year = int(m.group("year"))
 
-        if not m.group('monthday'):
+        if not m.group("monthday"):
             # No month and day
             month = 1
             day = 1
         else:
-            if options['day_first']:
-                month = int(m.group('day'))
-                day = int(m.group('month'))
+            if options["day_first"]:
+                month = int(m.group("day"))
+                day = int(m.group("month"))
             else:
-                month = int(m.group('month'))
-                day = int(m.group('day'))
+                month = int(m.group("month"))
+                day = int(m.group("day"))
 
-    if not m.group('time'):
+    if not m.group("time"):
         return date(year, month, day)
 
     # Grabbing hh:mm:ss
-    hour = int(m.group('hour'))
+    hour = int(m.group("hour"))
 
-    minute = int(m.group('minute'))
+    minute = int(m.group("minute"))
 
-    if m.group('second'):
-        second = int(m.group('second'))
+    if m.group("second"):
+        second = int(m.group("second"))
     else:
         second = 0
 
     # Grabbing subseconds, if any
     microsecond = 0
-    if m.group('subsecondsection'):
+    if m.group("subsecondsection"):
         # Limiting to 6 chars
-        subsecond = m.group('subsecond')[:6]
+        subsecond = m.group("subsecond")[:6]
 
-        microsecond = int('{:0<6}'.format(subsecond))
+        microsecond = int("{:0<6}".format(subsecond))
 
     if has_date:
         return datetime(year, month, day, hour, minute, second, microsecond)
@@ -202,17 +201,17 @@ class _Interval:
 
 
 def _parse_iso8601_interval(text):
-    if '/' not in text:
-        raise ParserError('Invalid interval')
+    if "/" not in text:
+        raise ParserError("Invalid interval")
 
-    first, last = text.split('/')
+    first, last = text.split("/")
     start = end = duration = None
 
-    if first[0] == 'P':
+    if first[0] == "P":
         # duration/end
         duration = parse_iso8601(first)
         end = parse_iso8601(last)
-    elif last[0] == 'P':
+    elif last[0] == "P":
         # start/duration
         start = parse_iso8601(first)
         duration = parse_iso8601(last)

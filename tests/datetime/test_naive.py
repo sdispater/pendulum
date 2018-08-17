@@ -28,18 +28,18 @@ def test_naive_subtract():
 
 def test_naive_in_timezone():
     dt = pendulum.naive(2013, 3, 31, 1, 30)
-    new = dt.in_timezone('Europe/Paris')
+    new = dt.in_timezone("Europe/Paris")
 
     assert_datetime(new, 2013, 3, 31, 1, 30)
-    assert new.timezone_name == 'Europe/Paris'
+    assert new.timezone_name == "Europe/Paris"
 
 
 def test_naive_in_timezone_dst():
     dt = pendulum.naive(2013, 3, 31, 2, 30)
-    new = dt.in_timezone('Europe/Paris')
+    new = dt.in_timezone("Europe/Paris")
 
     assert_datetime(new, 2013, 3, 31, 3, 30)
-    assert new.timezone_name == 'Europe/Paris'
+    assert new.timezone_name == "Europe/Paris"
 
 
 def test_add():
@@ -59,11 +59,11 @@ def test_subtract():
 def test_to_strings():
     dt = pendulum.naive(2013, 3, 31, 2, 30)
 
-    assert dt.isoformat() == '2013-03-31T02:30:00'
-    assert dt.to_iso8601_string() == '2013-03-31T02:30:00'
-    assert dt.to_rfc3339_string() == '2013-03-31T02:30:00'
-    assert dt.to_atom_string() == '2013-03-31T02:30:00'
-    assert dt.to_cookie_string() == 'Sunday, 31-Mar-2013 02:30:00 '
+    assert dt.isoformat() == "2013-03-31T02:30:00"
+    assert dt.to_iso8601_string() == "2013-03-31T02:30:00"
+    assert dt.to_rfc3339_string() == "2013-03-31T02:30:00"
+    assert dt.to_atom_string() == "2013-03-31T02:30:00"
+    assert dt.to_cookie_string() == "Sunday, 31-Mar-2013 02:30:00 "
 
 
 def test_naive_method():

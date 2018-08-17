@@ -76,7 +76,7 @@ def test_addition_invalid_type():
     d = pendulum.date(2015, 3, 14)
 
     with pytest.raises(TypeError):
-        d - 'ab'
+        d - "ab"
 
     with pytest.raises(TypeError):
-        'ab' - d
+        "ab" - d

@@ -74,17 +74,17 @@ def test_subtract_invalid_type():
     d = Time(0, 0, 0)
 
     with pytest.raises(TypeError):
-        d - 'ab'
+        d - "ab"
 
     with pytest.raises(TypeError):
-        'ab' - d
+        "ab" - d
 
 
 def test_subtract_time():
     t = Time(12, 34, 56)
     t1 = Time(1, 1, 1)
     t2 = time(1, 1, 1)
-    t3 = time(1, 1, 1, tzinfo=pytz.timezone('Europe/Paris'))
+    t3 = time(1, 1, 1, tzinfo=pytz.timezone("Europe/Paris"))
 
     diff = t - t1
     assert isinstance(diff, pendulum.Duration)

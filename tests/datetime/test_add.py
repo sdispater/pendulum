@@ -132,133 +132,133 @@ def test_addition_invalid_type():
 
 
 def test_add_to_fixed_timezones():
-    dt = pendulum.parse('2015-03-08T01:00:00-06:00')
+    dt = pendulum.parse("2015-03-08T01:00:00-06:00")
     dt = dt.add(weeks=1)
 
     assert_datetime(dt, 2015, 3, 15, 1, 0, 0)
-    assert dt.timezone_name == '-06:00'
+    assert dt.timezone_name == "-06:00"
     assert dt.offset == -6 * 3600
 
 
 def test_add_time_to_new_transition_skipped():
-    dt = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 3, 31, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
     dt = dt.add(microseconds=1)
 
     assert_datetime(dt, 2013, 3, 31, 3, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
-    dt = pendulum.datetime(2013, 3, 10, 1, 59, 59, 999999, tz='America/New_York')
+    dt = pendulum.datetime(2013, 3, 10, 1, 59, 59, 999999, tz="America/New_York")
 
     assert_datetime(dt, 2013, 3, 10, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
     dt = dt.add(microseconds=1)
 
     assert_datetime(dt, 2013, 3, 10, 3, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
-    assert dt.offset == - 4 * 3600
+    assert dt.timezone_name == "America/New_York"
+    assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
-    dt = pendulum.datetime(1957, 4, 28, 1, 59, 59, 999999, tz='America/New_York')
+    dt = pendulum.datetime(1957, 4, 28, 1, 59, 59, 999999, tz="America/New_York")
 
     assert_datetime(dt, 1957, 4, 28, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
     dt = dt.add(microseconds=1)
 
     assert_datetime(dt, 1957, 4, 28, 3, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
-    assert dt.offset == - 4 * 3600
+    assert dt.timezone_name == "America/New_York"
+    assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
 
 def test_add_time_to_new_transition_skipped_big():
-    dt = pendulum.datetime(2013, 3, 31, 1, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 3, 31, 1, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 3, 31, 1, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
     dt = dt.add(weeks=1)
 
     assert_datetime(dt, 2013, 4, 7, 1, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
 
 def test_add_time_to_new_transition_repeated():
-    dt = pendulum.datetime(2013, 10, 27, 1, 59, 59, 999999, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 1, 59, 59, 999999, tz="Europe/Paris")
     dt = dt.add(hours=1)
 
     assert_datetime(dt, 2013, 10, 27, 2, 59, 59, 999999)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
     dt = dt.add(microseconds=1)
 
     assert_datetime(dt, 2013, 10, 27, 2, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
-    dt = pendulum.datetime(2013, 11, 3, 0, 59, 59, 999999, tz='America/New_York')
+    dt = pendulum.datetime(2013, 11, 3, 0, 59, 59, 999999, tz="America/New_York")
     print(dt)
     dt = dt.add(hours=1)
     print(dt)
 
     assert_datetime(dt, 2013, 11, 3, 1, 59, 59, 999999)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -4 * 3600
     assert dt.is_dst()
 
     dt = dt.add(microseconds=1)
 
     assert_datetime(dt, 2013, 11, 3, 1, 0, 0, 0)
-    assert dt.timezone_name == 'America/New_York'
+    assert dt.timezone_name == "America/New_York"
     assert dt.offset == -5 * 3600
     assert not dt.is_dst()
 
 
 def test_add_time_to_new_transition_repeated_big():
-    dt = pendulum.datetime(2013, 10, 27, 1, tz='Europe/Paris')
+    dt = pendulum.datetime(2013, 10, 27, 1, tz="Europe/Paris")
 
     assert_datetime(dt, 2013, 10, 27, 1, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 7200
     assert dt.is_dst()
 
     dt = dt.add(weeks=1)
 
     assert_datetime(dt, 2013, 11, 3, 1, 0, 0, 0)
-    assert dt.timezone_name == 'Europe/Paris'
+    assert dt.timezone_name == "Europe/Paris"
     assert dt.offset == 3600
     assert not dt.is_dst()
 
 
 def test_add_interval():
-    dt = pendulum.datetime(2017, 3, 11, 10, 45, tz='America/Los_Angeles')
+    dt = pendulum.datetime(2017, 3, 11, 10, 45, tz="America/Los_Angeles")
     new = dt + pendulum.duration(hours=24)
 
     assert_datetime(new, 2017, 3, 12, 11, 45)
 
 
 def test_period_over_midnight_tz():
-    start = pendulum.datetime(2018, 2, 25, tz='Europe/Paris')
+    start = pendulum.datetime(2018, 2, 25, tz="Europe/Paris")
     end = start.add(hours=1)
     period = end - start
     new_end = start + period

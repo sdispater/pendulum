@@ -65,17 +65,17 @@ def test_fluid_microsecond_setter():
 
 
 def test_fluid_setter_keeps_timezone():
-    d = pendulum.datetime(2016, 7, 2, 0, 41, 20, 123456, tz='Europe/Paris')
+    d = pendulum.datetime(2016, 7, 2, 0, 41, 20, 123456, tz="Europe/Paris")
     new = d.set(microsecond=987654)
     assert_datetime(new, 2016, 7, 2, 0, 41, 20, 987654)
 
 
 def test_fluid_timezone_setter():
     d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
-    new = d.set(tz='Europe/Paris')
+    new = d.set(tz="Europe/Paris")
     assert isinstance(new, datetime)
-    assert 'Europe/Paris' == new.timezone_name
-    assert 'Europe/Paris' == new.tzinfo.name
+    assert "Europe/Paris" == new.timezone_name
+    assert "Europe/Paris" == new.tzinfo.name
 
 
 def test_fluid_on():
@@ -91,7 +91,7 @@ def test_fluid_on():
 
 
 def test_fluid_on_with_transition():
-    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz='Europe/Paris')
+    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz="Europe/Paris")
     new = d.on(2013, 4, 1)
     assert isinstance(new, datetime)
     assert 2013 == new.year
@@ -134,7 +134,7 @@ def test_fluid_at_partial():
 
 
 def test_fluid_at_with_transition():
-    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz='Europe/Paris')
+    d = pendulum.datetime(2013, 3, 31, 0, 0, 0, 0, tz="Europe/Paris")
     new = d.at(2, 30, 0)
     assert isinstance(new, datetime)
     assert 3 == new.hour
@@ -144,16 +144,16 @@ def test_fluid_at_with_transition():
 
 def test_replace_tzinfo():
     d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
-    new = d.replace(tzinfo=pendulum.timezone('Europe/Paris'))
+    new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
 
-    assert new.timezone_name == 'Europe/Paris'
+    assert new.timezone_name == "Europe/Paris"
 
 
 def test_replace_tzinfo_dst():
     d = pendulum.datetime(2013, 3, 31, 2, 30)
-    new = d.replace(tzinfo=pendulum.timezone('Europe/Paris'))
+    new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
 
     assert_datetime(new, 2013, 3, 31, 3, 30)
     assert new.is_dst()
     assert new.offset == 7200
-    assert new.timezone_name == 'Europe/Paris'
+    assert new.timezone_name == "Europe/Paris"
