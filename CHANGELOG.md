@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed `from_format()` not recognizing input strings when the specified pattern had escaped elements.
+- Fixed missing `x` token for string formatting.
 
 
 ## [2.0.3] - 2018-07-30

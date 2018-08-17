@@ -37,7 +37,23 @@ _MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+]+)?"
 
 class Formatter:
 
-    _TOKENS = "\[([^\[]*)\]|\\\(.)|" "(" "Mo|MM?M?M?" "|Do|DDDo|DD?D?D?|ddd?d?|do?" "|E{1,4}" "|w[o|w]?|W[o|W]?|Qo?" "|YYYY|YY|Y" "|gg(ggg?)?|GG(GGG?)?" "|a|A" "|hh?|HH?|kk?" "|mm?|ss?|S{1,9}" "|x|X" "|zz?|ZZ?" "|LTS|LT|LL?L?L?" ")"
+    _TOKENS = (
+        "\[([^\[]*)\]|\\\(.)|"
+        "("
+        "Mo|MM?M?M?"
+        "|Do|DDDo|DD?D?D?|ddd?d?|do?"
+        "|E{1,4}"
+        "|w[o|w]?|W[o|W]?|Qo?"
+        "|YYYY|YY|Y"
+        "|gg(ggg?)?|GG(GGG?)?"
+        "|a|A"
+        "|hh?|HH?|kk?"
+        "|mm?|ss?|S{1,9}"
+        "|x|X"
+        "|zz?|ZZ?"
+        "|LTS|LT|LL?L?L?"
+        ")"
+    )
 
     _FORMAT_RE = re.compile(_TOKENS)
 
@@ -106,6 +122,7 @@ class Formatter:
         "SSSSSS": lambda dt: "{:06d}".format(dt.microsecond),
         # Timestamp
         "X": lambda dt: "{:d}".format(dt.int_timestamp),
+        "x": lambda dt: "{:d}".format(dt.int_timestamp * 1000 + dt.microsecond // 1000),
         # Timezone
         "zz": lambda dt: "{}".format(dt.tzname() if dt.tzinfo is not None else ""),
         "z": lambda dt: "{}".format(dt.timezone_name or ""),

@@ -209,6 +209,14 @@ def test_timestamp():
     assert f.format(d.add(days=1), "X") == "86400"
 
 
+def test_timestamp_milliseconds():
+    f = Formatter()
+    d = pendulum.datetime(1970, 1, 1)
+    assert f.format(d, "x") == "0"
+    assert f.format(d.add(days=1), "x") == "86400000"
+    assert f.format(d.add(days=1, microseconds=129123), "x") == "86400129"
+
+
 def test_date_formats():
     f = Formatter()
     d = pendulum.datetime(2016, 8, 28, 7, 3, 6, 123456)
