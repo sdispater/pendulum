@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `from_format()` not recognizing input strings when the specified pattern had escaped elements.
+
+
 ## [2.0.3] - 2018-07-30
 
 ### Fixed

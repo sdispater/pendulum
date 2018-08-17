@@ -626,6 +626,9 @@ class Formatter:
         if token.startswith("[") and token.endswith("]"):
             return token[1:-1]
         elif token.startswith("\\"):
+            if len(token) == 2 and token[1] in {"[", "]"}:
+                return ""
+
             return token
         elif token not in self._REGEX_TOKENS and token not in self._LOCALIZABLE_TOKENS:
             raise ValueError("Unsupported token: {}".format(token))

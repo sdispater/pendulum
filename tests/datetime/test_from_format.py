@@ -31,6 +31,12 @@ def test_from_format_with_timezone():
     assert "Europe/London" == d.timezone_name
 
 
+def test_from_format_with_escaped_elements():
+    d = pendulum.from_format("1975-05-21T22:32:11+00:00", "YYYY-MM-DD[T]HH:mm:ssZ")
+    assert_datetime(d, 1975, 5, 21, 22, 32, 11)
+    assert "+00:00" == d.timezone_name
+
+
 def test_from_format_with_millis():
     d = pendulum.from_format("1975-05-21 22:32:11.123456", "YYYY-MM-DD HH:mm:ss.SSSSSS")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11, 123456)
