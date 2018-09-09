@@ -70,7 +70,9 @@ def diff_for_humans():
     assert d2.diff_for_humans(d, locale=locale) == "enkele seconden eerder"
 
     assert d.diff_for_humans(d2, True, locale=locale) == "enkele seconden"
-    assert d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == "enkele seconden"
+    assert (
+        d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == "enkele seconden"
+    )
 
 
 def test_format():
