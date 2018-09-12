@@ -37,6 +37,7 @@ from .constants import (
     W3C,
 )
 
+from itertools import chain as iterchain
 
 class DateTime(datetime.datetime, Date):
 
@@ -486,7 +487,6 @@ class DateTime(datetime.datetime, Date):
 
     # Comparisons
     def closest(self, dt1, dt2, *dts):
-        from functools import reduce
 
         """
         Get the farthest date from the instance.
@@ -497,15 +497,10 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        dt1 = pendulum.instance(dt1)
-        dt2 = pendulum.instance(dt2)
-        dts = [dt1, dt2] + [pendulum.instance(x) for x in dts]
-        dts = [(abs(self - dt), dt) for dt in dts]
-
-        return min(dts)[1]
+        dts = (pendulum.instance(x) for x in iterchain((dt1,dt2),dts))
+        return min(dts, key=self.diff)
 
     def farthest(self, dt1, dt2, *dts):
-        from functools import reduce
 
         """
         Get the farthest date from the instance.
@@ -516,13 +511,8 @@ class DateTime(datetime.datetime, Date):
 
         :rtype: DateTime
         """
-        dt1 = pendulum.instance(dt1)
-        dt2 = pendulum.instance(dt2)
-
-        dts = [dt1, dt2] + [pendulum.instance(x) for x in dts]
-        dts = [(abs(self - dt), dt) for dt in dts]
-
-        return max(dts)[1]
+        dts = (pendulum.instance(x) for x in iterchain((dt1,dt2),dts))
+        return max(dts, key=self.diff)
 
     def is_future(self):
         """
