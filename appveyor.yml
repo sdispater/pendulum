@@ -21,7 +21,7 @@ install:
 
   # Downloading and installing poetry
   - curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/develop/get-poetry.py
-  - python get-poetry.py --preview
+  - python get-poetry.py --preview -y
 
   # Install dependencies
   - python -m pip install codecov

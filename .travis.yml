@@ -64,7 +64,7 @@ install:
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
   - wget https://raw.githubusercontent.com/sdispater/poetry/develop/get-poetry.py
-  - python get-poetry.py --preview
+  - python get-poetry.py --preview -y
   - poetry install -v
   - poetry build -v
   - |
