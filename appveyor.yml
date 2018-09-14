@@ -20,7 +20,7 @@ install:
   - "python -m pip install --disable-pip-version-check --user --upgrade pip"
 
   # Downloading and installing poetry
-  - python -m pip install poetry --pre -U
+  - python -m pip install poetry -U
 
   # Install dependencies
   - python -m pip install codecov

@@ -63,7 +63,7 @@ install:
         virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
         source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
       fi
-  - pip install poetry --pre -U
+  - pip install poetry -U
   - poetry install -v
   - poetry build -v
   - |
