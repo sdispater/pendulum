@@ -17,6 +17,7 @@ _MATCH_3 = "\d{3}"
 _MATCH_4 = "\d{4}"
 _MATCH_6 = "[+-]?\d{6}"
 _MATCH_1_TO_2 = "\d\d?"
+_MATCH_1_TO_2_LEFT_PAD = "[0-9 ]\d?"
 _MATCH_1_TO_3 = "\d{1,3}"
 _MATCH_1_TO_4 = "\d{1,4}"
 _MATCH_1_TO_6 = "[+-]?\d{1,6}"
@@ -157,7 +158,7 @@ class Formatter:
         "MMM": _MATCH_WORD,
         "MMMM": _MATCH_WORD,
         "D": _MATCH_1_TO_2,
-        "DD": (_MATCH_1_TO_2, _MATCH_2),
+        "DD": (_MATCH_1_TO_2_LEFT_PAD, _MATCH_2),
         "DDD": _MATCH_1_TO_3,
         "DDDD": _MATCH_3,
         "dddd": _MATCH_WORD,
