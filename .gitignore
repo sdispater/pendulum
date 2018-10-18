@@ -31,6 +31,7 @@ profile.html
 /wheelhouse
 /docs/site/*
 pyproject.lock
+/poetry.lock
 
 # editor
 
