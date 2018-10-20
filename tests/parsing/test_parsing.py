@@ -680,3 +680,7 @@ def test_exif_edge_case():
     assert 15 == parsed.hour
     assert 45 == parsed.minute
     assert 28 == parsed.second
+
+def test_month_padding():
+    # This shouldn't raise an exceptionf
+    pendulum.parse('2016-7')
