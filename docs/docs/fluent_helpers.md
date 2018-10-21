@@ -52,6 +52,8 @@ converts the time in the appropriate timezone.
 >>> new_dt = dt.set(tz='Europe/Paris')
 >>> print(new_dt)
 '2013-03-31T03:30:00+02:00'
+# In this special case the time is modified because 02:30
+# doesn’t exist on that day (switch to daylight saving time)
 
 >>> new_dt = dt.in_tz('Europe/Paris')
 >>> print(new_dt)
