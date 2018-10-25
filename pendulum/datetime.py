@@ -193,7 +193,7 @@ class DateTime(datetime.datetime, Date):
 
     @property
     def age(self):
-        return self.date().diff(self.now(self.tz).date()).in_years()
+        return self.date().diff(self.now(self.tz).date(), abs=False).in_years()
 
     def is_local(self):
         return self.offset == self.in_timezone(pendulum.local_timezone()).offset

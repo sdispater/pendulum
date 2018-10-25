@@ -80,7 +80,7 @@ class Date(FormattableMixing, date):
 
     @property
     def age(self):
-        return self.diff().in_years()
+        return self.diff(abs=False).in_years()
 
     @property
     def quarter(self):
