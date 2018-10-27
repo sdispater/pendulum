@@ -241,7 +241,7 @@ class DateTime(datetime.datetime, Date):
         return self.offset == self.in_timezone(pendulum.local_timezone()).offset
 
     def is_utc(self):
-        return self.timezone_name == "UTC"
+        return self.offset == UTC.offset
 
     def is_dst(self):
         return self.dst() != datetime.timedelta()
