@@ -185,6 +185,11 @@ class DateTime(datetime.datetime, Date):
     def int_timestamp(self):
         # Workaround needed to avoid inaccuracy
         # for far into the future datetimes
+        kwargs = {"tzinfo": self.tzinfo}
+
+        if _HAS_FOLD:
+            kwargs["fold"] = self.fold
+
         dt = datetime.datetime(
             self.year,
             self.month,
@@ -193,7 +198,7 @@ class DateTime(datetime.datetime, Date):
             self.minute,
             self.second,
             self.microsecond,
-            tzinfo=self.tzinfo,
+            **kwargs
         )
 
         delta = dt - self._EPOCH
