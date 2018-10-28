@@ -207,9 +207,14 @@ class Date(FormattableMixing, date):
         if dt is None:
             dt = Date.today()
 
-        instance = dt1 = self.__class__(dt.year, dt.month, dt.day)
+        instance = self.__class__(dt.year, dt.month, dt.day)
 
         return (self.month, self.day) == (instance.month, instance.day)
+
+    # the additional method for checking if today is the anniversary day
+    # the alias is provided to start using a new name and keep the backward compatibility
+    # the old name can be completely replaced with the new in one of the future versions
+    is_anniversary = is_birthday
 
     # ADDITIONS AND SUBSTRACTIONS
 

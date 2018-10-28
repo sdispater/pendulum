@@ -585,6 +585,11 @@ class DateTime(datetime.datetime, Date):
 
         return (self.month, self.day) == (instance.month, instance.day)
 
+    # the additional method for checking if today is the anniversary day
+    # the alias is provided to start using a new name and keep the backward compatibility
+    # the old name can be completely replaced with the new in one of the future versions
+    is_anniversary = is_birthday
+
     # ADDITIONS AND SUBSTRACTIONS
 
     def add(
