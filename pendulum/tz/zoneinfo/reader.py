@@ -64,7 +64,7 @@ class Reader:
         """
         result = fd.read(nbytes)
 
-        if not result or len(result) != nbytes:
+        if (not result and nbytes > 0) or len(result) != nbytes:
             raise InvalidZoneinfoFile(
                 "Expected {} bytes reading {}, "
                 "but got {}".format(nbytes, fd.name, len(result) if result else 0)
