@@ -7,6 +7,7 @@
 - Fixed `from_format()` not recognizing input strings when the specified pattern had escaped elements.
 - Fixed missing `x` token for string formatting.
 - Fixed reading timezone files.
+- Added support for parsing padded 2-digit days of the month with `from_format()`
 
 
 ## [2.0.3] - 2018-07-30
