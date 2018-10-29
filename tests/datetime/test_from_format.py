@@ -42,6 +42,16 @@ def test_from_format_with_millis():
     assert_datetime(d, 1975, 5, 21, 22, 32, 11, 123456)
 
 
+def test_from_format_with_padded_day():
+    d = pendulum.from_format("Apr  2 12:00:00 2020 GMT", "MMM DD HH:mm:ss YYYY z")
+    assert_datetime(d, 2020, 4, 2, 12)
+
+
+def test_from_format_with_invalid_padded_day():
+    with pytest.raises(ValueError):
+        d = pendulum.from_format("Apr   2 12:00:00 2020 GMT", "MMM DD HH:mm:ss YYYY z")
+
+
 @pytest.mark.parametrize(
     "text,fmt,expected,now",
     [
