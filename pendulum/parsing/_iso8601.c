@@ -217,7 +217,7 @@ static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *args) {
  *     return "%s%d:%d" % (sign, self.offset / 60, self.offset % 60)
  */
 static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
-    char tzname[7] = {0};
+    char tzname_[7] = {0};
     char sign = '+';
     int offset = self->offset;
 
@@ -227,14 +227,14 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
     }
 
     sprintf(
-        tzname,
+        tzname_,
         "%c%02d:%02d",
         sign,
         offset / SECS_PER_HOUR,
         offset / SECS_PER_MIN % SECS_PER_MIN
     );
 
-    return PyUnicode_FromString(tzname);
+    return PyUnicode_FromString(tzname_);
 }
 
 /*
