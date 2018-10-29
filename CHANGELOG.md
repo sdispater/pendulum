@@ -9,6 +9,9 @@
 - Fixed reading timezone files.
 - Added support for parsing padded 2-digit days of the month with `from_format()`
 - Fixed `from_format()` trying to parse escaped tokens.
+- Fixed the `z` token timezone parsing in `from_format()` to allow underscores.
+- Fixed C extensions build errors.
+- Fixed `age` calculation for future dates.
 
 
 ## [2.0.3] - 2018-07-30
