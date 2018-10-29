@@ -58,6 +58,8 @@ class Formatter:
 
     _FORMAT_RE = re.compile(_TOKENS)
 
+    _FROM_FORMAT_RE = re.compile(r"(?<!\\\[)" + _TOKENS + r"(?!\\\])")
+
     _LOCALIZABLE_TOKENS = {
         "Qo": None,
         "MMMM": "months.wide",
@@ -372,7 +374,7 @@ class Formatter:
         """
         escaped_fmt = re.escape(fmt)
 
-        tokens = self._FORMAT_RE.findall(escaped_fmt)
+        tokens = self._FROM_FORMAT_RE.findall(escaped_fmt)
         if not tokens:
             return time
 
@@ -397,7 +399,7 @@ class Formatter:
             "timestamp": None,
         }
 
-        pattern = self._FORMAT_RE.sub(
+        pattern = self._FROM_FORMAT_RE.sub(
             lambda m: self._replace_tokens(m.group(0), locale), escaped_fmt
         )
 
