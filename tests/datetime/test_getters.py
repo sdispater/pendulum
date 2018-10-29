@@ -95,7 +95,8 @@ def test_int_timestamp_accuracy():
 def test_age():
     d = pendulum.now()
     assert d.age == 0
-    assert d.add(years=1).age == 1
+    assert d.add(years=1).age == -1
+    assert d.subtract(years=1).age == 1
 
 
 def test_local():

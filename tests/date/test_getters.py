@@ -36,7 +36,8 @@ def test_days_in_month():
 def test_age():
     d = pendulum.Date.today()
     assert d.age == 0
-    assert d.add(years=1).age == 1
+    assert d.add(years=1).age == -1
+    assert d.subtract(years=1).age == 1
 
 
 def test_is_leap_year():
