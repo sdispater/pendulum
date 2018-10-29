@@ -32,7 +32,7 @@ _MATCH_WORD = (
     "['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+"
     "|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}"
 )
-_MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+]+)?"
+_MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 
 
 class Formatter:

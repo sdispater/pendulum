@@ -92,6 +92,30 @@ def test_from_format_with_millis():
             "1975-12-25T14:15:16-05:00",
             None,
         ),
+        (
+            "1975-12-25T14:15:16 America/New_York",
+            "YYYY-MM-DDTHH:mm:ss z",
+            "1975-12-25T14:15:16-05:00",
+            None,
+        ),
+        (
+            "1975-12-25T14:15:16 Africa/Porto-Novo",
+            "YYYY-MM-DDTHH:mm:ss z",
+            "1975-12-25T14:15:16+01:00",
+            None,
+        ),
+        (
+            "1975-12-25T14:15:16 Etc/GMT+0",
+            "YYYY-MM-DDTHH:mm:ss z",
+            "1975-12-25T14:15:16+00:00",
+            None,
+        ),
+        (
+            "1975-12-25T14:15:16 W-SU",
+            "YYYY-MM-DDTHH:mm:ss z",
+            "1975-12-25T14:15:16+03:00",
+            None,
+        ),
     ],
 )
 def test_from_format(text, fmt, expected, now):
