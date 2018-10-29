@@ -28,9 +28,11 @@ jobs:
       env: PENDULUM_EXTENSIONS=1
     - python: 3.6
       env: PENDULUM_EXTENSIONS=0
-    - python: 3.7-dev
+    - python: 3.7
+      dist: xenial
       env: PENDULUM_EXTENSIONS=1
-    - python: 3.7-dev
+    - python: 3.7
+      dist: xenial
       env: PENDULUM_EXTENSIONS=0
     - python: pypy
     - python: pypy3
