@@ -5,7 +5,7 @@
 # http://www.opensource.org/licenses/MIT-license
 # Copyright (c) 2015 Sébastien Eustace
 
-PENDULUM_RELEASE := $$(sed -n -E "s/VERSION = '(.+)'/\1/p" pendulum/version.py)
+PENDULUM_RELEASE := $$(sed -n -E "s/VERSION = \"(.+)\"/\1/p" pendulum/version.py)
 
 # lists all available targets
 list:
