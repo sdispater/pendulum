@@ -136,7 +136,6 @@ def _parse_common(text, **options):
     :rtype: dict or None
     """
     m = COMMON.match(text)
-    print(m)
     has_date = False
     year = 0
     month = 1
