@@ -32,6 +32,7 @@ profile.html
 /docs/site/*
 pyproject.lock
 /poetry.lock
+setup.py
 
 # editor
 

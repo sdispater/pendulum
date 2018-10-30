@@ -23,7 +23,7 @@ setup: setup-python
 test:
 	@py.test --cov=pendulum --cov-config .coveragerc tests/ -sq
 
-release: wheels_x64 cp_wheels_x64 wheels_i686 cp_wheels_i686 wheel
+release: wheels_x64 cp_wheels_x64 wheel
 
 publish:
 	@poetry publish --no-build

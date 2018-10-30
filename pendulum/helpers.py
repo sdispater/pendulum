@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import pendulum
 import os
+import struct
 
 from math import copysign
 from datetime import datetime, date, timedelta
@@ -11,7 +12,7 @@ from typing import Union
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
 try:
-    if not with_extensions:
+    if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
     from ._extensions._helpers import (

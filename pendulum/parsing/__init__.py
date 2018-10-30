@@ -1,12 +1,19 @@
-import re
 import copy
+import os
+import re
+import struct
 
 from datetime import datetime, date, time
 from dateutil import parser
 
 from .exceptions import ParserError
 
+with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
+
 try:
+    if not with_extensions or struct.calcsize("P") == 4:
+        raise ImportError()
+
     from ._iso8601 import parse_iso8601
 except ImportError:
     from .iso8601 import parse_iso8601
