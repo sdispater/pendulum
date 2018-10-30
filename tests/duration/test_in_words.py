@@ -67,3 +67,9 @@ def test_subseconds_with_seconds():
     pi = pendulum.duration(seconds=12, microseconds=123456)
 
     assert pi.in_words() == "12 seconds"
+
+
+def test_duration_with_all_zero_values():
+    pi = pendulum.duration()
+
+    assert pi.in_words() == "0 microseconds"

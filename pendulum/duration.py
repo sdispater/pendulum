@@ -230,10 +230,15 @@ class Duration(timedelta):
                 )
                 parts.append(translation.format(count))
 
-        if not parts and abs(self.microseconds) > 0:
-            translation = locale.translation("units.second.{}".format(locale.plural(1)))
-            us = abs(self.microseconds) / 1e6
-            parts.append(translation.format("{:.2f}".format(us)))
+        if not parts:
+            if abs(self.microseconds) > 0:
+                unit = "units.second.{}".format(locale.plural(1))
+                count = "{:.2f}".format(abs(self.microseconds) / 1e6)
+            else:
+                unit = "units.microsecond.{}".format(locale.plural(0))
+                count = 0
+            translation = locale.translation(unit)
+            parts.append(translation.format(count))
 
         return decode(separator.join(parts))
 
