@@ -9,10 +9,6 @@
 #include <string.h>
 #include <time.h>
 
-#ifndef PyVarObject_HEAD_INIT
-    #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
-#endif
-
 /* ------------------------------------------------------------------------- */
 
 #define EPOCH_YEAR 1970
@@ -422,7 +418,7 @@ PyObject* timestamp(PyObject *self, PyObject *args) {
     result *= 60;
     result += second;
 
-    return PyLong_FromLong(result);
+    return PyLong_FromSsize_t(result);
 }
 
 PyObject* local_time(PyObject *self, PyObject *args) {

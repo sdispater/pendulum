@@ -1,14 +1,19 @@
 from __future__ import absolute_import
 
 import pendulum
+import os
 
 from math import copysign
 from datetime import datetime, date, timedelta
 from contextlib import contextmanager
 from typing import Union
 
+with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
 try:
+    if not with_extensions:
+        raise ImportError()
+
     from ._extensions._helpers import (
         local_time,
         precise_diff,
