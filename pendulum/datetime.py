@@ -571,7 +571,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.to_date_string() == dt.to_date_string()
 
-    def is_birthday(self, dt=None):
+    def is_anniversary(self, dt=None):
         """
         Check if its the birthday.
         Compares the date/month values of the two dates.
@@ -588,7 +588,7 @@ class DateTime(datetime.datetime, Date):
     # the additional method for checking if today is the anniversary day
     # the alias is provided to start using a new name and keep the backward compatibility
     # the old name can be completely replaced with the new in one of the future versions
-    is_anniversary = is_birthday
+    is_birthday = is_anniversary
 
     # ADDITIONS AND SUBSTRACTIONS
 
