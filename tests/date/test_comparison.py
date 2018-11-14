@@ -141,21 +141,32 @@ def test_is_anniversary():
     d = pendulum.Date.today()
     an_anniversary = d.subtract(years=1)
     assert an_anniversary.is_anniversary()
-    assert an_anniversary.is_birthday()  # backward compatibility
     not_an_anniversary = d.subtract(days=1)
     assert not not_an_anniversary.is_anniversary()
-    assert not not_an_anniversary.is_birthday()  # backward compatibility
     also_not_an_anniversary = d.add(days=2)
     assert not also_not_an_anniversary.is_anniversary()
-    assert not also_not_an_anniversary.is_birthday()  # backward compatibility
 
     d1 = pendulum.Date(1987, 4, 23)
     d2 = pendulum.Date(2014, 9, 26)
     d3 = pendulum.Date(2014, 4, 23)
     assert not d2.is_anniversary(d1)
-    assert not d2.is_birthday(d1)  # backward compatibility
     assert d3.is_anniversary(d1)
-    assert d3.is_birthday(d1)  # backward compatibility
+
+
+def test_is_birthday():  # backward compatibility
+    d = pendulum.Date.today()
+    an_anniversary = d.subtract(years=1)
+    assert an_anniversary.is_birthday()
+    not_an_anniversary = d.subtract(days=1)
+    assert not not_an_anniversary.is_birthday()
+    also_not_an_anniversary = d.add(days=2)
+    assert not also_not_an_anniversary.is_birthday()
+
+    d1 = pendulum.Date(1987, 4, 23)
+    d2 = pendulum.Date(2014, 9, 26)
+    d3 = pendulum.Date(2014, 4, 23)
+    assert not d2.is_birthday(d1)
+    assert d3.is_birthday(d1)
 
 
 def test_closest():

@@ -198,7 +198,7 @@ class Date(FormattableMixing, date):
 
     def is_anniversary(self, dt=None):
         """
-        Check if its the birthday.
+        Check if its the anniversary.
 
         Compares the date/month values of the two dates.
 
