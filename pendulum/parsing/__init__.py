@@ -21,27 +21,27 @@ except ImportError:
 
 COMMON = re.compile(
     # Date (optional)
-    "^"
-    "(?P<date>"
-    "    (?P<classic>"  # Classic date (YYYY-MM-DD)
-    "        (?P<year>\d{4})"  # Year
-    "        (?P<monthday>"
-    "            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
-    "            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
-    "        )?"
-    "    )"
-    ")?"
+    r"^"
+    r"(?P<date>"
+    r"    (?P<classic>"  # Classic date (YYYY-MM-DD)
+    r"        (?P<year>\d{4})"  # Year
+    r"        (?P<monthday>"
+    r"            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
+    r"            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
+    r"        )?"
+    r"    )"
+    r")?"
     # Time (optional)
-    "(?P<time>"
-    "    (?P<timesep>\ )?"  # Separator (space)
-    "    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
+    r"(?P<time>"
+    r"    (?P<timesep>\ )?"  # Separator (space)
+    r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
     # Subsecond part (optional)
-    "    (?P<subsecondsection>"
-    "        (?:[.|,])"  # Subsecond separator (optional)
-    "        (?P<subsecond>\d{1,9})"  # Subsecond
-    "    )?"
-    ")?"
-    "$",
+    r"    (?P<subsecondsection>"
+    r"        (?:[.|,])"  # Subsecond separator (optional)
+    r"        (?P<subsecond>\d{1,9})"  # Subsecond
+    r"    )?"
+    r")?"
+    r"$",
     re.VERBOSE,
 )
 
