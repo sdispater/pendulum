@@ -9,6 +9,7 @@ from pendulum.utils._compat import PYPY
 from pendulum.utils._compat import decode
 
 from .constants import (
+    DAYS_PER_WEEK,
     SECONDS_PER_DAY,
     SECONDS_PER_HOUR,
     SECONDS_PER_MINUTE,
@@ -78,7 +79,8 @@ class Duration(timedelta):
         if total < 0:
             m = -1
 
-        self._microseconds = round(total % m * 1e6)
+        # round returns a float in python2, so ensure stored as an int
+        self._microseconds = int(round(total % m * 1e6))
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
 
         _days = abs(int(total)) // SECONDS_PER_DAY * m
@@ -242,6 +244,58 @@ class Duration(timedelta):
             return -1
 
         return 1
+
+    def to_iso8601_string(self):
+        """
+        Return the duration as an ISO8601 string.
+        
+        Either:
+            "PnYnMnDTnHnMnS"
+            "PnW" - if only weeks are present
+        """
+        rep = "P"
+        if self._years:
+            rep += "{}Y".format(self._years)
+        if self._months:
+            rep += "{}M".format(self._months)
+        # days without any specified years, months
+        days_alone = self._days - (self.years * 365 + self.months * 30)
+        if days_alone:
+            rep += "{}D".format(days_alone)
+        time = "T"
+        if self.hours:
+            time += "{}H".format(self.hours)
+        if self.minutes:
+            time += "{}M".format(self.minutes)
+        # TODO weeks
+        # TODO signs and test
+        s = ""
+        if self.remaining_seconds:
+            s = str(self.remaining_seconds)
+        if self.microseconds:
+            # no division to avoid possible floating point errors
+            if not s:
+                s = "0"
+            s += ".{:0>6d}".format(self.microseconds).rstrip("0")
+        if s:
+            time += "{}S".format(s)
+        if len(time) > 1:
+            rep += time
+        if len(rep) == 1:
+            # 0 duration
+            rep = "PT0S"
+        # check if PnW representation is suitable
+        # i.e. only days
+        # TODO abs?
+        if (
+            days_alone % DAYS_PER_WEEK == 0
+            and not self._years
+            and not self._months
+            and len(time) == 1
+        ):
+            w = days_alone // DAYS_PER_WEEK
+            rep = "P{}W".format(w)
+        return rep
 
     def as_timedelta(self):
         """

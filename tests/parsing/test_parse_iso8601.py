@@ -160,7 +160,7 @@ def test_parse_ios8601_invalid():
         parse_iso8601("2012-W123")  # Missing separator
 
 
-def test_parse_ios8601_duration():
+def test_parse_iso8601_duration():
     text = "P2Y3M4DT5H6M7S"
     parsed = parse_iso8601(text)
 
