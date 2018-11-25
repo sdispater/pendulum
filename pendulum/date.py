@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 from .helpers import add_duration
 from .period import Period
-from .mixins.default import FormattableMixing
+from .mixins.default import FormattableMixin
 from .constants import (
     DAYS_PER_WEEK,
     YEARS_PER_DECADE,
@@ -26,7 +26,7 @@ from .constants import (
 from .exceptions import PendulumException
 
 
-class Date(FormattableMixing, date):
+class Date(FormattableMixin, date):
 
     # Names of days of the week
     _days = {

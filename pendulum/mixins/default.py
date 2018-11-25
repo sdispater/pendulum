@@ -3,7 +3,7 @@ from ..formatting import Formatter
 _formatter = Formatter()
 
 
-class FormattableMixing(object):
+class FormattableMixin(object):
 
     _formatter = _formatter
 
