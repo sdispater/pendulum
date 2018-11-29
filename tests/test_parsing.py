@@ -86,6 +86,20 @@ def test_parse_duration():
     assert isinstance(duration, pendulum.Duration)
     assert_duration(duration, 0, 0, 2, 0, 0, 0, 0)
 
+    text = "PT0S"
+
+    duration = pendulum.parse(text)
+
+    assert isinstance(duration, pendulum.Duration)
+    assert_duration(duration, 0, 0, 0, 0, 0, 0, 0)
+
+    text = "P0D"
+
+    duration = pendulum.parse(text)
+
+    assert isinstance(duration, pendulum.Duration)
+    assert_duration(duration, 0, 0, 0, 0, 0, 0, 0)
+
 
 def test_parse_interval():
     text = "2008-05-11T15:30:00Z/P1Y2M10DT2H30M"

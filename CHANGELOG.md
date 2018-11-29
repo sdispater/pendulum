@@ -1,13 +1,27 @@
 # Change Log
 
+## Unreleased
+
+### Added
+
+- Added `Duration.to_iso8601_string()` method to output a ISO 8601 string representation of a duration.
+
+### Fixed
+
+- Fixed Duration.microseconds not returning an int in python2
+
+
 ## [2.0.4] - 2018-10-30
+
+### Added
+
+- Added support for parsing padded 2-digit days of the month with `from_format()`
 
 ### Fixed
 
 - Fixed `from_format()` not recognizing input strings when the specified pattern had escaped elements.
 - Fixed missing `x` token for string formatting.
 - Fixed reading timezone files.
-- Added support for parsing padded 2-digit days of the month with `from_format()`
 - Fixed `from_format()` trying to parse escaped tokens.
 - Fixed the `z` token timezone parsing in `from_format()` to allow underscores.
 - Fixed C extensions build errors.
