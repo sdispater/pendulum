@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import datetime as _datetime
-from typing import Union
+from typing import Union, Optional
 
 from .__version__ import __version__
 
@@ -59,7 +59,7 @@ from .constants import (
     SECONDS_PER_DAY,
 )
 
-_TEST_NOW = None
+_TEST_NOW = None  # type: Optional[DateTime]
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
@@ -68,7 +68,7 @@ _formatter = Formatter()
 
 
 def _safe_timezone(obj):
-    # type: (Union[str, int, float, _datetime.tzinfo]) -> _Timezone
+    # type: (Optional[Union[str, float, _datetime.tzinfo, _Timezone]]) -> _Timezone
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -105,7 +105,7 @@ def datetime(
     minute=0,  # type: int
     second=0,  # type: int
     microsecond=0,  # type: int
-    tz=UTC,  # type: Union[str, _Timezone]
+    tz=UTC,  # type: Optional[Union[str, float, _Timezone]]
     dst_rule=POST_TRANSITION,  # type: str
 ):  # type: (...) -> DateTime
     """
@@ -169,8 +169,8 @@ def time(hour, minute=0, second=0, microsecond=0):  # type: (int, int, int, int)
 
 
 def instance(
-    dt, tz=UTC  # type: _datetime.datetime  # type: Union[str, _Timezone, None]
-):  # type: (...) -> DateTime
+    dt, tz=UTC
+):  # type: (_datetime.datetime, Optional[Union[str, _Timezone]]) -> DateTime
     """
     Create a DateTime instance from a datetime one.
     """
@@ -198,7 +198,7 @@ def instance(
     )
 
 
-def now(tz=None):  # type: (Union[str, _Timezone, None]) -> DateTime
+def now(tz=None):  # type: (Optional[Union[str, _Timezone]]) -> DateTime
     """
     Get a DateTime instance for the current date and time.
     """
@@ -248,7 +248,7 @@ def from_format(
     string,  # type: str
     fmt,  # type: str
     tz=UTC,  # type: Union[str, _Timezone]
-    locale=None,  # type: Union[str, None]
+    locale=None,  # type: Optional[str]
 ):  # type: (...) -> DateTime
     """
     Creates a DateTime instance from a specific format.
@@ -261,8 +261,8 @@ def from_format(
 
 
 def from_timestamp(
-    timestamp, tz=UTC  # type: Union[int, float]  # type: Union[str, _Timezone]
-):  # type: (...) -> DateTime
+    timestamp, tz=UTC
+):  # type: (Union[int, float], Union[str, _Timezone]) -> DateTime
     """
     Create a DateTime instance from a timestamp.
     """
@@ -305,9 +305,7 @@ def duration(
     )
 
 
-def period(
-    start, end, absolute=False  # type: DateTime  # type: DateTime  # type: bool
-):  # type: (...) -> Period
+def period(start, end, absolute=False):  # type: (DateTime, DateTime, bool) -> Period
     """
     Create a Period instance.
     """

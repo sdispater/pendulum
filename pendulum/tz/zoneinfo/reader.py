@@ -3,7 +3,7 @@ import pytzdata
 
 from collections import namedtuple
 from struct import unpack
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, IO, Any, Tuple
 
 from pytzdata.exceptions import TimezoneNotFound
 
@@ -155,7 +155,7 @@ class Reader:
 
         return hdr
 
-    def _parse_trans_64(self, fd, n):  # type: (..., int) -> List[int]
+    def _parse_trans_64(self, fd, n):  # type: (IO[Any], int) -> List[int]
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 8)
@@ -163,7 +163,7 @@ class Reader:
 
         return trans
 
-    def _parse_trans_32(self, fd, n):  # type: (..., int) -> List[int]
+    def _parse_trans_32(self, fd, n):  # type: (IO[Any], int) -> List[int]
         trans = []
         for _ in range(n):
             buff = self._check_read(fd, 4)
@@ -171,12 +171,14 @@ class Reader:
 
         return trans
 
-    def _parse_type_idx(self, fd, n):  # type: (..., int) -> List[int]
+    def _parse_type_idx(self, fd, n):  # type: (IO[Any], int) -> List[int]
         buff = self._check_read(fd, n)
 
         return list(unpack("{}B".format(n), buff))
 
-    def _parse_types(self, fd, n):  # type: (..., int) -> List[tuple]
+    def _parse_types(
+        self, fd, n
+    ):  # type: (IO[Any], int) -> List[Tuple[Any, bool, int]]
         types = []
 
         for _ in range(n):
@@ -188,8 +190,8 @@ class Reader:
         return types
 
     def _parse_abbrs(
-        self, fd, n, types  # type: int  # type: List[tuple]
-    ):  # type: (...) -> Dict[int, str]
+        self, fd, n, types
+    ):  # type: (IO[Any], int, List[Tuple[Any, bool, int]]) -> Dict[int, str]
         abbrs = {}
         buff = self._check_read(fd, n)
 

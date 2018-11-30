@@ -16,6 +16,7 @@ packages = [
     {include = "pendulum"},
     {include = "tests", format = "sdist"},
 ]
+include = ["pendulum/py.typed"]
 
 
 [tool.poetry.dependencies]
