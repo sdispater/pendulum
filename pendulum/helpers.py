@@ -62,7 +62,7 @@ def add_duration(
     seconds=0,  # type: int
     microseconds=0,  # type: int
 ):  # type: (...) -> _DT
-    ...
+    pass
 
 
 @overload
@@ -73,7 +73,7 @@ def add_duration(
     weeks=0,  # type: int
     days=0,  # type: int
 ):  # type: (...) -> _D
-    ...
+    pass
 
 
 def add_duration(

@@ -212,11 +212,11 @@ class Timezone(tzinfo):
 
     @overload
     def utcoffset(self, dt):  # type: (None) -> None
-        ...
+        pass
 
     @overload
     def utcoffset(self, dt):  # type: (_datetime) -> timedelta
-        ...
+        pass
 
     def utcoffset(self, dt):
         if dt is None:
