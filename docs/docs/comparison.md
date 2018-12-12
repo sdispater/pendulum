@@ -64,7 +64,7 @@ the `now()` is created in the same timezone as the instance.
 
 >>> born = pendulum.datetime(1987, 4, 23)
 >>> not_birthday = pendulum.datetime(2014, 9, 26)
->>> birthday = pendulum.datetime(2014, 2, 23)
+>>> birthday = pendulum.datetime(2014, 4, 23)
 >>> past_birthday = pendulum.now().subtract(years=50)
 
 >>> born.is_birthday(not_birthday)
