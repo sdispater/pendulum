@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed ISO week dates not being parsed properly in `fom_format()`.
+
+
 ## [2.0.4] - 2018-10-30
 
 ### Fixed

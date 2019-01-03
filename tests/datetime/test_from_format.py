@@ -132,6 +132,7 @@ def test_from_format_with_invalid_padded_day():
             "1975-12-25T14:15:16+03:00",
             None,
         ),
+        ("190022215", "YYDDDDHHmm", "2019-01-02T22:15:00+00:00", None),
     ],
 )
 def test_from_format(text, fmt, expected, now):

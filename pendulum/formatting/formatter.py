@@ -469,7 +469,7 @@ class Formatter:
 
         if parsed["day_of_year"] is not None:
             dt = pendulum.parse(
-                "{}-{}".format(validated["year"], parsed["day_of_year"])
+                "{}-{:>03d}".format(validated["year"], parsed["day_of_year"])
             )
 
             validated["month"] = dt.month
