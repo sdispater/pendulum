@@ -108,25 +108,26 @@ class Timezone(tzinfo):
             else:
                 transition = transition.previous
 
-        if transition.is_ambiguous(sec):
-            # Ambiguous time
-            if dst_rule == TRANSITION_ERROR:
-                raise AmbiguousTime(dt)
+        if transition:
+            if transition.is_ambiguous(sec):
+                # Ambiguous time
+                if dst_rule == TRANSITION_ERROR:
+                    raise AmbiguousTime(dt)
 
-            # We set the fold attribute for later
-            if dst_rule == POST_TRANSITION:
-                fold = 1
-        elif transition.is_missing(sec):
-            # Skipped time
-            if dst_rule == TRANSITION_ERROR:
-                raise NonExistingTime(dt)
+                # We set the fold attribute for later
+                if dst_rule == POST_TRANSITION:
+                    fold = 1
+            elif transition.is_missing(sec):
+                # Skipped time
+                if dst_rule == TRANSITION_ERROR:
+                    raise NonExistingTime(dt)
 
-            # We adjust accordingly
-            if dst_rule == POST_TRANSITION:
-                sec += transition.fix
-                fold = 1
-            else:
-                sec -= transition.fix
+                # We adjust accordingly
+                if dst_rule == POST_TRANSITION:
+                    sec += transition.fix
+                    fold = 1
+                else:
+                    sec -= transition.fix
 
         kwargs = {"tzinfo": self}
         if _HAS_FOLD or isinstance(dt, pendulum.DateTime):
