@@ -8,6 +8,8 @@ from importlib import import_module
 from pendulum.utils._compat import basestring
 from pendulum.utils._compat import decode
 
+import zipimport
+
 
 class Locale:
     """
@@ -34,6 +36,12 @@ class Locale:
         actual_locale = locale
         locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
         while not os.path.exists(locale_path):
+            ext = '.zip'
+            if ext in locale_path:
+                split_path = locale_path.split(ext)
+                z = zipimport.zipimporter(split_path[0]+ext)
+                if z.find_module(split_path[1].lstrip(os.path.sep)):
+                    break
             if actual_locale == locale:
                 raise ValueError("Locale [{}] does not exist.".format(locale))
 
