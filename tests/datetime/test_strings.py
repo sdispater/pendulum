@@ -52,6 +52,13 @@ def test_to_iso8601_extended_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
     assert d.to_iso8601_string() == "1975-12-25T14:15:16.123456-05:00"
 
+def test_to_iso8601_string_timespec_hours():
+    d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
+    assert d.to_iso8601_string(timespec="hours") == "1975-12-25T14-05:00"
+
+def test_to_iso8601_string_timespec_milliseconds():
+    d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
+    assert d.to_iso8601_string(timespec="milliseconds") == "1975-12-25T14:15:16.123-05:00"
 
 def test_to_rfc822_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
