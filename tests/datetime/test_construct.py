@@ -4,7 +4,7 @@ import pytz
 import pendulum
 import pytest
 
-from datetime import datetime
+from datetime import datetime, date
 from dateutil import tz
 from pendulum import DateTime
 from pendulum.tz import timezone
@@ -74,6 +74,11 @@ def test_yesterday():
 
 def test_instance_naive_datetime_defaults_to_utc():
     now = pendulum.instance(datetime.now())
+    assert now.timezone_name == "UTC"
+
+
+def test_instance_naive_date():
+    now = pendulum.instance(date.today())
     assert now.timezone_name == "UTC"
 
 
