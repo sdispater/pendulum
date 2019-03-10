@@ -172,13 +172,16 @@ def instance(
     dt, tz=UTC  # type: _datetime.datetime  # type: Union[str, _Timezone, None]
 ):  # type: (...) -> DateTime
     """
-    Create a DateTime instance from a datetime one.
+    Create a DateTime instance from a datetime or date.
     """
-    if not isinstance(dt, _datetime.datetime):
-        raise ValueError("instance() only accepts datetime objects.")
+    if not isinstance(dt, _datetime.datetime) and not isinstance(dt, _datetime.date):
+        raise ValueError("instance() only accepts datetime and date objects.")
 
     if isinstance(dt, DateTime):
         return dt
+
+    if isinstance(dt, _datetime.date):
+        dt = _datetime.datetime(dt.year, dt.month, dt.day)
 
     tz = dt.tzinfo or tz
 
