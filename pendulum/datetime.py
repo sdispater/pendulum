@@ -5,6 +5,7 @@ from __future__ import division
 import calendar
 import datetime
 import pendulum
+import platform
 
 from typing import Union
 
@@ -37,24 +38,40 @@ from .constants import (
     W3C,
 )
 
+PYTHON_VERSION = platform.python_version()
 
 class DateTime(datetime.datetime, Date):
 
     # Formats
 
-    _FORMATS = {
-        "atom": ATOM,
-        "cookie": COOKIE,
-        "iso8601": lambda dt, timespec: dt.isoformat(timespec=timespec),
-        "rfc822": RFC822,
-        "rfc850": RFC850,
-        "rfc1036": RFC1036,
-        "rfc1123": RFC1123,
-        "rfc2822": RFC2822,
-        "rfc3339": lambda dt: dt.isoformat(),
-        "rss": RSS,
-        "w3c": W3C,
-    }
+    if PYTHON_VERSION >= '3.6':
+        _FORMATS = {
+            "atom": ATOM,
+            "cookie": COOKIE,
+            "iso8601": lambda dt, timespec: dt.isoformat(timespec=timespec),
+            "rfc822": RFC822,
+            "rfc850": RFC850,
+            "rfc1036": RFC1036,
+            "rfc1123": RFC1123,
+            "rfc2822": RFC2822,
+            "rfc3339": lambda dt: dt.isoformat(),
+            "rss": RSS,
+            "w3c": W3C,
+        }
+    else:
+        _FORMATS = {
+            "atom": ATOM,
+            "cookie": COOKIE,
+            "iso8601": lambda dt: dt.isoformat(),
+            "rfc822": RFC822,
+            "rfc850": RFC850,
+            "rfc1036": RFC1036,
+            "rfc1123": RFC1123,
+            "rfc2822": RFC2822,
+            "rfc3339": lambda dt: dt.isoformat(),
+            "rss": RSS,
+            "w3c": W3C,
+        }
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
@@ -466,7 +483,7 @@ class DateTime(datetime.datetime, Date):
 
         fmt = self._FORMATS[fmt]
         if callable(fmt):
-            if string_format == "iso8601":
+            if string_format == "iso8601" and PYTHON_VERSION >= '3.6':
                 return fmt(self, timespec)
             return fmt(self)
 
