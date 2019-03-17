@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 
 import pendulum
 
@@ -9,8 +10,6 @@ def test_timezones():
     assert "America/Argentina/Buenos_Aires" in zones
 
 
-def test_timezones_are_loadable():
-    zones = pendulum.timezones
-
-    for zone in zones:
-        pendulum.timezone(zone)
+@pytest.mark.parametrize("zone", [zone for zone in pendulum.timezones])
+def test_timezones_are_loadable(zone):
+    pendulum.timezone(zone)
