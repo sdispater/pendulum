@@ -24,7 +24,7 @@ Here is a list (non-exhaustive) of the reported cases with a possible solution, 
     pymysql.converters.conversions[pendulum.DateTime] = pymysql.converters.escape_datetime
     ```
 
-* `django` will use the `isoformat()` method to store datetimes in the database. However since `pendulum` is always timezone aware the offset information will always be returned by `isoformat()` raising an error, at least for MySQL databases. To work around it you can either create your own `DateTimeField` or use the previous workaround for `MySQLdb`:
+* `django` will use the `isoformat()` method to store datetimes in the database. However, since `pendulum` is always timezone aware, the offset information will always be returned by `isoformat()` raising an error, at least for MySQL databases. To work around it, you can either create your own `DateTimeField` or use the previous workaround for `MySQLdb`:
 
     ```python
     import pendulum

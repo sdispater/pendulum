@@ -1,6 +1,6 @@
 # Modifiers
 
-These group of methods perform helpful modifications to a copy of the current instance.
+This group of methods performs helpful modifications to a copy of the current instance.
 You'll notice that the `start_of()`, `next()` and `previous()` methods
 set the time to `00:00:00` and the `end_of()` methods set the time to `23:59:59.999999`.
 
