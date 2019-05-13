@@ -403,7 +403,7 @@ class Formatter:
             lambda m: self._replace_tokens(m.group(0), locale), escaped_fmt
         )
 
-        if not re.match(pattern, time):
+        if not re.search("^" + pattern + "$", time):
             raise ValueError("String does not match format {}".format(fmt))
 
         re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)
