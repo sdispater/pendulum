@@ -15,10 +15,7 @@ def test_from_format_returns_datetime():
 
 def test_from_format_rejects_extra_text():
     with pytest.raises(ValueError):
-        pendulum.from_format(
-            "1975-05-21 22:32:11 extra text",
-            "YYYY-MM-DD HH:mm:ss",
-        )
+        pendulum.from_format("1975-05-21 22:32:11 extra text", "YYYY-MM-DD HH:mm:ss")
 
 
 def test_from_format_with_timezone_string():
