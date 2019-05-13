@@ -37,8 +37,6 @@ def test_from_format_with_square_bracket_in_timezone():
             "1975-05-21 22:32:11 Eu[rope/London",
             "YYYY-MM-DD HH:mm:ss z",
         )
-    assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert "Europe/London" == d.timezone_name
 
 
 def test_from_format_with_escaped_elements():
