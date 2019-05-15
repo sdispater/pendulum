@@ -3,7 +3,7 @@ import pytzdata
 
 from collections import namedtuple
 from struct import unpack
-from typing import List, Dict
+from typing import Dict, List, Optional
 
 from pytzdata.exceptions import TimezoneNotFound
 
@@ -200,12 +200,15 @@ class Reader:
 
         return abbrs
 
-    def _parse_posix_tz(self, fd):  # type: (...) -> PosixTimezone
+    def _parse_posix_tz(self, fd):  # type: (...) -> Optional[PosixTimezone]
         s = fd.read().decode("utf-8")
 
         if not s.startswith("\n") or not s.endswith("\n"):
             raise InvalidZoneinfoFile('Invalid posix rule in file "{}"'.format(fd.name))
 
         s = s.strip()
+
+        if not s:
+            return
 
         return posix_spec(s)
