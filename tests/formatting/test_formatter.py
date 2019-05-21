@@ -238,8 +238,8 @@ def test_date_formats():
 def test_escape():
     f = Formatter()
     d = pendulum.datetime(2016, 8, 28)
-    assert f.format(d, "[YYYY] YYYY \[YYYY\]") == "YYYY 2016 [2016]"
-    assert f.format(d, "\D D \\\D") == "D 28 \\28"
+    assert f.format(d, r"[YYYY] YYYY \[YYYY\]") == "YYYY 2016 [2016]"
+    assert f.format(d, r"\D D \\D") == "D 28 \\28"
 
 
 def test_date_formats_missing():
