@@ -144,7 +144,7 @@ The following tokens are currently supported:
 |                                | z             | Asia/Baku, Europe/Warsaw, GMT ...          |
 |                                | zz            | EST CST ... MST PST                        |
 | **Seconds timestamp**          | X             | 1381685817, 1234567890.123                 |
-| **Microseconds timestamp**     | x             | 1234567890123                              |
+| **Milliseconds timestamp**     | x             | 1234567890123                              |
 
 
 ### Localized Formats
