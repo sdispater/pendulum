@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed ISO week dates not being parsed properly in `fom_format()`.
+- Fixed period `==` comparison raising an exception when compared with other types.
 
 
 ## [2.0.4] - 2018-10-30

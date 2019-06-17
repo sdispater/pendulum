@@ -40,3 +40,11 @@ def test_comparison_to_timedelta():
     period = dt2 - dt1
 
     assert period < timedelta(days=4)
+
+def test_comparison_with_other():
+    dt1 = pendulum.datetime(2016, 11, 18)
+    dt2 = pendulum.datetime(2016, 11, 20)
+    p = pendulum.period(dt1, dt2)
+
+    assert p != None
+    assert not p == None
