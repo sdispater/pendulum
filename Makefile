@@ -3,7 +3,7 @@
 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/MIT-license
-# Copyright (c) 2015 Sébastien Eustace
+# Copyright (c) 2015 Sebastien Eustace
 
 PENDULUM_RELEASE := $$(sed -n -E "s/VERSION = \"(.+)\"/\1/p" pendulum/version.py)
 
