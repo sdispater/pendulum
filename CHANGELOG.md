@@ -4,7 +4,13 @@
 
 ### Fixed
 
-- Fixed ISO week dates not being parsed properly in `fom_format()`.
+- Fixed ISO week dates not being parsed properly in `from_format()`.
+- Fixed loading of some timezones with empty posix spec.
+- Fixed deprecation warnings.
+
+### Locales
+
+- Added RU locale.
 
 
 ## [2.0.4] - 2018-10-30
