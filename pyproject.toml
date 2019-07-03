@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "2.0.4"
+version = "2.0.5"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
@@ -31,7 +31,7 @@ pytz = ">=2018.3"
 babel = "^2.5"
 cleo = "^0.6.1"
 tox = "^3.0"
-black = { version = "^18.4-alpha.0", python = "^3.6" }
+black = { version = "^19.3b0", python = "^3.6" }
 pre-commit = "^1.10"
 
 

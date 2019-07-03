@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [2.0.5] - 2019-07-03
 
 ### Fixed
 
@@ -93,7 +93,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.4...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.5...master
+[2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5
 [2.0.4]: https://github.com/sdispater/pendulum/releases/tag/2.0.4
 [2.0.3]: https://github.com/sdispater/pendulum/releases/tag/2.0.3
 [2.0.2]: https://github.com/sdispater/pendulum/releases/tag/2.0.2
