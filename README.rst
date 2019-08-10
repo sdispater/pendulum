@@ -203,7 +203,7 @@ If the locale does not exist you will need to create it by using the ``clock`` u
 
 .. code-block:: bash
 
-    ./clock locale:create <your-locale>
+    ./clock locale create <your-locale>
 
 It will generate a directory in ``pendulum/locales`` named after your locale, with the following
 structure:
