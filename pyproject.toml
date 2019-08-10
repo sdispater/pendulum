@@ -12,6 +12,11 @@ keywords = ['datetime', 'date', 'time']
 
 build = "build.py"
 
+packages = [
+    {include = "pendulum"},
+    {include = "tests", format = "sdist"},
+]
+
 
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.4"
@@ -33,5 +38,5 @@ pre-commit = "^1.10"
 
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.0.0b1"]
 build-backend = "poetry.masonry.api"
