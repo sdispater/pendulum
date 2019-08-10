@@ -1,10 +1,16 @@
 # Change Log
 
-## [Unreleased]
+## [2.0.5] - 2019-07-03
 
 ### Fixed
 
-- Fixed ISO week dates not being parsed properly in `fom_format()`.
+- Fixed ISO week dates not being parsed properly in `from_format()`.
+- Fixed loading of some timezones with empty posix spec.
+- Fixed deprecation warnings.
+
+### Locales
+
+- Added RU locale.
 
 
 ## [2.0.4] - 2018-10-30
@@ -87,7 +93,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.4...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.5...master
+[2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5
 [2.0.4]: https://github.com/sdispater/pendulum/releases/tag/2.0.4
 [2.0.3]: https://github.com/sdispater/pendulum/releases/tag/2.0.3
 [2.0.2]: https://github.com/sdispater/pendulum/releases/tag/2.0.2

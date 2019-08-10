@@ -25,8 +25,8 @@ _MATCH_3_TO_4 = "\d{3}\d?"
 _MATCH_5_TO_6 = "\d{5}\d?"
 _MATCH_UNSIGNED = "\d+"
 _MATCH_SIGNED = "[+-]?\d+"
-_MATCH_OFFSET = "(?i)Z|[+-]\d\d:?\d\d"
-_MATCH_SHORT_OFFSET = "(?i)Z|[+-]\d\d(?::?\d\d)?"
+_MATCH_OFFSET = "[Zz]|[+-]\d\d:?\d\d"
+_MATCH_SHORT_OFFSET = "[Zz]|[+-]\d\d(?::?\d\d)?"
 _MATCH_TIMESTAMP = "[+-]?\d+(\.\d{1,6})?"
 _MATCH_WORD = (
     "(?i)[0-9]*"
@@ -403,7 +403,7 @@ class Formatter:
             lambda m: self._replace_tokens(m.group(0), locale), escaped_fmt
         )
 
-        if not re.match(pattern, time):
+        if not re.search("^" + pattern + "$", time):
             raise ValueError("String does not match format {}".format(fmt))
 
         re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)
