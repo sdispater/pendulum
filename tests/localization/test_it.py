@@ -64,9 +64,7 @@ def diff_for_humans():
     assert d2.diff_for_humans(d, locale=locale) == "alcuni secondi prima"
 
     assert d.diff_for_humans(d2, True, locale=locale) == "alcuni secondi"
-    assert (
-        d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == "alcuni secondi"
-    )
+    assert d2.diff_for_humans(d.add(seconds=1), True, locale=locale) == "alcuni secondi"
 
 
 def test_format():
