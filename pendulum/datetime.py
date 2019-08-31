@@ -592,17 +592,18 @@ class DateTime(datetime.datetime, Date):
         years=0,
         months=0,
         weeks=0,
+        weekdays=0,
         days=0,
         hours=0,
         minutes=0,
         seconds=0,
         microseconds=0,
-    ):  # type: (int, int, int, int, int, int, int) -> DateTime
+    ):  # type: (int, int, int, int, int, int, int, int, int) -> DateTime
         """
         Add a duration to the instance.
 
         If we're adding units of variable length (i.e., years, months),
-        move forward from curren time,
+        move forward from current time,
         otherwise move forward from utc, for accuracy
         when moving across DST boundaries.
         """
@@ -627,6 +628,7 @@ class DateTime(datetime.datetime, Date):
             years=years,
             months=months,
             weeks=weeks,
+            weekdays=weekdays,
             days=days,
             hours=hours,
             minutes=minutes,
@@ -676,6 +678,7 @@ class DateTime(datetime.datetime, Date):
         years=0,
         months=0,
         weeks=0,
+        weekdays=0,
         days=0,
         hours=0,
         minutes=0,
@@ -692,6 +695,9 @@ class DateTime(datetime.datetime, Date):
         :type months: int
 
         :param weeks: The number of weeks
+        :type weeks: int
+
+        :param weeks: The number of weekdays
         :type weeks: int
 
         :param days: The number of days
@@ -715,6 +721,7 @@ class DateTime(datetime.datetime, Date):
             years=-years,
             months=-months,
             weeks=-weeks,
+            weekdays=-weekdays,
             days=-days,
             hours=-hours,
             minutes=-minutes,

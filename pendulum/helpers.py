@@ -48,6 +48,7 @@ def add_duration(
     years=0,  # type: int
     months=0,  # type: int
     weeks=0,  # type: int
+    weekdays=0, # type: int
     days=0,  # type: int
     hours=0,  # type: int
     minutes=0,  # type: int
@@ -58,6 +59,13 @@ def add_duration(
     Adds a duration to a date/datetime instance.
     """
     days += weeks * 7
+
+    if weekdays:
+        while weekdays != 0:
+            days += _sign(weekdays)
+            if (dt + timedelta(days)).weekday() >= 5: # 6 = sunday
+                continue
+            weekdays -= _sign(weekdays)
 
     if (
         isinstance(dt, date)

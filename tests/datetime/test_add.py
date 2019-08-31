@@ -264,3 +264,8 @@ def test_period_over_midnight_tz():
     new_end = start + period
 
     assert new_end == end
+
+
+def test_add_weekdays():
+    assert pendulum.datetime(2019, 8, 30).add(weekdays=1).day == 2
+

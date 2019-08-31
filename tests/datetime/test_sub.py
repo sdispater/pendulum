@@ -231,3 +231,7 @@ def test_subtract_invalid_type():
 
     with pytest.raises(TypeError):
         "ab" - d
+
+
+def test_subtract_weekdays():
+    assert pendulum.datetime(2019, 8, 30).subtract(weekdays=5).day == 23
