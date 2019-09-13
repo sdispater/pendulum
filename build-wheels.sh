@@ -1,38 +1,22 @@
 #!/bin/bash
-PYTHON_VERSIONS="cp27-cp27m cp34-cp34m cp35-cp35m cp36-cp36m cp37-cp37m"
+set -e -x
 
-POETRY_PYTHON="cp37-cp37m"
-POETRY_VENV="/opt/python/poetry"
-echo "Create Poetry's virtualenv"
-/opt/python/${POETRY_PYTHON}/bin/pip install virtualenv
-/opt/python/${POETRY_PYTHON}/bin/virtualenv --python /opt/python/${POETRY_PYTHON}/bin/python ${POETRY_VENV}
-${POETRY_VENV}/bin/pip install poetry --pre
+cd $(dirname $0)
 
-RELEASE=$(sed -n "s/__version__ = \"\(.*\)\"/\1/p" /io/pendulum/__version__.py)
+curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+/opt/python/cp38-cp38/bin/python get-poetry.py --preview -y
+rm get-poetry.py
 
-echo "Compile wheels"
-for PYTHON in ${PYTHON_VERSIONS}; do
-    cd /io
-    /opt/python/${POETRY_PYTHON}/bin/virtualenv --python /opt/python/${PYTHON}/bin/python /opt/python/venv-${PYTHON}
-    . /opt/python/venv-${PYTHON}/bin/activate
-    ${POETRY_VENV}/bin/poetry install -v
-    ${POETRY_VENV}/bin/poetry build -v
-    mv dist/*-${RELEASE}-*-linux_*.whl wheelhouse/
-    deactivate
-    cd -
+for PYBIN in /opt/python/*/bin; do
+  if [ "$PYBIN" == "/opt/python/cp34-cp34m/bin" ]; then
+    continue
+  fi
+  rm -rf build
+  "${PYBIN}/python" $HOME/.poetry/bin/poetry build -vvv
 done
 
-echo "Bundle external shared libraries into the wheels"
-for whl in /io/wheelhouse/pendulum-${RELEASE}-*-linux_*.whl; do
-    auditwheel repair "$whl" -w /io/wheelhouse/
-done
-
-echo "Install packages and test"
-for PYTHON in ${PYTHON_VERSIONS}; do
-    . /opt/python/venv-${PYTHON}/bin/activate
-    pip install pendulum==${RELEASE} --no-index --find-links /io/wheelhouse
-    find ./io/tests | grep -E "(__pycache__|\.pyc$)" | xargs rm -rf
-    pytest /io/tests -W ignore
-    find ./io/tests | grep -E "(__pycache__|\.pyc$)" | xargs rm -rf
-    deactivate
+cd dist
+for whl in *.whl; do
+    auditwheel repair "$whl"
+    rm "$whl"
 done

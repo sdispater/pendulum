@@ -33,7 +33,7 @@ pytz = ">=2018.3"
 babel = "^2.5"
 cleo = "^0.7.5"
 tox = "^3.0"
-black = { version = "^19.3b0", python = "^3.6" }
+black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
 pre-commit = "^1.10"
 
 

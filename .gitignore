@@ -30,8 +30,6 @@ results.json
 profile.html
 /wheelhouse
 /docs/site/*
-pyproject.lock
-/poetry.lock
 setup.py
 
 # editor
