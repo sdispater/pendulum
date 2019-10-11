@@ -70,9 +70,6 @@ class Reader:
                 "but got {}".format(nbytes, fd.name, len(result) if result else 0)
             )
 
-        if PY2:
-            return bytearray(result)
-
         return result
 
     def _parse(self, fd):  # type: (...) -> Timezone
@@ -144,7 +141,7 @@ class Reader:
                 'The file "{}" has an invalid header.'.format(fd.name)
             )
 
-        version = {0x00: 1, 0x32: 2, 0x33: 3}.get(buff[4])
+        version = {0x00: 1, 0x32: 2, 0x33: 3}.get(ord(buff[4]) if PY2 else buff[4])
 
         if version is None:
             raise InvalidZoneinfoFile(
@@ -182,8 +179,8 @@ class Reader:
         for _ in range(n):
             buff = self._check_read(fd, 6)
             offset = unpack(">l", buff[:4])[0]
-            is_dst = buff[4] == 1
-            types.append((offset, is_dst, buff[5]))
+            is_dst = (ord(buff[4]) if PY2 else buff[4]) == 1
+            types.append((offset, is_dst, ord(buff[5]) if PY2 else buff[5]))
 
         return types
 
