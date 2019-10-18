@@ -1,10 +1,6 @@
 # Fluent helpers
 
-Pendulum provides helpers that returns a new instance with some attributes
-modified compared to the original instance.
-However, none of these helpers, with the exception of explicitely setting the
-timezone, will change the timezone of the instance. Specifically,
-setting the timestamp will not set the corresponding timezone to UTC.
+Pendulum provides helpers that returns a new instance with some attributes modified compared to the original instance. However, none of these helpers, except for explicitly setting the timezone, will change the timezone of the instance. Specifically, setting the timestamp will not set the corresponding timezone to UTC.
 
 ```python
 >>> import pendulum
