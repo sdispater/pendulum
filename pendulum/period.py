@@ -372,8 +372,11 @@ class Period(Duration):
         return hash((self.start, self.end, self._absolute))
 
     def __eq__(self, other):
-        return (self.start, self.end, self._absolute) == (
-            other.start,
-            other.end,
-            other._absolute,
-        )
+        if isinstance(other, Period):
+            return (self.start, self.end, self._absolute) == (
+                other.start,
+                other.end,
+                other._absolute,
+            )
+        else:
+            return self.as_interval() == other
