@@ -342,7 +342,8 @@ class FixedTimezone(Timezone):
         return timedelta()
 
     def fromutc(self, dt):  # type: (datetime) -> datetime
-        return (dt + self._utcoffset).replace(tzinfo=self)
+        # Use the stdlib datetime's add method to avoid infinite recursion
+        return (datetime.__add__(dt, self._utcoffset)).replace(tzinfo=self)
 
     def tzname(self, dt):  # type: Optional[datetime]  # type: (...) -> Union[str, None]
         return self._name
