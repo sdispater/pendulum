@@ -88,7 +88,7 @@ and each has their time value set to `00:00:00`.
 ```
 
 Pendulum enforces timezone aware datetimes, and using them is the preferred and recommended way
-of using the library, however is you really need a **naive** `DateTime` object, the `naive()` helper
+of using the library, however if you really need a **naive** `DateTime` object, the `naive()` helper
 is there for you.
 
 ```python
