@@ -76,7 +76,13 @@ class Date(FormattableMixing, date):
 
     @property
     def week_of_month(self):
-        return int(math.ceil(self.day / DAYS_PER_WEEK))
+        first_day = self.replace(day=1)
+        adjusted_day = self.day + first_day.weekday()
+        week_of_mon = int(math.ceil(adjusted_day / DAYS_PER_WEEK))
+        if (first_day.weekday() > 4):
+            return week_of_mon - 1
+        else:
+            return week_of_mon
 
     @property
     def age(self):
