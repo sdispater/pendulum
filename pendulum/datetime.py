@@ -5,6 +5,7 @@ from __future__ import division
 import calendar
 import datetime
 import pendulum
+import platform
 
 from typing import Union
 
@@ -37,24 +38,40 @@ from .constants import (
     W3C,
 )
 
+PYTHON_VERSION = platform.python_version()
 
 class DateTime(datetime.datetime, Date):
 
     # Formats
 
-    _FORMATS = {
-        "atom": ATOM,
-        "cookie": COOKIE,
-        "iso8601": lambda dt: dt.isoformat(),
-        "rfc822": RFC822,
-        "rfc850": RFC850,
-        "rfc1036": RFC1036,
-        "rfc1123": RFC1123,
-        "rfc2822": RFC2822,
-        "rfc3339": lambda dt: dt.isoformat(),
-        "rss": RSS,
-        "w3c": W3C,
-    }
+    if PYTHON_VERSION >= '3.6':
+        _FORMATS = {
+            "atom": ATOM,
+            "cookie": COOKIE,
+            "iso8601": lambda dt, timespec: dt.isoformat(timespec=timespec),
+            "rfc822": RFC822,
+            "rfc850": RFC850,
+            "rfc1036": RFC1036,
+            "rfc1123": RFC1123,
+            "rfc2822": RFC2822,
+            "rfc3339": lambda dt: dt.isoformat(),
+            "rss": RSS,
+            "w3c": W3C,
+        }
+    else:
+        _FORMATS = {
+            "atom": ATOM,
+            "cookie": COOKIE,
+            "iso8601": lambda dt: dt.isoformat(),
+            "rfc822": RFC822,
+            "rfc850": RFC850,
+            "rfc1036": RFC1036,
+            "rfc1123": RFC1123,
+            "rfc2822": RFC2822,
+            "rfc3339": lambda dt: dt.isoformat(),
+            "rss": RSS,
+            "w3c": W3C,
+        }
 
     _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=UTC)
 
@@ -364,13 +381,16 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("cookie", locale="en")
 
-    def to_iso8601_string(self):
+    def to_iso8601_string(self, timespec="auto"):
         """
         Format the instance as ISO 8601.
 
+        :param timespec: Specifies the number of additional components of the time to include
+        :type timespec: string
+
         :rtype: str
         """
-        string = self._to_string("iso8601")
+        string = self._to_string("iso8601", timespec=timespec)
 
         if self.tz and self.tz.name == "UTC":
             string = string.replace("+00:00", "Z")
@@ -441,7 +461,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("w3c")
 
-    def _to_string(self, fmt, locale=None):
+    def _to_string(self, fmt, locale=None, timespec=None):
         """
         Format the instance to a common string format.
 
@@ -451,13 +471,20 @@ class DateTime(datetime.datetime, Date):
         :param locale: The locale to use
         :type locale: str or None
 
+        :param timespec: Specifies the number of additional components of the time to include
+        :type timespec: string
+
         :rtype: str
         """
         if fmt not in self._FORMATS:
             raise ValueError("Format [{}] is not supported".format(fmt))
 
+        string_format = fmt
+
         fmt = self._FORMATS[fmt]
         if callable(fmt):
+            if string_format == "iso8601" and PYTHON_VERSION >= '3.6':
+                return fmt(self, timespec)
             return fmt(self)
 
         return self.format(fmt, locale=locale)
