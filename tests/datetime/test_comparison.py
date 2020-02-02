@@ -260,18 +260,16 @@ def test_closest():
     dt2 = pendulum.datetime(2015, 5, 28, 14, 0, 0)
     closest = instance.closest(dt1, dt2)
     assert closest == dt1
-
     closest = instance.closest(dt2, dt1)
     assert closest == dt1
-
     dts = [
         pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
         for x in range(4)
     ]
+
     closest = instance.closest(*dts)
     assert closest == dts[0]
-
-    closest = instance.closest(*(dts[::-1]))
+    closest = instance.closest(*reversed(dts))
     assert closest == dts[0]
 
 
@@ -281,13 +279,11 @@ def test_closest_with_datetime():
     dt2 = datetime(2015, 5, 28, 14, 0, 0)
     closest = instance.closest(dt1, dt2)
     assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
-
     dts = [
         pendulum.datetime(2015, 5, 28, 16, 0, 0) + pendulum.duration(hours=x)
         for x in range(4)
     ]
     closest = instance.closest(dt1, dt2, *dts)
-
     assert_datetime(closest, 2015, 5, 28, 11, 0, 0)
 
 

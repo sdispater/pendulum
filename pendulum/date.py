@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from __future__ import division
-
 import calendar
 import math
 import pendulum
@@ -25,6 +24,7 @@ from .constants import (
 )
 from .exceptions import PendulumException
 
+from itertools import chain as iterchain
 
 class Date(FormattableMixing, date):
 
@@ -118,39 +118,35 @@ class Date(FormattableMixing, date):
 
     # COMPARISONS
 
-    def closest(self, dt1, dt2):
+    def closest(self, dt1, dt2, *dts):
         """
         Get the closest date from the instance.
 
         :type dt1: Date or date
         :type dt2: Date or date
+        :type dts: list[Date or date,]
 
         :rtype: Date
         """
-        dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
-        dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
 
-        if self.diff(dt1).in_seconds() < self.diff(dt2).in_seconds():
-            return dt1
+        dts = (self.__class__(dt.year,dt.month,dt.day) for dt in iterchain((dt1,dt2),dts))
 
-        return dt2
+        return min(dts,key=self.diff)
 
-    def farthest(self, dt1, dt2):
+    def farthest(self, dt1, dt2, *dts):
         """
         Get the farthest date from the instance.
 
         :type dt1: Date or date
         :type dt2: Date or date
+        :type dts: list[Date or date,]
 
         :rtype: Date
         """
-        dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
-        dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
 
-        if self.diff(dt1).in_seconds() > self.diff(dt2).in_seconds():
-            return dt1
+        dts = (self.__class__(dt.year,dt.month,dt.day) for dt in iterchain((dt1,dt2),dts))
 
-        return dt2
+        return max(dts,key=self.diff)
 
     def is_future(self):
         """
