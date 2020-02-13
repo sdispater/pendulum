@@ -20,34 +20,34 @@ ISO8601_DT = re.compile(
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
-    "        (?P<year>\d{4})"  # Year
+    r"        (?P<year>\d{4})"  # Year
     "        (?P<monthday>"
-    "            (?P<monthsep>-)?(?P<month>\d{2})"  # Month (optional)
-    "            ((?P<daysep>-)?(?P<day>\d{1,2}))?"  # Day (optional)
+    r"            (?P<monthsep>-)?(?P<month>\d{2})"  # Month (optional)
+    r"            ((?P<daysep>-)?(?P<day>\d{1,2}))?"  # Day (optional)
     "        )?"
     "    )"
     "    |"
     "    (?P<isocalendar>"  # Calendar date (2016-W05 or 2016-W05-5)
-    "        (?P<isoyear>\d{4})"  # Year
+    r"        (?P<isoyear>\d{4})"  # Year
     "        (?P<weeksep>-)?"  # Separator (optional)
     "        W"  # W separator
-    "        (?P<isoweek>\d{2})"  # Week number
+    r"        (?P<isoweek>\d{2})"  # Week number
     "        (?P<weekdaysep>-)?"  # Separator (optional)
-    "        (?P<isoweekday>\d)?"  # Weekday (optional)
+    r"        (?P<isoweekday>\d)?"  # Weekday (optional)
     "    )"
     ")?"
     # Time (optional)
     "(?P<time>"
-    "    (?P<timesep>[T\ ])?"  # Separator (T or space)
-    "    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
+    r"    (?P<timesep>[T\ ])?"  # Separator (T or space)
+    r"    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
     # Subsecond part (optional)
     "    (?P<subsecondsection>"
     "        (?:[.,])"  # Subsecond separator (optional)
-    "        (?P<subsecond>\d{1,9})"  # Subsecond
+    r"        (?P<subsecond>\d{1,9})"  # Subsecond
     "    )?"
     # Timezone offset
     "    (?P<tz>"
-    "        (?:[-+])\d{2}:?(?:\d{2})?|Z"  # Offset (+HH:mm or +HHmm or +HH or Z)
+    r"        (?:[-+])\d{2}:?(?:\d{2})?|Z"  # Offset (+HH:mm or +HHmm or +HH or Z)
     "    )?"
     ")?"
     "$",
@@ -59,18 +59,18 @@ ISO8601_DURATION = re.compile(
     "^P"  # Duration P indicator
     # Years, months and days (optional)
     "(?P<w>"
-    "    (?P<weeks>\d+(?:[.,]\d+)?W)"
+    r"    (?P<weeks>\d+(?:[.,]\d+)?W)"
     ")?"
     "(?P<ymd>"
-    "    (?P<years>\d+(?:[.,]\d+)?Y)?"
-    "    (?P<months>\d+(?:[.,]\d+)?M)?"
-    "    (?P<days>\d+(?:[.,]\d+)?D)?"
+    r"    (?P<years>\d+(?:[.,]\d+)?Y)?"
+    r"    (?P<months>\d+(?:[.,]\d+)?M)?"
+    r"    (?P<days>\d+(?:[.,]\d+)?D)?"
     ")?"
     "(?P<hms>"
     "    (?P<timesep>T)"  # Separator (T)
-    "    (?P<hours>\d+(?:[.,]\d+)?H)?"
-    "    (?P<minutes>\d+(?:[.,]\d+)?M)?"
-    "    (?P<seconds>\d+(?:[.,]\d+)?S)?"
+    r"    (?P<hours>\d+(?:[.,]\d+)?H)?"
+    r"    (?P<minutes>\d+(?:[.,]\d+)?M)?"
+    r"    (?P<seconds>\d+(?:[.,]\d+)?S)?"
     ")?"
     "$",
     re.VERBOSE,

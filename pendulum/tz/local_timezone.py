@@ -177,8 +177,8 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
     # OpenSUSE has a TIMEZONE setting in /etc/sysconfig/clock and
     # Gentoo has a TIMEZONE setting in /etc/conf.d/clock
     # We look through these files for a timezone:
-    zone_re = re.compile('\s*ZONE\s*=\s*"')
-    timezone_re = re.compile('\s*TIMEZONE\s*=\s*"')
+    zone_re = re.compile(r'\s*ZONE\s*=\s*"')
+    timezone_re = re.compile(r'\s*TIMEZONE\s*=\s*"')
     end_re = re.compile('"')
 
     for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):

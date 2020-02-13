@@ -11,27 +11,27 @@ from pendulum.locales.locale import Locale
 from pendulum.utils._compat import decode
 
 
-_MATCH_1 = "\d"
-_MATCH_2 = "\d\d"
-_MATCH_3 = "\d{3}"
-_MATCH_4 = "\d{4}"
-_MATCH_6 = "[+-]?\d{6}"
-_MATCH_1_TO_2 = "\d\d?"
-_MATCH_1_TO_2_LEFT_PAD = "[0-9 ]\d?"
-_MATCH_1_TO_3 = "\d{1,3}"
-_MATCH_1_TO_4 = "\d{1,4}"
-_MATCH_1_TO_6 = "[+-]?\d{1,6}"
-_MATCH_3_TO_4 = "\d{3}\d?"
-_MATCH_5_TO_6 = "\d{5}\d?"
-_MATCH_UNSIGNED = "\d+"
-_MATCH_SIGNED = "[+-]?\d+"
-_MATCH_OFFSET = "[Zz]|[+-]\d\d:?\d\d"
-_MATCH_SHORT_OFFSET = "[Zz]|[+-]\d\d(?::?\d\d)?"
-_MATCH_TIMESTAMP = "[+-]?\d+(\.\d{1,6})?"
+_MATCH_1 = r"\d"
+_MATCH_2 = r"\d\d"
+_MATCH_3 = r"\d{3}"
+_MATCH_4 = r"\d{4}"
+_MATCH_6 = r"[+-]?\d{6}"
+_MATCH_1_TO_2 = r"\d\d?"
+_MATCH_1_TO_2_LEFT_PAD = r"[0-9 ]\d?"
+_MATCH_1_TO_3 = r"\d{1,3}"
+_MATCH_1_TO_4 = r"\d{1,4}"
+_MATCH_1_TO_6 = r"[+-]?\d{1,6}"
+_MATCH_3_TO_4 = r"\d{3}\d?"
+_MATCH_5_TO_6 = r"\d{5}\d?"
+_MATCH_UNSIGNED = r"\d+"
+_MATCH_SIGNED = r"[+-]?\d+"
+_MATCH_OFFSET = r"[Zz]|[+-]\d\d:?\d\d"
+_MATCH_SHORT_OFFSET = r"[Zz]|[+-]\d\d(?::?\d\d)?"
+_MATCH_TIMESTAMP = r"[+-]?\d+(\.\d{1,6})?"
 _MATCH_WORD = (
     "(?i)[0-9]*"
     "['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+"
-    "|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}"
+    r"|[\u0600-\u06FF/]+(\s*?[\u0600-\u06FF]+){1,2}"
 )
 _MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 
@@ -39,7 +39,7 @@ _MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 class Formatter:
 
     _TOKENS = (
-        "\[([^\[]*)\]|\\\(.)|"
+        r"\[([^\[]*)\]|\\(.)|"
         "("
         "Mo|MM?M?M?"
         "|Do|DDDo|DD?D?D?|ddd?d?|do?"
@@ -67,7 +67,7 @@ class Formatter:
         "Mo": None,
         "DDDo": None,
         "Do": lambda locale: tuple(
-            "\d+{}".format(o) for o in locale.get("custom.ordinal").values()
+            r"\d+{}".format(o) for o in locale.get("custom.ordinal").values()
         ),
         "dddd": "days.wide",
         "ddd": "days.abbreviated",
@@ -607,7 +607,7 @@ class Formatter:
             unit = "month"
             match = "months.abbreviated"
         elif token == "Do":
-            parsed["day"] = int(re.match("(\d+)", value).group(1))
+            parsed["day"] = int(re.match(r"(\d+)", value).group(1))
 
             return
         elif token == "dddd":
