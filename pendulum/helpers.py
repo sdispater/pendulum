@@ -139,10 +139,10 @@ def _sign(x):
 @contextmanager
 def test(mock):
     set_test_now(mock)
-
-    yield
-
-    set_test_now()
+    try:
+        yield
+    finally:
+        set_test_now()
 
 
 def set_test_now(test_now=None):
