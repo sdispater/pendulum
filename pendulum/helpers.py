@@ -174,10 +174,10 @@ def _sign(x):
 @contextmanager
 def test(mock):  # type: (pendulum.DateTime) -> Iterator[None]
     set_test_now(mock)
-
-    yield
-
-    set_test_now()
+    try:
+        yield
+    finally:
+        set_test_now()
 
 
 def set_test_now(test_now=None):  # type: (Optional[pendulum.DateTime]) -> None
