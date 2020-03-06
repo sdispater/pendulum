@@ -722,7 +722,10 @@ class DateTime(datetime.datetime, Date):
             microseconds=-microseconds,
         )
 
-    def _add_timedelta(self, delta):
+    # Adding a final underscore to the method name
+    # to avoid errors for PyPy which already defines
+    # a _add_timedelta method
+    def _add_timedelta_(self, delta):
         """
         Add timedelta duration to the instance.
 
@@ -1439,7 +1442,7 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
 
-        return self._add_timedelta(other)
+        return self._add_timedelta_(other)
 
     def __radd__(self, other):
         return self.__add__(other)

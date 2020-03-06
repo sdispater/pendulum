@@ -659,6 +659,10 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
                     // which is invalid for a date
                     // But it might be a time in the form hhmmss
                     parsed->ambiguous = 1;
+                } else if (separators > 1) {
+                    parsed->error = PARSER_INVALID_DATE;
+
+                    return NULL;
                 }
 
                 parsed->month = monthday;
