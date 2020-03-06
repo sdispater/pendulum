@@ -30,7 +30,6 @@ The provided instance will be returned specifically under the following conditio
 
 Related methods will also return values mocked according to the **now** instance.
 
-```python
 >>> print(pendulum.today())
 '2001-05-21T00:00:00+00:00'
 

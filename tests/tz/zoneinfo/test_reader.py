@@ -1,9 +1,11 @@
 import os
+
 import pytest
 
+from pendulum.tz.zoneinfo.exceptions import InvalidTimezone
+from pendulum.tz.zoneinfo.exceptions import InvalidZoneinfoFile
 from pendulum.tz.zoneinfo.reader import Reader
 from pendulum.tz.zoneinfo.timezone import Timezone
-from pendulum.tz.zoneinfo.exceptions import InvalidTimezone, InvalidZoneinfoFile
 
 
 def test_read_for_bad_timezone():

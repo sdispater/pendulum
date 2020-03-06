@@ -1,9 +1,9 @@
 import pickle
-import pytest
-
-import pendulum
 
 from datetime import date
+
+import pendulum
+import pytest
 
 
 @pytest.fixture()

@@ -1,10 +1,11 @@
+from datetime import time
+from datetime import timedelta
+
 import pendulum
 import pytest
 import pytz
 
-from datetime import timedelta, time
 from pendulum import Time
-
 
 from ..conftest import assert_duration
 

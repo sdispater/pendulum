@@ -1,7 +1,8 @@
 import pickle
-import pendulum
 
 from datetime import timedelta
+
+import pendulum
 
 
 def test_pickle():

@@ -1,0 +1,20 @@
+[flake8]
+max-line-length = 88
+ignore = E501, E203, W503
+per-file-ignores =
+    __init__.py:F401
+    pendulum/tz/timezone.py:F811
+exclude =
+    .git
+    __pycache__
+    setup.py
+    build
+    dist
+    releases
+    .idea
+    .venv
+    .tox
+    .mypy_cache
+    .pytest_cache
+    .vscode
+    .github

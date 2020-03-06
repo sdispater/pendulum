@@ -1,18 +1,26 @@
 import os
-import pytzdata
 
 from collections import namedtuple
 from struct import unpack
-from typing import Dict, List, Optional, IO, Any, Tuple
+from typing import IO
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+
+import pytzdata
 
 from pytzdata.exceptions import TimezoneNotFound
 
 from pendulum.utils._compat import PY2
 
-from .exceptions import InvalidZoneinfoFile, InvalidTimezone
+from .exceptions import InvalidTimezone
+from .exceptions import InvalidZoneinfoFile
+from .posix_timezone import PosixTimezone
+from .posix_timezone import posix_spec
 from .timezone import Timezone
 from .transition import Transition
-from .posix_timezone import posix_spec, PosixTimezone
 from .transition_type import TransitionType
 
 

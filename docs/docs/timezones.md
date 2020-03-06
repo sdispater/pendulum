@@ -102,10 +102,10 @@ with the `in_timezone()` method.
 !!!warning
 
     **You should avoid using the timezone library in Python < 3.6.**
-    
+
     This is due to the fact that Pendulum relies heavily on the presence
     of the `fold` attribute which was introduced in Python 3.6.
-    
+
     The reason it works inside the Pendulum ecosystem is that it
     backports the `fold` attribute in the `DateTime` class.
 

@@ -1,6 +1,5 @@
-import pytz
-
 import pendulum
+
 from pendulum import timezone
 
 from ..conftest import assert_datetime

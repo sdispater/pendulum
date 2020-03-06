@@ -1,7 +1,11 @@
+from datetime import date
+from datetime import datetime
+from datetime import time
+
 import pytest
 
-from datetime import date, time, datetime
 from pendulum.parsing import parse_iso8601
+
 
 try:
     from pendulum.parsing._extension import TZFixedOffset as FixedTimezone

@@ -3,10 +3,14 @@ import os
 import re
 import struct
 
-from datetime import datetime, date, time
+from datetime import date
+from datetime import datetime
+from datetime import time
+
 from dateutil import parser
 
 from .exceptions import ParserError
+
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 

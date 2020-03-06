@@ -1,12 +1,14 @@
+import struct
+
 import pendulum
 import pytest
-import struct
 
 from pendulum import DateTime
 from pendulum.tz import timezone
 from pendulum.utils._compat import _HAS_FOLD
 
-from ..conftest import assert_date, assert_time
+from ..conftest import assert_date
+from ..conftest import assert_time
 
 
 def test_year():

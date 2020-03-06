@@ -1,17 +1,18 @@
 from __future__ import division
 
-import re
 import datetime
+import re
 
-from ..constants import (
-    HOURS_PER_DAY,
-    MINUTES_PER_HOUR,
-    SECONDS_PER_MINUTE,
-    MONTHS_OFFSETS,
-)
-from ..helpers import week_day, days_in_year, is_leap, is_long_year
-from ..tz.timezone import FixedTimezone
+from ..constants import HOURS_PER_DAY
+from ..constants import MINUTES_PER_HOUR
+from ..constants import MONTHS_OFFSETS
+from ..constants import SECONDS_PER_MINUTE
 from ..duration import Duration
+from ..helpers import days_in_year
+from ..helpers import is_leap
+from ..helpers import is_long_year
+from ..helpers import week_day
+from ..tz.timezone import FixedTimezone
 from .exceptions import ParserError
 
 

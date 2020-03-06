@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import pytest
-
 import pendulum
+import pytest
 
 
 def test_timezones():

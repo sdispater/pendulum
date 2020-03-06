@@ -60,7 +60,7 @@ def test_from_format_with_padded_day():
 
 def test_from_format_with_invalid_padded_day():
     with pytest.raises(ValueError):
-        d = pendulum.from_format("Apr   2 12:00:00 2020 GMT", "MMM DD HH:mm:ss YYYY z")
+        pendulum.from_format("Apr   2 12:00:00 2020 GMT", "MMM DD HH:mm:ss YYYY z")
 
 
 @pytest.mark.parametrize(

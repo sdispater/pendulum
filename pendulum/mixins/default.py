@@ -1,5 +1,6 @@
 from ..formatting import Formatter
 
+
 _formatter = Formatter()
 
 

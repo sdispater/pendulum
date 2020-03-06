@@ -1,8 +1,10 @@
-import pendulum
 import pickle
-import pytest
 
 from datetime import time
+
+import pendulum
+import pytest
+
 from pendulum import Time
 
 

@@ -1,4 +1,5 @@
 import pendulum
+
 from pendulum import Period
 
 from ..conftest import assert_datetime

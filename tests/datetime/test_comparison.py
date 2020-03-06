@@ -1,7 +1,7 @@
-import pytz
 from datetime import datetime
 
 import pendulum
+import pytz
 
 from ..conftest import assert_datetime
 
@@ -72,7 +72,7 @@ def test_not_equal_with_timezone_true():
 def test_not_equal_to_none():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
 
-    assert d1 != None
+    assert d1 != None  # noqa
 
 
 def test_greater_than_true():

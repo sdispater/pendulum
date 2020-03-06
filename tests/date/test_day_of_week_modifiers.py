@@ -1,6 +1,6 @@
+import pendulum
 import pytest
 
-import pendulum
 from pendulum.exceptions import PendulumException
 
 from ..conftest import assert_date

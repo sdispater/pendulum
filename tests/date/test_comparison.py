@@ -1,6 +1,6 @@
-import pendulum
-
 from datetime import date
+
+import pendulum
 
 from ..conftest import assert_date
 
@@ -44,7 +44,7 @@ def test_not_equal_to_false():
 def test_not_equal_to_none():
     d1 = pendulum.Date(2000, 1, 1)
 
-    assert d1 != None
+    assert d1 != None  # noqa
 
 
 def test_greater_than_true():
@@ -242,4 +242,4 @@ def test_comparison_to_unsupported():
     dt1 = pendulum.Date.today()
 
     assert not dt1 == "test"
-    assert not dt1 in ["test"]
+    assert dt1 not in ["test"]

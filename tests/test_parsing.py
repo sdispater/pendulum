@@ -1,6 +1,9 @@
 import pendulum
 
-from .conftest import assert_datetime, assert_date, assert_time, assert_duration
+from .conftest import assert_date
+from .conftest import assert_datetime
+from .conftest import assert_duration
+from .conftest import assert_time
 
 
 def test_parse():

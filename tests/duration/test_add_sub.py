@@ -1,6 +1,6 @@
-import pendulum
-
 from datetime import timedelta
+
+import pendulum
 
 from ..conftest import assert_duration
 

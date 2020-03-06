@@ -6,9 +6,11 @@ import re
 
 from typing import Optional
 
-from pendulum.constants import MONTHS_OFFSETS, SECS_PER_DAY
+from pendulum.constants import MONTHS_OFFSETS
+from pendulum.constants import SECS_PER_DAY
 
 from .exceptions import InvalidPosixSpec
+
 
 _spec = re.compile(
     "^"

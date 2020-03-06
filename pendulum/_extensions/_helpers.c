@@ -609,7 +609,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
             dt1_minute -= dt1_offset / SECS_PER_MIN;
             dt1_offset %= SECS_PER_MIN;
             dt1_second -= dt1_offset;
-            
+
             if (dt1_second < 0) {
                 dt1_second += 60;
                 dt1_minute -= 1;
@@ -634,7 +634,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
                 dt1_day += 1;
             }
         }
-        
+
         dt1_total_seconds = (
             dt1_hour * SECS_PER_HOUR
             + dt1_minute * SECS_PER_MIN
@@ -713,7 +713,7 @@ PyObject* precise_diff(PyObject *self, PyObject *args) {
     );
 
     if (dt1_gt_dt2) {
-        PyObject* temp;   
+        PyObject* temp;
         temp = dt1;
         dt1 = dt2;
         dt2 = temp;

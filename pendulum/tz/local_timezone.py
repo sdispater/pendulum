@@ -1,6 +1,16 @@
-import sys
 import os
 import re
+import sys
+
+from contextlib import contextmanager
+from typing import Iterator
+from typing import Optional
+from typing import Union
+
+from .timezone import Timezone
+from .timezone import TimezoneFile
+from .zoneinfo.exceptions import InvalidTimezone
+
 
 try:
     import _winreg as winreg
@@ -9,12 +19,6 @@ except ImportError:
         import winreg
     except ImportError:
         winreg = None
-
-from contextlib import contextmanager
-from typing import Optional, Union, Iterator
-
-from .timezone import Timezone, TimezoneFile
-from .zoneinfo.exceptions import InvalidTimezone
 
 
 _mock_local_timezone = None

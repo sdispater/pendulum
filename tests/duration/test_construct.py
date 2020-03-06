@@ -1,7 +1,8 @@
-import pytest
-import pendulum
-
 from datetime import timedelta
+
+import pendulum
+import pytest
+
 from pendulum.duration import AbsoluteDuration
 
 from ..conftest import assert_duration

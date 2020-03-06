@@ -1,19 +1,17 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import pendulum
-
 from datetime import timedelta
+
+import pendulum
 
 from pendulum.utils._compat import PYPY
 from pendulum.utils._compat import decode
 
-from .constants import (
-    SECONDS_PER_DAY,
-    SECONDS_PER_HOUR,
-    SECONDS_PER_MINUTE,
-    US_PER_SECOND,
-)
+from .constants import SECONDS_PER_DAY
+from .constants import SECONDS_PER_HOUR
+from .constants import SECONDS_PER_MINUTE
+from .constants import US_PER_SECOND
 
 
 def _divide_and_round(a, b):
