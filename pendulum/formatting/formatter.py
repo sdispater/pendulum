@@ -229,7 +229,9 @@ class Formatter:
         "z": str,
     }
 
-    def format(self, dt, fmt, locale=None):
+    def format(
+        self, dt, fmt, locale=None
+    ):  # type: (pendulum.DateTime, str, typing.Optional[typing.Union[str, Locale]]) -> str
         """
         Formats a DateTime instance with a given format and locale.
 
@@ -260,7 +262,9 @@ class Formatter:
 
         return decode(result)
 
-    def _format_token(self, dt, token, locale):
+    def _format_token(
+        self, dt, token, locale
+    ):  # type: (pendulum.DateTime, str, Locale) -> str
         """
         Formats a DateTime instance with a given token and locale.
 
@@ -306,7 +310,9 @@ class Formatter:
 
             return "{}{:02d}{}{:02d}".format(sign, hour, separator, minute)
 
-    def _format_localizable_token(self, dt, token, locale):
+    def _format_localizable_token(
+        self, dt, token, locale
+    ):  # type: (pendulum.DateTime, str, Locale) -> str
         """
         Formats a DateTime instance
         with a given localizable token and locale.
@@ -360,8 +366,8 @@ class Formatter:
         time,  # type: str
         fmt,  # type: str
         now,  # type: pendulum.DateTime
-        locale=None,  # type:  typing.Union[str, None]
-    ):  # type: (...) -> dict
+        locale=None,  # type:  typing.Optional[str]
+    ):  # type: (...) -> typing.Dict[str, typing.Any]
         """
         Parses a time string matching a given format as a tuple.
 
@@ -410,7 +416,9 @@ class Formatter:
 
         return self._check_parsed(parsed, now)
 
-    def _check_parsed(self, parsed, now):  # type: (dict, pendulum.DateTime) -> dict
+    def _check_parsed(
+        self, parsed, now
+    ):  # type: (typing.Dict[str, typing.Any], pendulum.DateTime) -> typing.Dict[str, typing.Any]
         """
         Checks validity of parsed elements.
 
@@ -530,7 +538,7 @@ class Formatter:
 
     def _get_parsed_values(
         self, m, parsed, locale, now
-    ):  # type: (..., dict, Locale, pendulum.DateTime) -> None
+    ):  # type: (typing.Match[str], typing.Dict[str, typing.Any], Locale, pendulum.DateTime) -> None
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
                 self._get_parsed_locale_value(token, m.group(index), parsed, locale)
@@ -539,7 +547,7 @@ class Formatter:
 
     def _get_parsed_value(
         self, token, value, parsed, now
-    ):  # type: (str, str, dict, pendulum.DateTime) -> None
+    ):  # type: (str, str, typing.Dict[str, typing.Any], pendulum.DateTime) -> None
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if "Y" in token:
@@ -599,7 +607,7 @@ class Formatter:
 
     def _get_parsed_locale_value(
         self, token, value, parsed, locale
-    ):  # type: (str, str, dict, Locale) -> None
+    ):  # type: (str, str, typing.Dict[str, typing.Any], Locale) -> None
         if token == "MMMM":
             unit = "month"
             match = "months.wide"
