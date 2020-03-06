@@ -104,7 +104,7 @@ class Timezone(tzinfo):
                 # We set the fold attribute for later
                 if dst_rule == POST_TRANSITION:
                     fold = 1
-            else:
+            elif transition.previous is not None:
                 transition = transition.previous
 
         if transition:
@@ -149,7 +149,7 @@ class Timezone(tzinfo):
             transition = dt.tzinfo._lookup_transition(stamp)
             offset = transition.ttype.offset
 
-            if stamp < transition.local:
+            if stamp < transition.local and transition.previous is not None:
                 if (
                     transition.previous.is_ambiguous(stamp)
                     and getattr(dt, "fold", 1) == 0
@@ -161,7 +161,7 @@ class Timezone(tzinfo):
         stamp -= offset
 
         transition = self._lookup_transition(stamp, is_utc=True)
-        if stamp < transition.at:
+        if stamp < transition.at and transition.previous is not None:
             transition = transition.previous
 
         offset = transition.ttype.offset
@@ -260,7 +260,7 @@ class Timezone(tzinfo):
 
             transition = self._lookup_transition(stamp)
 
-            if stamp < transition.local:
+            if stamp < transition.local and transition.previous is not None:
                 fold = getattr(dt, "fold", 1)
                 if transition.is_ambiguous(stamp):
                     if fold == 0:
@@ -276,7 +276,7 @@ class Timezone(tzinfo):
         stamp = timestamp(dt)
 
         transition = self._lookup_transition(stamp, is_utc=True)
-        if stamp < transition.at:
+        if stamp < transition.at and transition.previous is not None:
             transition = transition.previous
 
         stamp += transition.ttype.offset
