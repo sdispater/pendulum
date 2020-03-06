@@ -1,11 +1,14 @@
-import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 import pendulum
+import pytest
+
 from pendulum import timezone
-from pendulum.utils._compat import PY36
 from pendulum.tz import fixed_timezone
-from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
+from pendulum.tz.exceptions import AmbiguousTime
+from pendulum.tz.exceptions import NonExistingTime
+from pendulum.utils._compat import PY36
 
 from ..conftest import assert_datetime
 

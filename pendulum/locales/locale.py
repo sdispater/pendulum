@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 import os
 import re
 
-from typing import Union, Optional, Any
 from importlib import import_module
+from typing import Any
+from typing import Optional
+from typing import Union
 
 from pendulum.utils._compat import basestring
 from pendulum.utils._compat import decode

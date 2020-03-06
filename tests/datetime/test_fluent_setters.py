@@ -1,9 +1,6 @@
-import pytest
-import pendulum
-
 from datetime import datetime
 
-from pendulum.tz.exceptions import NonExistingTime
+import pendulum
 
 from ..conftest import assert_datetime
 

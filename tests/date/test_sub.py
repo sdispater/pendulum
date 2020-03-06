@@ -1,8 +1,8 @@
-import pytest
+from datetime import datetime
+from datetime import timedelta
 
 import pendulum
-
-from datetime import datetime, timedelta
+import pytest
 
 from ..conftest import assert_date
 

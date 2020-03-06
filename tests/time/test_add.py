@@ -1,7 +1,7 @@
+from datetime import timedelta
+
 import pendulum
 import pytest
-
-from datetime import timedelta
 
 
 def test_add_hours_positive():

@@ -1,13 +1,25 @@
 from __future__ import absolute_import
 
-import pendulum
 import os
 import struct
 
-from math import copysign
-from datetime import datetime, date, timedelta
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Union, Optional, TypeVar, Iterator, overload
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+from math import copysign
+from typing import TYPE_CHECKING
+from typing import Iterator
+from typing import Optional
+from typing import TypeVar
+from typing import overload
+
+import pendulum
+
+from .constants import DAYS_PER_MONTHS
+from .formatting.difference_formatter import DifferenceFormatter
+from .locales.locale import Locale
+
 
 if TYPE_CHECKING:
     # Prevent import cycles
@@ -22,29 +34,21 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from ._extensions._helpers import (
-        local_time,
-        precise_diff,
-        is_leap,
-        is_long_year,
-        week_day,
-        days_in_year,
-        timestamp,
-    )
+    from ._extensions._helpers import local_time
+    from ._extensions._helpers import precise_diff
+    from ._extensions._helpers import is_leap
+    from ._extensions._helpers import is_long_year
+    from ._extensions._helpers import week_day
+    from ._extensions._helpers import days_in_year
+    from ._extensions._helpers import timestamp
 except ImportError:
-    from ._extensions.helpers import (
-        local_time,
-        precise_diff,
-        is_leap,
-        is_long_year,
-        week_day,
-        days_in_year,
-        timestamp,
-    )
-
-from .constants import DAYS_PER_MONTHS
-from .formatting.difference_formatter import DifferenceFormatter
-from .locales.locale import Locale
+    from ._extensions.helpers import local_time  # noqa
+    from ._extensions.helpers import precise_diff  # noqa
+    from ._extensions.helpers import is_leap  # noqa
+    from ._extensions.helpers import is_long_year  # noqa
+    from ._extensions.helpers import week_day  # noqa
+    from ._extensions.helpers import days_in_year  # noqa
+    from ._extensions.helpers import timestamp  # noqa
 
 
 difference_formatter = DifferenceFormatter()

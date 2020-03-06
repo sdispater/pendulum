@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from .custom import translations as custom_translations
+
+
 """
 ko locale file.
 
 It has been generated automatically and must not be modified directly.
 """
-
-from .custom import translations as custom_translations
 
 
 locale = {

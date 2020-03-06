@@ -1,6 +1,6 @@
-from pendulum.tz.zoneinfo.posix_timezone import posix_spec
 from pendulum.tz.zoneinfo.posix_timezone import JPosixTransition
 from pendulum.tz.zoneinfo.posix_timezone import MPosixTransition
+from pendulum.tz.zoneinfo.posix_timezone import posix_spec
 
 
 def test_posix_spec_m():

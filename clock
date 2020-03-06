@@ -6,18 +6,20 @@ import json
 import os
 
 from babel.core import get_global
-from babel.plural import (
-    PluralRule,
-    compile_zero,
-    _GettextCompiler,
-    _binary_compiler,
-    _unary_compiler,
-)
-from babel.dates import tokenize_pattern, PATTERN_CHARS
-from babel.localedata import load, normalize_locale, LocaleDataDict
-
-from cleo import Application, Command
+from babel.dates import PATTERN_CHARS
+from babel.dates import tokenize_pattern
+from babel.localedata import LocaleDataDict
+from babel.localedata import load
+from babel.localedata import normalize_locale
+from babel.plural import PluralRule
+from babel.plural import _binary_compiler
+from babel.plural import _GettextCompiler
+from babel.plural import _unary_compiler
+from babel.plural import compile_zero
+from cleo import Application
+from cleo import Command
 from cleo import argument
+
 from pendulum import __version__
 
 
@@ -52,13 +54,15 @@ class LocaleCreate(Command):
 
     TEMPLATE = """# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from .custom import translations as custom_translations
+
+
 \"\"\"
 {locale} locale file.
 
 It has been generated automatically and must not be modified directly.
 \"\"\"
-
-from .custom import translations as custom_translations
 
 
 locale = {{
@@ -71,6 +75,8 @@ locale = {{
 
     CUSTOM_TEMPLATE = """# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+
 \"\"\"
 {locale} custom locale file.
 \"\"\"

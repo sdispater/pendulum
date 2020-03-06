@@ -4,38 +4,40 @@ from __future__ import division
 
 import calendar
 import datetime
+
+from typing import Optional
+from typing import TypeVar
+from typing import Union
+
 import pendulum
 
-from typing import Union, Optional, TypeVar
-
+from .constants import ATOM
+from .constants import COOKIE
+from .constants import MINUTES_PER_HOUR
+from .constants import MONTHS_PER_YEAR
+from .constants import RFC822
+from .constants import RFC850
+from .constants import RFC1036
+from .constants import RFC1123
+from .constants import RFC2822
+from .constants import RSS
+from .constants import SATURDAY
+from .constants import SECONDS_PER_DAY
+from .constants import SECONDS_PER_MINUTE
+from .constants import SUNDAY
+from .constants import W3C
+from .constants import YEARS_PER_CENTURY
+from .constants import YEARS_PER_DECADE
 from .date import Date
-from .time import Time
-from .period import Period
 from .exceptions import PendulumException
-from .utils._compat import _HAS_FOLD
-from .tz import UTC
-from .tz.timezone import Timezone
 from .helpers import add_duration
 from .helpers import timestamp
-from .constants import (
-    YEARS_PER_CENTURY,
-    YEARS_PER_DECADE,
-    MONTHS_PER_YEAR,
-    MINUTES_PER_HOUR,
-    SECONDS_PER_MINUTE,
-    SECONDS_PER_DAY,
-    SUNDAY,
-    SATURDAY,
-    ATOM,
-    COOKIE,
-    RFC822,
-    RFC850,
-    RFC1036,
-    RFC1123,
-    RFC2822,
-    RSS,
-    W3C,
-)
+from .period import Period
+from .time import Time
+from .tz import UTC
+from .tz.timezone import Timezone
+from .utils._compat import _HAS_FOLD
+
 
 _D = TypeVar("_D", bound="DateTime")
 
@@ -495,8 +497,6 @@ class DateTime(datetime.datetime, Date):
 
     # Comparisons
     def closest(self, dt1, dt2, *dts):
-        from functools import reduce
-
         """
         Get the farthest date from the instance.
 
@@ -514,8 +514,6 @@ class DateTime(datetime.datetime, Date):
         return min(dts)[1]
 
     def farthest(self, dt1, dt2, *dts):
-        from functools import reduce
-
         """
         Get the farthest date from the instance.
 

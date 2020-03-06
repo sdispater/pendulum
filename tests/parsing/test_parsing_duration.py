@@ -1,6 +1,7 @@
 import pytest
 
-from pendulum.parsing import parse, ParserError
+from pendulum.parsing import ParserError
+from pendulum.parsing import parse
 
 
 def test_parse_duration():

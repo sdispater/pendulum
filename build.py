@@ -1,11 +1,11 @@
 import os
 import sys
 
-
-from distutils.core import Extension
-
-from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
 from distutils.command.build_ext import build_ext
+from distutils.core import Extension
+from distutils.errors import CCompilerError
+from distutils.errors import DistutilsExecError
+from distutils.errors import DistutilsPlatformError
 
 
 # C Extensions

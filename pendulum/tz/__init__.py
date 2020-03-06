@@ -1,14 +1,15 @@
-import pytzdata
+from typing import Tuple
+from typing import Union
 
-from typing import Union, Tuple
+import pytzdata
 
 from .local_timezone import get_local_timezone
 from .local_timezone import set_local_timezone
 from .local_timezone import test_local_timezone
-
-from .timezone import Timezone as _Timezone
-from .timezone import FixedTimezone as _FixedTimezone
 from .timezone import UTC
+from .timezone import FixedTimezone as _FixedTimezone
+from .timezone import Timezone as _Timezone
+
 
 PRE_TRANSITION = "pre"
 POST_TRANSITION = "post"

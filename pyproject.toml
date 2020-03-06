@@ -35,7 +35,35 @@ babel = "^2.5"
 cleo = "^0.7.5"
 tox = "^3.0"
 black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
+isort = { version = "^4.3.21", markers = "python_version >= '3.6' and python_version < '4.0'" }
 pre-commit = "^1.10"
+mkdocs = { version = "^1.0", python = "^3.5" }
+pymdown-extensions = "^6.0"
+pygments = "^2.2"
+markdown-include = "^0.5.1"
+
+
+[tool.isort]
+line_length = 88
+force_single_line = true
+force_grid_wrap = 0
+atomic = true
+include_trailing_comma = true
+lines_after_imports = 2
+lines_between_types = 1
+multi_line_output = 3
+use_parentheses = true
+not_skip = "__init__.py"
+skip_glob = ["*/setup.py"]
+filter_files = true
+
+known_first_party = "pendulum"
+known_third_party = [
+    "babel",
+    "cleo",
+    "dateutil",
+    "pytzdata",
+]
 
 
 [build-system]

@@ -1,26 +1,24 @@
-import math
-from collections import namedtuple
-
 import datetime
+import math
 import typing
 
-from ..constants import (
-    EPOCH_YEAR,
-    SECS_PER_DAY,
-    SECS_PER_400_YEARS,
-    SECS_PER_100_YEARS,
-    SECS_PER_4_YEARS,
-    SECS_PER_YEAR,
-    SECS_PER_HOUR,
-    SECS_PER_MIN,
-    DAYS_PER_MONTHS,
-    MONTHS_OFFSETS,
-    TM_DECEMBER,
-    TM_JANUARY,
-    DAY_OF_WEEK_TABLE,
-    DAYS_PER_L_YEAR,
-    DAYS_PER_N_YEAR,
-)
+from collections import namedtuple
+
+from ..constants import DAY_OF_WEEK_TABLE
+from ..constants import DAYS_PER_L_YEAR
+from ..constants import DAYS_PER_MONTHS
+from ..constants import DAYS_PER_N_YEAR
+from ..constants import EPOCH_YEAR
+from ..constants import MONTHS_OFFSETS
+from ..constants import SECS_PER_4_YEARS
+from ..constants import SECS_PER_100_YEARS
+from ..constants import SECS_PER_400_YEARS
+from ..constants import SECS_PER_DAY
+from ..constants import SECS_PER_HOUR
+from ..constants import SECS_PER_MIN
+from ..constants import SECS_PER_YEAR
+from ..constants import TM_DECEMBER
+from ..constants import TM_JANUARY
 
 
 class PreciseDiff(

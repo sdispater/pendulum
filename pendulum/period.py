@@ -1,15 +1,18 @@
 from __future__ import absolute_import
 
 import operator
-import pendulum
 
-from datetime import datetime, date, timedelta
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+
+import pendulum
 
 from pendulum.utils._compat import _HAS_FOLD
 from pendulum.utils._compat import decode
 
-from .duration import Duration
 from .constants import MONTHS_PER_YEAR
+from .duration import Duration
 from .helpers import precise_diff
 
 

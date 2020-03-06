@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 import datetime
-import pendulum
+import re
 import typing
 
-from pendulum.helpers import local_time
+import pendulum
+
 from pendulum.locales.locale import Locale
 from pendulum.utils._compat import decode
 
@@ -445,6 +445,8 @@ class Formatter:
                 microseconds = int("{}".format(str_us.split(".")[1].ljust(6, "0")))
             else:
                 microseconds = 0
+
+            from pendulum.helpers import local_time
 
             time = local_time(parsed["timestamp"], 0, microseconds)
             validated["year"] = time[0]
