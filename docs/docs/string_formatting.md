@@ -170,6 +170,6 @@ To escape characters in format strings, you can wrap the characters in square br
 >>> import pendulum
 
 >>> dt = pendulum.now()
->>> dt.format('[today] dddd', formatter='alternative')
+>>> dt.format('[today] dddd')
 'today Sunday'
 ```
