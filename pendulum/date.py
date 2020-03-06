@@ -76,7 +76,9 @@ class Date(FormattableMixin, date):
 
     @property
     def week_of_month(self):
-        return int(math.ceil(self.day / DAYS_PER_WEEK))
+        first_day_of_month = self.replace(day=1)
+
+        return self.week_of_year - first_day_of_month.week_of_year + 1
 
     @property
     def age(self):
