@@ -108,6 +108,7 @@ The following tokens are currently supported:
 | ------------------------------ | ------------- | ------------------------------------------ |
 | **Year**                       | YYYY          | 2000, 2001, 2002 ... 2012, 2013            |
 |                                | YY            | 00, 01, 02 ... 12, 13                      |
+|                                | Y             | 2000, 2001, 2002 ... 2012, 2013            |
 | **Quarter**                    | Q             | 1 2 3 4                                    |
 |                                | Qo            | 1st 2nd 3rd 4th                            |
 | **Month**                      | MMMM          | January, February, March ...               |
