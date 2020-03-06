@@ -6,7 +6,7 @@ It provides classes that are drop-in replacements for the native ones (they inhe
 
 Special care has been taken to ensure timezones are handled correctly,
 and are based on the underlying `tzinfo` implementation.
-For example all comparisons are done in `UTC` or in the timezone of the datetime being used.
+For example, all comparisons are done in `UTC` or in the timezone of the datetime being used.
 
 ```python
 >>> import pendulum

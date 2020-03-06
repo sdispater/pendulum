@@ -1,6 +1,6 @@
 # Period
 
-When you subtract a `DateTime` instance to another, or use the `diff()` method, it will return a `Period` instance.
+When you subtract a `DateTime` instance from another, or use the `diff()` method, it will return a `Period` instance.
 It inherits from the [Duration](#duration) class with the added benefit that it is aware of the
 instances that generated it, so that it can give access to more methods and properties:
 
@@ -61,7 +61,7 @@ transitions that might have occurred and adjust accordingly. Let's take an examp
 
 !!!warning
 
-    Due to its nature (fixed duration between two datetimes), most arithmetic operations will
+    Due to their nature (fixed duration between two datetimes), most arithmetic operations will
     return a `Duration` instead of a `Period`.
 
     ```python
@@ -98,7 +98,7 @@ You can also make an inverted period:
 ```
 
 If you have inverted dates but want to make sure that the period is positive,
-you set the `absolute` keyword argument to `True`:
+you should set the `absolute` keyword argument to `True`:
 
 ```python
 >>> period = pendulum.period(end, start, absolute=True)

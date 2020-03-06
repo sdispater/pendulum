@@ -26,7 +26,7 @@ by using `pendulum.set_locale()`.
 ```
 
 However, you might not want to set the locale globally. The `diff_for_humans()`
-method accept a `locale` keyword argument to use a locale for a specific call.
+method accepts a `locale` keyword argument to use a locale for a specific call.
 
 ```python
 >>> pendulum.set_locale('de')

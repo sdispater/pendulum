@@ -1,6 +1,6 @@
 # String formatting
 
-The `__str__` magic method is defined which allows `DateTime` instances to be printed
+The `__str__` magic method is defined to allow `DateTime` instances to be printed
 as a pretty date string when used in a string context.
 
 The default string representation is the same as the one returned by the `isoformat()` method.

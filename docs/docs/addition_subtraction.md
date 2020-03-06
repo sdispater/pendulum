@@ -1,6 +1,6 @@
 # Addition and Subtraction
 
-To easily adding and subtracting time, you can use the `add()` and `subtract()`
+To easily add and subtract time, you can use the `add()` and `subtract()`
 methods.
 Each method returns a new `DateTime` instance.
 

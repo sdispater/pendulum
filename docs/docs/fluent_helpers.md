@@ -1,8 +1,8 @@
 # Fluent helpers
 
-Pendulum provides helpers that returns a new instance with some attributes
+Pendulum provides helpers that return a new instance with some attributes
 modified compared to the original instance.
-However, none of these helpers, with the exception of explicitely setting the
+However, none of these helpers, with the exception of explicitly setting the
 timezone, will change the timezone of the instance. Specifically,
 setting the timestamp will not set the corresponding timezone to UTC.
 
@@ -38,8 +38,8 @@ You can also modify the timezone.
 >>> dt.set(tz='Europe/London')
 ```
 
-Setting the timezone just modify the timezone information without
-making any conversion while `in_timezone()` (or `in_tz()`)
+Setting the timezone just modifies the timezone information without
+making any conversion, while `in_timezone()` (or `in_tz()`)
 converts the time in the appropriate timezone.
 
 ```python
