@@ -137,14 +137,30 @@ def test_less_than_or_equal_false():
     assert not d1 <= d3
 
 
-def test_is_birthday():
+def test_is_anniversary():
     d = pendulum.Date.today()
-    a_birthday = d.subtract(years=1)
-    assert a_birthday.is_birthday()
-    not_a_birthday = d.subtract(days=1)
-    assert not not_a_birthday.is_birthday()
-    also_not_a_birthday = d.add(days=2)
-    assert not also_not_a_birthday.is_birthday()
+    an_anniversary = d.subtract(years=1)
+    assert an_anniversary.is_anniversary()
+    not_an_anniversary = d.subtract(days=1)
+    assert not not_an_anniversary.is_anniversary()
+    also_not_an_anniversary = d.add(days=2)
+    assert not also_not_an_anniversary.is_anniversary()
+
+    d1 = pendulum.Date(1987, 4, 23)
+    d2 = pendulum.Date(2014, 9, 26)
+    d3 = pendulum.Date(2014, 4, 23)
+    assert not d2.is_anniversary(d1)
+    assert d3.is_anniversary(d1)
+
+
+def test_is_birthday():  # backward compatibility
+    d = pendulum.Date.today()
+    an_anniversary = d.subtract(years=1)
+    assert an_anniversary.is_birthday()
+    not_an_anniversary = d.subtract(days=1)
+    assert not not_an_anniversary.is_birthday()
+    also_not_an_anniversary = d.add(days=2)
+    assert not also_not_an_anniversary.is_birthday()
 
     d1 = pendulum.Date(1987, 4, 23)
     d2 = pendulum.Date(2014, 9, 26)
