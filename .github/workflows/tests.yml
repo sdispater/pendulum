@@ -48,15 +48,16 @@ jobs:
       run: |
         source $HOME/.poetry/env
         poetry install
+    - name: Test Pure Python
+      run: |
+        source $HOME/.poetry/env
+        PENDULUM_EXTENSIONS=0 poetry run pytest -q tests
     - name: Test
       run: |
         source $HOME/.poetry/env
         poetry run pytest -q tests
         poetry install
-    - name: Test Pure Python
-      run: |
-        source $HOME/.poetry/env
-        PENDULUM_EXTENSIONS=0 poetry run pytest -q tests
+
   MacOS:
     needs: Linting
     runs-on: macos-latest
@@ -89,14 +90,14 @@ jobs:
       run: |
         source $HOME/.poetry/env
         poetry install
-    - name: Test
-      run: |
-        source $HOME/.poetry/env
-        poetry run pytest -q tests
     - name: Test Pure Python
       run: |
         source $HOME/.poetry/env
         PENDULUM_EXTENSIONS=0 poetry run pytest -q tests
+    - name: Test
+      run: |
+        source $HOME/.poetry/env
+        poetry run pytest -q tests
   Windows:
     needs: Linting
     runs-on: windows-latest
@@ -130,12 +131,12 @@ jobs:
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
         poetry install
-    - name: Test
-      run: |
-        $env:Path += ";$env:Userprofile\.poetry\bin"
-        poetry run pytest -q tests
     - name: Test Pure Python
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
         $env:PENDULUM_EXTENSIONS = "0"
+        poetry run pytest -q tests
+    - name: Test
+      run: |
+        $env:Path += ";$env:Userprofile\.poetry\bin"
         poetry run pytest -q tests
