@@ -303,6 +303,12 @@ def test_utcoffset():
     assert utcoffset == timedelta(0, -18000)
 
 
+def test_utcoffset_pre_transition():
+    tz = pendulum.timezone("America/Chicago")
+    utcoffset = tz.utcoffset(datetime(1883, 11, 18))
+    assert utcoffset == timedelta(days=-1, seconds=64800)
+
+
 def test_dst():
     tz = pendulum.timezone("Europe/Amsterdam")
     dst = tz.dst(datetime(1940, 7, 1))

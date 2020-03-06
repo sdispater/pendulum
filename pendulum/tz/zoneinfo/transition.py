@@ -68,6 +68,9 @@ class Transition:
         return self._utcoffset
 
     def __contains__(self, stamp):  # type: (int) -> bool
+        if self.previous is None:
+            return stamp < self.local
+
         return self.previous.local <= stamp < self.local
 
     def __repr__(self):  # type: () -> str
