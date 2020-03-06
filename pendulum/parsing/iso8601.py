@@ -12,6 +12,7 @@ from ..helpers import days_in_year
 from ..helpers import is_leap
 from ..helpers import is_long_year
 from ..helpers import week_day
+from ..tz.timezone import UTC
 from ..tz.timezone import FixedTimezone
 from .exceptions import ParserError
 
@@ -230,7 +231,7 @@ def parse_iso8601(text):
         tz = m.group("tz")
         if tz:
             if tz == "Z":
-                offset = 0
+                tzinfo = UTC
             else:
                 negative = True if tz.startswith("-") else False
                 tz = tz[1:]
@@ -248,7 +249,7 @@ def parse_iso8601(text):
                 if negative:
                     offset = -1 * offset
 
-            tzinfo = FixedTimezone(offset)
+                tzinfo = FixedTimezone(offset)
 
         if is_time:
             return datetime.time(hour, minute, second, microsecond)

@@ -131,3 +131,9 @@ def test_parse_now():
 
     with pendulum.test(mock_now):
         assert pendulum.parse("now") == mock_now
+
+
+def test_parse_with_utc_timezone():
+    dt = pendulum.parse("2020-02-05T20:05:37.364951Z")
+
+    assert "2020-02-05T20:05:37.364951Z" == dt.to_iso8601_string()

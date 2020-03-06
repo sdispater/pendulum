@@ -79,6 +79,8 @@ def _safe_timezone(obj):
         # pytz
         if hasattr(obj, "localize"):
             obj = obj.zone
+        elif obj.tzname(None) == "UTC":
+            return UTC
         else:
             offset = obj.utcoffset(None)
 
