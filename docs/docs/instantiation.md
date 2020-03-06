@@ -133,7 +133,7 @@ and will set the timezone as well or default it to `UTC`.
 '1970-01-01T00:59:59+01:00'
 ```
 
-Finally, if you find yourself inheriting a `DateTime` instance,
+Finally, if you find yourself inheriting a `datetime.datetime` instance,
 you can create a `DateTime` instance via the `instance()` function.
 
 ```python
