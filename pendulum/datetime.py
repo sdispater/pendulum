@@ -1268,11 +1268,11 @@ class DateTime(datetime.datetime, Date):
             return self.first_of("month", day_of_week)
 
         dt = self.first_of("month")
-        check = dt.format("%Y-%m")
+        check = dt.format("%Y-%M")
         for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
-        if dt.format("%Y-%m") == check:
+        if dt.format("%Y-%M") == check:
             return self.set(day=dt.day).start_of("day")
 
         return False
