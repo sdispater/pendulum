@@ -6,7 +6,7 @@ import calendar
 import datetime
 import pendulum
 
-from typing import Union
+from typing import Union, Optional, TypeVar
 
 from .date import Date
 from .time import Time
@@ -37,8 +37,12 @@ from .constants import (
     W3C,
 )
 
+_D = TypeVar("_D", bound="DateTime")
+
 
 class DateTime(datetime.datetime, Date):
+
+    EPOCH = None  # type: DateTime
 
     # Formats
 
@@ -93,7 +97,7 @@ class DateTime(datetime.datetime, Date):
             return self
 
     @classmethod
-    def now(cls, tz=None):  # type: (Union[str, Timezone, None]) -> DateTime
+    def now(cls, tz=None):  # type: (Optional[Union[str, Timezone]]) -> DateTime
         """
         Get a DateTime instance for the current date and time.
         """
@@ -214,21 +218,21 @@ class DateTime(datetime.datetime, Date):
         return self.get_offset() / SECONDS_PER_MINUTE / MINUTES_PER_HOUR
 
     @property
-    def timezone(self):  # type: () -> Union[str, None]
+    def timezone(self):  # type: () -> Optional[Timezone]
         if not isinstance(self.tzinfo, Timezone):
             return
 
         return self.tzinfo
 
     @property
-    def tz(self):  # type: () -> Union[str, None]
+    def tz(self):  # type: () -> Optional[Timezone]
         return self.timezone
 
     @property
-    def timezone_name(self):  # type: () -> Union[str, None]
+    def timezone_name(self):  # type: () -> Optional[str]
         tz = self.timezone
 
-        if self.timezone is None:
+        if tz is None:
             return None
 
         return tz.name
@@ -255,7 +259,7 @@ class DateTime(datetime.datetime, Date):
     def time(self):
         return Time(self.hour, self.minute, self.second, self.microsecond)
 
-    def naive(self):  # type: () -> DateTime
+    def naive(self):  # type: (_D) -> _D
         """
         Return the DateTime without timezone information.
         """
@@ -602,7 +606,7 @@ class DateTime(datetime.datetime, Date):
         minutes=0,
         seconds=0,
         microseconds=0,
-    ):  # type: (int, int, int, int, int, int, int) -> DateTime
+    ):  # type: (_D, int, int, int, int, int, int, int, int) -> _D
         """
         Add a duration to the instance.
 
@@ -802,10 +806,10 @@ class DateTime(datetime.datetime, Date):
 
     def diff_for_humans(
         self,
-        other=None,  # type: Union['DateTime', None]
+        other=None,  # type: Optional[DateTime]
         absolute=False,  # type: bool
-        locale=None,  # type:Union[str, None]
-    ):  # type: (...) -> False
+        locale=None,  # type: Optional[str]
+    ):  # type: (...) -> str
         """
         Get the difference in a human readable format in the current locale.
 

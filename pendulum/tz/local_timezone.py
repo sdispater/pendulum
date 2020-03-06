@@ -11,7 +11,7 @@ except ImportError:
         winreg = None
 
 from contextlib import contextmanager
-from typing import Union
+from typing import Optional, Union, Iterator
 
 from .timezone import Timezone, TimezoneFile
 from .zoneinfo.exceptions import InvalidTimezone
@@ -35,14 +35,14 @@ def get_local_timezone():  # type: () -> Timezone
     return _local_timezone
 
 
-def set_local_timezone(mock=None):  # type: (Union[str, Timezone, None]) -> None
+def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> None
     global _mock_local_timezone
 
     _mock_local_timezone = mock
 
 
 @contextmanager
-def test_local_timezone(mock):  # type: (Timezone) -> None
+def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
     set_local_timezone(mock)
 
     yield
