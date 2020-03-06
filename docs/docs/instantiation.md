@@ -135,10 +135,16 @@ and will set the timezone as well or default it to `UTC`.
 
 Finally, if you find yourself inheriting a `DateTime` instance,
 you can create a `DateTime` instance via the `instance()` function.
+This also works with datetime.date instances.
 
 ```python
 >>> dt = datetime(2008, 1, 1)
 >>> p = pendulum.instance(dt)
 >>> print(p)
 '2008-01-01T00:00:00+00:00'
+>>> d = date(2008, 1, 1)
+>>> p = pendulum.instance(d)
+>>> print(p)
+'2008-01-01T00:00:00+00:00'
+
 ```
