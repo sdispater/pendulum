@@ -23,11 +23,11 @@ COMMON = re.compile(
     # Date (optional)
     "^"
     "(?P<date>"
-    "    (?P<classic>"  # Classic date (YYYY-MM-DD)
+    "    (?P<classic>"  # Classic date (YYYY:MM:DD) or (YYYY-MM-DD) or (YYYY/MM/DD)
     "        (?P<year>\d{4})"  # Year
     "        (?P<monthday>"
-    "            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
-    "            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
+    "            (?P<monthsep>[/:-])?(?P<month>\d{1,2})"  # Month (optional)
+    "            ((?P<daysep>[/:-])?(?P<day>\d{1,2}))?"  # Day (optional)
     "        )?"
     "    )"
     ")?"
@@ -167,7 +167,7 @@ def _parse_common(text, **options):
                 day = int(m.group("month"))
             else:
                 month = int(m.group("month"))
-                day = int(m.group("day"))
+                day = int(m.group("day") or 1)
 
     if not m.group("time"):
         return date(year, month, day)
