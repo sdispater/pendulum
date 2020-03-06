@@ -5,11 +5,11 @@ import pendulum
 from datetime import time, timedelta
 
 from .duration import Duration, AbsoluteDuration
-from .mixins.default import FormattableMixing
+from .mixins.default import FormattableMixin
 from .constants import USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
 
 
-class Time(FormattableMixing, time):
+class Time(FormattableMixin, time):
     """
     Represents a time instance as hour, minute, second, microsecond.
     """
