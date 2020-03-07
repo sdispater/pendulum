@@ -1,5 +1,39 @@
 # Change Log
 
+## [2.1.0] - 2020-03-07
+
+### Added
+
+- Added better typing and PEP-561 compliance ([#320](https://github.com/sdispater/pendulum/pull/320)).
+- Added the `is_anniversary()` method as an alias of `is_birthday()` ([#298](https://github.com/sdispater/pendulum/pull/298)).
+
+### Changed
+
+- Dropped support for Python 3.4.
+- `is_utc()` will now return `True` for any datetime with an offset of 0, similar to the behavior in the `1.*` versions ([#295](https://github.com/sdispater/pendulum/pull/295))
+- `Duration.in_words()` will now return `0 milliseconds` for empty durations.
+
+### Fixed
+
+- Fixed various issues with timezone transitions for some edge cases ([#321](https://github.com/sdispater/pendulum/pull/321), ([#350](https://github.com/sdispater/pendulum/pull/350))).
+- Fixed out of bound detection for `nth_of("month")` ([#357](https://github.com/sdispater/pendulum/pull/357)).
+- Fixed an error where extra text was accepted in `from_format()` ([#372](https://github.com/sdispater/pendulum/pull/372)).
+- Fixed a recursion error when adding time to a `DateTime` with a fixed timezone ([#431](https://github.com/sdispater/pendulum/pull/431)).
+- Fixed errors where `Period` instances were not properly compared to other classes, especially `timedelta` instances ([#427](https://github.com/sdispater/pendulum/pull/427)).
+- Fixed deprecation warnings due to internal regexps ([#427](https://github.com/sdispater/pendulum/pull/427)).
+- Fixed an error where the `test()` helper would not unset the test instance when an exception was raised ([#445](https://github.com/sdispater/pendulum/pull/445)).
+- Fixed an error where the `week_of_month` attribute was not returning the correct value ([#446](https://github.com/sdispater/pendulum/pull/446)).
+- Fixed an error in the way the `Z` ISO-8601 UTC designator was not parsed as UTC ([#448](https://github.com/sdispater/pendulum/pull/448)).
+
+### Locales
+
+- Added the `nl` locale.
+- Added the `it` locale.
+- Added the `id` locale.
+- Added the `nb` locale.
+- Added the `nn` locale.
+
+
 ## [2.0.5] - 2019-07-03
 
 ### Fixed
@@ -93,7 +127,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.0.5...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.0...master
+[2.1.0]: https://github.com/sdispater/pendulum/releases/tag/2.1.0
 [2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5
 [2.0.4]: https://github.com/sdispater/pendulum/releases/tag/2.0.4
 [2.0.3]: https://github.com/sdispater/pendulum/releases/tag/2.0.3
