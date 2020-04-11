@@ -1,7 +1,8 @@
 import pytest
 
 from pendulum.tz import timezone
-from pendulum.tz.timezone import Timezone, FixedTimezone
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 from pendulum.tz.zoneinfo.exceptions import InvalidTimezone
 
 

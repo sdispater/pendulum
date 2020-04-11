@@ -1,7 +1,7 @@
+from datetime import timedelta
+
 import pendulum
 import pytest
-
-from datetime import timedelta
 
 from ..conftest import assert_datetime
 
@@ -134,8 +134,9 @@ def test_addition_invalid_type():
 def test_add_to_fixed_timezones():
     dt = pendulum.parse("2015-03-08T01:00:00-06:00")
     dt = dt.add(weeks=1)
+    dt = dt.add(hours=1)
 
-    assert_datetime(dt, 2015, 3, 15, 1, 0, 0)
+    assert_datetime(dt, 2015, 3, 15, 2, 0, 0)
     assert dt.timezone_name == "-06:00"
     assert dt.offset == -6 * 3600
 

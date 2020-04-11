@@ -1,8 +1,13 @@
 from datetime import datetime
-from typing import List, Union
+from typing import List
+from typing import Optional
 
-from pendulum.constants import DAYS_PER_YEAR, SECS_PER_YEAR
-from pendulum.helpers import local_time, is_leap, timestamp, week_day
+from pendulum.constants import DAYS_PER_YEAR
+from pendulum.constants import SECS_PER_YEAR
+from pendulum.helpers import is_leap
+from pendulum.helpers import local_time
+from pendulum.helpers import timestamp
+from pendulum.helpers import week_day
 
 from .posix_timezone import PosixTimezone
 from .transition import Transition
@@ -13,7 +18,7 @@ class Timezone:
     def __init__(
         self,
         transitions,  # type: List[Transition]
-        posix_rule=None,  # type: Union[PosixTimezone, None]
+        posix_rule=None,  # type: Optional[PosixTimezone]
         extended=True,  # type: bool
     ):
         self._posix_rule = posix_rule

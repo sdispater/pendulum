@@ -1,6 +1,16 @@
-import sys
 import os
 import re
+import sys
+
+from contextlib import contextmanager
+from typing import Iterator
+from typing import Optional
+from typing import Union
+
+from .timezone import Timezone
+from .timezone import TimezoneFile
+from .zoneinfo.exceptions import InvalidTimezone
+
 
 try:
     import _winreg as winreg
@@ -9,12 +19,6 @@ except ImportError:
         import winreg
     except ImportError:
         winreg = None
-
-from contextlib import contextmanager
-from typing import Union
-
-from .timezone import Timezone, TimezoneFile
-from .zoneinfo.exceptions import InvalidTimezone
 
 
 _mock_local_timezone = None
@@ -35,14 +39,14 @@ def get_local_timezone():  # type: () -> Timezone
     return _local_timezone
 
 
-def set_local_timezone(mock=None):  # type: (Union[str, Timezone, None]) -> None
+def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> None
     global _mock_local_timezone
 
     _mock_local_timezone = mock
 
 
 @contextmanager
-def test_local_timezone(mock):  # type: (Timezone) -> None
+def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
     set_local_timezone(mock)
 
     yield
@@ -177,8 +181,8 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
     # OpenSUSE has a TIMEZONE setting in /etc/sysconfig/clock and
     # Gentoo has a TIMEZONE setting in /etc/conf.d/clock
     # We look through these files for a timezone:
-    zone_re = re.compile('\s*ZONE\s*=\s*"')
-    timezone_re = re.compile('\s*TIMEZONE\s*=\s*"')
+    zone_re = re.compile(r'\s*ZONE\s*=\s*"')
+    timezone_re = re.compile(r'\s*TIMEZONE\s*=\s*"')
     end_re = re.compile('"')
 
     for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):

@@ -1,5 +1,6 @@
 import sys
 
+
 PY2 = sys.version_info < (3, 0)
 PY36 = sys.version_info >= (3, 6)
 PYPY = hasattr(sys, "pypy_version_info")

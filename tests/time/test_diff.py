@@ -1,5 +1,4 @@
 import pendulum
-import pytest
 
 from pendulum import Time
 

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Union
+from typing import Optional
 
 from .transition_type import TransitionType
 
@@ -9,7 +9,7 @@ class Transition:
         self,
         at,  # type: int
         ttype,  # type: TransitionType
-        previous,  # type: Union['Transition', None]
+        previous,  # type: Optional[Transition]
     ):
         self._at = at
 
@@ -51,7 +51,7 @@ class Transition:
         return self._ttype
 
     @property
-    def previous(self):  # type: () -> Transition
+    def previous(self):  # type: () -> Optional[Transition]
         return self._previous
 
     @property
@@ -67,7 +67,10 @@ class Transition:
     def utcoffset(self):  # type: () -> timedelta
         return self._utcoffset
 
-    def __contains__(self, stamp):  # type: () -> bool
+    def __contains__(self, stamp):  # type: (int) -> bool
+        if self.previous is None:
+            return stamp < self.local
+
         return self.previous.local <= stamp < self.local
 
     def __repr__(self):  # type: () -> str

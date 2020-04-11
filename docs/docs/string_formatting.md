@@ -1,6 +1,6 @@
 # String formatting
 
-The `__str__` magic method is defined which allows `DateTime` instances to be printed
+The `__str__` magic method is defined to allow `DateTime` instances to be printed
 as a pretty date string when used in a string context.
 
 The default string representation is the same as the one returned by the `isoformat()` method.
@@ -108,6 +108,7 @@ The following tokens are currently supported:
 | ------------------------------ | ------------- | ------------------------------------------ |
 | **Year**                       | YYYY          | 2000, 2001, 2002 ... 2012, 2013            |
 |                                | YY            | 00, 01, 02 ... 12, 13                      |
+|                                | Y             | 2000, 2001, 2002 ... 2012, 2013            |
 | **Quarter**                    | Q             | 1 2 3 4                                    |
 |                                | Qo            | 1st 2nd 3rd 4th                            |
 | **Month**                      | MMMM          | January, February, March ...               |
@@ -144,7 +145,7 @@ The following tokens are currently supported:
 |                                | z             | Asia/Baku, Europe/Warsaw, GMT ...          |
 |                                | zz            | EST CST ... MST PST                        |
 | **Seconds timestamp**          | X             | 1381685817, 1234567890.123                 |
-| **Microseconds timestamp**     | x             | 1234567890123                              |
+| **Milliseconds timestamp**     | x             | 1234567890123                              |
 
 
 ### Localized Formats
@@ -169,6 +170,6 @@ To escape characters in format strings, you can wrap the characters in square br
 >>> import pendulum
 
 >>> dt = pendulum.now()
->>> dt.format('[today] dddd', formatter='alternative')
+>>> dt.format('[today] dddd')
 'today Sunday'
 ```

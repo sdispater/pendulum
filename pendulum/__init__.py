@@ -1,65 +1,59 @@
 from __future__ import absolute_import
 
 import datetime as _datetime
+
+from typing import Optional
 from typing import Union
 
 from .__version__ import __version__
-
-# Types
-from .datetime import DateTime
+from .constants import DAYS_PER_WEEK
+from .constants import FRIDAY
+from .constants import HOURS_PER_DAY
+from .constants import MINUTES_PER_HOUR
+from .constants import MONDAY
+from .constants import MONTHS_PER_YEAR
+from .constants import SATURDAY
+from .constants import SECONDS_PER_DAY
+from .constants import SECONDS_PER_HOUR
+from .constants import SECONDS_PER_MINUTE
+from .constants import SUNDAY
+from .constants import THURSDAY
+from .constants import TUESDAY
+from .constants import WEDNESDAY
+from .constants import WEEKS_PER_YEAR
+from .constants import YEARS_PER_CENTURY
+from .constants import YEARS_PER_DECADE
 from .date import Date
-from .time import Time
+from .datetime import DateTime
 from .duration import Duration
-from .period import Period
-
-from .tz import timezone
-from .tz import PRE_TRANSITION, POST_TRANSITION, TRANSITION_ERROR
-from .tz.timezone import Timezone as _Timezone
-
 from .formatting import Formatter
-
-# Helpers
-from .helpers import (
-    test,
-    set_test_now,
-    has_test_now,
-    get_test_now,
-    set_locale,
-    get_locale,
-    locale,
-    format_diff,
-    week_starts_at,
-    week_ends_at,
-)
-
+from .helpers import format_diff
+from .helpers import get_locale
+from .helpers import get_test_now
+from .helpers import has_test_now
+from .helpers import locale
+from .helpers import set_locale
+from .helpers import set_test_now
+from .helpers import test
+from .helpers import week_ends_at
+from .helpers import week_starts_at
+from .parser import parse
+from .period import Period
+from .time import Time
+from .tz import POST_TRANSITION
+from .tz import PRE_TRANSITION
+from .tz import TRANSITION_ERROR
+from .tz import UTC
+from .tz import local_timezone
+from .tz import set_local_timezone
+from .tz import test_local_timezone
+from .tz import timezone
+from .tz import timezones
+from .tz.timezone import Timezone as _Timezone
 from .utils._compat import _HAS_FOLD
 
-from .tz import timezones, local_timezone, test_local_timezone, set_local_timezone, UTC
 
-from .parser import parse
-
-# Constants
-from .constants import (
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY,
-    YEARS_PER_CENTURY,
-    YEARS_PER_DECADE,
-    MONTHS_PER_YEAR,
-    WEEKS_PER_YEAR,
-    DAYS_PER_WEEK,
-    HOURS_PER_DAY,
-    MINUTES_PER_HOUR,
-    SECONDS_PER_MINUTE,
-    SECONDS_PER_HOUR,
-    SECONDS_PER_DAY,
-)
-
-_TEST_NOW = None
+_TEST_NOW = None  # type: Optional[DateTime]
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
@@ -68,7 +62,7 @@ _formatter = Formatter()
 
 
 def _safe_timezone(obj):
-    # type: (Union[str, int, float, _datetime.tzinfo]) -> _Timezone
+    # type: (Optional[Union[str, float, _datetime.tzinfo, _Timezone]]) -> _Timezone
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -85,6 +79,8 @@ def _safe_timezone(obj):
         # pytz
         if hasattr(obj, "localize"):
             obj = obj.zone
+        elif obj.tzname(None) == "UTC":
+            return UTC
         else:
             offset = obj.utcoffset(None)
 
@@ -105,7 +101,7 @@ def datetime(
     minute=0,  # type: int
     second=0,  # type: int
     microsecond=0,  # type: int
-    tz=UTC,  # type: Union[str, _Timezone]
+    tz=UTC,  # type: Optional[Union[str, float, _Timezone]]
     dst_rule=POST_TRANSITION,  # type: str
 ):  # type: (...) -> DateTime
     """
@@ -169,8 +165,8 @@ def time(hour, minute=0, second=0, microsecond=0):  # type: (int, int, int, int)
 
 
 def instance(
-    dt, tz=UTC  # type: _datetime.datetime  # type: Union[str, _Timezone, None]
-):  # type: (...) -> DateTime
+    dt, tz=UTC
+):  # type: (_datetime.datetime, Optional[Union[str, _Timezone]]) -> DateTime
     """
     Create a DateTime instance from a datetime one.
     """
@@ -198,7 +194,7 @@ def instance(
     )
 
 
-def now(tz=None):  # type: (Union[str, _Timezone, None]) -> DateTime
+def now(tz=None):  # type: (Optional[Union[str, _Timezone]]) -> DateTime
     """
     Get a DateTime instance for the current date and time.
     """
@@ -245,11 +241,8 @@ def yesterday(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime
 
 
 def from_format(
-    string,  # type: str
-    fmt,  # type: str
-    tz=UTC,  # type: Union[str, _Timezone]
-    locale=None,  # type: Union[str, None]
-):  # type: (...) -> DateTime
+    string, fmt, tz=UTC, locale=None,  # noqa
+):  # type: (str, str, Union[str, _Timezone], Optional[str]) -> DateTime
     """
     Creates a DateTime instance from a specific format.
     """
@@ -261,8 +254,8 @@ def from_format(
 
 
 def from_timestamp(
-    timestamp, tz=UTC  # type: Union[int, float]  # type: Union[str, _Timezone]
-):  # type: (...) -> DateTime
+    timestamp, tz=UTC
+):  # type: (Union[int, float], Union[str, _Timezone]) -> DateTime
     """
     Create a DateTime instance from a timestamp.
     """
@@ -305,9 +298,7 @@ def duration(
     )
 
 
-def period(
-    start, end, absolute=False  # type: DateTime  # type: DateTime  # type: bool
-):  # type: (...) -> Period
+def period(start, end, absolute=False):  # type: (DateTime, DateTime, bool) -> Period
     """
     Create a Period instance.
     """

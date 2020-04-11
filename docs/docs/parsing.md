@@ -18,10 +18,10 @@ The library natively supports the RFC 3339 format, most ISO 8601 formats and som
 >>> dt = pendulum.parse('1975-05-21 22:00:00')
 ```
 
-If you pass a non-standard or more complicated string, it will raise an exception so it is advised to
+If you pass a non-standard or more complicated string, it will raise an exception, so it is advised to
 use the `from_format()` helper instead.
 
-However, if you want the library to fallback on the [dateutil](https://dateutil.readthedocs.io) parser,
+However, if you want the library to fall back on the [dateutil](https://dateutil.readthedocs.io) parser,
 you have to pass `strict=False`.
 
 ```python

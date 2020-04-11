@@ -1,6 +1,6 @@
+import pendulum
 import pytest
 
-import pendulum
 from pendulum.exceptions import PendulumException
 
 from ..conftest import assert_datetime
@@ -127,7 +127,7 @@ def test_last_friday_of_month():
 
 
 def test_nth_of_month_outside_scope():
-    d = pendulum.datetime(1975, 12, 5)
+    d = pendulum.datetime(1975, 6, 5)
 
     with pytest.raises(PendulumException):
         d.nth_of("month", 6, pendulum.MONDAY)

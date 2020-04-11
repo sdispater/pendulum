@@ -4,29 +4,31 @@ http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap08.html.
 """
 import re
 
-from typing import Union
+from typing import Optional
 
-from pendulum.constants import MONTHS_OFFSETS, SECS_PER_DAY
+from pendulum.constants import MONTHS_OFFSETS
+from pendulum.constants import SECS_PER_DAY
 
 from .exceptions import InvalidPosixSpec
 
+
 _spec = re.compile(
     "^"
-    "(?P<std_abbr><.*?>|[^-+,\d]{3,})"
-    "(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)"
-    "(?P<dst_info>"
-    "    (?P<dst_abbr><.*?>|[^-+,\d]{3,})"
-    "    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?"
-    ")?"
-    "(?:,(?P<rules>"
-    "    (?P<dst_start>"
-    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
-    "        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+    r"(?P<std_abbr><.*?>|[^-+,\d]{3,})"
+    r"(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)"
+    r"(?P<dst_info>"
+    r"    (?P<dst_abbr><.*?>|[^-+,\d]{3,})"
+    r"    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?"
+    r")?"
+    r"(?:,(?P<rules>"
+    r"    (?P<dst_start>"
+    r"        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+    r"        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
     "    )"
     "    ,"
-    "    (?P<dst_end>"
-    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
-    "        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+    r"    (?P<dst_end>"
+    r"        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+    r"        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
     "    )"
     "))?"
     "$",
@@ -67,7 +69,7 @@ def _posix_spec(spec):  # type: (str) -> PosixTimezone
     return PosixTimezone(std_abbr, std_offset, dst_abbr, dst_offset, dst_start, dst_end)
 
 
-def _parse_abbr(text):  # type: (str) -> Union[str, None]
+def _parse_abbr(text):  # type: (str) -> str
     return text.lstrip("<").rstrip(">")
 
 
@@ -231,10 +233,10 @@ class PosixTimezone:
         self,
         std_abbr,  # type: str
         std_offset,  # type: int
-        dst_abbr,  # type: Union[str, None] = None
-        dst_offset,  # type: Union[str, None] = None
-        dst_start=None,  # type: Union[PosixTransition, None]
-        dst_end=None,  # type: Union[PosixTransition, None]
+        dst_abbr,  # type: Optional[str]
+        dst_offset,  # type: Optional[int]
+        dst_start=None,  # type: Optional[PosixTransition]
+        dst_end=None,  # type: Optional[PosixTransition]
     ):
         self._std_abbr = std_abbr
         self._std_offset = std_offset
@@ -252,17 +254,17 @@ class PosixTimezone:
         return self._std_offset
 
     @property
-    def dst_abbr(self):  # type: () -> Union[str, None]
+    def dst_abbr(self):  # type: () -> Optional[str]
         return self._dst_abbr
 
     @property
-    def dst_offset(self):  # type: () -> Union[int, None]
+    def dst_offset(self):  # type: () -> Optional[int]
         return self._dst_offset
 
     @property
-    def dst_start(self):  # type: () -> Union[PosixTransition, None]
+    def dst_start(self):  # type: () -> Optional[PosixTransition]
         return self._dst_start
 
     @property
-    def dst_end(self):  # type: () -> Union[PosixTransition, None]
+    def dst_end(self):  # type: () -> Optional[PosixTransition]
         return self._dst_end

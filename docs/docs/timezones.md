@@ -1,6 +1,6 @@
 # Timezones
 
-Timezones are an important part of every datetime library and `pendulum`
+Timezones are an important part of every datetime library, and `pendulum`
 tries to provide an easy and accurate system to handle them properly.
 
 !!!note
@@ -102,12 +102,12 @@ with the `in_timezone()` method.
 !!!warning
 
     **You should avoid using the timezone library in Python < 3.6.**
-    
+
     This is due to the fact that Pendulum relies heavily on the presence
     of the `fold` attribute which was introduced in Python 3.6.
-    
+
     The reason it works inside the Pendulum ecosystem is that it
-    backported the `fold` attribute in the `DateTime` class.
+    backports the `fold` attribute in the `DateTime` class.
 
 Like said in the introduction, you can use the timezone library
 directly with standard `datetime` objects but with limitations, especially
@@ -134,7 +134,7 @@ by default to determine the transition rule.
 ```
 
 Instead of relying on the `fold` attribute, you can use the `dst_rule`
-keyword argument, this is especially useful if you want to raise errors
+keyword argument. This is especially useful if you want to raise errors
 on non-existing and ambiguous times.
 
 ```python
@@ -170,8 +170,8 @@ object, things get tricky.
 '2013-03-31T02:00:00+01:00'
 ```
 
-This is not what we expect, it should be `2013-03-31T03:00:00+02:00`.
-This is actually easy to retrieve the proper datetime by using `convert()`
+This is not what we expect. It should be `2013-03-31T03:00:00+02:00`.
+It is actually easy to retrieve the proper datetime by using `convert()`
 again.
 
 ```python

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import os
 import re
 
 from importlib import import_module
+from typing import Any
+from typing import Optional
+from typing import Union
 
 from pendulum.utils._compat import basestring
 from pendulum.utils._compat import decode
@@ -16,13 +20,13 @@ class Locale:
 
     _cache = {}
 
-    def __init__(self, locale, data):
+    def __init__(self, locale, data):  # type: (str, Any) -> None
         self._locale = locale
         self._data = data
         self._key_cache = {}
 
     @classmethod
-    def load(cls, locale):
+    def load(cls, locale):  # type: (Union[str, Locale]) -> Locale
         if isinstance(locale, Locale):
             return locale
 
@@ -46,14 +50,14 @@ class Locale:
         return cls._cache[locale]
 
     @classmethod
-    def normalize_locale(cls, locale):
+    def normalize_locale(cls, locale):  # type: (str) -> str
         m = re.match("([a-z]{2})[-_]([a-z]{2})", locale, re.I)
         if m:
             return "{}_{}".format(m.group(1).lower(), m.group(2).lower())
         else:
             return locale.lower()
 
-    def get(self, key, default=None):
+    def get(self, key, default=None):  # type: (str, Optional[Any]) -> Any
         if key in self._key_cache:
             return self._key_cache[key]
 
@@ -72,16 +76,16 @@ class Locale:
 
         return self._key_cache[key]
 
-    def translation(self, key):
+    def translation(self, key):  # type: (str) -> Any
         return self.get("translations.{}".format(key))
 
-    def plural(self, number):
+    def plural(self, number):  # type: (int) -> str
         return decode(self._data["plural"](number))
 
-    def ordinal(self, number):
+    def ordinal(self, number):  # type: (int) -> str
         return decode(self._data["ordinal"](number))
 
-    def ordinalize(self, number):
+    def ordinalize(self, number):  # type: (int) -> str
         ordinal = self.get("custom.ordinal.{}".format(self.ordinal(number)))
 
         if not ordinal:

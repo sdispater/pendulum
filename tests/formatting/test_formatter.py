@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import pendulum
 import pytest
 
-import pendulum
 from pendulum.formatting import Formatter
 from pendulum.locales.locale import Locale
 

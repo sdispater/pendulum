@@ -1,50 +1,62 @@
 from __future__ import absolute_import
 
-import pendulum
 import os
 import struct
 
-from math import copysign
-from datetime import datetime, date, timedelta
 from contextlib import contextmanager
-from typing import Union
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+from math import copysign
+from typing import TYPE_CHECKING
+from typing import Iterator
+from typing import Optional
+from typing import TypeVar
+from typing import overload
 
-with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
-
-try:
-    if not with_extensions or struct.calcsize("P") == 4:
-        raise ImportError()
-
-    from ._extensions._helpers import (
-        local_time,
-        precise_diff,
-        is_leap,
-        is_long_year,
-        week_day,
-        days_in_year,
-        timestamp,
-    )
-except ImportError:
-    from ._extensions.helpers import (
-        local_time,
-        precise_diff,
-        is_leap,
-        is_long_year,
-        week_day,
-        days_in_year,
-        timestamp,
-    )
+import pendulum
 
 from .constants import DAYS_PER_MONTHS
 from .formatting.difference_formatter import DifferenceFormatter
 from .locales.locale import Locale
 
 
+if TYPE_CHECKING:
+    # Prevent import cycles
+    from .period import Period
+
+with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
+
+_DT = TypeVar("_DT", bound=datetime)
+_D = TypeVar("_D", bound=date)
+
+try:
+    if not with_extensions or struct.calcsize("P") == 4:
+        raise ImportError()
+
+    from ._extensions._helpers import local_time
+    from ._extensions._helpers import precise_diff
+    from ._extensions._helpers import is_leap
+    from ._extensions._helpers import is_long_year
+    from ._extensions._helpers import week_day
+    from ._extensions._helpers import days_in_year
+    from ._extensions._helpers import timestamp
+except ImportError:
+    from ._extensions.helpers import local_time  # noqa
+    from ._extensions.helpers import precise_diff  # noqa
+    from ._extensions.helpers import is_leap  # noqa
+    from ._extensions.helpers import is_long_year  # noqa
+    from ._extensions.helpers import week_day  # noqa
+    from ._extensions.helpers import days_in_year  # noqa
+    from ._extensions.helpers import timestamp  # noqa
+
+
 difference_formatter = DifferenceFormatter()
 
 
+@overload
 def add_duration(
-    dt,  # type:  Union[datetime, date]
+    dt,  # type: _DT
     years=0,  # type: int
     months=0,  # type: int
     weeks=0,  # type: int
@@ -52,8 +64,33 @@ def add_duration(
     hours=0,  # type: int
     minutes=0,  # type: int
     seconds=0,  # type: int
+    microseconds=0,  # type: int
+):  # type: (...) -> _DT
+    pass
+
+
+@overload
+def add_duration(
+    dt,  # type: _D
+    years=0,  # type: int
+    months=0,  # type: int
+    weeks=0,  # type: int
+    days=0,  # type: int
+):  # type: (...) -> _D
+    pass
+
+
+def add_duration(
+    dt,
+    years=0,
+    months=0,
+    weeks=0,
+    days=0,
+    hours=0,
+    minutes=0,
+    seconds=0,
     microseconds=0,
-):  # type: (...) -> Union[datetime, date]
+):
     """
     Adds a duration to a date/datetime instance.
     """
@@ -122,7 +159,9 @@ def add_duration(
     )
 
 
-def format_diff(diff, is_now=True, absolute=False, locale=None):
+def format_diff(
+    diff, is_now=True, absolute=False, locale=None
+):  # type: (Period, bool, bool, Optional[str]) -> str
     if locale is None:
         locale = get_locale()
 
@@ -137,19 +176,19 @@ def _sign(x):
 
 
 @contextmanager
-def test(mock):
+def test(mock):  # type: (pendulum.DateTime) -> Iterator[None]
     set_test_now(mock)
+    try:
+        yield
+    finally:
+        set_test_now()
 
-    yield
 
-    set_test_now()
-
-
-def set_test_now(test_now=None):
+def set_test_now(test_now=None):  # type: (Optional[pendulum.DateTime]) -> None
     pendulum._TEST_NOW = test_now
 
 
-def get_test_now():  # type: () -> pendulum.DateTime
+def get_test_now():  # type: () -> Optional[pendulum.DateTime]
     return pendulum._TEST_NOW
 
 
@@ -157,28 +196,28 @@ def has_test_now():  # type: () -> bool
     return pendulum._TEST_NOW is not None
 
 
-def locale(name):
+def locale(name):  # type: (str) -> Locale
     return Locale.load(name)
 
 
-def set_locale(name):
+def set_locale(name):  # type: (str) -> None
     locale(name)
 
     pendulum._LOCALE = name
 
 
-def get_locale():
+def get_locale():  # type: () -> str
     return pendulum._LOCALE
 
 
-def week_starts_at(wday):
+def week_starts_at(wday):  # type: (int) -> None
     if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
         raise ValueError("Invalid week day as start of week.")
 
     pendulum._WEEK_STARTS_AT = wday
 
 
-def week_ends_at(wday):
+def week_ends_at(wday):  # type: (int) -> None
     if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
         raise ValueError("Invalid week day as start of week.")
 

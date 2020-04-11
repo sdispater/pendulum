@@ -1,5 +1,5 @@
-import pytest
 import pendulum
+import pytest
 
 
 @pytest.fixture(autouse=True)

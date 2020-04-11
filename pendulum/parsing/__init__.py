@@ -3,10 +3,14 @@ import os
 import re
 import struct
 
-from datetime import datetime, date, time
+from datetime import date
+from datetime import datetime
+from datetime import time
+
 from dateutil import parser
 
 from .exceptions import ParserError
+
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
@@ -24,21 +28,21 @@ COMMON = re.compile(
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD)
-    "        (?P<year>\d{4})"  # Year
+    r"        (?P<year>\d{4})"  # Year
     "        (?P<monthday>"
-    "            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
-    "            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
+    r"            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
+    r"            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
     "        )?"
     "    )"
     ")?"
     # Time (optional)
     "(?P<time>"
-    "    (?P<timesep>\ )?"  # Separator (space)
-    "    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
+    r"    (?P<timesep>\ )?"  # Separator (space)
+    r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
     # Subsecond part (optional)
     "    (?P<subsecondsection>"
     "        (?:[.|,])"  # Subsecond separator (optional)
-    "        (?P<subsecond>\d{1,9})"  # Subsecond
+    r"        (?P<subsecond>\d{1,9})"  # Subsecond
     "    )?"
     ")?"
     "$",

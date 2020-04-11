@@ -1,6 +1,6 @@
-import pendulum
-
 from datetime import datetime
+
+import pendulum
 
 from ..conftest import assert_datetime
 

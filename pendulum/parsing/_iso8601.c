@@ -178,6 +178,7 @@ int is_long_year(int year) {
 typedef struct {
     PyObject_HEAD
     int offset;
+    char *tzname;
 } FixedOffset;
 
 /*
@@ -186,10 +187,16 @@ typedef struct {
 */
 static int FixedOffset_init(FixedOffset *self, PyObject *args, PyObject *kwargs) {
     int offset;
-    if (!PyArg_ParseTuple(args, "i", &offset))
+    char *tzname = NULL;
+
+    static char *kwlist[] = {"offset", "tzname", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|s", kwlist, &offset, &tzname))
         return -1;
 
     self->offset = offset;
+    self->tzname = tzname;
+
     return 0;
 }
 
@@ -217,6 +224,10 @@ static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *args) {
  *     return "%s%d:%d" % (sign, self.offset / 60, self.offset % 60)
  */
 static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
+    if (self->tzname != NULL) {
+        return PyUnicode_FromString(self->tzname);
+    }
+
     char tzname_[7] = {0};
     char sign = '+';
     int offset = self->offset;
@@ -292,16 +303,17 @@ static PyTypeObject FixedOffset_type = {
  * Skip overhead of calling PyObject_New and PyObject_Init.
  * Directly allocate object.
  */
-static PyObject *new_fixed_offset_ex(int offset, PyTypeObject *type) {
+static PyObject *new_fixed_offset_ex(int offset, char *name, PyTypeObject *type) {
     FixedOffset *self = (FixedOffset *) (type->tp_alloc(type, 0));
 
     if (self != NULL)
         self->offset = offset;
+        self->tzname = name;
 
     return (PyObject *) self;
 }
 
-#define new_fixed_offset(offset) new_fixed_offset_ex(offset, &FixedOffset_type)
+#define new_fixed_offset(offset, name) new_fixed_offset_ex(offset, name, &FixedOffset_type)
 
 
 /*
@@ -455,6 +467,7 @@ typedef struct {
     int microsecond;
     int offset;
     int has_offset;
+    char *tzname;
     int years;
     int months;
     int weeks;
@@ -487,6 +500,7 @@ Parsed* new_parsed() {
         parsed->microsecond = 0;
         parsed->offset = 0;
         parsed->has_offset = 0;
+        parsed->tzname = NULL;
 
         parsed->years = 0;
         parsed->months = 0;
@@ -585,7 +599,7 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
         }
 
         // Checks
-        if (week > 53 || week > 52 && !is_long_year(parsed->year)) {
+        if (week > 53 || (week > 52 && !is_long_year(parsed->year))) {
             parsed->error = PARSER_INVALID_WEEK_NUMBER;
 
             return NULL;
@@ -659,6 +673,10 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
                     // which is invalid for a date
                     // But it might be a time in the form hhmmss
                     parsed->ambiguous = 1;
+                } else if (separators > 1) {
+                    parsed->error = PARSER_INVALID_DATE;
+
+                    return NULL;
                 }
 
                 parsed->month = monthday;
@@ -846,6 +864,7 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
         // Timezone
         if (*c == 'Z') {
             parsed->has_offset = 1;
+            parsed->tzname = "UTC";
             c++;
         } else if (*c == '+' || *c == '-') {
             tz_sign = 1;
@@ -1254,7 +1273,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         if (!parsed->has_offset) {
             tzinfo = Py_BuildValue("");
         } else {
-            tzinfo = new_fixed_offset(parsed->offset);
+            tzinfo = new_fixed_offset(parsed->offset, parsed->tzname);
         }
 
         obj = PyDateTimeAPI->DateTime_FromDateAndTime(

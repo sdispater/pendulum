@@ -1,7 +1,7 @@
+from datetime import date
+
 import pendulum
 import pytest
-
-from datetime import date
 
 
 @pytest.fixture

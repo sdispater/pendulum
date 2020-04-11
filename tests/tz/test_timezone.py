@@ -1,11 +1,14 @@
-import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 import pendulum
+import pytest
+
 from pendulum import timezone
-from pendulum.utils._compat import PY36
 from pendulum.tz import fixed_timezone
-from pendulum.tz.exceptions import NonExistingTime, AmbiguousTime
+from pendulum.tz.exceptions import AmbiguousTime
+from pendulum.tz.exceptions import NonExistingTime
+from pendulum.utils._compat import PY36
 
 from ..conftest import assert_datetime
 
@@ -301,6 +304,12 @@ def test_utcoffset():
     tz = pendulum.timezone("America/Guayaquil")
     utcoffset = tz.utcoffset(pendulum.now("UTC"))
     assert utcoffset == timedelta(0, -18000)
+
+
+def test_utcoffset_pre_transition():
+    tz = pendulum.timezone("America/Chicago")
+    utcoffset = tz.utcoffset(datetime(1883, 11, 18))
+    assert utcoffset == timedelta(days=-1, seconds=64800)
 
 
 def test_dst():

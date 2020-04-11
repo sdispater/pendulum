@@ -1,7 +1,7 @@
+from datetime import datetime
+
 import pendulum
 import pytest
-
-from datetime import datetime
 
 
 def test_diff_in_years_positive():

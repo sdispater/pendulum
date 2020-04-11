@@ -1,4 +1,4 @@
-from .parsing.exceptions import ParserError
+from .parsing.exceptions import ParserError  # noqa
 
 
 class PendulumException(Exception):

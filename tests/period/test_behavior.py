@@ -1,7 +1,8 @@
 import pickle
-import pendulum
 
 from datetime import timedelta
+
+import pendulum
 
 
 def test_pickle():
@@ -40,3 +41,12 @@ def test_comparison_to_timedelta():
     period = dt2 - dt1
 
     assert period < timedelta(days=4)
+
+
+def test_equality_to_timedelta():
+    dt1 = pendulum.datetime(2016, 11, 18)
+    dt2 = pendulum.datetime(2016, 11, 20)
+
+    period = dt2 - dt1
+
+    assert period == timedelta(days=2)

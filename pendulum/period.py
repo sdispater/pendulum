@@ -1,15 +1,18 @@
 from __future__ import absolute_import
 
 import operator
-import pendulum
 
-from datetime import datetime, date, timedelta
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+
+import pendulum
 
 from pendulum.utils._compat import _HAS_FOLD
 from pendulum.utils._compat import decode
 
-from .duration import Duration
 from .constants import MONTHS_PER_YEAR
+from .duration import Duration
 from .helpers import precise_diff
 
 
@@ -266,10 +269,15 @@ class Period(Duration):
                 )
                 parts.append(translation.format(count))
 
-        if not parts and abs(self.microseconds) > 0:
-            translation = locale.translation("units.second.{}".format(locale.plural(1)))
-            us = abs(self.microseconds) / 1e6
-            parts.append(translation.format("{:.2f}").format(us))
+        if not parts:
+            if abs(self.microseconds) > 0:
+                unit = "units.second.{}".format(locale.plural(1))
+                count = "{:.2f}".format(abs(self.microseconds) / 1e6)
+            else:
+                unit = "units.microsecond.{}".format(locale.plural(0))
+                count = 0
+            translation = locale.translation(unit)
+            parts.append(translation.format(count))
 
         return decode(separator.join(parts))
 
@@ -372,8 +380,11 @@ class Period(Duration):
         return hash((self.start, self.end, self._absolute))
 
     def __eq__(self, other):
-        return (self.start, self.end, self._absolute) == (
-            other.start,
-            other.end,
-            other._absolute,
-        )
+        if isinstance(other, Period):
+            return (self.start, self.end, self._absolute) == (
+                other.start,
+                other.end,
+                other._absolute,
+            )
+        else:
+            return self.as_interval() == other

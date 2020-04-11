@@ -1,6 +1,6 @@
 # Addition and Subtraction
 
-To easily adding and subtracting time, you can use the `add()` and `subtract()`
+To easily add and subtract time, you can use the `add()` and `subtract()`
 methods.
 Each method returns a new `DateTime` instance.
 
@@ -78,12 +78,6 @@ Each method returns a new `DateTime` instance.
 >>> dt = dt.add(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
 '2015-04-03 12:31:43'
 >>> dt = dt.subtract(years=3, months=2, days=6, hours=12, minutes=31, seconds=43)
-'2012-01-28 00:00:00'
-
-# You can also add or remove a timedelta
->>> dt.add_timedelta(timedelta(hours=3, minutes=4, seconds=5))
-'2012-01-28 03:04:05'
->>> dt.sub_timedelta(timedelta(hours=3, minutes=4, seconds=5))
 '2012-01-28 00:00:00'
 ```
 

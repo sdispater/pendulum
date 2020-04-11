@@ -52,10 +52,13 @@ def test_is_long_year():
 
 def test_week_of_month():
     assert pendulum.Date(2012, 9, 30).week_of_month == 5
-    assert pendulum.Date(2012, 9, 28).week_of_month == 4
-    assert pendulum.Date(2012, 9, 20).week_of_month == 3
+    assert pendulum.Date(2012, 9, 28).week_of_month == 5
+    assert pendulum.Date(2012, 9, 20).week_of_month == 4
     assert pendulum.Date(2012, 9, 8).week_of_month == 2
     assert pendulum.Date(2012, 9, 1).week_of_month == 1
+    assert pendulum.date(2020, 1, 1).week_of_month == 1
+    assert pendulum.date(2020, 1, 7).week_of_month == 2
+    assert pendulum.date(2020, 1, 14).week_of_month == 3
 
 
 def test_week_of_year_first_week():

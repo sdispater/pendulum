@@ -16,7 +16,7 @@ True
 
 `datetime()` sets the time to `00:00:00` if it's not specified,
 and the timezone (the `tz` keyword argument) to `UTC`.
-It otherwise can be a `Timezone` instance or simply a string timezone value.
+Otherwise it can be a `Timezone` instance or simply a string timezone value.
 
 ```python
 >>> import pendulum
@@ -88,7 +88,7 @@ and each has their time value set to `00:00:00`.
 ```
 
 Pendulum enforces timezone aware datetimes, and using them is the preferred and recommended way
-of using the library, however is you really need a **naive** `DateTime` object, the `naive()` helper
+of using the library. However, if you really need a **naive** `DateTime` object, the `naive()` helper
 is there for you.
 
 ```python
@@ -133,7 +133,7 @@ and will set the timezone as well or default it to `UTC`.
 '1970-01-01T00:59:59+01:00'
 ```
 
-Finally, if you find yourself inheriting a `DateTime` instance,
+Finally, if you find yourself inheriting a `datetime.datetime` instance,
 you can create a `DateTime` instance via the `instance()` function.
 
 ```python

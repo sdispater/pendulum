@@ -6,7 +6,7 @@ Installing `pendulum` is quite simple:
 $ pip install pendulum
 ```
 
-or, if you are using [poetry](https://poetry.eustace.io):
+or, if you are using [poetry](https://python-poetry.org):
 
 ```bash
 $ poetry add pendulum

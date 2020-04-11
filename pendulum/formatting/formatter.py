@@ -1,37 +1,37 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 import datetime
-import pendulum
+import re
 import typing
 
-from pendulum.helpers import local_time
+import pendulum
+
 from pendulum.locales.locale import Locale
 from pendulum.utils._compat import decode
 
 
-_MATCH_1 = "\d"
-_MATCH_2 = "\d\d"
-_MATCH_3 = "\d{3}"
-_MATCH_4 = "\d{4}"
-_MATCH_6 = "[+-]?\d{6}"
-_MATCH_1_TO_2 = "\d\d?"
-_MATCH_1_TO_2_LEFT_PAD = "[0-9 ]\d?"
-_MATCH_1_TO_3 = "\d{1,3}"
-_MATCH_1_TO_4 = "\d{1,4}"
-_MATCH_1_TO_6 = "[+-]?\d{1,6}"
-_MATCH_3_TO_4 = "\d{3}\d?"
-_MATCH_5_TO_6 = "\d{5}\d?"
-_MATCH_UNSIGNED = "\d+"
-_MATCH_SIGNED = "[+-]?\d+"
-_MATCH_OFFSET = "[Zz]|[+-]\d\d:?\d\d"
-_MATCH_SHORT_OFFSET = "[Zz]|[+-]\d\d(?::?\d\d)?"
-_MATCH_TIMESTAMP = "[+-]?\d+(\.\d{1,6})?"
+_MATCH_1 = r"\d"
+_MATCH_2 = r"\d\d"
+_MATCH_3 = r"\d{3}"
+_MATCH_4 = r"\d{4}"
+_MATCH_6 = r"[+-]?\d{6}"
+_MATCH_1_TO_2 = r"\d\d?"
+_MATCH_1_TO_2_LEFT_PAD = r"[0-9 ]\d?"
+_MATCH_1_TO_3 = r"\d{1,3}"
+_MATCH_1_TO_4 = r"\d{1,4}"
+_MATCH_1_TO_6 = r"[+-]?\d{1,6}"
+_MATCH_3_TO_4 = r"\d{3}\d?"
+_MATCH_5_TO_6 = r"\d{5}\d?"
+_MATCH_UNSIGNED = r"\d+"
+_MATCH_SIGNED = r"[+-]?\d+"
+_MATCH_OFFSET = r"[Zz]|[+-]\d\d:?\d\d"
+_MATCH_SHORT_OFFSET = r"[Zz]|[+-]\d\d(?::?\d\d)?"
+_MATCH_TIMESTAMP = r"[+-]?\d+(\.\d{1,6})?"
 _MATCH_WORD = (
     "(?i)[0-9]*"
     "['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+"
-    "|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}"
+    r"|[\u0600-\u06FF/]+(\s*?[\u0600-\u06FF]+){1,2}"
 )
 _MATCH_TIMEZONE = "[A-Za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 
@@ -39,7 +39,7 @@ _MATCH_TIMEZONE = "[A-Za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 class Formatter:
 
     _TOKENS = (
-        "\[([^\[]*)\]|\\\(.)|"
+        r"\[([^\[]*)\]|\\(.)|"
         "("
         "Mo|MM?M?M?"
         "|Do|DDDo|DD?D?D?|ddd?d?|do?"
@@ -67,7 +67,7 @@ class Formatter:
         "Mo": None,
         "DDDo": None,
         "Do": lambda locale: tuple(
-            "\d+{}".format(o) for o in locale.get("custom.ordinal").values()
+            r"\d+{}".format(o) for o in locale.get("custom.ordinal").values()
         ),
         "dddd": "days.wide",
         "ddd": "days.abbreviated",
@@ -229,7 +229,9 @@ class Formatter:
         "z": str,
     }
 
-    def format(self, dt, fmt, locale=None):
+    def format(
+        self, dt, fmt, locale=None
+    ):  # type: (pendulum.DateTime, str, typing.Optional[typing.Union[str, Locale]]) -> str
         """
         Formats a DateTime instance with a given format and locale.
 
@@ -260,7 +262,9 @@ class Formatter:
 
         return decode(result)
 
-    def _format_token(self, dt, token, locale):
+    def _format_token(
+        self, dt, token, locale
+    ):  # type: (pendulum.DateTime, str, Locale) -> str
         """
         Formats a DateTime instance with a given token and locale.
 
@@ -306,7 +310,9 @@ class Formatter:
 
             return "{}{:02d}{}{:02d}".format(sign, hour, separator, minute)
 
-    def _format_localizable_token(self, dt, token, locale):
+    def _format_localizable_token(
+        self, dt, token, locale
+    ):  # type: (pendulum.DateTime, str, Locale) -> str
         """
         Formats a DateTime instance
         with a given localizable token and locale.
@@ -360,8 +366,8 @@ class Formatter:
         time,  # type: str
         fmt,  # type: str
         now,  # type: pendulum.DateTime
-        locale=None,  # type:  typing.Union[str, None]
-    ):  # type: (...) -> dict
+        locale=None,  # type:  typing.Optional[str]
+    ):  # type: (...) -> typing.Dict[str, typing.Any]
         """
         Parses a time string matching a given format as a tuple.
 
@@ -410,7 +416,9 @@ class Formatter:
 
         return self._check_parsed(parsed, now)
 
-    def _check_parsed(self, parsed, now):  # type: (dict, pendulum.DateTime) -> dict
+    def _check_parsed(
+        self, parsed, now
+    ):  # type: (typing.Dict[str, typing.Any], pendulum.DateTime) -> typing.Dict[str, typing.Any]
         """
         Checks validity of parsed elements.
 
@@ -437,6 +445,8 @@ class Formatter:
                 microseconds = int("{}".format(str_us.split(".")[1].ljust(6, "0")))
             else:
                 microseconds = 0
+
+            from pendulum.helpers import local_time
 
             time = local_time(parsed["timestamp"], 0, microseconds)
             validated["year"] = time[0]
@@ -530,7 +540,7 @@ class Formatter:
 
     def _get_parsed_values(
         self, m, parsed, locale, now
-    ):  # type: (..., dict, Locale, pendulum.DateTime) -> None
+    ):  # type: (typing.Match[str], typing.Dict[str, typing.Any], Locale, pendulum.DateTime) -> None
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
                 self._get_parsed_locale_value(token, m.group(index), parsed, locale)
@@ -539,7 +549,7 @@ class Formatter:
 
     def _get_parsed_value(
         self, token, value, parsed, now
-    ):  # type: (str, str, dict, pendulum.DateTime) -> None
+    ):  # type: (str, str, typing.Dict[str, typing.Any], pendulum.DateTime) -> None
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if "Y" in token:
@@ -599,7 +609,7 @@ class Formatter:
 
     def _get_parsed_locale_value(
         self, token, value, parsed, locale
-    ):  # type: (str, str, dict, Locale) -> None
+    ):  # type: (str, str, typing.Dict[str, typing.Any], Locale) -> None
         if token == "MMMM":
             unit = "month"
             match = "months.wide"
@@ -607,7 +617,7 @@ class Formatter:
             unit = "month"
             match = "months.abbreviated"
         elif token == "Do":
-            parsed["day"] = int(re.match("(\d+)", value).group(1))
+            parsed["day"] = int(re.match(r"(\d+)", value).group(1))
 
             return
         elif token == "dddd":

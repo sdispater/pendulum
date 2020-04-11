@@ -1,12 +1,16 @@
 import pickle
-from datetime import datetime, date, time, timedelta
-from copy import deepcopy
 
-import pytest
+from copy import deepcopy
+from datetime import date
+from datetime import datetime
+from datetime import time
+from datetime import timedelta
 
 import pendulum
-from pendulum.tz.timezone import Timezone
+import pytest
+
 from pendulum import timezone
+from pendulum.tz.timezone import Timezone
 
 
 @pytest.fixture

@@ -1,12 +1,15 @@
 from __future__ import absolute_import
 
-import pytest
+from datetime import datetime
+
 import pendulum
+import pytest
 import pytz
 
-from datetime import datetime
 from pendulum import timezone
-from pendulum.helpers import precise_diff, week_day, days_in_year
+from pendulum.helpers import days_in_year
+from pendulum.helpers import precise_diff
+from pendulum.helpers import week_day
 
 from .conftest import assert_datetime
 
@@ -190,3 +193,20 @@ def test_week_ends_at_invalid_value():
 
     with pytest.raises(ValueError):
         pendulum.week_ends_at(11)
+
+
+def test_with_test():
+    t = pendulum.datetime(2000, 1, 1)
+
+    with pendulum.test(t):
+        assert pendulum.now() == t
+
+    assert pendulum.now() != t
+
+    # Also make sure that it restores things after an exception
+    with pytest.raises(RuntimeError):
+        with pendulum.test(t):
+            assert pendulum.now() == t
+            raise RuntimeError
+
+    assert pendulum.now() != t

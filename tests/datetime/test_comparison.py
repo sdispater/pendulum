@@ -1,7 +1,7 @@
-import pytz
 from datetime import datetime
 
 import pendulum
+import pytz
 
 from ..conftest import assert_datetime
 
@@ -72,7 +72,7 @@ def test_not_equal_with_timezone_true():
 def test_not_equal_to_none():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
 
-    assert d1 != None
+    assert d1 != None  # noqa
 
 
 def test_greater_than_true():
@@ -237,15 +237,32 @@ def test_less_than_or_equal_with_timezone_false():
     assert not d1 <= d3
 
 
-def test_is_birthday():
+def test_is_anniversary():
     with pendulum.test(pendulum.now()):
         d = pendulum.now()
-        a_birthday = d.subtract(years=1)
-        assert a_birthday.is_birthday()
-        not_a_birthday = d.subtract(days=1)
-        assert not not_a_birthday.is_birthday()
-        also_not_a_birthday = d.add(days=2)
-        assert not also_not_a_birthday.is_birthday()
+        an_anniversary = d.subtract(years=1)
+        assert an_anniversary.is_anniversary()
+        not_an_anniversary = d.subtract(days=1)
+        assert not not_an_anniversary.is_anniversary()
+        also_not_an_anniversary = d.add(days=2)
+        assert not also_not_an_anniversary.is_anniversary()
+
+    d1 = pendulum.datetime(1987, 4, 23)
+    d2 = pendulum.datetime(2014, 9, 26)
+    d3 = pendulum.datetime(2014, 4, 23)
+    assert not d2.is_anniversary(d1)
+    assert d3.is_anniversary(d1)
+
+
+def test_is_birthday():  # backward compatibility
+    with pendulum.test(pendulum.now()):
+        d = pendulum.now()
+        an_anniversary = d.subtract(years=1)
+        assert an_anniversary.is_birthday()
+        not_an_anniversary = d.subtract(days=1)
+        assert not not_an_anniversary.is_birthday()
+        also_not_an_anniversary = d.add(days=2)
+        assert not also_not_an_anniversary.is_birthday()
 
     d1 = pendulum.datetime(1987, 4, 23)
     d2 = pendulum.datetime(2014, 9, 26)

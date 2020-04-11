@@ -3,30 +3,29 @@ from __future__ import division
 
 import calendar
 import math
+
+from datetime import date
+from datetime import timedelta
+
 import pendulum
 
-from datetime import date, timedelta
-
-from .helpers import add_duration
-from .period import Period
-from .mixins.default import FormattableMixing
-from .constants import (
-    DAYS_PER_WEEK,
-    YEARS_PER_DECADE,
-    YEARS_PER_CENTURY,
-    MONTHS_PER_YEAR,
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY,
-)
+from .constants import FRIDAY
+from .constants import MONDAY
+from .constants import MONTHS_PER_YEAR
+from .constants import SATURDAY
+from .constants import SUNDAY
+from .constants import THURSDAY
+from .constants import TUESDAY
+from .constants import WEDNESDAY
+from .constants import YEARS_PER_CENTURY
+from .constants import YEARS_PER_DECADE
 from .exceptions import PendulumException
+from .helpers import add_duration
+from .mixins.default import FormattableMixin
+from .period import Period
 
 
-class Date(FormattableMixing, date):
+class Date(FormattableMixin, date):
 
     # Names of days of the week
     _days = {
@@ -76,7 +75,9 @@ class Date(FormattableMixing, date):
 
     @property
     def week_of_month(self):
-        return int(math.ceil(self.day / DAYS_PER_WEEK))
+        first_day_of_month = self.replace(day=1)
+
+        return self.week_of_year - first_day_of_month.week_of_year + 1
 
     @property
     def age(self):
@@ -196,9 +197,9 @@ class Date(FormattableMixing, date):
         """
         return self == dt
 
-    def is_birthday(self, dt=None):
+    def is_anniversary(self, dt=None):
         """
-        Check if its the birthday.
+        Check if its the anniversary.
 
         Compares the date/month values of the two dates.
 
@@ -207,9 +208,14 @@ class Date(FormattableMixing, date):
         if dt is None:
             dt = Date.today()
 
-        instance = dt1 = self.__class__(dt.year, dt.month, dt.day)
+        instance = self.__class__(dt.year, dt.month, dt.day)
 
         return (self.month, self.day) == (instance.month, instance.day)
+
+    # the additional method for checking if today is the anniversary day
+    # the alias is provided to start using a new name and keep the backward compatibility
+    # the old name can be completely replaced with the new in one of the future versions
+    is_birthday = is_anniversary
 
     # ADDITIONS AND SUBSTRACTIONS
 

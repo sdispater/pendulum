@@ -1,8 +1,8 @@
-import pytest
+from datetime import datetime
+from datetime import timedelta
 
 import pendulum
-
-from datetime import timedelta
+import pytest
 
 from ..conftest import assert_date
 
@@ -41,6 +41,11 @@ def test_subtract_days_zero():
 
 def test_subtract_days_negative():
     assert pendulum.Date(1975, 5, 30).subtract(days=-1).day == 31
+
+
+def test_subtract_days_max():
+    delta = pendulum.now() - pendulum.instance(datetime.min)
+    assert pendulum.now().subtract(days=delta.days - 1).year == 1
 
 
 def test_subtract_weeks_positive():

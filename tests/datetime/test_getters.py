@@ -1,12 +1,14 @@
+import struct
+
 import pendulum
 import pytest
-import struct
 
 from pendulum import DateTime
 from pendulum.tz import timezone
 from pendulum.utils._compat import _HAS_FOLD
 
-from ..conftest import assert_date, assert_time
+from ..conftest import assert_date
+from ..conftest import assert_time
 
 
 def test_year():
@@ -134,7 +136,10 @@ def test_utc():
     assert not pendulum.datetime(2012, 1, 1, tz="America/Toronto").is_utc()
     assert not pendulum.datetime(2012, 1, 1, tz="Europe/Paris").is_utc()
     assert pendulum.datetime(2012, 1, 1, tz="UTC").is_utc()
-    assert not pendulum.datetime(2012, 1, 1, tz="GMT").is_utc()
+    assert pendulum.datetime(2012, 1, 1, tz=0).is_utc()
+    assert not pendulum.datetime(2012, 1, 1, tz=5).is_utc()
+    # There is no time difference between Greenwich Mean Time and Coordinated Universal Time
+    assert pendulum.datetime(2012, 1, 1, tz="GMT").is_utc()
 
 
 def test_is_dst():
@@ -182,10 +187,13 @@ def test_is_long_year():
 
 def test_week_of_month():
     assert pendulum.datetime(2012, 9, 30).week_of_month == 5
-    assert pendulum.datetime(2012, 9, 28).week_of_month == 4
-    assert pendulum.datetime(2012, 9, 20).week_of_month == 3
+    assert pendulum.datetime(2012, 9, 28).week_of_month == 5
+    assert pendulum.datetime(2012, 9, 20).week_of_month == 4
     assert pendulum.datetime(2012, 9, 8).week_of_month == 2
     assert pendulum.datetime(2012, 9, 1).week_of_month == 1
+    assert pendulum.datetime(2020, 1, 1).week_of_month == 1
+    assert pendulum.datetime(2020, 1, 7).week_of_month == 2
+    assert pendulum.datetime(2020, 1, 14).week_of_month == 3
 
 
 def test_week_of_year_first_week():

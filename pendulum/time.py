@@ -1,20 +1,23 @@
 from __future__ import absolute_import
 
+from datetime import time
+from datetime import timedelta
+
 import pendulum
 
-from datetime import time, timedelta
+from .constants import SECS_PER_HOUR
+from .constants import SECS_PER_MIN
+from .constants import USECS_PER_SEC
+from .duration import AbsoluteDuration
+from .duration import Duration
+from .mixins.default import FormattableMixin
 
-from .duration import Duration, AbsoluteDuration
-from .mixins.default import FormattableMixing
-from .constants import USECS_PER_SEC, SECS_PER_HOUR, SECS_PER_MIN
 
-
-class Time(FormattableMixing, time):
+class Time(FormattableMixin, time):
     """
     Represents a time instance as hour, minute, second, microsecond.
     """
 
-    pass
     # String formatting
     def __repr__(self):
         us = ""

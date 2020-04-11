@@ -1,25 +1,24 @@
+import datetime
 import math
+import typing
+
 from collections import namedtuple
 
-import datetime
-
-from ..constants import (
-    EPOCH_YEAR,
-    SECS_PER_DAY,
-    SECS_PER_400_YEARS,
-    SECS_PER_100_YEARS,
-    SECS_PER_4_YEARS,
-    SECS_PER_YEAR,
-    SECS_PER_HOUR,
-    SECS_PER_MIN,
-    DAYS_PER_MONTHS,
-    MONTHS_OFFSETS,
-    TM_DECEMBER,
-    TM_JANUARY,
-    DAY_OF_WEEK_TABLE,
-    DAYS_PER_L_YEAR,
-    DAYS_PER_N_YEAR,
-)
+from ..constants import DAY_OF_WEEK_TABLE
+from ..constants import DAYS_PER_L_YEAR
+from ..constants import DAYS_PER_MONTHS
+from ..constants import DAYS_PER_N_YEAR
+from ..constants import EPOCH_YEAR
+from ..constants import MONTHS_OFFSETS
+from ..constants import SECS_PER_4_YEARS
+from ..constants import SECS_PER_100_YEARS
+from ..constants import SECS_PER_400_YEARS
+from ..constants import SECS_PER_DAY
+from ..constants import SECS_PER_HOUR
+from ..constants import SECS_PER_MIN
+from ..constants import SECS_PER_YEAR
+from ..constants import TM_DECEMBER
+from ..constants import TM_JANUARY
 
 
 class PreciseDiff(
@@ -48,18 +47,18 @@ class PreciseDiff(
         )
 
 
-def is_leap(year):
+def is_leap(year):  # type: (int) -> bool
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
-def is_long_year(year):
+def is_long_year(year):  # type: (int) -> bool
     def p(y):
         return y + y // 4 - y // 100 + y // 400
 
     return p(year) % 7 == 4 or p(year - 1) % 7 == 3
 
 
-def week_day(year, month, day):
+def week_day(year, month, day):  # type: (int, int, int) -> int
     if month < 3:
         year -= 1
 
@@ -78,14 +77,14 @@ def week_day(year, month, day):
     return w
 
 
-def days_in_year(year):
+def days_in_year(year):  # type: (int) -> int
     if is_leap(year):
         return DAYS_PER_L_YEAR
 
     return DAYS_PER_N_YEAR
 
 
-def timestamp(dt):  # type: (datetime) -> int
+def timestamp(dt):  # type: (datetime.datetime) -> int
     year = dt.year
 
     result = (year - 1970) * 365 + MONTHS_OFFSETS[0][dt.month]
@@ -107,7 +106,9 @@ def timestamp(dt):  # type: (datetime) -> int
     return result
 
 
-def local_time(unix_time, utc_offset, microseconds):
+def local_time(
+    unix_time, utc_offset, microseconds
+):  # type: (int, int, int) -> typing.Tuple[int, int, int, int, int, int, int]
     """
     Returns a UNIX time as a broken down time
     for a particular transition type.
@@ -182,7 +183,9 @@ def local_time(unix_time, utc_offset, microseconds):
     return (year, month, day, hour, minute, second, microseconds)
 
 
-def precise_diff(d1, d2):
+def precise_diff(
+    d1, d2
+):  # type: (typing.Union[datetime.datetime, datetime.date], typing.Union[datetime.datetime, datetime.date]) -> PreciseDiff
     """
     Calculate a precise difference between two datetimes.
 
@@ -341,7 +344,7 @@ def precise_diff(d1, d2):
     )
 
 
-def _day_number(year, month, day):
+def _day_number(year, month, day):  # type: (int, int, int) -> int
     month = (month + 9) % 12
     year = year - month // 10
 

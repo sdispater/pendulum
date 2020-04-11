@@ -1,3 +1,7 @@
+import typing
+
+import pendulum
+
 from pendulum.utils._compat import decode
 
 from ..locales.locale import Locale
@@ -11,7 +15,9 @@ class DifferenceFormatter(object):
     def __init__(self, locale="en"):
         self._locale = Locale.load(locale)
 
-    def format(self, diff, is_now=True, absolute=False, locale=None):
+    def format(
+        self, diff, is_now=True, absolute=False, locale=None
+    ):  # type: (pendulum.Period, bool, bool, typing.Optional[str]) -> str
         """
         Formats a difference.
 
