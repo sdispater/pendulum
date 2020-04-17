@@ -56,6 +56,9 @@ The following are methods to display a `DateTime` instance as a common format:
 >>> dt.to_cookie_string()
 'Thursday, 25-Dec-1975 14:15:16 EST'
 
+>>> dt.to_http_date_string()
+'Thu, 25 Dec 1975 19:15:16 GMT'
+
 >>> dt.to_iso8601_string()
 '1975-12-25T14:15:16-0500'
 

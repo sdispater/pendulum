@@ -38,6 +38,11 @@ def test_to_cookie_string():
     assert d.to_cookie_string() == "Thursday, 25-Dec-1975 14:15:16 EST"
 
 
+def test_to_http_date_string():
+    d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
+    assert d.to_http_date_string() == "Thu, 25 Dec 1975 19:15:16 GMT"
+
+
 def test_to_iso8601_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
     assert d.to_iso8601_string() == "1975-12-25T14:15:16-05:00"

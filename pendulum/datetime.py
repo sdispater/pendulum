@@ -23,6 +23,7 @@ from .constants import RFC850
 from .constants import RFC1036
 from .constants import RFC1123
 from .constants import RFC2822
+from .constants import RFC7231
 from .constants import RSS
 from .constants import SATURDAY
 from .constants import SECONDS_PER_DAY
@@ -56,6 +57,7 @@ class DateTime(datetime.datetime, Date):
         "rfc1123": RFC1123,
         "rfc2822": RFC2822,
         "rfc3339": lambda dt: dt.isoformat(),
+        "rfc7231": RFC7231,
         "rss": RSS,
         "w3c": W3C,
     }
@@ -279,6 +281,14 @@ class DateTime(datetime.datetime, Date):
         Format the instance as COOKIE.
         """
         return self._to_string("cookie", locale="en")
+
+    def to_http_date_string(self) -> str:
+        """
+        Format the instance as HTTP Date (RFC 7231).
+
+        HTTP dates are always expressed in GMT, never in local time.
+        """
+        return self.in_timezone("GMT")._to_string("rfc7231", locale="en")
 
     def to_iso8601_string(self) -> str:
         """

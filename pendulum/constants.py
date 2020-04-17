@@ -30,6 +30,7 @@ RFC850 = "dddd, DD-MMM-YY HH:mm:ss zz"
 RFC1036 = "ddd, DD MMM YY HH:mm:ss ZZ"
 RFC1123 = "ddd, DD MMM YYYY HH:mm:ss ZZ"
 RFC2822 = "ddd, DD MMM YYYY HH:mm:ss ZZ"
+RFC7231 = "ddd, DD MMM YYYY HH:mm:ss zz"
 RFC3339 = ISO8601
 RFC3339_EXTENDED = ISO8601_EXTENDED
 RSS = "ddd, DD MMM YYYY HH:mm:ss ZZ"
