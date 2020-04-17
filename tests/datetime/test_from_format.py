@@ -9,6 +9,7 @@ def test_from_format_returns_datetime():
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert isinstance(d, pendulum.DateTime)
     assert "UTC" == d.timezone_name
+    assert "UTC" == d.timezone_abbr
 
 
 def test_from_format_rejects_extra_text():
@@ -22,6 +23,7 @@ def test_from_format_with_timezone_string():
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert "Europe/London" == d.timezone_name
+    assert "BST" == d.timezone_abbr
 
 
 def test_from_format_with_timezone():
@@ -32,6 +34,7 @@ def test_from_format_with_timezone():
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert "Europe/London" == d.timezone_name
+    assert "BST" == d.timezone_abbr
 
 
 def test_from_format_with_square_bracket_in_timezone():
@@ -45,12 +48,14 @@ def test_from_format_with_escaped_elements():
     d = pendulum.from_format("1975-05-21T22:32:11+00:00", "YYYY-MM-DD[T]HH:mm:ssZ")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert "+00:00" == d.timezone_name
+    assert "+00:00" == d.timezone_abbr
 
 
 def test_from_format_with_escaped_elements_valid_tokens():
     d = pendulum.from_format("1975-05-21T22:32:11.123Z", "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert "UTC" == d.timezone_name
+    assert "UTC" == d.timezone_abbr
 
 
 def test_from_format_with_millis():
@@ -198,3 +203,4 @@ def test_strptime():
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert isinstance(d, pendulum.DateTime)
     assert "UTC" == d.timezone_name
+    assert "UTC" == d.timezone_abbr

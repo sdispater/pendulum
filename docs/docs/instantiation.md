@@ -62,6 +62,8 @@ There is also the `now()` method.
 >>> now_in_london_tz = pendulum.now('Europe/London')
 >>> now_in_london_tz.timezone_name
 'Europe/London'
+>>> now_in_london_tz.timezone_abbr
+'BST'
 ```
 
 To accompany `now()`, a few other static instantiation helpers exist to create known instances.

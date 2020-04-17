@@ -220,6 +220,14 @@ def test_timezone_name():
     assert d.timezone_name == "-05:00"
 
 
+def test_timezone_abbr():
+    d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    assert d.timezone_abbr == "EST"
+
+    d = pendulum.datetime(2000, 1, 1, tz=-5)
+    assert d.timezone_abbr == "-05:00"
+
+
 def test_is_future():
     with pendulum.test(DateTime(2000, 1, 1)):
         d = pendulum.now()

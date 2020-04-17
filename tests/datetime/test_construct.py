@@ -29,29 +29,35 @@ def test_creates_an_instance_default_to_utcnow():
         now.year, now.month, now.day, now.hour, now.minute, now.second
     )
     assert now.timezone_name == p.timezone_name
+    assert now.timezone_name == p.timezone_abbr
+    assert now.timezone_abbr == p.timezone_abbr
 
     assert_datetime(p, now.year, now.month, now.day, now.hour, now.minute, now.second)
 
 
 def test_setting_timezone():
     tz = "Europe/London"
+    abbr = "BST"
     dtz = timezone(tz)
     dt = datetime.utcnow()
     offset = dtz.convert(dt).utcoffset().total_seconds() / 3600
 
     p = pendulum.datetime(dt.year, dt.month, dt.day, tz=dtz)
     assert p.timezone_name == tz
+    assert p.timezone_abbr == abbr
     assert p.offset_hours == int(offset)
 
 
 def test_setting_timezone_with_string():
     tz = "Europe/London"
+    abbr = "BST"
     dtz = timezone(tz)
     dt = datetime.utcnow()
     offset = dtz.convert(dt).utcoffset().total_seconds() / 3600
 
     p = pendulum.datetime(dt.year, dt.month, dt.day, tz=tz)
     assert p.timezone_name == tz
+    assert p.timezone_abbr == abbr
     assert p.offset_hours == int(offset)
 
 
@@ -78,22 +84,26 @@ def test_yesterday():
 def test_instance_naive_datetime_defaults_to_utc():
     now = pendulum.instance(datetime.now())
     assert now.timezone_name == "UTC"
+    assert now.timezone_abbr == "UTC"
 
 
 def test_instance_timezone_aware_datetime():
     now = pendulum.instance(datetime.now(timezone("Europe/Paris")))
     assert now.timezone_name == "Europe/Paris"
+    assert now.timezone_abbr == "CEST"
 
 
 def test_instance_timezone_aware_datetime_pytz():
     now = pendulum.instance(datetime.now(pytz.timezone("Europe/Paris")))
     assert now.timezone_name == "Europe/Paris"
+    assert now.timezone_abbr == "CEST"
 
 
 def test_instance_timezone_aware_datetime_any_tzinfo():
     dt = datetime(2016, 8, 7, 12, 34, 56, tzinfo=tz.gettz("Europe/Paris"))
     now = pendulum.instance(dt)
     assert now.timezone_name == "+02:00"
+    assert now.timezone_abbr == "+02:00"
 
 
 def test_now():
@@ -147,12 +157,14 @@ def test_now_with_fixed_offset():
     now = pendulum.now(6)
 
     assert "+06:00" == now.timezone_name
+    assert "+06:00" == now.timezone_abbr
 
 
 def test_create_with_no_transition_timezone():
     dt = pendulum.now("Etc/UTC")
 
     assert dt.timezone_name == "Etc/UTC"
+    assert dt.timezone_abbr == "UTC"
 
 
 def test_create_maintains_microseconds():
@@ -174,3 +186,4 @@ def test_local():
 
     assert_datetime(local, 2018, 2, 2, 12, 34, 56, 123456)
     assert local.timezone_name == "America/Toronto"
+    assert local.timezone_abbr == "EST"

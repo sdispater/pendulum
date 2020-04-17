@@ -183,6 +183,10 @@ class DateTime(datetime.datetime, Date):
         return tz.name
 
     @property
+    def timezone_abbr(self) -> Optional[str]:
+        return self.tzname()
+
+    @property
     def age(self) -> int:
         return self.date().diff(self.now(self.tz).date(), abs=False).in_years()
 

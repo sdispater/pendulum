@@ -63,6 +63,9 @@ Pendulum gives access to more attributes and properties than the default ``datet
 # Gets the timezone name
 >>> pendulum.now().timezone_name
 
+# Gets the timezone abbreviation
+>>> pendulum.now().timezone_abbr
+
 # Indicates if daylight savings time is on
 >>> dt = pendulum.datetime(2012, 1, 1, tz='America/Toronto')
 >>> dt.is_dst()
