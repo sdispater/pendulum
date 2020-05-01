@@ -10,6 +10,16 @@ from pendulum.tz.local_timezone import _get_windows_timezone
 @pytest.mark.skipif(
     sys.platform == "win32", reason="Test only available for UNIX systems"
 )
+def test_unix_environment_variable(monkeypatch):
+    # localtime can be set on unix with TZ environment variable
+    monkeypatch.setenv("TZ", "UTC")
+    tz = _get_unix_timezone()
+    assert tz.name == "UTC"
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Test only available for UNIX systems"
+)
 def test_unix_symlink():
     # A ZONE setting in the target path of a symbolic linked localtime,
     # f ex systemd distributions
