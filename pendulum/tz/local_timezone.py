@@ -248,7 +248,11 @@ def _tz_from_env(tzenv):  # type: (str) -> Timezone
 
     # TZ specifies a file
     if os.path.exists(tzenv):
-        return TimezoneFile(tzenv)
+        try:
+            return TimezoneFile(tzenv)
+        except FileNotFoundError:
+            # if cannot load from timezone file, assume path existing is coincidence
+            pass
 
     # TZ specifies a zoneinfo zone.
     try:
