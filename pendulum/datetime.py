@@ -330,7 +330,7 @@ class DateTime(datetime.datetime, Date):
 
     # STRING FORMATTING
 
-    def to_time_string(self):
+    def to_time_string(self):  # type: () -> str
         """
         Format the instance as time.
 
@@ -338,7 +338,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.format("HH:mm:ss")
 
-    def to_datetime_string(self):
+    def to_datetime_string(self):  # type: () -> str
         """
         Format the instance as date and time.
 
@@ -346,7 +346,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.format("YYYY-MM-DD HH:mm:ss")
 
-    def to_day_datetime_string(self):
+    def to_day_datetime_string(self):  # type: () -> str
         """
         Format the instance as day, date and time (in english).
 
@@ -354,7 +354,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.format("ddd, MMM D, YYYY h:mm A", locale="en")
 
-    def to_atom_string(self):
+    def to_atom_string(self):  # type: () -> str
         """
         Format the instance as ATOM.
 
@@ -362,7 +362,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("atom")
 
-    def to_cookie_string(self):
+    def to_cookie_string(self):  # type: () -> str
         """
         Format the instance as COOKIE.
 
@@ -370,7 +370,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("cookie", locale="en")
 
-    def to_iso8601_string(self):
+    def to_iso8601_string(self):  # type: () -> str
         """
         Format the instance as ISO 8601.
 
@@ -383,7 +383,7 @@ class DateTime(datetime.datetime, Date):
 
         return string
 
-    def to_rfc822_string(self):
+    def to_rfc822_string(self):  # type: () -> str
         """
         Format the instance as RFC 822.
 
@@ -391,7 +391,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc822")
 
-    def to_rfc850_string(self):
+    def to_rfc850_string(self):  # type: () -> str
         """
         Format the instance as RFC 850.
 
@@ -399,7 +399,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc850")
 
-    def to_rfc1036_string(self):
+    def to_rfc1036_string(self):  # type: () -> str
         """
         Format the instance as RFC 1036.
 
@@ -407,7 +407,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc1036")
 
-    def to_rfc1123_string(self):
+    def to_rfc1123_string(self):  # type: () -> str
         """
         Format the instance as RFC 1123.
 
@@ -415,7 +415,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc1123")
 
-    def to_rfc2822_string(self):
+    def to_rfc2822_string(self):  # type: () -> str
         """
         Format the instance as RFC 2822.
 
@@ -423,7 +423,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc2822")
 
-    def to_rfc3339_string(self):
+    def to_rfc3339_string(self):  # type: () -> str
         """
         Format the instance as RFC 3339.
 
@@ -431,7 +431,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rfc3339")
 
-    def to_rss_string(self):
+    def to_rss_string(self):  # type: () -> str
         """
         Format the instance as RSS.
 
@@ -439,7 +439,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self._to_string("rss")
 
-    def to_w3c_string(self):
+    def to_w3c_string(self):  # type: () -> str
         """
         Format the instance as W3C.
 

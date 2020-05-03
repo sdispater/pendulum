@@ -89,7 +89,7 @@ class Date(FormattableMixin, date):
 
     # String Formatting
 
-    def to_date_string(self):
+    def to_date_string(self):  # type: () -> str
         """
         Format the instance as date.
 
@@ -97,7 +97,7 @@ class Date(FormattableMixin, date):
         """
         return self.strftime("%Y-%m-%d")
 
-    def to_formatted_date_string(self):
+    def to_formatted_date_string(self):  # type: () -> str
         """
         Format the instance as a readable date.
 

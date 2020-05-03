@@ -22,7 +22,7 @@ class FormattableMixin(object):
         """
         return self._formatter.format(self, fmt, locale)
 
-    def for_json(self):
+    def for_json(self):  # type: () -> str
         """
         Methods for automatic json serialization by simplejson
 
