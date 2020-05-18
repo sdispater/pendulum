@@ -104,6 +104,9 @@ class Formatter:
         "d": lambda dt: "{:d}".format(dt.day_of_week),
         # Day of ISO Week
         "E": lambda dt: "{:d}".format(dt.isoweekday()),
+        # Week of Year
+        "WW": lambda dt: "{:02d}".format(dt.week_of_year),
+        "W": lambda dt: "{:d}".format(dt.week_of_year),
         # Hour
         "HH": lambda dt: "{:02d}".format(dt.hour),
         "H": lambda dt: "{:d}".format(dt.hour),
