@@ -212,10 +212,17 @@ class Date(FormattableMixin, date):
 
         return (self.month, self.day) == (instance.month, instance.day)
 
-    # the additional method for checking if today is the anniversary day
-    # the alias is provided to start using a new name and keep the backward compatibility
-    # the old name can be completely replaced with the new in one of the future versions
-    is_birthday = is_anniversary
+    def next_anniversary(self, dt=None) -> "Date":
+        """
+        Return the next anniversary date, either from today, or the given date
+        """
+        if dt is None:
+            dt = Date.today()
+
+        years = dt.year - self.year
+        this_year = self.add(years=years)
+
+        return this_year if this_year.is_future() else self.add(years=years + 1)
 
     # ADDITIONS AND SUBSTRACTIONS
 

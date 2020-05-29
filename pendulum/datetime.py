@@ -451,6 +451,18 @@ class DateTime(datetime.datetime, Date):
 
         return (self.month, self.day) == (instance.month, instance.day)
 
+    def next_anniversary(self, dt=None) -> "DateTime":
+        """
+        Return the next anniversary datetime, either from today, or the given datetime
+        """
+        if dt is None:
+            dt = self.now(self.tz)
+
+        years = dt.year - self.year
+        this_year = self.add(years=years)
+
+        return this_year if this_year.is_future() else self.add(years=years + 1)
+
     # ADDITIONS AND SUBSTRACTIONS
 
     def add(
