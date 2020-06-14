@@ -18,4 +18,4 @@ For example, all comparisons are done in `UTC` or in the timezone of the datetim
 3
 ```
 
-The default timezone, except when using the `now()`, method will always be `UTC`.
+The default timezone, except when using the `now()` method, will always be `UTC`.
