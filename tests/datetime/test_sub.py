@@ -231,3 +231,18 @@ def test_subtract_invalid_type():
 
     with pytest.raises(TypeError):
         "ab" - d
+
+
+def test_subtract_negative_over_dls_transitioning_off():
+    just_before_dls_ends = pendulum.datetime(
+        2019, 11, 3, 1, 30, tz="US/Pacific", dst_rule=pendulum.PRE_TRANSITION
+    )
+    plus_10_hours = just_before_dls_ends + timedelta(hours=10)
+    minus_neg_10_hours = just_before_dls_ends - timedelta(hours=-10)
+
+    # 1:30-0700 becomes 10:30-0800
+    assert plus_10_hours.hour == 10
+    assert minus_neg_10_hours.hour == 10
+    assert just_before_dls_ends.is_dst()
+    assert not plus_10_hours.is_dst()
+    assert not minus_neg_10_hours.is_dst()

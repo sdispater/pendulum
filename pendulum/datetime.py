@@ -780,9 +780,7 @@ class DateTime(datetime.datetime, Date):
                 microseconds=delta.microseconds,
             )
 
-        return self.subtract(
-            days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds
-        )
+        return self.subtract(seconds=delta.total_seconds())
 
     # DIFFERENCES
 
