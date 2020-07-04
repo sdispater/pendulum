@@ -66,11 +66,19 @@ class Duration(timedelta):
             raise ValueError("Float year and months are not supported")
 
         self = timedelta.__new__(
-            cls, days, seconds, microseconds, milliseconds, minutes, hours, weeks
+            cls,
+            days + years * 365 + months * 30,
+            seconds,
+            microseconds,
+            milliseconds,
+            minutes,
+            hours,
+            weeks,
         )
 
         # Intuitive normalization
-        total = self.total_seconds()
+        total = self.total_seconds() - (years * 365 + months * 30) * SECONDS_PER_DAY
+        self._total = total
 
         m = 1
         if total < 0:
@@ -80,7 +88,7 @@ class Duration(timedelta):
         self._seconds = abs(int(total)) % SECONDS_PER_DAY * m
 
         _days = abs(int(total)) // SECONDS_PER_DAY * m
-        self._days = _days + (years * 365 + months * 30)
+        self._days = _days
         self._remaining_days = abs(_days) % 7 * m
         self._weeks = abs(_days) // 7 * m
         self._months = months
@@ -103,10 +111,18 @@ class Duration(timedelta):
     if PYPY:
 
         def total_seconds(self):
+            days = 0
+
+            if hasattr(self, "_years"):
+                days += self._years * 365
+
+            if hasattr(self, "_months"):
+                days += self._months * 30
+
             if hasattr(self, "_remaining_days"):
-                days = self._weeks * 7 + self._remaining_days
+                days += self._weeks * 7 + self._remaining_days
             else:
-                days = self._days
+                days += self._days
 
             return (
                 (days * SECONDS_PER_DAY + self._seconds) * US_PER_SECOND
@@ -125,9 +141,11 @@ class Duration(timedelta):
     def weeks(self):
         return self._weeks
 
-    @property
-    def days(self):
-        return self._days
+    if PYPY:
+
+        @property
+        def days(self):
+            return self._years * 365 + self._months * 30 + self._days
 
     @property
     def remaining_days(self):
@@ -320,7 +338,7 @@ class Duration(timedelta):
             return self.__class__(
                 years=self._years * other,
                 months=self._months * other,
-                seconds=self.total_seconds() * other,
+                seconds=self._total * other,
             )
 
         if isinstance(other, float):
@@ -341,9 +359,6 @@ class Duration(timedelta):
         if isinstance(other, timedelta):
             return usec // other._to_microseconds()
 
-        # Removing years/months approximation
-        usec -= (self._years * 365 + self._months * 30) * SECONDS_PER_DAY * 1e6
-
         if isinstance(other, int):
             return self.__class__(
                 0,
@@ -360,9 +375,6 @@ class Duration(timedelta):
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
             return usec / other._to_microseconds()
-
-        # Removing years/months approximation
-        usec -= (self._years * 365 + self._months * 30) * SECONDS_PER_DAY * 1e6
 
         if isinstance(other, int):
             return self.__class__(
