@@ -27,9 +27,11 @@ The provided instance will be returned specifically under the following conditio
 
 >>> print(pendulum.now())
 '2016-07-10T22:10:33.954851-05:00'
+```
 
 Related methods will also return values mocked according to the **now** instance.
 
+```python
 >>> print(pendulum.today())
 '2001-05-21T00:00:00+00:00'
 
