@@ -36,6 +36,13 @@ def test_from_format_with_timezone():
     assert "Europe/London" == d.timezone_name
 
 
+def test_from_format_with_square_bracket_in_timezone():
+    with pytest.raises(ValueError, match="^String does not match format"):
+        pendulum.from_format(
+            "1975-05-21 22:32:11 Eu[rope/London", "YYYY-MM-DD HH:mm:ss z",
+        )
+
+
 def test_from_format_with_escaped_elements():
     d = pendulum.from_format("1975-05-21T22:32:11+00:00", "YYYY-MM-DD[T]HH:mm:ssZ")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
