@@ -17,12 +17,14 @@ def test_years():
     pi = pendulum.duration(years=2)
     assert_duration(pi, years=2, weeks=0)
     assert 730 == pi.days
+    assert 63072000 == pi.total_seconds()
 
 
 def test_months():
     pi = pendulum.duration(months=3)
     assert_duration(pi, months=3, weeks=0)
     assert 90 == pi.days
+    assert 7776000 == pi.total_seconds()
 
 
 def test_weeks():
