@@ -1494,6 +1494,8 @@ class DateTime(datetime.datetime, Date):
             microsecond = self.microsecond
         if tzinfo is True:
             tzinfo = self.tzinfo
+        if fold is None:
+            fold = self.fold
 
         transition_rule = pendulum.POST_TRANSITION
         if fold is not None:

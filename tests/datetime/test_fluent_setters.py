@@ -139,18 +139,41 @@ def test_fluid_at_with_transition():
     assert 0 == new.second
 
 
-def test_replace_tzinfo():
-    d = pendulum.datetime(2016, 7, 2, 0, 41, 20)
+def test_replace_tzinfo_dst_off():
+    d = pendulum.datetime(2016, 3, 27, 0, 30)  # 30 min before DST turning on
     new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
 
+    assert_datetime(new, 2016, 3, 27, 0, 30)
+    assert not new.is_dst()
+    assert new.offset == 3600
     assert new.timezone_name == "Europe/Paris"
 
 
-def test_replace_tzinfo_dst():
-    d = pendulum.datetime(2013, 3, 31, 2, 30)
+def test_replace_tzinfo_dst_transitioning_on():
+    d = pendulum.datetime(2016, 3, 27, 1, 30)  # In middle of turning on
     new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
 
-    assert_datetime(new, 2013, 3, 31, 3, 30)
+    assert_datetime(new, 2016, 3, 27, 1, 30)
+    assert not new.is_dst()
+    assert new.offset == 3600
+    assert new.timezone_name == "Europe/Paris"
+
+
+def test_replace_tzinfo_dst_on():
+    d = pendulum.datetime(2016, 10, 30, 0, 30)  # 30 min before DST turning off
+    new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
+
+    assert_datetime(new, 2016, 10, 30, 0, 30)
+    assert new.is_dst()
+    assert new.offset == 7200
+    assert new.timezone_name == "Europe/Paris"
+
+
+def test_replace_tzinfo_dst_transitioning_off():
+    d = pendulum.datetime(2016, 10, 30, 1, 30)  # In the middle of turning off
+    new = d.replace(tzinfo=pendulum.timezone("Europe/Paris"))
+
+    assert_datetime(new, 2016, 10, 30, 1, 30)
     assert new.is_dst()
     assert new.offset == 7200
     assert new.timezone_name == "Europe/Paris"
