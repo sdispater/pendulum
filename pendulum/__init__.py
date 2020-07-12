@@ -216,7 +216,17 @@ def now(tz=None):  # type: (Optional[Union[str, _Timezone]]) -> DateTime
         tz = _safe_timezone(tz)
         dt = tz.convert(dt)
 
-    return instance(dt, tz)
+    return DateTime(
+        dt.year,
+        dt.month,
+        dt.day,
+        dt.hour,
+        dt.minute,
+        dt.second,
+        dt.microsecond,
+        tzinfo=dt.tzinfo,
+        fold=dt.fold if _HAS_FOLD else 0,
+    )
 
 
 def today(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime

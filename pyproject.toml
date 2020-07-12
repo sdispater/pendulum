@@ -32,7 +32,7 @@ pytest = "^4.6"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
 babel = "^2.5"
-cleo = "^0.7.5"
+cleo = "^0.8.1"
 tox = "^3.0"
 black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
 isort = { version = "^4.3.21", markers = "python_version >= '3.6' and python_version < '4.0'" }
@@ -41,6 +41,7 @@ mkdocs = { version = "^1.0", python = "^3.5" }
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
 markdown-include = "^0.5.1"
+freezegun = "^0.3.15"
 
 
 [tool.isort]
@@ -62,6 +63,7 @@ known_third_party = [
     "babel",
     "cleo",
     "dateutil",
+    "freezegun",
     "pytzdata",
 ]
 
