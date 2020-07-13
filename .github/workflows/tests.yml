@@ -44,6 +44,10 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Upgrade pip
+      run: |
+        source $HOME/.poetry/env
+        poetry run python -m pip install pip -U
     - name: Install dependencies
       run: |
         source $HOME/.poetry/env
@@ -86,6 +90,10 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-fix-${{ hashFiles('**/poetry.lock') }}
+    - name: Upgrade pip
+      run: |
+        source $HOME/.poetry/env
+        poetry run python -m pip install pip -U
     - name: Install dependencies
       run: |
         source $HOME/.poetry/env
@@ -127,6 +135,10 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Upgrade pip
+      run: |
+        $env:Path += ";$env:Userprofile\.poetry\bin"
+        poetry run python -m pip install pip -U
     - name: Install dependencies
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
