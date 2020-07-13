@@ -22,7 +22,7 @@ include = ["pendulum/py.typed"]
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.5"
 python-dateutil = "^2.6"
-pytzdata = ">=2018.3"
+pytzdata = ">=2020.1"
 
 # typing is needed for Python < 3.5
 typing = { version = "^3.6", python = "<3.5" }
