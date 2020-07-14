@@ -13,8 +13,6 @@ import pytzdata
 
 from pytzdata.exceptions import TimezoneNotFound
 
-from pendulum.utils._compat import PY2
-
 from .exceptions import InvalidTimezone
 from .exceptions import InvalidZoneinfoFile
 from .posix_timezone import PosixTimezone
@@ -77,9 +75,6 @@ class Reader:
                 "Expected {} bytes reading {}, "
                 "but got {}".format(nbytes, fd.name, len(result) if result else 0)
             )
-
-        if PY2:
-            return bytearray(result)
 
         return result
 
