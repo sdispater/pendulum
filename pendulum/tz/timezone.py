@@ -5,11 +5,8 @@ from typing import Optional
 from typing import TypeVar
 from typing import overload
 
-import pendulum
-
 from pendulum.helpers import local_time
 from pendulum.helpers import timestamp
-from pendulum.utils._compat import _HAS_FOLD
 
 from .exceptions import AmbiguousTime
 from .exceptions import NonExistingTime
@@ -79,23 +76,14 @@ class Timezone(tzinfo):
         """
         Return a normalized datetime for the current timezone.
         """
-        if _HAS_FOLD:
-            return self.convert(
-                datetime(year, month, day, hour, minute, second, microsecond, fold=1)
-            )
-
         return self.convert(
-            datetime(year, month, day, hour, minute, second, microsecond),
-            dst_rule=POST_TRANSITION,
+            datetime(year, month, day, hour, minute, second, microsecond, fold=1)
         )
 
     def _normalize(self, dt, dst_rule=None):  # type: (_D, Optional[str]) -> _D
         sec = timestamp(dt)
         fold = 0
         transition = self._lookup_transition(sec)
-
-        if not _HAS_FOLD and dst_rule is None:
-            dst_rule = POST_TRANSITION
 
         if dst_rule is None:
             dst_rule = PRE_TRANSITION
@@ -135,11 +123,7 @@ class Timezone(tzinfo):
                 else:
                     sec -= transition.fix
 
-        kwargs = {"tzinfo": self}
-        if _HAS_FOLD or isinstance(dt, pendulum.DateTime):
-            kwargs["fold"] = fold
-
-        return dt.__class__(*local_time(sec, 0, dt.microsecond), **kwargs)
+        return dt.__class__(*local_time(sec, 0, dt.microsecond), tzinfo=self, fold=fold)
 
     def _convert(self, dt):  # type: (_D) -> _D
         if dt.tzinfo is self:
@@ -175,12 +159,9 @@ class Timezone(tzinfo):
         stamp += offset
         fold = int(not transition.ttype.is_dst())
 
-        kwargs = {"tzinfo": self}
-
-        if _HAS_FOLD or isinstance(dt, pendulum.DateTime):
-            kwargs["fold"] = fold
-
-        return dt.__class__(*local_time(stamp, 0, dt.microsecond), **kwargs)
+        return dt.__class__(
+            *local_time(stamp, 0, dt.microsecond), tzinfo=self, fold=fold
+        )
 
     def _lookup_transition(
         self, stamp, is_utc=False
@@ -316,29 +297,17 @@ class FixedTimezone(Timezone):
         return self._offset
 
     def _normalize(self, dt, dst_rule=None):  # type: (_D, Optional[str]) -> _D
-        if _HAS_FOLD:
-            dt = dt.__class__(
-                dt.year,
-                dt.month,
-                dt.day,
-                dt.hour,
-                dt.minute,
-                dt.second,
-                dt.microsecond,
-                tzinfo=self,
-                fold=0,
-            )
-        else:
-            dt = dt.__class__(
-                dt.year,
-                dt.month,
-                dt.day,
-                dt.hour,
-                dt.minute,
-                dt.second,
-                dt.microsecond,
-                tzinfo=self,
-            )
+        dt = dt.__class__(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            tzinfo=self,
+            fold=0,
+        )
 
         return dt
 

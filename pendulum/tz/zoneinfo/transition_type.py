@@ -1,8 +1,5 @@
 from datetime import timedelta
 
-from pendulum.utils._compat import PY2
-from pendulum.utils._compat import encode
-
 
 class TransitionType:
     def __init__(self, offset, is_dst, abbr):
@@ -18,9 +15,6 @@ class TransitionType:
 
     @property
     def abbreviation(self):  # type: () -> str
-        if PY2:
-            return encode(self._abbr)
-
         return self._abbr
 
     def is_dst(self):  # type: () -> bool

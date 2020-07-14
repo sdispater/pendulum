@@ -8,7 +8,6 @@ from pendulum import timezone
 from pendulum.tz import fixed_timezone
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import NonExistingTime
-from pendulum.utils._compat import PY36
 
 from ..conftest import assert_datetime
 
@@ -22,7 +21,6 @@ def setup():
     pendulum.tz._tz_cache = {}
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_basic_convert():
     dt = datetime(2016, 6, 1, 12, 34, 56, 123456, fold=1)
     tz = timezone("Europe/Paris")
@@ -40,7 +38,6 @@ def test_basic_convert():
     assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_skipped_time_with_pre_rule():
     dt = datetime(2013, 3, 31, 2, 30, 45, 123456, fold=0)
     tz = timezone("Europe/Paris")
@@ -58,7 +55,6 @@ def test_skipped_time_with_pre_rule():
     assert dt.tzinfo.dst(dt) == timedelta()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_skipped_time_with_post_rule():
     dt = datetime(2013, 3, 31, 2, 30, 45, 123456, fold=1)
     tz = timezone("Europe/Paris")
@@ -117,7 +113,6 @@ def test_skipped_time_with_error():
         tz.convert(dt, dst_rule=pendulum.TRANSITION_ERROR)
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_repeated_time():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456, fold=1)
     tz = timezone("Europe/Paris")
@@ -135,7 +130,6 @@ def test_repeated_time():
     assert dt.tzinfo.dst(dt) == timedelta()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_repeated_time_explicit_post_rule():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
     tz = timezone("Europe/Paris")
@@ -153,7 +147,6 @@ def test_repeated_time_explicit_post_rule():
     assert dt.tzinfo.dst(dt) == timedelta()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_repeated_time_pre_rule():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456, fold=0)
     tz = timezone("Europe/Paris")
@@ -171,7 +164,6 @@ def test_repeated_time_pre_rule():
     assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
-@pytest.mark.skipif(not PY36, reason="Disambiguation is not available in Python 2.7")
 def test_repeated_time_explicit_pre_rule():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
     tz = timezone("Europe/Paris")
@@ -389,7 +381,6 @@ def test_on_last_transition():
     assert dt.utcoffset().total_seconds() == 7200
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_convert_fold_attribute_is_honored():
     tz = pendulum.timezone("US/Eastern")
     dt = datetime(2014, 11, 2, 1, 30)
@@ -401,7 +392,6 @@ def test_convert_fold_attribute_is_honored():
     assert new.strftime("%z") == "-0500"
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_utcoffset_fold_attribute_is_honored():
     tz = pendulum.timezone("US/Eastern")
     dt = datetime(2014, 11, 2, 1, 30)
@@ -415,7 +405,6 @@ def test_utcoffset_fold_attribute_is_honored():
     assert offset.total_seconds() == -5 * 3600
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_dst_fold_attribute_is_honored():
     tz = pendulum.timezone("US/Eastern")
     dt = datetime(2014, 11, 2, 1, 30)
@@ -429,7 +418,6 @@ def test_dst_fold_attribute_is_honored():
     assert offset.total_seconds() == 0
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_tzname_fold_attribute_is_honored():
     tz = pendulum.timezone("US/Eastern")
     dt = datetime(2014, 11, 2, 1, 30)
@@ -443,7 +431,6 @@ def test_tzname_fold_attribute_is_honored():
     assert name == "EST"
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_constructor_fold_attribute_is_honored():
     tz = pendulum.timezone("US/Eastern")
     dt = datetime(2014, 11, 2, 1, 30, tzinfo=tz)
@@ -455,7 +442,6 @@ def test_constructor_fold_attribute_is_honored():
     assert dt.strftime("%z") == "-0500"
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
 def test_convert_sets_fold_attribute_properly():
     tz = pendulum.timezone("US/Eastern")
 
