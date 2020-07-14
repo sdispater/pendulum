@@ -8,7 +8,6 @@ import typing
 import pendulum
 
 from pendulum.locales.locale import Locale
-from pendulum.utils._compat import decode
 
 
 _MATCH_1 = r"\d"
@@ -260,7 +259,7 @@ class Formatter:
             fmt,
         )
 
-        return decode(result)
+        return result
 
     def _format_token(
         self, dt, token, locale
@@ -680,6 +679,6 @@ class Formatter:
         if not isinstance(candidates, tuple):
             candidates = (candidates,)
 
-        pattern = "(?P<{}>{})".format(token, "|".join([decode(p) for p in candidates]))
+        pattern = "(?P<{}>{})".format(token, "|".join(candidates))
 
         return pattern

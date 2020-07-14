@@ -2,8 +2,6 @@ import typing
 
 import pendulum
 
-from pendulum.utils._compat import decode
-
 from ..locales.locale import Locale
 
 
@@ -146,8 +144,8 @@ class DifferenceFormatter(object):
                 else:
                     key += ".before"
 
-                return locale.get(key).format(decode(time))
+                return locale.get(key).format(time)
 
         key += ".{}".format(locale.plural(count))
 
-        return decode(locale.get(key).format(count))
+        return locale.get(key).format(count)
