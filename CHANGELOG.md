@@ -1,5 +1,21 @@
 # Change Log
 
+## [2.1.1] - 2020-07-13
+
+### Fixed
+
+- Fixed errors where invalid timezones were matched in `from_format()` ([#374](https://github.com/sdispater/pendulum/pull/374)).
+- Fixed errors when subtracting negative timedeltas ([#419](https://github.com/sdispater/pendulum/pull/419)).
+- Fixed errors in total units computation for durations with years and months ([#482](https://github.com/sdispater/pendulum/pull/482)).
+- Fixed an error where the `fold` attribute was overridden when using `replace()` ([#414](https://github.com/sdispater/pendulum/pull/414)).
+- Fixed an error where `now()` was not returning the correct result on DST transitions ([#483](https://github.com/sdispater/pendulum/pull/483)).
+- Fixed inconsistent typing annotation for the `parse()` function ([#452](https://github.com/sdispater/pendulum/pull/452)).
+
+### Locales
+
+- Added the `pl` locale ([#459](https://github.com/sdispater/pendulum/pull/459)).
+
+
 ## [2.1.0] - 2020-03-07
 
 ### Added
@@ -127,7 +143,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.0...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.1...master
+[2.1.1]: https://github.com/sdispater/pendulum/releases/tag/2.1.1
 [2.1.0]: https://github.com/sdispater/pendulum/releases/tag/2.1.0
 [2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5
 [2.0.4]: https://github.com/sdispater/pendulum/releases/tag/2.0.4
