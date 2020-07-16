@@ -234,6 +234,10 @@ class Timezone(tzinfo):
 
         return transition.utcoffset()
 
+    @property
+    def _utcoffset(self):  # type: () -> timedelta
+        return self.utcoffset(datetime.utcnow())
+
     def dst(
         self, dt  # type: Optional[_datetime]
     ):  # type: (...) -> Optional[timedelta]
@@ -309,11 +313,14 @@ class FixedTimezone(Timezone):
 
         self._name = name
         self._offset = offset
-        self._utcoffset = timedelta(seconds=offset)
 
     @property
     def offset(self):  # type: () -> int
         return self._offset
+
+    @property
+    def _utcoffset(self):  # type: () -> timedelta
+        return timedelta(seconds=self.offset)
 
     def _normalize(self, dt, dst_rule=None):  # type: (_D, Optional[str]) -> _D
         if _HAS_FOLD:
