@@ -591,6 +591,7 @@ def test_timezone_has_private_utcoffset_attribute():
 
     assert now.utcoffset().total_seconds() == pandas_call
 
+
 def test_repr():
     tz = timezone("Europe/Paris")
 
