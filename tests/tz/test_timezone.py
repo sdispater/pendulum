@@ -585,6 +585,12 @@ def test_timezones_extension_can_be_disabled():
     assert dt.dst() == timedelta()
 
 
+def test_timezone_has_private_utcoffset_attribute():
+    now = pendulum.now()
+    pandas_call = now.tzinfo._utcoffset.total_seconds()
+
+    assert now.utcoffset().total_seconds() == pandas_call
+
 def test_repr():
     tz = timezone("Europe/Paris")
 
