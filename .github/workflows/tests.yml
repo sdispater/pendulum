@@ -51,7 +51,7 @@ jobs:
     - name: Install dependencies
       run: |
         source $HOME/.poetry/env
-        poetry install
+        poetry install -vvv
     - name: Test Pure Python
       run: |
         source $HOME/.poetry/env
@@ -67,7 +67,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy3]
 
     steps:
     - uses: actions/checkout@v2
@@ -97,7 +97,7 @@ jobs:
     - name: Install dependencies
       run: |
         source $HOME/.poetry/env
-        poetry install
+        poetry install -vvv
     - name: Test Pure Python
       run: |
         source $HOME/.poetry/env
@@ -142,7 +142,7 @@ jobs:
     - name: Install dependencies
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
-        poetry install
+        poetry install -vvv
     - name: Test Pure Python
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
