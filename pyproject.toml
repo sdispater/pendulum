@@ -69,5 +69,5 @@ known_third_party = [
 
 
 [build-system]
-requires = ["poetry>=1.0.0b1"]
+requires = ["poetry>=1.0.0b1", "setuptools"]
 build-backend = "poetry.masonry.api"
