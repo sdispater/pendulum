@@ -10,13 +10,18 @@ repository = "https://github.com/sdispater/pendulum"
 documentation = "https://pendulum.eustace.io/docs"
 keywords = ['datetime', 'date', 'time']
 
-build = "build.py"
-
 packages = [
     {include = "pendulum"},
     #{include = "tests", format = "sdist"},
 ]
-include = ["pendulum/py.typed"]
+include = [
+    {path = "pendulum/py.typed"},
+    # C extensions must be included in the wheel distributions
+    {path = "pendulum/_extensions/*.so", format = "wheel"},
+    {path = "pendulum/_extensions/*.pyd", format = "wheel"},
+    {path = "pendulum/parsing/*.so", format = "wheel"},
+    {path = "pendulum/parsing/*.pyd", format = "wheel"},
+]
 
 
 [tool.poetry.dependencies]
@@ -43,6 +48,9 @@ pygments = "^2.2"
 markdown-include = "^0.5.1"
 freezegun = "^0.3.15"
 
+[tool.poetry.build]
+generate-setup-file = false
+script = "build.py"
 
 [tool.isort]
 line_length = 88
@@ -69,5 +77,5 @@ known_third_party = [
 
 
 [build-system]
-requires = ["poetry>=1.0.0b1"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0a9"]
+build-backend = "poetry.core.masonry.api"
