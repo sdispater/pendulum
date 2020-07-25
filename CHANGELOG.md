@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.1.2] - 2020-07-24
+
+### Fixed
+
+- Fixed errors when trying to build Pendulum from source ([#489](https://github.com/sdispater/pendulum/pull/489)).
+
+
 ## [2.1.1] - 2020-07-13
 
 ### Fixed
@@ -143,7 +150,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.2...master
+[2.1.2]: https://github.com/sdispater/pendulum/releases/tag/2.1.2
 [2.1.1]: https://github.com/sdispater/pendulum/releases/tag/2.1.1
 [2.1.0]: https://github.com/sdispater/pendulum/releases/tag/2.1.0
 [2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5
