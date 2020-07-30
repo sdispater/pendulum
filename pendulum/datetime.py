@@ -37,6 +37,7 @@ from .helpers import add_duration
 from .period import Period
 from .time import Time
 from .tz import UTC
+from .tz.timezone import FixedTimezone
 from .tz.timezone import Timezone
 
 
@@ -164,7 +165,7 @@ class DateTime(datetime.datetime, Date):
 
     @property
     def timezone(self) -> Optional[Timezone]:
-        if not isinstance(self.tzinfo, Timezone):
+        if not isinstance(self.tzinfo, (Timezone, FixedTimezone)):
             return
 
         return self.tzinfo

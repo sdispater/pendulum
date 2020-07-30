@@ -197,6 +197,7 @@ def precise_diff(
 
     :rtype: PreciseDiff
     """
+    print("DT", d1, d2)
     sign = 1
 
     if d1 == d2:
@@ -234,14 +235,19 @@ def precise_diff(
     # Trying to figure out the timezone names
     # If we can't find them, we assume different timezones
     if tzinfo1 and tzinfo2:
-        if hasattr(tzinfo1, "name"):
+        if hasattr(tzinfo1, "key"):
+            # zoneinfo timezone
+            tz1 = tzinfo1.key
+        elif hasattr(tzinfo1, "name"):
             # Pendulum timezone
             tz1 = tzinfo1.name
         elif hasattr(tzinfo1, "zone"):
             # pytz timezone
             tz1 = tzinfo1.zone
 
-        if hasattr(tzinfo2, "name"):
+        if hasattr(tzinfo2, "key"):
+            tz2 = tzinfo2.key
+        elif hasattr(tzinfo2, "name"):
             tz2 = tzinfo2.name
         elif hasattr(tzinfo2, "zone"):
             tz2 = tzinfo2.zone
