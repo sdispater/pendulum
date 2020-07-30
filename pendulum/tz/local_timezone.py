@@ -7,9 +7,10 @@ from typing import Iterator
 from typing import Optional
 from typing import Union
 
+from pendulum.utils._compat import zoneinfo
+
+from .timezone import FixedTimezone
 from .timezone import Timezone
-from .timezone import TimezoneFile
-from .zoneinfo.exceptions import InvalidTimezone
 
 
 try:
@@ -25,7 +26,7 @@ _mock_local_timezone = None
 _local_timezone = None
 
 
-def get_local_timezone():  # type: () -> Timezone
+def get_local_timezone() -> Union[Timezone, FixedTimezone]:
     global _local_timezone
 
     if _mock_local_timezone is not None:
@@ -46,7 +47,7 @@ def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> 
 
 
 @contextmanager
-def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
+def test_local_timezone(mock: Timezone) -> Iterator[None]:
     set_local_timezone(mock)
 
     yield
@@ -54,7 +55,7 @@ def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
     set_local_timezone()
 
 
-def _get_system_timezone():  # type: () -> Timezone
+def _get_system_timezone() -> Timezone:
     if sys.platform == "win32":
         return _get_windows_timezone()
     elif "darwin" in sys.platform:
@@ -63,7 +64,7 @@ def _get_system_timezone():  # type: () -> Timezone
     return _get_unix_timezone()
 
 
-def _get_windows_timezone():  # type: () -> Timezone
+def _get_windows_timezone() -> Timezone:
     from .data.windows import windows_timezones
 
     # Windows is special. It has unique time zone names (in several
@@ -142,7 +143,7 @@ def _get_windows_timezone():  # type: () -> Timezone
     return Timezone(timezone)
 
 
-def _get_darwin_timezone():  # type: () -> Timezone
+def _get_darwin_timezone() -> Timezone:
     # link will be something like /usr/share/zoneinfo/America/Los_Angeles.
     link = os.readlink("/etc/localtime")
     tzname = link[link.rfind("zoneinfo/") + 9 :]
@@ -212,7 +213,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
 
                     try:
                         return Timezone(os.path.join(*tzpath))
-                    except InvalidTimezone:
+                    except zoneinfo.ZoneInfoNotFoundError:
                         pass
 
     # systemd distributions use symlinks that include the zone name,
@@ -227,7 +228,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
             tzpath.insert(0, parts.pop(0))
             try:
                 return Timezone(os.path.join(*tzpath))
-            except InvalidTimezone:
+            except zoneinfo.ZoneInfoNotFoundError:
                 pass
 
     # No explicit setting existed. Use localtime
@@ -237,18 +238,20 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
         if not os.path.isfile(tzpath):
             continue
 
-        return TimezoneFile(tzpath)
+        with open(tzpath, "rb") as f:
+            return Timezone.from_file(f)
 
     raise RuntimeError("Unable to find any timezone configuration")
 
 
-def _tz_from_env(tzenv):  # type: (str) -> Timezone
+def _tz_from_env(tzenv: str) -> Timezone:
     if tzenv[0] == ":":
         tzenv = tzenv[1:]
 
     # TZ specifies a file
     if os.path.isfile(tzenv):
-        return TimezoneFile(tzenv)
+        with open(tzenv, "rb") as f:
+            return Timezone.from_file(f)
 
     # TZ specifies a zoneinfo zone.
     try:

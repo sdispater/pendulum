@@ -27,10 +27,11 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.6"
 python-dateutil = "^2.6"
-pytzdata = ">=2020.1"
+"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.6,<3.9"}
+tzdata = ">=2020.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.6"
+pytest = "^5.4.3"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
 babel = "^2.5"
