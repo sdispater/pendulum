@@ -46,7 +46,7 @@ def test_skipped_time_with_pre_rule():
     assert dt.year == 2013
     assert dt.month == 3
     assert dt.day == 31
-    assert dt.hour == 1
+    assert dt.hour == 2
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
