@@ -251,7 +251,10 @@ def yesterday(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime
 
 
 def from_format(
-    string, fmt, tz=UTC, locale=None,  # noqa
+    string,
+    fmt,
+    tz=UTC,
+    locale=None,  # noqa
 ):  # type: (str, str, Union[str, _Timezone], Optional[str]) -> DateTime
     """
     Creates a DateTime instance from a specific format.
