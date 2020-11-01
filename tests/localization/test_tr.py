@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import pendulum
 
 
-locale = "tr"
+locale = "tr"  # Turkish
 
 
 def test_diff_for_humans():
