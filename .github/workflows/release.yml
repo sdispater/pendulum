@@ -9,6 +9,9 @@ jobs:
 
   Linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [manylinux2014_x86_64, manylinux2014_i686, manylinux2014_aarch64]
 
     steps:
     - uses: actions/checkout@v2
@@ -16,9 +19,14 @@ jobs:
       id: tag
       run: |
         echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+    - name: Set up QEMU
+      if: ${{ matrix.image == 'manylinux2014_aarch64' }}
+      id: qemu
+      uses: docker/setup-qemu-action@v1
     - name: Building release
       run: |
-        make linux_release
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+          quay.io/pypa/${{ matrix.image }} ./build-wheels.sh
     - name: Upload distributions artifacts
       uses: actions/upload-artifact@v1
       with:

@@ -93,3 +93,38 @@ jobs:
         shell: bash
         run: |
           poetry run pytest -q tests
+
+  Linux-AArch64:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [cp37-cp37m, cp38-cp38, cp39-cp39, cp310-cp310]
+      fail-fast: false
+    env:
+      py: /opt/python/${{ matrix.python-version }}/bin/python
+      img: quay.io/pypa/manylinux2014_aarch64
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup test environment and run tests
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+            ${{ env.img }} \
+            bash -exc '\
+            echo -e "\e[1;34m Install poetry \e[0m" && \
+            curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py && \
+            ${{ env.py }} install-poetry.py --preview -y && \
+            echo -e "\e[1;34m Update PATH \e[0m" && \
+            export PATH="/root/.local/bin:$PATH" && \
+            echo -e "\e[1;34m Configure poetry \e[0m" && \
+            poetry config virtualenvs.in-project true && \
+            echo -e "\e[1;34m Install dependencies \e[0m" && \
+            poetry install --only default --only test -vvv && \
+            echo -e "\e[1;34m Test Pure Python \e[0m" && \
+            PENDULUM_EXTENSIONS=0 poetry run pytest -q tests && \
+            echo -e "\e[1;34m Test \e[0m" && \
+            poetry run pytest -q tests'
