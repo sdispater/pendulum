@@ -175,3 +175,22 @@ It also has a handy `in_words()` method, which determines the duration represent
 >>> it.in_words(locale='de')
 '168 Wochen 1 Tag 2 Stunden 1 Minute 24 Sekunden'
 ```
+
+Finally, it has an
+[ISO-8601-compliant](https://en.wikipedia.org/wiki/ISO_8601#Durations) `isformat()`
+method for cross-platform representation.
+
+```python
+
+>>> import pendulum
+
+>>> dur = pendulum.duration(years=1, months=3, days=6, seconds=3)
+
+>>> iso = dur.isoformat()
+
+>>> print(iso)
+'P1Y3M6DT0H0M3S'
+
+>>> pendulum.parse(iso) == dur
+True
+```
