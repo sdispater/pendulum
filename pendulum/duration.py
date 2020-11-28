@@ -423,7 +423,7 @@ class Duration(timedelta):
         ]
         period = "P"
         for sym, val in periods:
-            period += f"{val}{sym}"
+            period += "{val}{sym}".format(val=val, sym=sym)
         times = [
             ("H", self.hours),
             ("M", self.minutes),
@@ -431,10 +431,10 @@ class Duration(timedelta):
         ]
         time = "T"
         for sym, val in times:
-            time += f"{val}{sym}"
+            time += "{val}{sym}".format(val=val, sym=sym)
         if self.microseconds:
             time = time[:-1]
-            time += f".{self.microseconds:06}S"
+            time += ".{ms:06}S".format(ms=self.microseconds)
         return period + time
 
 
