@@ -8,9 +8,6 @@ from datetime import timedelta
 
 import pendulum
 
-from pendulum.utils._compat import _HAS_FOLD
-from pendulum.utils._compat import decode
-
 from .constants import MONTHS_PER_YEAR
 from .duration import Duration
 from .helpers import precise_diff
@@ -38,56 +35,32 @@ class Period(Duration):
         _start = start
         _end = end
         if isinstance(start, pendulum.DateTime):
-            if _HAS_FOLD:
-                _start = datetime(
-                    start.year,
-                    start.month,
-                    start.day,
-                    start.hour,
-                    start.minute,
-                    start.second,
-                    start.microsecond,
-                    tzinfo=start.tzinfo,
-                    fold=start.fold,
-                )
-            else:
-                _start = datetime(
-                    start.year,
-                    start.month,
-                    start.day,
-                    start.hour,
-                    start.minute,
-                    start.second,
-                    start.microsecond,
-                    tzinfo=start.tzinfo,
-                )
+            _start = datetime(
+                start.year,
+                start.month,
+                start.day,
+                start.hour,
+                start.minute,
+                start.second,
+                start.microsecond,
+                tzinfo=start.tzinfo,
+                fold=start.fold,
+            )
         elif isinstance(start, pendulum.Date):
             _start = date(start.year, start.month, start.day)
 
         if isinstance(end, pendulum.DateTime):
-            if _HAS_FOLD:
-                _end = datetime(
-                    end.year,
-                    end.month,
-                    end.day,
-                    end.hour,
-                    end.minute,
-                    end.second,
-                    end.microsecond,
-                    tzinfo=end.tzinfo,
-                    fold=end.fold,
-                )
-            else:
-                _end = datetime(
-                    end.year,
-                    end.month,
-                    end.day,
-                    end.hour,
-                    end.minute,
-                    end.second,
-                    end.microsecond,
-                    tzinfo=end.tzinfo,
-                )
+            _end = datetime(
+                end.year,
+                end.month,
+                end.day,
+                end.hour,
+                end.minute,
+                end.second,
+                end.microsecond,
+                tzinfo=end.tzinfo,
+                fold=end.fold,
+            )
         elif isinstance(end, pendulum.Date):
             _end = date(end.year, end.month, end.day)
 
@@ -279,7 +252,7 @@ class Period(Duration):
             translation = locale.translation(unit)
             parts.append(translation.format(count))
 
-        return decode(separator.join(parts))
+        return separator.join(parts)
 
     def range(self, unit, amount=1):
         method = "add"
