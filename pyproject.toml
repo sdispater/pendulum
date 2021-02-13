@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "2.1.1"
+version = "3.0.0a0"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
@@ -25,22 +25,20 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "^3.6"
 python-dateutil = "^2.6"
-pytzdata = ">=2020.1"
-
-# typing is needed for Python < 3.5
-typing = { version = "^3.6", python = "<3.5" }
+"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.6,<3.9"}
+tzdata = ">=2020.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.6"
+pytest = "^5.4.3"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
 babel = "^2.5"
 cleo = "^0.8.1"
 tox = "^3.0"
-black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
-isort = { version = "^4.3.21", markers = "python_version >= '3.6' and python_version < '4.0'" }
+black = { version = "^19.3b0", markers = "implementation_name != 'pypy'" }
+isort = "^4.3.21"
 pre-commit = "^1.10"
 mkdocs = { version = "^1.0", python = "^3.5" }
 pymdown-extensions = "^6.0"

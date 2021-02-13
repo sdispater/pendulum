@@ -8,7 +8,6 @@ import typing
 import pendulum
 
 from pendulum.locales.locale import Locale
-from pendulum.utils._compat import decode
 
 
 _MATCH_1 = r"\d"
@@ -105,6 +104,9 @@ class Formatter:
         "d": lambda dt: "{:d}".format(dt.day_of_week),
         # Day of ISO Week
         "E": lambda dt: "{:d}".format(dt.isoweekday()),
+        # Week of Year
+        "WW": lambda dt: "{:02d}".format(dt.week_of_year),
+        "W": lambda dt: "{:d}".format(dt.week_of_year),
         # Hour
         "HH": lambda dt: "{:02d}".format(dt.hour),
         "H": lambda dt: "{:d}".format(dt.hour),
@@ -260,7 +262,7 @@ class Formatter:
             fmt,
         )
 
-        return decode(result)
+        return result
 
     def _format_token(
         self, dt, token, locale
@@ -680,6 +682,6 @@ class Formatter:
         if not isinstance(candidates, tuple):
             candidates = (candidates,)
 
-        pattern = "(?P<{}>{})".format(token, "|".join([decode(p) for p in candidates]))
+        pattern = "(?P<{}>{})".format(token, "|".join(candidates))
 
         return pattern

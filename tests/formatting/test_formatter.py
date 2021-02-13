@@ -90,9 +90,11 @@ def test_day_of_year():
 
 def test_week_of_year():
     f = Formatter()
-    d = pendulum.datetime(2016, 8, 28)
+    d = pendulum.datetime(2016, 2, 28)
 
-    assert f.format(d, "wo") == "34th"
+    assert f.format(d, "W") == "8"
+    assert f.format(d, "WW") == "08"
+    assert f.format(d, "wo") == "8th"
 
 
 def test_day_of_week():

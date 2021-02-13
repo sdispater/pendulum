@@ -3,6 +3,11 @@ class TimezoneError(ValueError):
     pass
 
 
+class InvalidTimezone(TimezoneError):
+
+    pass
+
+
 class NonExistingTime(TimezoneError):
 
     message = "The datetime {} does not exist."
