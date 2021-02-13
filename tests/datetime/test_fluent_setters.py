@@ -72,6 +72,7 @@ def test_fluid_timezone_setter():
     new = d.set(tz="Europe/Paris")
     assert isinstance(new, datetime)
     assert "Europe/Paris" == new.timezone_name
+    assert "CEST" == new.timezone_abbr
     assert "Europe/Paris" == new.tzinfo.name
 
 
@@ -167,6 +168,7 @@ def test_replace_tzinfo_dst_on():
     assert new.is_dst()
     assert new.offset == 7200
     assert new.timezone_name == "Europe/Paris"
+    assert new.timezone_abbr == "CEST"
 
 
 def test_replace_tzinfo_dst_transitioning_off():
@@ -177,3 +179,4 @@ def test_replace_tzinfo_dst_transitioning_off():
     assert new.is_dst()
     assert new.offset == 7200
     assert new.timezone_name == "Europe/Paris"
+    assert new.timezone_abbr == "CEST"

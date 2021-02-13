@@ -1,7 +1,9 @@
+import os
+
 from typing import Tuple
 from typing import Union
 
-import pytzdata
+import tzdata
 
 from .local_timezone import get_local_timezone
 from .local_timezone import set_local_timezone
@@ -15,13 +17,23 @@ PRE_TRANSITION = "pre"
 POST_TRANSITION = "post"
 TRANSITION_ERROR = "error"
 
-timezones = pytzdata.timezones  # type: Tuple[str, ...]
+_timezones = None
 
 
 _tz_cache = {}
 
 
-def timezone(name, extended=True):  # type: (Union[str, int], bool) -> _Timezone
+def timezones():
+    global _timezones
+
+    if _timezones is None:
+        with open(os.path.join(os.path.dirname(tzdata.__file__), "zones")) as f:
+            _timezones = tuple(tz.strip() for tz in f.readlines())
+
+    return _timezones
+
+
+def timezone(name: str) -> _Timezone:
     """
     Return a Timezone instance given its name.
     """
@@ -31,13 +43,7 @@ def timezone(name, extended=True):  # type: (Union[str, int], bool) -> _Timezone
     if name.lower() == "utc":
         return UTC
 
-    if name in _tz_cache:
-        return _tz_cache[name]
-
-    tz = _Timezone(name, extended=extended)
-    _tz_cache[name] = tz
-
-    return tz
+    return _Timezone(name)
 
 
 def fixed_timezone(offset):  # type: (int) -> _FixedTimezone

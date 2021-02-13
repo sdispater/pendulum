@@ -5,7 +5,6 @@ import pytest
 
 from pendulum import DateTime
 from pendulum.tz import timezone
-from pendulum.utils._compat import _HAS_FOLD
 
 from ..conftest import assert_date
 from ..conftest import assert_time
@@ -103,19 +102,10 @@ def test_timestamp_with_transition():
         2012, 10, 28, 2, 0, tz="Europe/Warsaw", dst_rule=pendulum.POST_TRANSITION
     )
 
-    if _HAS_FOLD:
-        # the difference between the timestamps before and after is equal to one hour
-        assert d_post.timestamp() - d_pre.timestamp() == pendulum.SECONDS_PER_HOUR
-        assert d_post.float_timestamp - d_pre.float_timestamp == (
-            pendulum.SECONDS_PER_HOUR
-        )
-        assert d_post.int_timestamp - d_pre.int_timestamp == pendulum.SECONDS_PER_HOUR
-    else:
-        # when the transition is not recognizable
-        # then the difference should be equal to zero hours
-        assert d_post.timestamp() - d_pre.timestamp() == 0
-        assert d_post.float_timestamp - d_pre.float_timestamp == 0
-        assert d_post.int_timestamp - d_pre.int_timestamp == 0
+    # the difference between the timestamps before and after is equal to one hour
+    assert d_post.timestamp() - d_pre.timestamp() == pendulum.SECONDS_PER_HOUR
+    assert d_post.float_timestamp - d_pre.float_timestamp == (pendulum.SECONDS_PER_HOUR)
+    assert d_post.int_timestamp - d_pre.int_timestamp == pendulum.SECONDS_PER_HOUR
 
 
 def test_age():
@@ -228,6 +218,14 @@ def test_timezone_name():
 
     d = pendulum.datetime(2000, 1, 1, tz=-5)
     assert d.timezone_name == "-05:00"
+
+
+def test_timezone_abbr():
+    d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
+    assert d.timezone_abbr == "EST"
+
+    d = pendulum.datetime(2000, 1, 1, tz=-5)
+    assert d.timezone_abbr == "-05:00"
 
 
 def test_is_future():

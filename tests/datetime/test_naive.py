@@ -10,6 +10,7 @@ def test_naive():
     assert dt.tzinfo is None
     assert dt.timezone is None
     assert dt.timezone_name is None
+    assert dt.timezone_abbr is None
 
 
 def test_naive_add():
@@ -32,6 +33,7 @@ def test_naive_in_timezone():
 
     assert_datetime(new, 2013, 3, 31, 1, 30)
     assert new.timezone_name == "Europe/Paris"
+    assert new.timezone_abbr == "CET"
 
 
 def test_naive_in_timezone_dst():
@@ -40,6 +42,7 @@ def test_naive_in_timezone_dst():
 
     assert_datetime(new, 2013, 3, 31, 3, 30)
     assert new.timezone_name == "Europe/Paris"
+    assert new.timezone_abbr == "CEST"
 
 
 def test_add():
@@ -74,3 +77,4 @@ def test_naive_method():
     assert dt.tzinfo is None
     assert dt.timezone is None
     assert dt.timezone_name is None
+    assert dt.timezone_abbr is None

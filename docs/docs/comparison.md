@@ -14,10 +14,14 @@ so things aren't always as they seem.
 '2012-09-05 23:26:11'
 >>> first.timezone_name
 'America/Toronto'
+>>> first.timezone_abbr
+'EDT'
 >>> second.to_datetime_string()
 '2012-09-05 20:26:11'
 >>> second.timezone_name
 'America/Vancouver'
+>>> second.timezone_abbr
+'PDT'
 
 >>> first == second
 True

@@ -6,7 +6,6 @@ from datetime import timedelta
 import pendulum
 
 from pendulum.utils._compat import PYPY
-from pendulum.utils._compat import decode
 
 from .constants import SECONDS_PER_DAY
 from .constants import SECONDS_PER_HOUR
@@ -256,7 +255,7 @@ class Duration(timedelta):
             translation = locale.translation(unit)
             parts.append(translation.format(count))
 
-        return decode(separator.join(parts))
+        return separator.join(parts)
 
     def _sign(self, value):
         if value < 0:
