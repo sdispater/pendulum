@@ -165,7 +165,13 @@ char *_get_tz_name(PyObject *dt)
 
     if (tzinfo != Py_None)
     {
-        if (PyObject_HasAttrString(tzinfo, "name"))
+        if (PyObject_HasAttrString(tzinfo, "key"))
+        {
+            // zoneinfo timezone
+            tz = (char *)PyUnicode_AsUTF8(
+                PyObject_GetAttrString(tzinfo, "name"));
+        }
+        else if (PyObject_HasAttrString(tzinfo, "name"))
         {
             // Pendulum timezone
             tz = (char *)PyUnicode_AsUTF8(
