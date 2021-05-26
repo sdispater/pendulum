@@ -8,25 +8,15 @@ class FormattableMixin(object):
 
     _formatter = _formatter
 
-    def format(self, fmt, locale=None):
+    def format(self, fmt, locale=None):  # type: (str, Optional[str]) -> str
         """
         Formats the instance using the given format.
-
-        :param fmt: The format to use
-        :type fmt: str
-
-        :param locale: The locale to use
-        :type locale: str or None
-
-        :rtype: str
         """
         return self._formatter.format(self, fmt, locale)
 
-    def for_json(self):
+    def for_json(self):  # type: () -> str
         """
         Methods for automatic json serialization by simplejson
-
-        :rtype: str
         """
         return str(self)
 
