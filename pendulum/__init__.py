@@ -231,21 +231,21 @@ def now(tz=None):  # type: (Optional[Union[str, _Timezone]]) -> DateTime
 
 def today(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime
     """
-    Create a DateTime instance for today.
+    Create a DateTime instance for today with time equal to 00:00:00 in 'tz' arg.
     """
     return now(tz).start_of("day")
 
 
 def tomorrow(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime
     """
-    Create a DateTime instance for today.
+    Create a DateTime instance for tomorrow with time equal to 00:00:00 in 'tz' arg.
     """
     return today(tz).add(days=1)
 
 
 def yesterday(tz="local"):  # type: (Union[str, _Timezone]) -> DateTime
     """
-    Create a DateTime instance for today.
+    Create a DateTime instance for yesterday with time equal to 00:00:00 in 'tz' arg.
     """
     return today(tz).subtract(days=1)
 
