@@ -5,8 +5,8 @@ cd $(dirname $0)
 
 export PATH=/opt/python/cp38-cp38/bin/:$PATH
 
-curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-/opt/python/cp38-cp38/bin/python get-poetry.py --preview -y
+curl -fsS -o install-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py
+/opt/python/cp38-cp38/bin/python install-poetry.py --preview -y
 rm get-poetry.py
 
 for PYBIN in /opt/python/cp3*/bin; do

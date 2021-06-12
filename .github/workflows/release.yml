@@ -43,8 +43,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and set up Poetry
       run: |
-        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-        python get-poetry.py --preview -y
+        curl -fsS -o install-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py
+        python install-poetry.py --preview -y
     - name: Build distributions
       run: |
         source $HOME/.poetry/env
@@ -74,8 +74,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and setup Poetry
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -O get-poetry.py
-        python get-poetry.py --preview -y
+        Invoke-WebRequest https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -O install-poetry.py
+        python install-poetry.py --preview -y
     - name: Build distributions
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
