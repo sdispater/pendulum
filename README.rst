@@ -73,55 +73,6 @@ and by default in ``UTC`` for ease of use.
 
 Pendulum also improves the standard ``timedelta`` class by providing more intuitive methods and properties.
 
-
-Why not Arrow?
-==============
-
-Arrow is the most popular datetime library for Python right now, however its behavior
-and API can be erratic and unpredictable. The ``get()`` method can receive pretty much anything
-and it will try its best to return something while silently failing to handle some cases:
-
-.. code-block:: python
-
-    arrow.get('2016-1-17')
-    # <Arrow [2016-01-01T00:00:00+00:00]>
-
-    pendulum.parse('2016-1-17')
-    # <Pendulum [2016-01-17T00:00:00+00:00]>
-
-    arrow.get('20160413')
-    # <Arrow [1970-08-22T08:06:53+00:00]>
-
-    pendulum.parse('20160413')
-    # <Pendulum [2016-04-13T00:00:00+00:00]>
-
-    arrow.get('2016-W07-5')
-    # <Arrow [2016-01-01T00:00:00+00:00]>
-
-    pendulum.parse('2016-W07-5')
-    # <Pendulum [2016-02-19T00:00:00+00:00]>
-
-    # Working with DST
-    just_before = arrow.Arrow(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
-    just_after = just_before.replace(microseconds=1)
-    '2013-03-31T02:00:00+02:00'
-    # Should be 2013-03-31T03:00:00+02:00
-
-    (just_after.to('utc') - just_before.to('utc')).total_seconds()
-    -3599.999999
-    # Should be 1e-06
-
-    just_before = pendulum.datetime(2013, 3, 31, 1, 59, 59, 999999, 'Europe/Paris')
-    just_after = just_before.add(microseconds=1)
-    '2013-03-31T03:00:00+02:00'
-
-    (just_after.in_timezone('utc') - just_before.in_timezone('utc')).total_seconds()
-    1e-06
-
-Those are a few examples showing that Arrow cannot always be trusted to have a consistent
-behavior with the data you are passing to it.
-
-
 Limitations
 ===========
 
