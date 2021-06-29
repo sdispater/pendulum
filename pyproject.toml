@@ -38,7 +38,7 @@ babel = "^2.5"
 cleo = "^0.8.1"
 tox = "^3.0"
 black = { version = "^19.3b0", markers = "implementation_name != 'pypy'" }
-isort = "^4.3.21"
+isort = {version = "^5.9.1", python = "^3.6.1"}
 pre-commit = "^1.10"
 mkdocs = { version = "^1.0", python = "^3.5" }
 pymdown-extensions = "^6.0"
