@@ -67,7 +67,7 @@ adopt the proper behavior and apply the transition accordingly.
 >>> dt = dt.add(microseconds=1)
 '2013-03-31T03:00:00+02:00'
 >>> dt.subtract(microseconds=1)
-'2013-03-31T01:59:59.999998+01:00'
+'2013-03-31T01:59:59.999999+01:00'
 
 >>> dt = pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999,
                            tz='Europe/Paris',
