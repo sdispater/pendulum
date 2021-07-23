@@ -24,3 +24,13 @@ def test_in_minutes():
 def test_in_seconds():
     it = pendulum.duration(seconds=72)
     assert it.in_seconds() == 72
+
+
+def test_in_milliseconds():
+    it = pendulum.duration(milliseconds=1234)
+    assert it.in_milliseconds() == 1234
+
+
+def test_in_microseconds():
+    it = pendulum.duration(microseconds=1234567)
+    assert it.in_microseconds() == 1234567
