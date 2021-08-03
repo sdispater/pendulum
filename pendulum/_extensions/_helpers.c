@@ -238,10 +238,7 @@ static int Diff_init(Diff *self, PyObject *args, PyObject *kwargs)
  */
 static PyObject *Diff_repr(Diff *self)
 {
-    char repr[82] = {0};
-
-    sprintf(
-        repr,
+    return PyUnicode_FromFormat(
         "%d years %d months %d days %d hours %d minutes %d seconds %d microseconds",
         self->years,
         self->months,
@@ -250,8 +247,6 @@ static PyObject *Diff_repr(Diff *self)
         self->minutes,
         self->seconds,
         self->microseconds);
-
-    return PyUnicode_FromString(repr);
 }
 
 /*
