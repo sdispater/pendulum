@@ -1229,6 +1229,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         PyErr_SetString(
             PyExc_ValueError, "Invalid parameters"
         );
+        free(parsed);
         return NULL;
     }
 
@@ -1239,6 +1240,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 PyExc_ValueError, PARSER_ERRORS[parsed->error]
             );
 
+            free(parsed);
             return NULL;
         }
     } else if (_parse_iso8601_datetime(str, parsed) == NULL) {
@@ -1246,6 +1248,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             PyExc_ValueError, PARSER_ERRORS[parsed->error]
         );
 
+        free(parsed);
         return NULL;
     }
 
@@ -1295,6 +1298,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             parsed->hours, parsed->minutes, parsed->seconds, parsed->microseconds
         );
     } else {
+        free(parsed);
         return NULL;
     }
 
