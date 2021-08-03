@@ -306,9 +306,10 @@ static PyTypeObject FixedOffset_type = {
 static PyObject *new_fixed_offset_ex(int offset, char *name, PyTypeObject *type) {
     FixedOffset *self = (FixedOffset *) (type->tp_alloc(type, 0));
 
-    if (self != NULL)
+    if (self != NULL) {
         self->offset = offset;
         self->tzname = name;
+    }
 
     return (PyObject *) self;
 }
