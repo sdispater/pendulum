@@ -7,8 +7,6 @@ from typing import Iterator
 from typing import Optional
 from typing import Union
 
-from pendulum.utils._compat import zoneinfo
-
 from .exceptions import InvalidTimezone
 from .timezone import FixedTimezone
 from .timezone import Timezone

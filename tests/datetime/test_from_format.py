@@ -1,5 +1,6 @@
-import pendulum
 import pytest
+
+import pendulum
 
 from ..conftest import assert_datetime
 

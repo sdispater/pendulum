@@ -37,9 +37,9 @@ pytz = ">=2018.3"
 babel = "^2.5"
 cleo = "^1.0.0a3"
 tox = "^3.0"
-black = { version = "^19.3b0", markers = "implementation_name != 'pypy'" }
+black = {version = "^21.9b0", markers = "python_full_version >= '3.6.2' and python_version < '4.0' and implementation_name != 'pypy'"}
 isort = {version = "^5.9.1", python = "^3.6.1"}
-pre-commit = "^1.10"
+pre-commit = {version = "^2.10.0", python = "^3.6.1"}
 mkdocs = { version = "^1.0", python = "^3.5" }
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
@@ -51,14 +51,12 @@ generate-setup-file = false
 script = "build.py"
 
 [tool.isort]
-line_length = 88
+profile = "black"
 force_single_line = true
-force_grid_wrap = 0
 atomic = true
 include_trailing_comma = true
 lines_after_imports = 2
 lines_between_types = 1
-multi_line_output = 3
 use_parentheses = true
 not_skip = "__init__.py"
 skip_glob = ["*/setup.py"]
@@ -69,11 +67,11 @@ known_third_party = [
     "babel",
     "cleo",
     "dateutil",
-    "freezegun",
+    "time_machine",
     "pytzdata",
 ]
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0a9"]
+requires = ["poetry-core>=1.1.0a6"]
 build-backend = "poetry.core.masonry.api"

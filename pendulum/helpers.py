@@ -34,21 +34,21 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from ._extensions._helpers import local_time
-    from ._extensions._helpers import precise_diff
+    from ._extensions._helpers import days_in_year
     from ._extensions._helpers import is_leap
     from ._extensions._helpers import is_long_year
-    from ._extensions._helpers import week_day
-    from ._extensions._helpers import days_in_year
+    from ._extensions._helpers import local_time
+    from ._extensions._helpers import precise_diff
     from ._extensions._helpers import timestamp
+    from ._extensions._helpers import week_day
 except ImportError:
-    from ._extensions.helpers import local_time  # noqa
-    from ._extensions.helpers import precise_diff  # noqa
+    from ._extensions.helpers import days_in_year  # noqa
     from ._extensions.helpers import is_leap  # noqa
     from ._extensions.helpers import is_long_year  # noqa
-    from ._extensions.helpers import week_day  # noqa
-    from ._extensions.helpers import days_in_year  # noqa
+    from ._extensions.helpers import local_time  # noqa
+    from ._extensions.helpers import precise_diff  # noqa
     from ._extensions.helpers import timestamp  # noqa
+    from ._extensions.helpers import week_day  # noqa
 
 
 difference_formatter = DifferenceFormatter()
