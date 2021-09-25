@@ -9,6 +9,7 @@ from typing import Union
 
 from pendulum.utils._compat import zoneinfo
 
+from .exceptions import InvalidTimezone
 from .timezone import FixedTimezone
 from .timezone import Timezone
 
@@ -213,7 +214,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
 
                     try:
                         return Timezone(os.path.join(*tzpath))
-                    except zoneinfo.ZoneInfoNotFoundError:
+                    except InvalidTimezone:
                         pass
 
     # systemd distributions use symlinks that include the zone name,
@@ -228,7 +229,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
             tzpath.insert(0, parts.pop(0))
             try:
                 return Timezone(os.path.join(*tzpath))
-            except zoneinfo.ZoneInfoNotFoundError:
+            except InvalidTimezone:
                 pass
 
     # No explicit setting existed. Use localtime

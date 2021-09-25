@@ -1,7 +1,8 @@
 from datetime import datetime
 
-import pendulum
 import pytest
+
+import pendulum
 
 
 def test_diff_in_years_positive():
@@ -807,17 +808,7 @@ def test_subtraction_with_timezone():
 
     assert (post - dt).total_seconds() == 1e-06
 
-    dt = pendulum.datetime(
-        2013,
-        10,
-        27,
-        2,
-        59,
-        59,
-        999999,
-        tz="Europe/Paris",
-        dst_rule=pendulum.PRE_TRANSITION,
-    )
+    dt = pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999, tz="Europe/Paris", fold=0,)
     post = dt.add(microseconds=1)
 
     assert (post - dt).total_seconds() == 1e-06

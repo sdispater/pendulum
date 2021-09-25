@@ -197,7 +197,6 @@ def precise_diff(
 
     :rtype: PreciseDiff
     """
-    print("DT", d1, d2)
     sign = 1
 
     if d1 == d2:

@@ -1,7 +1,8 @@
 import struct
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
@@ -95,12 +96,8 @@ def test_int_timestamp_accuracy():
 
 
 def test_timestamp_with_transition():
-    d_pre = pendulum.datetime(
-        2012, 10, 28, 2, 0, tz="Europe/Warsaw", dst_rule=pendulum.PRE_TRANSITION
-    )
-    d_post = pendulum.datetime(
-        2012, 10, 28, 2, 0, tz="Europe/Warsaw", dst_rule=pendulum.POST_TRANSITION
-    )
+    d_pre = pendulum.datetime(2012, 10, 28, 2, 0, tz="Europe/Warsaw", fold=0)
+    d_post = pendulum.datetime(2012, 10, 28, 2, 0, tz="Europe/Warsaw", fold=1)
 
     # the difference between the timestamps before and after is equal to one hour
     assert d_post.timestamp() - d_pre.timestamp() == pendulum.SECONDS_PER_HOUR

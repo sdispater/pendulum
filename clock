@@ -16,9 +16,9 @@ from babel.plural import _binary_compiler
 from babel.plural import _GettextCompiler
 from babel.plural import _unary_compiler
 from babel.plural import compile_zero
-from cleo import Application
-from cleo import Command
-from cleo import argument
+from cleo.application import Application
+from cleo.commands.command import Command
+from cleo.helpers import argument
 
 from pendulum import __version__
 
@@ -47,7 +47,7 @@ class _LambdaCompiler(_GettextCompiler):
 
 class LocaleCreate(Command):
 
-    name = "create"
+    name = "locale create"
     description = "Creates locale translations."
 
     arguments = [argument("locales", "Locales to dump.", optional=False, multiple=True)]
@@ -236,7 +236,7 @@ translations = {{}}
 
 class LocaleRecreate(Command):
 
-    name = "recreate"
+    name = "locale recreate"
     description = "Recreate existing locales."
 
     def handle(self):
@@ -249,20 +249,9 @@ class LocaleRecreate(Command):
         self.call("locale:create", [("locales", locales)])
 
 
-class LocaleCommand(Command):
-
-    name = "locale"
-    description = "Locale related commands."
-
-    commands = [LocaleCreate()]
-
-    def handle(self):
-        self.call("help", self._config.name)
-
-
 class WindowsTzDump(Command):
 
-    name = "dump-timezones"
+    name = "windows dump-timezones"
     description = "Dumps the mapping of Windows timezones to IANA timezones."
 
     MAPPING_DIR = os.path.join("pendulum", "tz", "data")
@@ -281,21 +270,14 @@ class WindowsTzDump(Command):
         with open(os.path.join(self.MAPPING_DIR, "windows.py"), "w") as f:
             f.write(mapping)
 
-
-class WindowsCommand(Command):
-
-    name = "windows"
-    description = "Windows related commands."
-
-    commands = [WindowsTzDump()]
-
     def handle(self):
         self.call("help", self._config.name)
 
 
 app = Application("clock", __version__)
-app.add(LocaleCommand())
-app.add(WindowsCommand())
+app.add(LocaleCreate())
+app.add(LocaleRecreate())
+app.add(WindowsTzDump())
 
 
 if __name__ == "__main__":

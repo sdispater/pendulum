@@ -101,7 +101,8 @@ def datetime(
     second: int = 0,
     microsecond: int = 0,
     tz: Optional[Union[str, float, Timezone]] = UTC,
-    dst_rule: str = POST_TRANSITION,
+    fold: Optional[int] = 1,
+    raise_on_unknown_times: bool = False,
 ) -> DateTime:
     """
     Creates a new DateTime instance from a specific date and time.
@@ -109,10 +110,12 @@ def datetime(
     if tz is not None:
         tz = _safe_timezone(tz)
 
-    dt = _datetime.datetime(year, month, day, hour, minute, second, microsecond)
+    dt = _datetime.datetime(
+        year, month, day, hour, minute, second, microsecond, fold=fold
+    )
 
     if tz is not None:
-        dt = tz.convert(dt, dst_rule=dst_rule)
+        dt = tz.convert(dt, raise_on_unknown_times=raise_on_unknown_times)
 
     return DateTime(
         dt.year,
@@ -152,11 +155,12 @@ def naive(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
+    fold: Optional[int] = 1,
 ) -> DateTime:
     """
     Return a naive DateTime.
     """
-    return DateTime(year, month, day, hour, minute, second, microsecond)
+    return DateTime(year, month, day, hour, minute, second, microsecond, fold=fold)
 
 
 def date(year: int, month: int, day: int) -> Date:
@@ -223,7 +227,7 @@ def now(tz: Optional[Union[str, Timezone]] = None) -> DateTime:
     else:
         dt = _datetime.datetime.now(UTC)
         tz = _safe_timezone(tz)
-        dt = tz.convert(dt)
+        dt = dt.astimezone(tz)
 
     return DateTime(
         dt.year,
