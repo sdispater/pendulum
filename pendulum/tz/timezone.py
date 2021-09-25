@@ -8,6 +8,10 @@ from typing import TypeVar
 
 from pendulum.utils._compat import zoneinfo
 
+from .exceptions import AmbiguousTime
+from .exceptions import InvalidTimezone
+from .exceptions import NonExistingTime
+
 
 POST_TRANSITION = "post"
 PRE_TRANSITION = "pre"
@@ -51,11 +55,17 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
     >>> tz = Timezone('Europe/Paris')
     """
 
+    def __new__(cls, key: str) -> "Timezone":
+        try:
+            return super().__new__(cls, key)
+        except zoneinfo.ZoneInfoNotFoundError:
+            raise InvalidTimezone(key)
+
     @property
     def name(self) -> str:
         return self.key
 
-    def convert(self, dt: datetime, dst_rule: Optional[str] = None) -> datetime:
+    def convert(self, dt: datetime, raise_on_unknown_times: bool = False) -> datetime:
         """
         Converts a datetime in the current timezone.
 
@@ -76,14 +86,30 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
         >>> in_new_york.isoformat()
         '2013-03-30T21:30:00-04:00'
         """
-        if dst_rule is not None:
-            if dst_rule == PRE_TRANSITION and dt.fold != 0:
-                dt = dt.replace(fold=0)
-            elif dst_rule == POST_TRANSITION and dt.fold != 1:
-                dt = dt.replace(fold=1)
-
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=self)
+            offset_before = (
+                self.utcoffset(dt.replace(fold=0)) if dt.fold else self.utcoffset(dt)
+            )
+            offset_after = (
+                self.utcoffset(dt) if dt.fold else self.utcoffset(dt.replace(fold=1))
+            )
+
+            if offset_after > offset_before:
+                # Skipped time
+                if raise_on_unknown_times:
+                    raise NonExistingTime(dt)
+
+                dt += (
+                    (offset_after - offset_before)
+                    if dt.fold
+                    else (offset_before - offset_after)
+                )
+            elif offset_before > offset_after:
+                # Repeated time
+                if raise_on_unknown_times:
+                    raise AmbiguousTime(dt)
+
+            return dt.replace(tzinfo=self)
 
         return dt.astimezone(self)
 
@@ -100,9 +126,12 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
         """
         Return a normalized datetime for the current timezone.
         """
-        return datetime(
-            year, month, day, hour, minute, second, microsecond, tzinfo=self, fold=1
+        return self.convert(
+            datetime(year, month, day, hour, minute, second, microsecond, fold=1)
         )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}('{self.name}')"
 
 
 class FixedTimezone(tzinfo, PendulumTimezone):
@@ -123,7 +152,7 @@ class FixedTimezone(tzinfo, PendulumTimezone):
     def name(self) -> str:
         return self._name
 
-    def convert(self, dt: datetime, dst_rule: Optional[str] = None) -> datetime:
+    def convert(self, dt: datetime, raise_on_unknown_times: bool = False) -> datetime:
         if dt.tzinfo is None:
             return dt.__class__(
                 dt.year,
@@ -136,12 +165,6 @@ class FixedTimezone(tzinfo, PendulumTimezone):
                 tzinfo=self,
                 fold=0,
             )
-
-        if dst_rule is not None:
-            if dst_rule == PRE_TRANSITION and dt.fold != 0:
-                dt = dt.replace(fold=0)
-            elif dst_rule == POST_TRANSITION and dt.fold != 1:
-                dt = dt.replace(fold=1)
 
         return dt.astimezone(self)
 
@@ -179,5 +202,12 @@ class FixedTimezone(tzinfo, PendulumTimezone):
     def __getinitargs__(self):  # type: () -> tuple
         return self._offset, self._name
 
+    def __repr__(self) -> str:
+        name = ""
+        if self._name:
+            name = f', name="{self._name}"'
 
-UTC = FixedTimezone(0, "UTC")
+        return f"{self.__class__.__name__}({self._offset}{name})"
+
+
+UTC = Timezone("UTC")

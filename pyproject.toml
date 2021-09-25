@@ -30,12 +30,12 @@ python-dateutil = "^2.6"
 "backports.zoneinfo" = {version = "^0.2.1", python = ">=3.6,<3.9"}
 tzdata = ">=2020.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^5.4.3"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
 babel = "^2.5"
-cleo = "^0.8.1"
+cleo = "^1.0.0a3"
 tox = "^3.0"
 black = { version = "^19.3b0", markers = "implementation_name != 'pypy'" }
 isort = {version = "^5.9.1", python = "^3.6.1"}
@@ -44,7 +44,7 @@ mkdocs = { version = "^1.0", python = "^3.5" }
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
 markdown-include = "^0.5.1"
-freezegun = "^0.3.15"
+time-machine = "^2.4.0"
 
 [tool.poetry.build]
 generate-setup-file = false

@@ -601,7 +601,7 @@ class Formatter:
             parsed["tz"] = pendulum.timezone(offset)
         elif token == "z":
             # Full timezone
-            if value not in pendulum.timezones:
+            if value not in pendulum.timezones():
                 raise ValueError("Invalid date")
 
             parsed["tz"] = pendulum.timezone(value)

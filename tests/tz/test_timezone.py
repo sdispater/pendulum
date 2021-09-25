@@ -1,8 +1,9 @@
 from datetime import datetime
 from datetime import timedelta
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import timezone
 from pendulum.tz import fixed_timezone
@@ -46,7 +47,7 @@ def test_skipped_time_with_pre_rule():
     assert dt.year == 2013
     assert dt.month == 3
     assert dt.day == 31
-    assert dt.hour == 2
+    assert dt.hour == 1
     assert dt.minute == 30
     assert dt.second == 45
     assert dt.microsecond == 123456
@@ -72,68 +73,17 @@ def test_skipped_time_with_post_rule():
     assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
-def test_skipped_time_with_explicit_post_rule():
-    dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
-    tz = timezone("Europe/Paris")
-    dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
-
-    assert dt.year == 2013
-    assert dt.month == 3
-    assert dt.day == 31
-    assert dt.hour == 3
-    assert dt.minute == 30
-    assert dt.second == 45
-    assert dt.microsecond == 123456
-    assert dt.tzinfo.name == "Europe/Paris"
-    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
-    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
-
-
-def test_skipped_time_with_explicit_pre_rule():
-    dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
-    tz = timezone("Europe/Paris")
-    dt = tz.convert(dt, dst_rule=pendulum.PRE_TRANSITION)
-
-    assert dt.year == 2013
-    assert dt.month == 3
-    assert dt.day == 31
-    assert dt.hour == 1
-    assert dt.minute == 30
-    assert dt.second == 45
-    assert dt.microsecond == 123456
-    assert dt.tzinfo.name == "Europe/Paris"
-    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
-    assert dt.tzinfo.dst(dt) == timedelta()
-
-
 def test_skipped_time_with_error():
     dt = datetime(2013, 3, 31, 2, 30, 45, 123456)
     tz = timezone("Europe/Paris")
     with pytest.raises(NonExistingTime):
-        tz.convert(dt, dst_rule=pendulum.TRANSITION_ERROR)
+        tz.convert(dt, raise_on_unknown_times=True)
 
 
 def test_repeated_time():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456, fold=1)
     tz = timezone("Europe/Paris")
     dt = tz.convert(dt)
-
-    assert dt.year == 2013
-    assert dt.month == 10
-    assert dt.day == 27
-    assert dt.hour == 2
-    assert dt.minute == 30
-    assert dt.second == 45
-    assert dt.microsecond == 123456
-    assert dt.tzinfo.name == "Europe/Paris"
-    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=3600)
-    assert dt.tzinfo.dst(dt) == timedelta()
-
-
-def test_repeated_time_explicit_post_rule():
-    dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
-    tz = timezone("Europe/Paris")
-    dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
 
     assert dt.year == 2013
     assert dt.month == 10
@@ -164,28 +114,11 @@ def test_repeated_time_pre_rule():
     assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
-def test_repeated_time_explicit_pre_rule():
-    dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
-    tz = timezone("Europe/Paris")
-    dt = tz.convert(dt, dst_rule=pendulum.PRE_TRANSITION)
-
-    assert dt.year == 2013
-    assert dt.month == 10
-    assert dt.day == 27
-    assert dt.hour == 2
-    assert dt.minute == 30
-    assert dt.second == 45
-    assert dt.microsecond == 123456
-    assert dt.tzinfo.name == "Europe/Paris"
-    assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
-    assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
-
-
 def test_repeated_time_with_error():
     dt = datetime(2013, 10, 27, 2, 30, 45, 123456)
     tz = timezone("Europe/Paris")
     with pytest.raises(AmbiguousTime):
-        tz.convert(dt, dst_rule=pendulum.TRANSITION_ERROR)
+        tz.convert(dt, raise_on_unknown_times=True)
 
 
 def test_pendulum_create_basic():
@@ -200,6 +133,7 @@ def test_pendulum_create_basic():
 def test_pendulum_create_skipped():
     dt = pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz="Europe/Paris")
 
+    assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2013, 3, 31, 3, 30, 45, 123456)
     assert dt.timezone_name == "Europe/Paris"
     assert dt.tzinfo.utcoffset(dt) == timedelta(seconds=7200)
@@ -207,17 +141,7 @@ def test_pendulum_create_skipped():
 
 
 def test_pendulum_create_skipped_with_pre_rule():
-    dt = pendulum.datetime(
-        2013,
-        3,
-        31,
-        2,
-        30,
-        45,
-        123456,
-        tz="Europe/Paris",
-        dst_rule=pendulum.PRE_TRANSITION,
-    )
+    dt = pendulum.datetime(2013, 3, 31, 2, 30, 45, 123456, tz="Europe/Paris", fold=0)
 
     assert_datetime(dt, 2013, 3, 31, 1, 30, 45, 123456)
     assert dt.timezone_name == "Europe/Paris"
@@ -236,7 +160,7 @@ def test_pendulum_create_skipped_with_error():
             45,
             123456,
             tz="Europe/Paris",
-            dst_rule=pendulum.TRANSITION_ERROR,
+            raise_on_unknown_times=True,
         )
 
 
@@ -250,17 +174,7 @@ def test_pendulum_create_repeated():
 
 
 def test_pendulum_create_repeated_with_pre_rule():
-    dt = pendulum.datetime(
-        2013,
-        10,
-        27,
-        2,
-        30,
-        45,
-        123456,
-        tz="Europe/Paris",
-        dst_rule=pendulum.PRE_TRANSITION,
-    )
+    dt = pendulum.datetime(2013, 10, 27, 2, 30, 45, 123456, tz="Europe/Paris", fold=0,)
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
     assert dt.timezone_name == "Europe/Paris"
@@ -279,7 +193,7 @@ def test_pendulum_create_repeated_with_error():
             45,
             123456,
             tz="Europe/Paris",
-            dst_rule=pendulum.TRANSITION_ERROR,
+            raise_on_unknown_times=True,
         )
 
 
@@ -301,7 +215,7 @@ def test_utcoffset():
 def test_utcoffset_pre_transition():
     tz = pendulum.timezone("America/Chicago")
     utcoffset = tz.utcoffset(datetime(1883, 11, 18))
-    assert utcoffset == timedelta(days=-1, seconds=64800)
+    assert utcoffset == timedelta(days=-1, seconds=65364)
 
 
 def test_dst():
@@ -309,14 +223,6 @@ def test_dst():
     dst = tz.dst(datetime(1940, 7, 1))
 
     assert dst == timedelta(0, 6000)
-
-
-def test_short_timezones():
-    tz = pendulum.timezone("CET")
-    assert len(tz._transitions) > 0
-
-    tz = pendulum.timezone("EET")
-    assert len(tz._transitions) > 0
 
 
 def test_short_timezones_should_not_modify_time():
@@ -354,6 +260,9 @@ def test_after_last_transition():
     assert dt.microsecond == 0
 
 
+@pytest.mark.skip(
+    reason="zoneinfo does not currently support POSIX transition rules to go beyond the last fixed transition."
+)
 def test_on_last_transition():
     tz = pendulum.timezone("Europe/Paris")
     dt = pendulum.naive(2037, 10, 25, 2, 30)
@@ -442,16 +351,6 @@ def test_constructor_fold_attribute_is_honored():
     assert dt.strftime("%z") == "-0500"
 
 
-def test_convert_sets_fold_attribute_properly():
-    tz = pendulum.timezone("US/Eastern")
-
-    dt = tz.convert(datetime(2014, 11, 2, 1, 30), dst_rule=pendulum.PRE_TRANSITION)
-    assert dt.fold == 0
-
-    dt = tz.convert(datetime(2014, 11, 2, 1, 30), dst_rule=pendulum.POST_TRANSITION)
-    assert dt.fold == 1
-
-
 def test_datetime():
     tz = timezone("Europe/Paris")
 
@@ -485,14 +384,17 @@ def test_fixed_timezone():
 
 def test_just_before_last_transition():
     tz = pendulum.timezone("Asia/Shanghai")
-    dt = datetime(1991, 4, 20, 1, 49, 8)
-    dt = tz.convert(dt, dst_rule=pendulum.POST_TRANSITION)
+    dt = datetime(1991, 4, 20, 1, 49, 8, fold=0)
+    dt = tz.convert(dt)
 
     epoch = datetime(1970, 1, 1, tzinfo=timezone("UTC"))
     expected = (dt - epoch).total_seconds()
     assert expected == 672079748.0
 
 
+@pytest.mark.skip(
+    reason="zoneinfo does not currently support POSIX transition rules to go beyond the last fixed transition."
+)
 def test_timezones_are_extended():
     tz = pendulum.timezone("Europe/Paris")
     dt = tz.convert(pendulum.naive(2134, 2, 13, 1))
@@ -501,9 +403,7 @@ def test_timezones_are_extended():
     assert dt.utcoffset().total_seconds() == 3600
     assert dt.dst() == timedelta()
 
-    dt = tz.convert(
-        pendulum.naive(2134, 3, 28, 2, 30), dst_rule=pendulum.POST_TRANSITION
-    )
+    dt = tz.convert(pendulum.naive(2134, 3, 28, 2, 30))
 
     assert_datetime(dt, 2134, 3, 28, 3, 30)
     assert dt.utcoffset().total_seconds() == 7200
@@ -515,56 +415,13 @@ def test_timezones_are_extended():
     assert dt.utcoffset().total_seconds() == 7200
     assert dt.dst() == timedelta(seconds=3600)
 
-    dt = tz.convert(
-        pendulum.naive(2134, 10, 31, 2, 30), dst_rule=pendulum.PRE_TRANSITION
-    )
+    dt = tz.convert(pendulum.naive(2134, 10, 31, 2, 30, fold=0))
 
     assert_datetime(dt, 2134, 10, 31, 2, 30)
     assert dt.utcoffset().total_seconds() == 7200
     assert dt.dst() == timedelta(seconds=3600)
 
-    dt = tz.convert(
-        pendulum.naive(2134, 10, 31, 2, 30), dst_rule=pendulum.POST_TRANSITION
-    )
-
-    assert_datetime(dt, 2134, 10, 31, 2, 30)
-    assert dt.utcoffset().total_seconds() == 3600
-    assert dt.dst() == timedelta()
-
-
-def test_timezones_extension_can_be_disabled():
-    tz = pendulum.timezone("Europe/Paris", extended=False)
-    dt = tz.convert(pendulum.naive(2134, 2, 13, 1))
-
-    assert_datetime(dt, 2134, 2, 13, 1)
-    assert dt.utcoffset().total_seconds() == 3600
-    assert dt.dst() == timedelta()
-
-    dt = tz.convert(
-        pendulum.naive(2134, 3, 28, 2, 30), dst_rule=pendulum.POST_TRANSITION
-    )
-
-    assert_datetime(dt, 2134, 3, 28, 2, 30)
-    assert dt.utcoffset().total_seconds() == 3600
-    assert dt.dst() == timedelta()
-
-    dt = tz.convert(pendulum.naive(2134, 7, 11, 2, 30))
-
-    assert_datetime(dt, 2134, 7, 11, 2, 30)
-    assert dt.utcoffset().total_seconds() == 3600
-    assert dt.dst() == timedelta()
-
-    dt = tz.convert(
-        pendulum.naive(2134, 10, 31, 2, 30), dst_rule=pendulum.PRE_TRANSITION
-    )
-
-    assert_datetime(dt, 2134, 10, 31, 2, 30)
-    assert dt.utcoffset().total_seconds() == 3600
-    assert dt.dst() == timedelta()
-
-    dt = tz.convert(
-        pendulum.naive(2134, 10, 31, 2, 30), dst_rule=pendulum.POST_TRANSITION
-    )
+    dt = tz.convert(pendulum.naive(2134, 10, 31, 2, 30))
 
     assert_datetime(dt, 2134, 10, 31, 2, 30)
     assert dt.utcoffset().total_seconds() == 3600

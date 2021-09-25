@@ -175,11 +175,11 @@ class DateTime(datetime.datetime, Date):
         return self.timezone
 
     @property
-    def timezone_name(self) -> str:
+    def timezone_name(self) -> Optional[str]:
         tz = self.timezone
 
         if tz is None:
-            return None
+            return
 
         return tz.name
 
@@ -191,7 +191,7 @@ class DateTime(datetime.datetime, Date):
         return self.offset == self.in_timezone(pendulum.local_timezone()).offset
 
     def is_utc(self) -> bool:
-        return self.offset == UTC.offset
+        return self.offset == 0
 
     def is_dst(self) -> bool:
         return self.dst() != datetime.timedelta()
@@ -241,7 +241,11 @@ class DateTime(datetime.datetime, Date):
         """
         tz = pendulum._safe_timezone(tz)
 
-        return tz.convert(self, dst_rule=pendulum.POST_TRANSITION)
+        dt = self
+        if not self.timezone:
+            dt = dt.replace(fold=1)
+
+        return tz.convert(dt)
 
     def in_tz(self, tz: Union[str, Timezone]) -> "DateTime":
         """
@@ -377,7 +381,7 @@ class DateTime(datetime.datetime, Date):
             minute=self.minute,
             second=self.second,
             us=us,
-            tzinfo=self.tzinfo,
+            tzinfo=repr(self.tzinfo),
         )
 
     # Comparisons
@@ -469,8 +473,7 @@ class DateTime(datetime.datetime, Date):
         Add a duration to the instance.
 
         If we're adding units of variable length (i.e., years, months),
-        move forward from curren time,
-        otherwise move forward from utc, for accuracy
+        move forward from current time, otherwise move forward from utc, for accuracy
         when moving across DST boundaries.
         """
         units_of_variable_length = any([years, months, weeks, days])
@@ -1170,7 +1173,19 @@ class DateTime(datetime.datetime, Date):
         return pendulum.instance(datetime.datetime.combine(date, time), tz=None)
 
     def astimezone(self, tz: Optional[datetime.tzinfo] = None) -> "DateTime":
-        return pendulum.instance(super(DateTime, self).astimezone(tz))
+        dt = super().astimezone(tz)
+
+        return self.__class__(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            fold=dt.fold,
+            tzinfo=dt.tzinfo,
+        )
 
     def replace(
         self,
@@ -1203,22 +1218,8 @@ class DateTime(datetime.datetime, Date):
         if fold is None:
             fold = self.fold
 
-        transition_rule = pendulum.POST_TRANSITION
-        if fold is not None:
-            transition_rule = pendulum.PRE_TRANSITION
-            if fold:
-                transition_rule = pendulum.POST_TRANSITION
-
         return pendulum.datetime(
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
-            microsecond,
-            tz=tzinfo,
-            dst_rule=transition_rule,
+            year, month, day, hour, minute, second, microsecond, tz=tzinfo, fold=fold
         )
 
     def __getnewargs__(self) -> Tuple:
