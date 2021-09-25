@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Linting
         run: |
           pip install pre-commit
@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, MacOS, Windows]
-        python-version: [3.6, 3.7, 3.8, pypy3]
+        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
     steps:
       - uses: actions/checkout@v2
 
@@ -51,9 +51,18 @@ jobs:
       - name: Install poetry
         shell: bash
         run: |
-          curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-          python get-poetry.py --preview -y
-          echo "::set-env name=PATH::$HOME/.poetry/bin:$PATH"
+          curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
+          python install-poetry.py --preview -y
+
+      - name: Update PATH
+        if: ${{ matrix.os != 'Windows' }}
+        shell: bash
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Update Path for Windows
+        if: ${{ matrix.os == 'Windows' }}
+        shell: bash
+        run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
 
       - name: Configure poetry
         shell: bash
