@@ -174,7 +174,17 @@ def test_pendulum_create_repeated():
 
 
 def test_pendulum_create_repeated_with_pre_rule():
-    dt = pendulum.datetime(2013, 10, 27, 2, 30, 45, 123456, tz="Europe/Paris", fold=0,)
+    dt = pendulum.datetime(
+        2013,
+        10,
+        27,
+        2,
+        30,
+        45,
+        123456,
+        tz="Europe/Paris",
+        fold=0,
+    )
 
     assert_datetime(dt, 2013, 10, 27, 2, 30, 45, 123456)
     assert dt.timezone_name == "Europe/Paris"

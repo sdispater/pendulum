@@ -2,8 +2,9 @@ import pickle
 
 from datetime import time
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import Time
 

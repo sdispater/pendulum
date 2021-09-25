@@ -244,7 +244,7 @@ class LocaleRecreate(Command):
 
         locales_dir = os.path.join("pendulum", "locales")
         locales = glob.glob(os.path.join(locales_dir, "*", "locale.py"))
-        locales = [os.path.basename(os.path.dirname(l)) for l in locales]
+        locales = [os.path.basename(os.path.dirname(locale)) for locale in locales]
 
         self.call("locale:create", [("locales", locales)])
 
@@ -269,9 +269,6 @@ class WindowsTzDump(Command):
 
         with open(os.path.join(self.MAPPING_DIR, "windows.py"), "w") as f:
             f.write(mapping)
-
-    def handle(self):
-        self.call("help", self._config.name)
 
 
 app = Application("clock", __version__)

@@ -808,7 +808,17 @@ def test_subtraction_with_timezone():
 
     assert (post - dt).total_seconds() == 1e-06
 
-    dt = pendulum.datetime(2013, 10, 27, 2, 59, 59, 999999, tz="Europe/Paris", fold=0,)
+    dt = pendulum.datetime(
+        2013,
+        10,
+        27,
+        2,
+        59,
+        59,
+        999999,
+        tz="Europe/Paris",
+        fold=0,
+    )
     post = dt.add(microseconds=1)
 
     assert (post - dt).total_seconds() == 1e-06

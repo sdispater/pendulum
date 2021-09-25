@@ -1,9 +1,10 @@
 from datetime import time
 from datetime import timedelta
 
-import pendulum
 import pytest
 import pytz
+
+import pendulum
 
 from pendulum import Time
 
