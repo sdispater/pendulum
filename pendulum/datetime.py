@@ -516,7 +516,7 @@ class DateTime(datetime.datetime, Date):
                 tz=self.tz,
             )
 
-        dt = self.__class__(
+        dt = datetime.datetime(
             dt.year,
             dt.month,
             dt.day,
