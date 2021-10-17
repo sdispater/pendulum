@@ -39,6 +39,7 @@ from .time import Time
 from .tz import UTC
 from .tz.timezone import FixedTimezone
 from .tz.timezone import Timezone
+from .utils._compat import PY38
 
 
 class DateTime(datetime.datetime, Date):
@@ -1146,6 +1147,16 @@ class DateTime(datetime.datetime, Date):
     def __add__(self, other: datetime.timedelta) -> "DateTime":
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
+
+        if PY38:
+            # This is a workaround for Python 3.8+
+            # since calling astimezone() will call this method
+            # instead of the base datetime class one.
+            import inspect
+
+            caller = inspect.stack()[1][3]
+            if caller == "astimezone":
+                return super().__add__(other)
 
         return self._add_timedelta_(other)
 

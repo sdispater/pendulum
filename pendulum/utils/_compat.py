@@ -2,6 +2,7 @@ import sys
 
 
 PYPY = hasattr(sys, "pypy_version_info")
+PY38 = sys.version_info[:2] >= (3, 8)
 
 
 try:
