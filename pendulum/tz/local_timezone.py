@@ -190,7 +190,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
         if not os.path.isfile(tzpath):
             continue
 
-        with open(tzpath, "rt") as tzfile:
+        with open(tzpath) as tzfile:
             data = tzfile.readlines()
 
         for line in data:

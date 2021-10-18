@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-
 import calendar
 import math
 
@@ -399,9 +396,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise ValueError('Invalid unit "{}" for start_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for start_of()')
 
-        return getattr(self, "_start_of_{}".format(unit))()
+        return getattr(self, f"_start_of_{unit}")()
 
     def end_of(self, unit):
         """
@@ -603,9 +600,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, "_first_of_{}".format(unit))(day_of_week)
+        return getattr(self, f"_first_of_{unit}")(day_of_week)
 
     def last_of(self, unit, day_of_week=None):
         """
@@ -624,9 +621,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, "_last_of_{}".format(unit))(day_of_week)
+        return getattr(self, f"_last_of_{unit}")(day_of_week)
 
     def nth_of(self, unit, nth, day_of_week):
         """
@@ -648,9 +645,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        dt = getattr(self, "_nth_of_{}".format(unit))(nth, day_of_week)
+        dt = getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
         if dt is False:
             raise PendulumException(
                 "Unable to find occurence {} of {} in {}".format(
@@ -873,13 +870,13 @@ class Date(FormattableMixin, date):
 
     @classmethod
     def fromtimestamp(cls, t):
-        dt = super(Date, cls).fromtimestamp(t)
+        dt = super().fromtimestamp(t)
 
         return cls(dt.year, dt.month, dt.day)
 
     @classmethod
     def fromordinal(cls, n):
-        dt = super(Date, cls).fromordinal(n)
+        dt = super().fromordinal(n)
 
         return cls(dt.year, dt.month, dt.day)
 
