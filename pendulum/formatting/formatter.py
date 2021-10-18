@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 import re
 import typing
@@ -66,7 +63,7 @@ class Formatter:
         "Mo": None,
         "DDDo": None,
         "Do": lambda locale: tuple(
-            r"\d+{}".format(o) for o in locale.get("custom.ordinal").values()
+            fr"\d+{o}" for o in locale.get("custom.ordinal").values()
         ),
         "dddd": "days.wide",
         "ddd": "days.abbreviated",
@@ -86,44 +83,44 @@ class Formatter:
 
     _TOKENS_RULES = {
         # Year
-        "YYYY": lambda dt: "{:d}".format(dt.year),
-        "YY": lambda dt: "{:d}".format(dt.year)[2:],
-        "Y": lambda dt: "{:d}".format(dt.year),
+        "YYYY": lambda dt: f"{dt.year:d}",
+        "YY": lambda dt: f"{dt.year:d}"[2:],
+        "Y": lambda dt: f"{dt.year:d}",
         # Quarter
-        "Q": lambda dt: "{:d}".format(dt.quarter),
+        "Q": lambda dt: f"{dt.quarter:d}",
         # Month
-        "MM": lambda dt: "{:02d}".format(dt.month),
-        "M": lambda dt: "{:d}".format(dt.month),
+        "MM": lambda dt: f"{dt.month:02d}",
+        "M": lambda dt: f"{dt.month:d}",
         # Day
-        "DD": lambda dt: "{:02d}".format(dt.day),
-        "D": lambda dt: "{:d}".format(dt.day),
+        "DD": lambda dt: f"{dt.day:02d}",
+        "D": lambda dt: f"{dt.day:d}",
         # Day of Year
-        "DDDD": lambda dt: "{:03d}".format(dt.day_of_year),
-        "DDD": lambda dt: "{:d}".format(dt.day_of_year),
+        "DDDD": lambda dt: f"{dt.day_of_year:03d}",
+        "DDD": lambda dt: f"{dt.day_of_year:d}",
         # Day of Week
-        "d": lambda dt: "{:d}".format(dt.day_of_week),
+        "d": lambda dt: f"{dt.day_of_week:d}",
         # Day of ISO Week
-        "E": lambda dt: "{:d}".format(dt.isoweekday()),
+        "E": lambda dt: f"{dt.isoweekday():d}",
         # Hour
-        "HH": lambda dt: "{:02d}".format(dt.hour),
-        "H": lambda dt: "{:d}".format(dt.hour),
+        "HH": lambda dt: f"{dt.hour:02d}",
+        "H": lambda dt: f"{dt.hour:d}",
         "hh": lambda dt: "{:02d}".format(dt.hour % 12 or 12),
         "h": lambda dt: "{:d}".format(dt.hour % 12 or 12),
         # Minute
-        "mm": lambda dt: "{:02d}".format(dt.minute),
-        "m": lambda dt: "{:d}".format(dt.minute),
+        "mm": lambda dt: f"{dt.minute:02d}",
+        "m": lambda dt: f"{dt.minute:d}",
         # Second
-        "ss": lambda dt: "{:02d}".format(dt.second),
-        "s": lambda dt: "{:d}".format(dt.second),
+        "ss": lambda dt: f"{dt.second:02d}",
+        "s": lambda dt: f"{dt.second:d}",
         # Fractional second
         "S": lambda dt: "{:01d}".format(dt.microsecond // 100000),
         "SS": lambda dt: "{:02d}".format(dt.microsecond // 10000),
         "SSS": lambda dt: "{:03d}".format(dt.microsecond // 1000),
         "SSSS": lambda dt: "{:04d}".format(dt.microsecond // 100),
         "SSSSS": lambda dt: "{:05d}".format(dt.microsecond // 10),
-        "SSSSSS": lambda dt: "{:06d}".format(dt.microsecond),
+        "SSSSSS": lambda dt: f"{dt.microsecond:06d}",
         # Timestamp
-        "X": lambda dt: "{:d}".format(dt.int_timestamp),
+        "X": lambda dt: f"{dt.int_timestamp:d}",
         "x": lambda dt: "{:d}".format(dt.int_timestamp * 1000 + dt.microsecond // 1000),
         # Timezone
         "zz": lambda dt: "{}".format(dt.tzname() if dt.tzinfo is not None else ""),
@@ -279,7 +276,7 @@ class Formatter:
         :rtype: str
         """
         if token in self._DATE_FORMATS:
-            fmt = locale.get("custom.date_formats.{}".format(token))
+            fmt = locale.get(f"custom.date_formats.{token}")
             if fmt is None:
                 fmt = self._DEFAULT_DATE_FORMATS[token]
 
@@ -307,7 +304,7 @@ class Formatter:
 
             hour, minute = divmod(abs(int(minutes)), 60)
 
-            return "{}{:02d}{}{:02d}".format(sign, hour, separator, minute)
+            return f"{sign}{hour:02d}{separator}{minute:02d}"
 
     def _format_localizable_token(
         self, dt, token, locale
@@ -409,7 +406,7 @@ class Formatter:
         )
 
         if not re.search("^" + pattern + "$", time):
-            raise ValueError("String does not match format {}".format(fmt))
+            raise ValueError(f"String does not match format {fmt}")
 
         re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)
 
@@ -586,7 +583,7 @@ class Formatter:
             tz = value[1:]
             if ":" not in tz:
                 if len(tz) == 2:
-                    tz = "{}00".format(tz)
+                    tz = f"{tz}00"
 
                 off_hour = tz[0:2]
                 off_minute = tz[2:4]
@@ -645,7 +642,7 @@ class Formatter:
 
             return
         else:
-            raise ValueError('Invalid token "{}"'.format(token))
+            raise ValueError(f'Invalid token "{token}"')
 
         parsed[unit] = locale.match_translation(match, value)
         if value is None:
@@ -660,7 +657,7 @@ class Formatter:
 
             return token
         elif token not in self._REGEX_TOKENS and token not in self._LOCALIZABLE_TOKENS:
-            raise ValueError("Unsupported token: {}".format(token))
+            raise ValueError(f"Unsupported token: {token}")
 
         if token in self._LOCALIZABLE_TOKENS:
             values = self._LOCALIZABLE_TOKENS[token]
@@ -674,7 +671,7 @@ class Formatter:
             candidates = self._REGEX_TOKENS[token]
 
         if not candidates:
-            raise ValueError("Unsupported token: {}".format(token))
+            raise ValueError(f"Unsupported token: {token}")
 
         if not isinstance(candidates, tuple):
             candidates = (candidates,)

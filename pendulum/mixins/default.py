@@ -4,7 +4,7 @@ from ..formatting import Formatter
 _formatter = Formatter()
 
 
-class FormattableMixin(object):
+class FormattableMixin:
 
     _formatter = _formatter
 

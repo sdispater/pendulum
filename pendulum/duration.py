@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-
 from datetime import timedelta
 
 import pendulum
@@ -275,31 +272,31 @@ class Duration(timedelta):
         return self.in_words()
 
     def __repr__(self):
-        rep = "{}(".format(self.__class__.__name__)
+        rep = f"{self.__class__.__name__}("
 
         if self._years:
-            rep += "years={}, ".format(self._years)
+            rep += f"years={self._years}, "
 
         if self._months:
-            rep += "months={}, ".format(self._months)
+            rep += f"months={self._months}, "
 
         if self._weeks:
-            rep += "weeks={}, ".format(self._weeks)
+            rep += f"weeks={self._weeks}, "
 
         if self._days:
-            rep += "days={}, ".format(self._remaining_days)
+            rep += f"days={self._remaining_days}, "
 
         if self.hours:
-            rep += "hours={}, ".format(self.hours)
+            rep += f"hours={self.hours}, "
 
         if self.minutes:
-            rep += "minutes={}, ".format(self.minutes)
+            rep += f"minutes={self.minutes}, "
 
         if self.remaining_seconds:
-            rep += "seconds={}, ".format(self.remaining_seconds)
+            rep += f"seconds={self.remaining_seconds}, "
 
         if self.microseconds:
-            rep += "microseconds={}, ".format(self.microseconds)
+            rep += f"microseconds={self.microseconds}, "
 
         rep += ")"
 

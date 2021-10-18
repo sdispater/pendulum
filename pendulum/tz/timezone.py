@@ -142,7 +142,7 @@ class FixedTimezone(tzinfo, PendulumTimezone):
         hour, minute = divmod(abs(int(minutes)), 60)
 
         if not name:
-            name = "{0}{1:02d}:{2:02d}".format(sign, hour, minute)
+            name = f"{sign}{hour:02d}:{minute:02d}"
 
         self._name = name
         self._offset = offset

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 import pendulum
@@ -120,7 +119,7 @@ def test_repr():
 
 def test_format_with_locale():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
-    expected = u"jeudi 25e jour de décembre 1975 02:15:16 PM -05:00"
+    expected = "jeudi 25e jour de décembre 1975 02:15:16 PM -05:00"
     assert d.format("dddd Do [jour de] MMMM YYYY hh:mm:ss A Z", locale="fr") == expected
 
 
@@ -136,7 +135,7 @@ def test_for_json():
 
 def test_format():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="Europe/Paris")
-    assert "{}".format(d) == "1975-12-25T14:15:16+01:00"
-    assert "{:YYYY}".format(d) == "1975"
-    assert "{:%Y}".format(d) == "1975"
-    assert "{:%H:%M %d.%m.%Y}".format(d) == "14:15 25.12.1975"
+    assert f"{d}" == "1975-12-25T14:15:16+01:00"
+    assert f"{d:YYYY}" == "1975"
+    assert f"{d:%Y}" == "1975"
+    assert f"{d:%H:%M %d.%m.%Y}" == "14:15 25.12.1975"

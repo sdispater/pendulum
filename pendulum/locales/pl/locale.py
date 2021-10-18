@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from .custom import translations as custom_translations
 
 
@@ -15,30 +12,30 @@ locale = {
     "plural": lambda n: "few"
     if (
         (
-            (0 == 0 and ((0 == 0)))
-            and ((n % 10) == (n % 10) and (((n % 10) >= 2 and (n % 10) <= 4)))
+            (0 == 0 and (0 == 0))
+            and ((n % 10) == (n % 10) and ((n % 10) >= 2 and (n % 10) <= 4))
         )
-        and (not ((n % 100) == (n % 100) and (((n % 100) >= 12 and (n % 100) <= 14))))
+        and (not ((n % 100) == (n % 100) and ((n % 100) >= 12 and (n % 100) <= 14)))
     )
     else "many"
     if (
         (
             (
-                ((0 == 0 and ((0 == 0))) and (not (n == n and ((n == 1)))))
-                and ((n % 10) == (n % 10) and (((n % 10) >= 0 and (n % 10) <= 1)))
+                ((0 == 0 and (0 == 0)) and (not (n == n and (n == 1))))
+                and ((n % 10) == (n % 10) and ((n % 10) >= 0 and (n % 10) <= 1))
             )
             or (
-                (0 == 0 and ((0 == 0)))
-                and ((n % 10) == (n % 10) and (((n % 10) >= 5 and (n % 10) <= 9)))
+                (0 == 0 and (0 == 0))
+                and ((n % 10) == (n % 10) and ((n % 10) >= 5 and (n % 10) <= 9))
             )
         )
         or (
-            (0 == 0 and ((0 == 0)))
-            and ((n % 100) == (n % 100) and (((n % 100) >= 12 and (n % 100) <= 14)))
+            (0 == 0 and (0 == 0))
+            and ((n % 100) == (n % 100) and ((n % 100) >= 12 and (n % 100) <= 14))
         )
     )
     else "one"
-    if ((n == n and ((n == 1))) and (0 == 0 and ((0 == 0))))
+    if ((n == n and (n == 1)) and (0 == 0 and (0 == 0)))
     else "other",
     "ordinal": lambda n: "other",
     "translations": {

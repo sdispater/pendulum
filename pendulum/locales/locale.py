@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import re
 
@@ -37,11 +34,11 @@ class Locale:
         locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
         while not os.path.exists(locale_path):
             if actual_locale == locale:
-                raise ValueError("Locale [{}] does not exist.".format(locale))
+                raise ValueError(f"Locale [{locale}] does not exist.")
 
             actual_locale = actual_locale.split("_")[0]
 
-        m = import_module("pendulum.locales.{}.locale".format(actual_locale))
+        m = import_module(f"pendulum.locales.{actual_locale}.locale")
 
         cls._cache[locale] = cls(locale, m.locale)
 
@@ -72,7 +69,7 @@ class Locale:
         return self._key_cache[key]
 
     def translation(self, key: str) -> Any:
-        return self.get("translations.{}".format(key))
+        return self.get(f"translations.{key}")
 
     def plural(self, number: int) -> str:
         return self._data["plural"](number)
@@ -84,9 +81,9 @@ class Locale:
         ordinal = self.get("custom.ordinal.{}".format(self.ordinal(number)))
 
         if not ordinal:
-            return "{}".format(number)
+            return f"{number}"
 
-        return "{}{}".format(number, ordinal)
+        return f"{number}{ordinal}"
 
     def match_translation(self, key: str, value: Any) -> Optional[Dict]:
         translations = self.translation(key)
@@ -96,4 +93,4 @@ class Locale:
         return {v: k for k, v in translations.items()}[value]
 
     def __repr__(self) -> str:
-        return "{}('{}')".format(self.__class__.__name__, self._locale)
+        return f"{self.__class__.__name__}('{self._locale}')"

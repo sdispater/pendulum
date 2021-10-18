@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-
 import calendar
 import datetime
 
@@ -350,7 +346,7 @@ class DateTime(datetime.datetime, Date):
         Format the instance to a common string format.
         """
         if fmt not in self._FORMATS:
-            raise ValueError("Format [{}] is not supported".format(fmt))
+            raise ValueError(f"Format [{fmt}] is not supported")
 
         fmt = self._FORMATS[fmt]
         if callable(fmt):
@@ -364,7 +360,7 @@ class DateTime(datetime.datetime, Date):
     def __repr__(self) -> str:
         us = ""
         if self.microsecond:
-            us = ", {}".format(self.microsecond)
+            us = f", {self.microsecond}"
 
         repr_ = "{klass}(" "{year}, {month}, {day}, " "{hour}, {minute}, {second}{us}"
 
@@ -665,9 +661,9 @@ class DateTime(datetime.datetime, Date):
         * century: date to first day of century and time to 00:00:00
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise ValueError('Invalid unit "{}" for start_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for start_of()')
 
-        return getattr(self, "_start_of_{}".format(unit))()
+        return getattr(self, f"_start_of_{unit}")()
 
     def end_of(self, unit: str) -> "DateTime":
         """
@@ -884,9 +880,9 @@ class DateTime(datetime.datetime, Date):
         Supported units are month, quarter and year.
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, "_first_of_{}".format(unit))(day_of_week)
+        return getattr(self, f"_first_of_{unit}")(day_of_week)
 
     def last_of(self, unit: str, day_of_week: Optional[int] = None) -> "DateTime":
         """
@@ -898,9 +894,9 @@ class DateTime(datetime.datetime, Date):
         Supported units are month, quarter and year.
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, "_last_of_{}".format(unit))(day_of_week)
+        return getattr(self, f"_last_of_{unit}")(day_of_week)
 
     def nth_of(self, unit: str, nth: int, day_of_week: int) -> "DateTime":
         """
@@ -913,9 +909,9 @@ class DateTime(datetime.datetime, Date):
         Supported units are month, quarter and year.
         """
         if unit not in ["month", "quarter", "year"]:
-            raise ValueError('Invalid unit "{}" for first_of()'.format(unit))
+            raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        dt = getattr(self, "_nth_of_{}".format(unit))(nth, day_of_week)
+        dt = getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
         if dt is False:
             raise PendulumException(
                 "Unable to find occurence {} of {} in {}".format(

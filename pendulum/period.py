@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import operator
 
 from datetime import date
@@ -79,10 +77,10 @@ class Period(Duration):
 
         delta = _end - _start
 
-        return super(Period, cls).__new__(cls, seconds=delta.total_seconds())
+        return super().__new__(cls, seconds=delta.total_seconds())
 
     def __init__(self, start, end, absolute=False):
-        super(Period, self).__init__()
+        super().__init__()
 
         if not isinstance(start, pendulum.Date):
             if isinstance(start, datetime):
@@ -319,7 +317,7 @@ class Period(Duration):
         return self.__class__(self.start, self.end, True)
 
     def __repr__(self):
-        return "<Period [{} -> {}]>".format(self._start, self._end)
+        return f"<Period [{self._start} -> {self._end}]>"
 
     def __str__(self):
         return self.__repr__()

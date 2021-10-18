@@ -16,6 +16,11 @@ repos:
         additional_dependencies: [toml]
         exclude: ^.*/?setup\.py$
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.29.0
+    hooks:
+      - id: pyupgrade
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
