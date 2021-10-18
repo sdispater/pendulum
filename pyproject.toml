@@ -25,9 +25,9 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 python-dateutil = "^2.6"
-"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.6,<3.9"}
+"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.7,<3.9"}
 tzdata = ">=2020.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -37,10 +37,10 @@ pytz = ">=2018.3"
 babel = "^2.5"
 cleo = "^1.0.0a3"
 tox = "^3.0"
-black = {version = "^21.9b0", markers = "python_full_version >= '3.6.2' and python_version < '4.0' and implementation_name != 'pypy'"}
-isort = {version = "^5.9.1", python = "^3.6.1"}
-pre-commit = {version = "^2.10.0", python = "^3.6.1"}
-mkdocs = { version = "^1.0", python = "^3.5" }
+black = {version = "^21.9b0", markers = "implementation_name != 'pypy'"}
+isort = "^5.9.1"
+pre-commit = "^2.10.0"
+mkdocs = "^1.0"
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
 markdown-include = "^0.5.1"
