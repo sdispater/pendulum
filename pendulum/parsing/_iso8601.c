@@ -228,7 +228,6 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
         return PyUnicode_FromString(self->tzname);
     }
 
-    char tzname_[7] = {0};
     char sign = '+';
     int offset = self->offset;
 
@@ -237,15 +236,12 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
         offset *= -1;
     }
 
-    sprintf(
-        tzname_,
+    return PyUnicode_FromFormat(
         "%c%02d:%02d",
         sign,
         offset / SECS_PER_HOUR,
         offset / SECS_PER_MIN % SECS_PER_MIN
     );
-
-    return PyUnicode_FromString(tzname_);
 }
 
 /*
@@ -369,10 +365,7 @@ static int Duration_init(Duration *self, PyObject *args, PyObject *kwargs) {
  *     )
  */
 static PyObject *Duration_repr(Duration *self) {
-    char repr[82] = {0};
-
-    sprintf(
-        repr,
+    return PyUnicode_FromFormat(
         "%d years %d months %d weeks %d days %d hours %d minutes %d seconds %d microseconds",
         self->years,
         self->months,
@@ -383,8 +376,6 @@ static PyObject *Duration_repr(Duration *self) {
         self->seconds,
         self->microseconds
     );
-
-    return PyUnicode_FromString(repr);
 }
 
 /*
