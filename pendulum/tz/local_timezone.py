@@ -11,6 +11,8 @@ from .timezone import Timezone
 from .timezone import TimezoneFile
 from .zoneinfo.exceptions import InvalidTimezone
 
+if sys.platform == "win32":
+    from .data.windows import windows_timezones
 
 try:
     import _winreg as winreg
@@ -64,7 +66,7 @@ def _get_system_timezone():  # type: () -> Timezone
 
 
 def _get_windows_timezone():  # type: () -> Timezone
-    from .data.windows import windows_timezones
+
 
     # Windows is special. It has unique time zone names (in several
     # meanings of the word) available, but unfortunately, they can be
