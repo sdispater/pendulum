@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: "3.10"
       - name: Linting
         run: |
           pip install pre-commit
@@ -30,13 +30,14 @@ jobs:
     needs: Linting
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy3]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "pypy3"]
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Get full python version
@@ -50,7 +51,7 @@ jobs:
         source $HOME/.poetry/env
         poetry config virtualenvs.in-project true
     - name: Set up cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
@@ -76,13 +77,14 @@ jobs:
     needs: Linting
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy3]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "pypy3"]
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Get full python version
@@ -96,7 +98,7 @@ jobs:
         source $HOME/.poetry/env
         poetry config virtualenvs.in-project true
     - name: Set up cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-fix-${{ hashFiles('**/poetry.lock') }}
@@ -120,13 +122,14 @@ jobs:
     needs: Linting
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Get full python version
@@ -141,7 +144,7 @@ jobs:
         $env:Path += ";$env:Userprofile\.poetry\bin"
         poetry config virtualenvs.in-project true
     - name: Set up cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}

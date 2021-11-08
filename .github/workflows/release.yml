@@ -20,7 +20,7 @@ jobs:
       run: |
         make linux_release
     - name: Upload distributions artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: pendulum-dist
         path: dist/wheelhouse
@@ -29,7 +29,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
       run: |
         echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install and set up Poetry
@@ -50,7 +50,7 @@ jobs:
         source $HOME/.poetry/env
         poetry build -vvv
     - name: Upload distribution artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: pendulum-dist
         path: dist
@@ -59,7 +59,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -69,7 +69,7 @@ jobs:
       run: |
         echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install and setup Poetry
@@ -81,7 +81,7 @@ jobs:
         $env:Path += ";$env:Userprofile\.poetry\bin"
         poetry build -vvv
     - name: Upload distribution artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: pendulum-dist
         path: dist
@@ -107,7 +107,7 @@ jobs:
           curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
           python get-poetry.py -y
       - name: Set up cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
