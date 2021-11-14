@@ -26,7 +26,6 @@ from .period import Period
 
 
 class Date(FormattableMixin, date):
-
     # Names of days of the week
     _days = {
         SUNDAY: "Sunday",
@@ -216,6 +215,33 @@ class Date(FormattableMixin, date):
     # the alias is provided to start using a new name and keep the backward compatibility
     # the old name can be completely replaced with the new in one of the future versions
     is_birthday = is_anniversary
+
+    def is_business_day(self, holidays: [list, tuple] = None) -> bool:
+        """
+        Check if the date is a business day (not a weekend), including checking against an optional list of holidays
+
+        :param holidays: list or tuple containing Date or DateTime objects to be considered holidays
+        :type holidays: list, tuple
+
+        :rtype: bool
+            True if the date is a business day, otherwise false
+        """
+
+        # check if this date is a weekend
+        if self.day_of_week == SATURDAY \
+                or self.day_of_week == SUNDAY:
+            return False
+
+        # check if this date falls on a holiday
+        if holidays is not None:
+            # TODO: prefilter the holiday list by year (test for speed)
+            for holiday in holidays:
+                if self.is_same_day(holiday):
+                    return False
+
+            return False
+
+        return True
 
     # ADDITIONS AND SUBSTRACTIONS
 
