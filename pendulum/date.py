@@ -67,7 +67,10 @@ class Date(FormattableMixin, date):
 
     @property
     def week_of_year(self):
-        return self.isocalendar()[1]
+        week_num = self.isocalendar()[1]
+        if self.month <= 2 and week_num > 50:
+            return 0
+        return week_num
 
     @property
     def days_in_month(self):
