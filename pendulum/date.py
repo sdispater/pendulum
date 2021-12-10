@@ -67,11 +67,7 @@ class Date(FormattableMixin, date):
 
     @property
     def week_of_year(self):
-        week_num = self.isocalendar()[1]
-        if self.month <= 2 and week_num > 50:
-            return 0
-        return week_num
-        # return self.isocalendar()[1]
+        return self.isocalendar()[1]
 
     @property
     def days_in_month(self):
@@ -81,7 +77,16 @@ class Date(FormattableMixin, date):
     def week_of_month(self):
         first_day_of_month = self.replace(day=1)
 
-        return self.week_of_year - first_day_of_month.week_of_year + 1
+        first_day_week_num = first_day_of_month.week_of_year
+        if first_day_of_month.month <= 2 and first_day_week_num > 50:
+            first_day_week_num = 0
+
+        curr_week_num = self.week_of_year
+        if self.month <= 2 and curr_week_num > 50:
+            curr_week_num = 0
+
+
+        return curr_week_num - first_day_week_num + 1
 
     @property
     def age(self):
