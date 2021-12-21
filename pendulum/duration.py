@@ -23,6 +23,10 @@ def _divide_and_round(a, b):
     # Based on the reference implementation for divmod_near
     # in Objects/longobject.c.
     q, r = divmod(a, b)
+
+    if isinstance(q, float) and q == int(q):
+        q = int(q)
+
     # round up if either r / b > 0.5, or r / b == 0.5 and q is odd.
     # The expression r / b > 0.5 is equivalent to 2 * r > b if b is
     # positive, 2 * r < b if b negative.
