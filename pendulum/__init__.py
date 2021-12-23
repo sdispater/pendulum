@@ -107,26 +107,17 @@ def datetime(
     """
     Creates a new DateTime instance from a specific date and time.
     """
-    if tz is not None:
-        tz = _safe_timezone(tz)
-
-    dt = _datetime.datetime(
-        year, month, day, hour, minute, second, microsecond, fold=fold
-    )
-
-    if tz is not None:
-        dt = tz.convert(dt, raise_on_unknown_times=raise_on_unknown_times)
-
-    return DateTime(
-        dt.year,
-        dt.month,
-        dt.day,
-        dt.hour,
-        dt.minute,
-        dt.second,
-        dt.microsecond,
-        tzinfo=dt.tzinfo,
-        fold=dt.fold,
+    return DateTime.create(
+        year,
+        month,
+        day,
+        hour=hour,
+        minute=minute,
+        second=second,
+        microsecond=microsecond,
+        tz=tz,
+        fold=fold,
+        raise_on_unknown_times=raise_on_unknown_times,
     )
 
 
@@ -211,35 +202,7 @@ def now(tz: Optional[Union[str, Timezone]] = None) -> DateTime:
     """
     Get a DateTime instance for the current date and time.
     """
-    if has_test_now():
-        test_instance = get_test_now()
-        _tz = _safe_timezone(tz)
-
-        if tz is not None and _tz != test_instance.timezone:
-            test_instance = test_instance.in_tz(_tz)
-
-        return test_instance
-
-    if tz is None or tz == "local":
-        dt = _datetime.datetime.now(local_timezone())
-    elif tz is UTC or tz == "UTC":
-        dt = _datetime.datetime.now(UTC)
-    else:
-        dt = _datetime.datetime.now(UTC)
-        tz = _safe_timezone(tz)
-        dt = dt.astimezone(tz)
-
-    return DateTime(
-        dt.year,
-        dt.month,
-        dt.day,
-        dt.hour,
-        dt.minute,
-        dt.second,
-        dt.microsecond,
-        tzinfo=dt.tzinfo,
-        fold=dt.fold,
-    )
+    return DateTime.now(tz)
 
 
 def today(tz: Union[str, Timezone] = "local") -> DateTime:

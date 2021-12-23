@@ -30,9 +30,12 @@ from .constants import YEARS_PER_DECADE
 from .date import Date
 from .exceptions import PendulumException
 from .helpers import add_duration
+from .helpers import get_test_now
+from .helpers import has_test_now
 from .period import Period
 from .time import Time
 from .tz import UTC
+from .tz import local_timezone
 from .tz.timezone import FixedTimezone
 from .tz.timezone import Timezone
 from .utils._compat import PY38
@@ -73,11 +76,78 @@ class DateTime(datetime.datetime, Date):
     ]
 
     @classmethod
+    def create(
+        cls,
+        year: int,
+        month: int,
+        day: int,
+        hour: int = 0,
+        minute: int = 0,
+        second: int = 0,
+        microsecond: int = 0,
+        tz: Optional[Union[str, float, Timezone]] = UTC,
+        fold: Optional[int] = 1,
+        raise_on_unknown_times: bool = False,
+    ) -> "DateTime":
+        """
+        Creates a new DateTime instance from a specific date and time.
+        """
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz)
+
+        dt = datetime.datetime(
+            year, month, day, hour, minute, second, microsecond, fold=fold
+        )
+
+        if tz is not None:
+            dt = tz.convert(dt, raise_on_unknown_times=raise_on_unknown_times)
+
+        return cls(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            tzinfo=dt.tzinfo,
+            fold=dt.fold,
+        )
+
+    @classmethod
     def now(cls, tz: Optional[Union[str, Timezone]] = None) -> "DateTime":
         """
         Get a DateTime instance for the current date and time.
         """
-        return pendulum.now(tz)
+        if has_test_now():
+            test_instance = get_test_now()
+            _tz = pendulum._safe_timezone(tz)
+
+            if tz is not None and _tz != test_instance.timezone:
+                test_instance = test_instance.in_tz(_tz)
+
+            return test_instance
+
+        if tz is None or tz == "local":
+            dt = datetime.datetime.now(local_timezone())
+        elif tz is UTC or tz == "UTC":
+            dt = datetime.datetime.now(UTC)
+        else:
+            dt = datetime.datetime.now(UTC)
+            tz = pendulum._safe_timezone(tz)
+            dt = dt.astimezone(tz)
+
+        return cls(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            tzinfo=dt.tzinfo,
+            fold=dt.fold,
+        )
 
     @classmethod
     def utcnow(cls) -> "DateTime":
@@ -124,7 +194,7 @@ class DateTime(datetime.datetime, Date):
         if tz is None:
             tz = self.tz
 
-        return pendulum.datetime(
+        return DateTime.create(
             year, month, day, hour, minute, second, microsecond, tz=tz
         )
 
@@ -428,7 +498,7 @@ class DateTime(datetime.datetime, Date):
         See link `https://en.wikipedia.org/wiki/ISO_8601#Week_dates`_
         """
         return (
-            pendulum.datetime(self.year, 12, 28, 0, 0, 0, tz=self.tz).isocalendar()[1]
+            DateTime.create(self.year, 12, 28, 0, 0, 0, tz=self.tz).isocalendar()[1]
             == 53
         )
 
@@ -502,7 +572,7 @@ class DateTime(datetime.datetime, Date):
         )
 
         if units_of_variable_length or self.tzinfo is None:
-            return pendulum.datetime(
+            return DateTime.create(
                 dt.year,
                 dt.month,
                 dt.day,
@@ -1225,7 +1295,7 @@ class DateTime(datetime.datetime, Date):
         if fold is None:
             fold = self.fold
 
-        return pendulum.datetime(
+        return DateTime.create(
             year, month, day, hour, minute, second, microsecond, tz=tzinfo, fold=fold
         )
 
