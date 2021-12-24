@@ -31,7 +31,7 @@ python-dateutil = "^2.6"
 tzdata = ">=2020.1"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^5.4.3"
+pytest = "^6.2.5"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
 babel = "^2.5"
