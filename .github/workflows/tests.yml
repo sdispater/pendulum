@@ -80,14 +80,9 @@ jobs:
         shell: bash
         run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
 
-      - name: Upgrade pip
-        shell: bash
-        run: |
-          poetry run python -m pip install pip -U
-
       - name: Install dependencies
         shell: bash
-        run: poetry install -vvv
+        run: poetry install --only default --only test -vvv
 
       - name: Test Pure Python
         shell: bash
