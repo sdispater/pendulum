@@ -212,7 +212,7 @@ class _Interval:
 
 
 def _parse_iso8601_interval(text):
-    if "/" not in text:
+    if text.count("/") != 1 or text.startswith("/") or text.endswith("/"):
         raise ParserError("Invalid interval")
 
     first, last = text.split("/")
