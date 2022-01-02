@@ -161,7 +161,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
     # Now look for distribution specific configuration files
     # that contain the timezone name.
     tzpath = os.path.join(_root, "etc/timezone")
-    if os.path.exists(tzpath):
+    if os.path.isfile(tzpath):
         with open(tzpath, "rb") as tzfile:
             data = tzfile.read()
 
@@ -187,7 +187,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
 
     for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):
         tzpath = os.path.join(_root, filename)
-        if not os.path.exists(tzpath):
+        if not os.path.isfile(tzpath):
             continue
 
         with open(tzpath, "rt") as tzfile:
@@ -218,7 +218,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
     tzpath = os.path.join(_root, "etc", "localtime")
-    if os.path.exists(tzpath) and os.path.islink(tzpath):
+    if os.path.isfile(tzpath) and os.path.islink(tzpath):
         parts = list(
             reversed(os.path.realpath(tzpath).replace(" ", "_").split(os.path.sep))
         )
@@ -234,7 +234,7 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
     for filename in ("etc/localtime", "usr/local/etc/localtime"):
         tzpath = os.path.join(_root, filename)
 
-        if not os.path.exists(tzpath):
+        if not os.path.isfile(tzpath):
             continue
 
         return TimezoneFile(tzpath)
@@ -247,7 +247,7 @@ def _tz_from_env(tzenv):  # type: (str) -> Timezone
         tzenv = tzenv[1:]
 
     # TZ specifies a file
-    if os.path.exists(tzenv):
+    if os.path.isfile(tzenv):
         return TimezoneFile(tzenv)
 
     # TZ specifies a zoneinfo zone.

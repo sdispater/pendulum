@@ -59,7 +59,7 @@ class Reader:
 
         :param file_path: The path of a zoneinfo file.
         """
-        if not os.path.exists(file_path):
+        if not os.path.isfile(file_path):
             raise InvalidZoneinfoFile("The tzinfo file does not exist")
 
         with open(file_path, "rb") as fd:
