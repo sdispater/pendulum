@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pendulum
 import pytz
+import pytest
 
 from ..conftest import assert_datetime
 
@@ -190,6 +191,27 @@ def test_less_than_with_timezone_false():
 
     assert not d1 < d2
     assert not d1 < d3
+
+
+@pytest.mark.parametrize(
+    'truth_fun',
+    (
+        lambda earlier, later: earlier < later,
+        lambda earlier, later: earlier <= later,
+        lambda earlier, later: later > earlier,
+        lambda earlier, later: later >= earlier,
+    )
+)
+def test_comparison_crossing_dst_transitioning_off(truth_fun):
+    # We only need to test turning off DST, since that's when the time
+    # component goes backwards.
+    # We start with 2019-11-03T01:30:00-0700
+    earlier = pendulum.datetime(2019, 11, 3, 8, 30).in_tz("US/Pacific")
+    # Adding 55 minutes to it, we turn off DST, but the time component is
+    # slightly less than before, i.e. we get 2019-11-03T01:25:00-0800
+    later = earlier.add(minutes=55)
+    # Run through all inequality-comparison functions
+    assert truth_fun(earlier, later)
 
 
 def test_less_than_or_equal_true():

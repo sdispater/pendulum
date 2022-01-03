@@ -1536,26 +1536,28 @@ class DateTime(datetime.datetime, Date):
     def __reduce_ex__(self, protocol):
         return self.__class__, self._getstate(protocol)
 
+    def __le__(self, other):
+        if isinstance(other, DateTime):
+            return self._cmp(other) <= 0
+        return super().__le__(other)
+
+    def __lt__(self, other):
+        if isinstance(other, DateTime):
+            return self._cmp(other) < 0
+        return super().__lt__(other)
+
+    def __ge__(self, other):
+        # Will default to the negative of its reflection
+        return NotImplemented
+
+    def __gt__(self, other):
+        # Will default to the negative of its reflection
+        return NotImplemented
+
     def _cmp(self, other, **kwargs):
-        # Fix for pypy which compares using this method
-        # which would lead to infinite recursion if we didn't override
-        kwargs = {"tzinfo": self.tz}
-
-        if _HAS_FOLD:
-            kwargs["fold"] = self.fold
-
-        dt = datetime.datetime(
-            self.year,
-            self.month,
-            self.day,
-            self.hour,
-            self.minute,
-            self.second,
-            self.microsecond,
-            **kwargs
-        )
-
-        return 0 if dt == other else 1 if dt > other else -1
+        sts = self.timestamp()
+        ots = other.timestamp()
+        return 0 if sts == ots else 1 if sts > ots else -1
 
 
 DateTime.min = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)
