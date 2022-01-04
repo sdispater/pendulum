@@ -16,7 +16,7 @@ Pendulum
 
 Python datetimes made easy.
 
-Supports Python **2.7** and **3.4+**.
+Supports Python **3.7+**.
 
 
 .. code-block:: python
@@ -186,11 +186,13 @@ Getting started
 ---------------
 
 To work on the Pendulum codebase, you'll want to clone the project locally
-and install the required depedendencies via `poetry <https://poetry.eustace.io>`_.
+and install the required depedendencies via `poetry <https://python-poetry.org>`_.
+(As of this writing, ``poetry >=1.2a2`` is required.)
 
 .. code-block:: bash
 
     $ git clone git@github.com:sdispater/pendulum.git
+    $ cd pendulum
     $ poetry install
 
 Localization
