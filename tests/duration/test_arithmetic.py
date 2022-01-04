@@ -38,8 +38,20 @@ def test_divide():
     assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 0, 0, 0, 1, 0, 0, 17, 761111)
 
+    it = pendulum.duration(days=2, seconds=35, microseconds=522222)
+    mul = it / 1.1
+
+    assert isinstance(mul, pendulum.Duration)
+    assert_duration(mul, 0, 0, 0, 1, 19, 38, 43, 202020)
+
     it = pendulum.duration(years=2, months=4, days=2, seconds=35, microseconds=522222)
     mul = it / 2
+
+    assert isinstance(mul, pendulum.Duration)
+    assert_duration(mul, 1, 2, 0, 1, 0, 0, 17, 761111)
+
+    it = pendulum.duration(years=2, months=4, days=2, seconds=35, microseconds=522222)
+    mul = it / 2.0
 
     assert isinstance(mul, pendulum.Duration)
     assert_duration(mul, 1, 2, 0, 1, 0, 0, 17, 761111)
