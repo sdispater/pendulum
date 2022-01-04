@@ -43,7 +43,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and set up Poetry
       run: |
-        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/1.2.0a2/get-poetry.py
         python get-poetry.py -y
     - name: Build distributions
       run: |
@@ -74,7 +74,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and setup Poetry
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -O get-poetry.py
+        Invoke-WebRequest https://raw.githubusercontent.com/python-poetry/poetry/1.2.0a2/get-poetry.py -O get-poetry.py
         python get-poetry.py -y
     - name: Build distributions
       run: |
@@ -104,7 +104,7 @@ jobs:
           path: dist
       - name: Install and set up Poetry
         run: |
-          curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+          curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/1.2.0a2/get-poetry.py
           python get-poetry.py -y
       - name: Set up cache
         uses: actions/cache@v1
