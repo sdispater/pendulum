@@ -49,6 +49,7 @@ from .tz import timezone
 from .tz import timezones
 from .tz.timezone import FixedTimezone
 from .tz.timezone import Timezone
+from .utils._compat import zoneinfo
 
 
 _TEST_NOW = None  # type: Optional[DateTime]
@@ -64,8 +65,11 @@ def _safe_timezone(
 ) -> Timezone:
     """
     Creates a timezone instance
-    from a string, Timezone, TimezoneInfo or integer offset.
+    from a string, Timezone, TimezoneInfo, ZoneInfo or integer offset.
     """
+    if isinstance(obj, zoneinfo.ZoneInfo):
+        return timezone(str(obj))
+
     if isinstance(obj, (Timezone, FixedTimezone)):
         return obj
 
