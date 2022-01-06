@@ -24,8 +24,9 @@ def _divide_and_round(a, b):
     # in Objects/longobject.c.
     q, r = divmod(a, b)
 
-    if isinstance(q, float):
-        q = int(q)
+    # The output of divmod() is either a float or an int,
+    # but we always want it to be an int.
+    q = int(q)
 
     # round up if either r / b > 0.5, or r / b == 0.5 and q is odd.
     # The expression r / b > 0.5 is equivalent to 2 * r > b if b is
