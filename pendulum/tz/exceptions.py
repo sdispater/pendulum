@@ -3,6 +3,11 @@ class TimezoneError(ValueError):
     pass
 
 
+class InvalidTimezone(TimezoneError):
+
+    pass
+
+
 class NonExistingTime(TimezoneError):
 
     message = "The datetime {} does not exist."
@@ -10,7 +15,7 @@ class NonExistingTime(TimezoneError):
     def __init__(self, dt):
         message = self.message.format(dt)
 
-        super(NonExistingTime, self).__init__(message)
+        super().__init__(message)
 
 
 class AmbiguousTime(TimezoneError):
@@ -20,4 +25,4 @@ class AmbiguousTime(TimezoneError):
     def __init__(self, dt):
         message = self.message.format(dt)
 
-        super(AmbiguousTime, self).__init__(message)
+        super().__init__(message)

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum.formatting import Formatter
 from pendulum.locales.locale import Locale
@@ -230,9 +230,9 @@ def test_date_formats():
     assert f.format(d, "LT", locale="fr") == "07:03"
     assert f.format(d, "LTS", locale="fr") == "07:03:06"
     assert f.format(d, "L", locale="fr") == "28/08/2016"
-    assert f.format(d, "LL", locale="fr") == u"28 août 2016"
-    assert f.format(d, "LLL", locale="fr") == u"28 août 2016 07:03"
-    assert f.format(d, "LLLL", locale="fr") == u"dimanche 28 août 2016 07:03"
+    assert f.format(d, "LL", locale="fr") == "28 août 2016"
+    assert f.format(d, "LLL", locale="fr") == "28 août 2016 07:03"
+    assert f.format(d, "LLLL", locale="fr") == "dimanche 28 août 2016 07:03"
 
 
 def test_escape():

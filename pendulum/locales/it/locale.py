@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from .custom import translations as custom_translations
 
 
@@ -13,7 +10,7 @@ It has been generated automatically and must not be modified directly.
 
 locale = {
     "plural": lambda n: "one"
-    if ((n == n and ((n == 1))) and (0 == 0 and ((0 == 0))))
+    if ((n == n and (n == 1)) and (0 == 0 and (0 == 0)))
     else "other",
     "ordinal": lambda n: "many"
     if (n == n and ((n == 11) or (n == 8) or (n == 80) or (n == 800)))

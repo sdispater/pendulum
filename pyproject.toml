@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "2.1.1"
+version = "3.0.0a0"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
@@ -25,42 +25,44 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "^3.7"
 python-dateutil = "^2.6"
-pytzdata = ">=2020.1"
+"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.7,<3.9"}
+tzdata = ">=2020.1"
 
-# typing is needed for Python < 3.5
-typing = { version = "^3.6", python = "<3.5" }
-
-[tool.poetry.dev-dependencies]
-pytest = "^4.6"
+[tool.poetry.group.test.dependencies]
+pytest = "^6.2.5"
 pytest-cov = "^2.5"
 pytz = ">=2018.3"
-babel = "^2.5"
-cleo = "^0.8.1"
-tox = "^3.0"
-black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
-isort = { version = "^4.3.21", markers = "python_version >= '3.6' and python_version < '4.0'" }
-pre-commit = "^1.10"
-mkdocs = { version = "^1.0", python = "^3.5" }
+time-machine = "^2.4.0"
+
+[tool.poetry.group.doc.dependencies]
+mkdocs = "^1.0"
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
 markdown-include = "^0.5.1"
-freezegun = "^0.3.15"
+
+[tool.poetry.group.lint.dependencies]
+black = {version = "^21.12b0", markers = "implementation_name != 'pypy'"}
+isort = "^5.9.1"
+pre-commit = "^2.10.0"
+
+[tool.poetry.group.dev.dependencies]
+babel = "^2.5"
+cleo = "^1.0.0a3"
+tox = "^3.0"
 
 [tool.poetry.build]
 generate-setup-file = false
 script = "build.py"
 
 [tool.isort]
-line_length = 88
+profile = "black"
 force_single_line = true
-force_grid_wrap = 0
 atomic = true
 include_trailing_comma = true
 lines_after_imports = 2
 lines_between_types = 1
-multi_line_output = 3
 use_parentheses = true
 not_skip = "__init__.py"
 skip_glob = ["*/setup.py"]
@@ -71,11 +73,11 @@ known_third_party = [
     "babel",
     "cleo",
     "dateutil",
-    "freezegun",
+    "time_machine",
     "pytzdata",
 ]
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0a9"]
+requires = ["poetry-core>=1.1.0a6"]
 build-backend = "poetry.core.masonry.api"

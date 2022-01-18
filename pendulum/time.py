@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from datetime import time
 from datetime import timedelta
 
@@ -22,7 +20,7 @@ class Time(FormattableMixin, time):
     def __repr__(self):
         us = ""
         if self.microsecond:
-            us = ", {}".format(self.microsecond)
+            us = f", {self.microsecond}"
 
         tzinfo = ""
         if self.tzinfo:
@@ -259,7 +257,7 @@ class Time(FormattableMixin, time):
         second = second if second is not None else self.second
         microsecond = microsecond if microsecond is not None else self.microsecond
 
-        t = super(Time, self).replace(hour, minute, second, microsecond, tzinfo=tzinfo)
+        t = super().replace(hour, minute, second, microsecond, tzinfo=tzinfo)
         return self.__class__(
             t.hour, t.minute, t.second, t.microsecond, tzinfo=t.tzinfo
         )
