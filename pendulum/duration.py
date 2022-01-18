@@ -419,6 +419,29 @@ class Duration(timedelta):
 
         return NotImplemented
 
+    def isoformat(self) -> str:
+        """Represent this duration as a ISO-8601-compliant string."""
+        periods = [
+            ("Y", self.years),
+            ("M", self.months),
+            ("D", self.remaining_days),
+        ]
+        period = "P"
+        for sym, val in periods:
+            period += "{val}{sym}".format(val=val, sym=sym)
+        times = [
+            ("H", self.hours),
+            ("M", self.minutes),
+            ("S", self.remaining_seconds),
+        ]
+        time = "T"
+        for sym, val in times:
+            time += "{val}{sym}".format(val=val, sym=sym)
+        if self.microseconds:
+            time = time[:-1]
+            time += ".{ms:06}S".format(ms=self.microseconds)
+        return period + time
+
 
 Duration.min = Duration(days=-999999999)
 Duration.max = Duration(
