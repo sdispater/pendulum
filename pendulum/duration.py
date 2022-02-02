@@ -1,12 +1,8 @@
-from __future__ import absolute_import
-from __future__ import division
-
 from datetime import timedelta
 
 import pendulum
 
 from pendulum.utils._compat import PYPY
-from pendulum.utils._compat import decode
 
 from .constants import SECONDS_PER_DAY
 from .constants import SECONDS_PER_HOUR
@@ -23,6 +19,11 @@ def _divide_and_round(a, b):
     # Based on the reference implementation for divmod_near
     # in Objects/longobject.c.
     q, r = divmod(a, b)
+
+    # The output of divmod() is either a float or an int,
+    # but we always want it to be an int.
+    q = int(q)
+
     # round up if either r / b > 0.5, or r / b == 0.5 and q is odd.
     # The expression r / b > 0.5 is equivalent to 2 * r > b if b is
     # positive, 2 * r < b if b negative.
@@ -256,7 +257,7 @@ class Duration(timedelta):
             translation = locale.translation(unit)
             parts.append(translation.format(count))
 
-        return decode(separator.join(parts))
+        return separator.join(parts)
 
     def _sign(self, value):
         if value < 0:
@@ -276,31 +277,31 @@ class Duration(timedelta):
         return self.in_words()
 
     def __repr__(self):
-        rep = "{}(".format(self.__class__.__name__)
+        rep = f"{self.__class__.__name__}("
 
         if self._years:
-            rep += "years={}, ".format(self._years)
+            rep += f"years={self._years}, "
 
         if self._months:
-            rep += "months={}, ".format(self._months)
+            rep += f"months={self._months}, "
 
         if self._weeks:
-            rep += "weeks={}, ".format(self._weeks)
+            rep += f"weeks={self._weeks}, "
 
         if self._days:
-            rep += "days={}, ".format(self._remaining_days)
+            rep += f"days={self._remaining_days}, "
 
         if self.hours:
-            rep += "hours={}, ".format(self.hours)
+            rep += f"hours={self.hours}, "
 
         if self.minutes:
-            rep += "minutes={}, ".format(self.minutes)
+            rep += f"minutes={self.minutes}, "
 
         if self.remaining_seconds:
-            rep += "seconds={}, ".format(self.remaining_seconds)
+            rep += f"seconds={self.remaining_seconds}, "
 
         if self.microseconds:
-            rep += "microseconds={}, ".format(self.microseconds)
+            rep += f"microseconds={self.microseconds}, "
 
         rep += ")"
 

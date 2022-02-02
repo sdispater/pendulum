@@ -1,7 +1,8 @@
 from datetime import timedelta
 
-import pendulum
 import pytest
+
+import pendulum
 
 from ..conftest import assert_datetime
 
@@ -235,7 +236,7 @@ def test_subtract_invalid_type():
 
 def test_subtract_negative_over_dls_transitioning_off():
     just_before_dls_ends = pendulum.datetime(
-        2019, 11, 3, 1, 30, tz="US/Pacific", dst_rule=pendulum.PRE_TRANSITION
+        2019, 11, 3, 1, 30, tz="US/Pacific", fold=0
     )
     plus_10_hours = just_before_dls_ends + timedelta(hours=10)
     minus_neg_10_hours = just_before_dls_ends - timedelta(hours=-10)

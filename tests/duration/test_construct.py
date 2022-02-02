@@ -1,7 +1,8 @@
 from datetime import timedelta
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum.duration import AbsoluteDuration
 

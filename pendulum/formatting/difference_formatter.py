@@ -2,12 +2,10 @@ import typing
 
 import pendulum
 
-from pendulum.utils._compat import decode
-
 from ..locales.locale import Locale
 
 
-class DifferenceFormatter(object):
+class DifferenceFormatter:
     """
     Handles formatting differences in text.
     """
@@ -107,14 +105,14 @@ class DifferenceFormatter(object):
             count = 1
 
         if absolute:
-            key = "translations.units.{}".format(unit)
+            key = f"translations.units.{unit}"
         else:
             is_future = diff.invert
 
             if is_now:
                 # Relative to now, so we can use
                 # the CLDR data
-                key = "translations.relative.{}".format(unit)
+                key = f"translations.relative.{unit}"
 
                 if is_future:
                     key += ".future"
@@ -127,9 +125,9 @@ class DifferenceFormatter(object):
                 # Checking for special pluralization rules
                 key = "custom.units_relative"
                 if is_future:
-                    key += ".{}.future".format(unit)
+                    key += f".{unit}.future"
                 else:
-                    key += ".{}.past".format(unit)
+                    key += f".{unit}.past"
 
                 trans = locale.get(key)
                 if not trans:
@@ -146,8 +144,8 @@ class DifferenceFormatter(object):
                 else:
                     key += ".before"
 
-                return locale.get(key).format(decode(time))
+                return locale.get(key).format(time)
 
         key += ".{}".format(locale.plural(count))
 
-        return decode(locale.get(key).format(count))
+        return locale.get(key).format(count)
