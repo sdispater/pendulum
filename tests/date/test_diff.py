@@ -17,6 +17,7 @@ def setup():
     pendulum.week_starts_at(pendulum.MONDAY)
     pendulum.week_ends_at(pendulum.SUNDAY)
 
+
 @pytest.fixture
 def today():
     return pendulum.today().date()
