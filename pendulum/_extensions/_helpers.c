@@ -824,14 +824,6 @@ PyObject *precise_diff(PyObject *self, PyObject *args)
                 day_diff += days_in_last_month;
             }
         }
-        else if (day_diff == days_in_month - days_in_last_month)
-        {
-            // We have exactly a full month
-            // We remove the days difference
-            // and add one to the months difference
-            day_diff = 0;
-            month_diff += 1;
-        }
         else
         {
             // We have a full month
