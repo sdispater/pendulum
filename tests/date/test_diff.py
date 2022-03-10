@@ -151,12 +151,6 @@ def test_diff_for_humans_now_and_month():
         assert "4 weeks ago" == today.subtract(weeks=4).diff_for_humans()
 
 
-def _test_pendulum_test():
-    with pendulum.test(pendulum.datetime(2016, 3, 1)):
-        today = pendulum.today().date()
-        assert today == pendulum.datetime(2016, 3, 1).date()
-
-
 def test_diff_for_humans_now_and_months(today):
     assert "2 months ago" == today.subtract(months=2).diff_for_humans()
 
