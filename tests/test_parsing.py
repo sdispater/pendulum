@@ -101,6 +101,16 @@ def test_parse_interval():
     assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
     assert period.end.offset == 0
 
+    text = "20080511T153000Z/P1Y2M10DT2H30M"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
+    assert period.end.offset == 0
+
     text = "P1Y2M10DT2H30M/2008-05-11T15:30:00Z"
 
     period = pendulum.parse(text)
@@ -111,7 +121,87 @@ def test_parse_interval():
     assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
     assert period.end.offset == 0
 
+    text = "P1Y2M10DT2H30M/20080511T153000Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
     text = "2007-03-01T13:00:00Z/2008-05-11T15:30:00Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
+    text = "20070301T130000Z/20080511T153000Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
+    text = "2008-05-11T15:30:00Z--P1Y2M10DT2H30M"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
+    assert period.end.offset == 0
+
+    text = "20080511T153000Z--P1Y2M10DT2H30M"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
+    assert period.end.offset == 0
+
+    text = "P1Y2M10DT2H30M--2008-05-11T15:30:00Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
+    text = "P1Y2M10DT2H30M--20080511T153000Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
+    text = "2007-03-01T13:00:00Z--2008-05-11T15:30:00Z"
+
+    period = pendulum.parse(text)
+
+    assert isinstance(period, pendulum.Period)
+    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert period.start.offset == 0
+    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert period.end.offset == 0
+
+    text = "20070301T130000Z--20080511T153000Z"
 
     period = pendulum.parse(text)
 
