@@ -39,6 +39,7 @@ from pendulum.helpers import week_ends_at
 from pendulum.helpers import week_starts_at
 from pendulum.parser import parse
 from pendulum.period import Period
+from pendulum.testing.traveller import Traveller
 from pendulum.time import Time
 from pendulum.tz import UTC
 from pendulum.tz import local_timezone
@@ -297,6 +298,15 @@ def period(start: DateTime, end: DateTime, absolute: bool = False) -> Period:
     return Period(start, end, absolute=absolute)
 
 
+# Testing
+
+_traveller = Traveller(DateTime)
+
+freeze = _traveller.freeze
+travel = _traveller.travel
+travel_to = _traveller.travel_to
+travel_back = _traveller.travel_back
+
 __all__ = [
     "__version__",
     "DAYS_PER_WEEK",
@@ -324,6 +334,7 @@ __all__ = [
     "datetime",
     "duration",
     "format_diff",
+    "freeze",
     "from_format",
     "from_timestamp",
     "get_locale",
@@ -352,6 +363,9 @@ __all__ = [
     "timezones",
     "today",
     "tomorrow",
+    "travel",
+    "travel_back",
+    "travel_to",
     "FixedTimezone",
     "Timezone",
     "yesterday",
