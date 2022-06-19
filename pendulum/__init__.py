@@ -29,12 +29,8 @@ from pendulum.duration import Duration
 from pendulum.formatting import Formatter
 from pendulum.helpers import format_diff
 from pendulum.helpers import get_locale
-from pendulum.helpers import get_test_now
-from pendulum.helpers import has_test_now
 from pendulum.helpers import locale
 from pendulum.helpers import set_locale
-from pendulum.helpers import set_test_now
-from pendulum.helpers import test
 from pendulum.helpers import week_ends_at
 from pendulum.helpers import week_starts_at
 from pendulum.parser import parse
@@ -240,8 +236,7 @@ def from_format(
     """
     Creates a DateTime instance from a specific format.
     """
-    parts = _formatter.parse(string, fmt, now(), locale=locale)
-
+    parts = _formatter.parse(string, fmt, now(tz=tz), locale=locale)
     if parts["tz"] is None:
         parts["tz"] = tz
 
@@ -338,8 +333,6 @@ __all__ = [
     "from_format",
     "from_timestamp",
     "get_locale",
-    "get_test_now",
-    "has_test_now",
     "instance",
     "local",
     "locale",
@@ -347,8 +340,6 @@ __all__ = [
     "now",
     "period",
     "set_locale",
-    "set_test_now",
-    "test",
     "week_ends_at",
     "week_starts_at",
     "parse",

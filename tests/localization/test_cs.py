@@ -6,7 +6,7 @@ locale = "cs"
 
 
 def test_diff_for_humans():
-    with pendulum.test(pendulum.datetime(2016, 8, 29)):
+    with pendulum.travel_to(pendulum.datetime(2016, 8, 29), freeze=True):
         diff_for_humans()
 
 

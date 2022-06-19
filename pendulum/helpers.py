@@ -3,13 +3,11 @@ from __future__ import annotations
 import os
 import struct
 
-from contextlib import contextmanager
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
 from math import copysign
 from typing import TYPE_CHECKING
-from typing import Iterator
 from typing import TypeVar
 from typing import overload
 
@@ -178,27 +176,6 @@ def _sign(x: float) -> int:
 # Global helpers
 
 
-@contextmanager
-def test(mock: pendulum.DateTime) -> Iterator[None]:
-    set_test_now(mock)
-    try:
-        yield
-    finally:
-        set_test_now()
-
-
-def set_test_now(test_now: pendulum.DateTime | None = None) -> None:
-    pendulum._TEST_NOW = test_now
-
-
-def get_test_now() -> pendulum.DateTime | None:
-    return pendulum._TEST_NOW
-
-
-def has_test_now() -> bool:
-    return pendulum._TEST_NOW is not None
-
-
 def locale(name: str) -> Locale:
     return Locale.load(name)
 
@@ -238,10 +215,6 @@ __all__ = [
     "week_day",
     "add_duration",
     "format_diff",
-    "test",
-    "set_test_now",
-    "get_test_now",
-    "has_test_now",
     "locale",
     "set_locale",
     "get_locale",

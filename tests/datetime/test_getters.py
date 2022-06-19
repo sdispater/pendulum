@@ -219,7 +219,7 @@ def test_timezone_name():
 
 
 def test_is_future():
-    with pendulum.test(DateTime(2000, 1, 1)):
+    with pendulum.travel_to(DateTime(2000, 1, 1)):
         d = pendulum.now()
         assert not d.is_future()
         d = d.add(days=1)
@@ -227,7 +227,7 @@ def test_is_future():
 
 
 def test_is_past():
-    with pendulum.test(DateTime(2000, 1, 1)):
+    with pendulum.travel_to(DateTime(2000, 1, 1), freeze=True):
         d = pendulum.now()
         assert not d.is_past()
         d = d.subtract(days=1)

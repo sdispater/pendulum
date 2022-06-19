@@ -32,8 +32,6 @@ from pendulum.constants import YEARS_PER_DECADE
 from pendulum.date import Date
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
-from pendulum.helpers import get_test_now
-from pendulum.helpers import has_test_now
 from pendulum.period import Period
 from pendulum.time import Time
 from pendulum.tz import UTC
@@ -135,15 +133,6 @@ class DateTime(datetime.datetime, Date):
         """
         Get a DateTime instance for the current date and time.
         """
-        if has_test_now():
-            test_instance: DateTime = cast(DateTime, get_test_now())
-            _tz = pendulum._safe_timezone(tz)
-
-            if tz is not None and _tz != test_instance.timezone:
-                test_instance = test_instance.in_tz(_tz)
-
-            return test_instance
-
         if tz is None or tz == "local":
             dt = datetime.datetime.now(local_timezone())
         elif tz is UTC or tz == "UTC":

@@ -155,7 +155,7 @@ def test_from_format(text, fmt, expected, now):
     else:
         now = pendulum.parse(now)
 
-    with pendulum.test(now):
+    with pendulum.travel_to(now, freeze=True):
         assert pendulum.from_format(text, fmt).isoformat() == expected
 
 
@@ -172,7 +172,7 @@ def test_from_format(text, fmt, expected, now):
 def test_from_format_with_locale(text, fmt, expected):
     now = pendulum.datetime(2018, 2, 2)
 
-    with pendulum.test(now):
+    with pendulum.travel_to(now, freeze=True):
         formatted = pendulum.from_format(text, fmt, locale="fr").isoformat()
         assert formatted == expected
 
@@ -192,7 +192,7 @@ def test_from_format_with_locale(text, fmt, expected):
 def test_from_format_error(text, fmt, locale):
     now = pendulum.datetime(2018, 2, 2)
 
-    with pendulum.test(now), pytest.raises(ValueError):
+    with pendulum.travel_to(now, freeze=True), pytest.raises(ValueError):
         pendulum.from_format(text, fmt, locale=locale)
 
 

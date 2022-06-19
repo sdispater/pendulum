@@ -11,7 +11,6 @@ from pendulum import timezone
 from pendulum.helpers import days_in_year
 from pendulum.helpers import precise_diff
 from pendulum.helpers import week_day
-from tests.conftest import assert_datetime
 
 
 def assert_diff(
@@ -124,21 +123,6 @@ def test_days_in_years():
     assert days_in_year(2016) == 366
 
 
-def test_test_now():
-    now = pendulum.datetime(2000, 11, 10, 12, 34, 56, 123456)
-    pendulum.set_test_now(now)
-
-    assert pendulum.has_test_now()
-    assert now == pendulum.get_test_now()
-
-    assert_datetime(pendulum.now(), 2000, 11, 10, 12, 34, 56, 123456)
-
-    pendulum.set_test_now()
-
-    assert not pendulum.has_test_now()
-    assert pendulum.get_test_now() is None
-
-
 def test_locale():
     dt = pendulum.datetime(2000, 11, 10, 12, 34, 56, 123456)
     pendulum.set_locale("fr")
@@ -193,19 +177,3 @@ def test_week_ends_at_invalid_value():
 
     with pytest.raises(ValueError):
         pendulum.week_ends_at(11)
-
-
-def test_with_test():
-    t = pendulum.datetime(2000, 1, 1)
-
-    with pendulum.test(t):
-        assert pendulum.now() == t
-
-    assert pendulum.now() != t
-
-    # Also make sure that it restores things after an exception
-    with pytest.raises(RuntimeError), pendulum.test(t):
-        assert pendulum.now() == t
-        raise RuntimeError
-
-    assert pendulum.now() != t

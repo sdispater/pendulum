@@ -24,8 +24,6 @@ from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
-from pendulum.helpers import get_test_now
-from pendulum.helpers import has_test_now
 from pendulum.mixins.default import FormattableMixin
 from pendulum.period import Period
 
@@ -733,9 +731,6 @@ class Date(FormattableMixin, date):
 
     @classmethod
     def today(cls) -> Date:
-        if has_test_now():
-            return cast(pendulum.DateTime, get_test_now()).date()
-
         dt = date.today()
 
         return cls(dt.year, dt.month, dt.day)

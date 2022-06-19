@@ -24,7 +24,7 @@ except ImportError:
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
     # Use the mock now value if it exists
-    options["now"] = options.get("now", pendulum.get_test_now())
+    options["now"] = options.get("now")
 
     return _parse(text, **options)
 
