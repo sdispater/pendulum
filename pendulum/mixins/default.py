@@ -2,37 +2,28 @@ from __future__ import annotations
 
 from pendulum.formatting import Formatter
 
-
 _formatter = Formatter()
 
 
 class FormattableMixin:
+    _formatter: Formatter = _formatter
 
-    _formatter = _formatter
-
-    def format(self, fmt, locale=None):
+    def format(self, fmt: str, locale: str | None = None) -> str:
         """
         Formats the instance using the given format.
 
         :param fmt: The format to use
-        :type fmt: str
-
         :param locale: The locale to use
-        :type locale: str or None
-
-        :rtype: str
         """
         return self._formatter.format(self, fmt, locale)
 
-    def for_json(self):
+    def for_json(self) -> str:
         """
-        Methods for automatic json serialization by simplejson
-
-        :rtype: str
+        Methods for automatic json serialization by simplejson.
         """
         return str(self)
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec: str) -> str:
         if len(format_spec) > 0:
             if "%" in format_spec:
                 return self.strftime(format_spec)
@@ -41,5 +32,5 @@ class FormattableMixin:
 
         return str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.isoformat()

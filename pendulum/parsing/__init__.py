@@ -9,11 +9,13 @@ import struct
 from datetime import date
 from datetime import datetime
 from datetime import time
+from typing import Any
+from typing import Optional
+from typing import cast
 
 from dateutil import parser
 
 from pendulum.parsing.exceptions import ParserError
-
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
@@ -21,10 +23,11 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
+    from pendulum.parsing._iso8601 import Duration
     from pendulum.parsing._iso8601 import parse_iso8601
 except ImportError:
-    from pendulum.parsing.iso8601 import parse_iso8601
-
+    from pendulum.duration import Duration  # type: ignore[misc]
+    from pendulum.parsing.iso8601 import parse_iso8601  # type: ignore[misc]
 
 COMMON = re.compile(
     # Date (optional)  # noqa: E800
@@ -52,7 +55,6 @@ COMMON = re.compile(
     re.VERBOSE,
 )
 
-
 DEFAULT_OPTIONS = {
     "day_first": False,
     "year_first": True,
@@ -62,35 +64,31 @@ DEFAULT_OPTIONS = {
 }
 
 
-def parse(text, **options):
+def parse(text: str, **options: Any) -> datetime | date | time | _Interval | Duration:
     """
     Parses a string with the given options.
 
     :param text: The string to parse.
-    :type text: str
-
-    :rtype: Parsed
     """
-    _options = copy.copy(DEFAULT_OPTIONS)
+    _options: dict[str, Any] = copy.copy(DEFAULT_OPTIONS)
     _options.update(options)
 
     return _normalize(_parse(text, **_options), **_options)
 
 
-def _normalize(parsed, **options):
+def _normalize(
+    parsed: datetime | date | time | _Interval | Duration, **options: Any
+) -> datetime | date | time | _Interval | Duration:
     """
     Normalizes the parsed element.
 
     :param parsed: The parsed elements.
-    :type parsed: Parsed
-
-    :rtype: Parsed
     """
     if options.get("exact"):
         return parsed
 
     if isinstance(parsed, time):
-        now = options["now"] or datetime.now()
+        now = cast(Optional[datetime], options["now"]) or datetime.now()
 
         return datetime(
             now.year,
@@ -107,7 +105,7 @@ def _normalize(parsed, **options):
     return parsed
 
 
-def _parse(text, **options):
+def _parse(text: str, **options: Any) -> datetime | date | time | _Interval | Duration:
     # Trying to parse ISO8601
     with contextlib.suppress(ValueError):
         return parse_iso8601(text)
@@ -134,14 +132,11 @@ def _parse(text, **options):
     return dt
 
 
-def _parse_common(text, **options):
+def _parse_common(text: str, **options: Any) -> datetime | date | time:
     """
     Tries to parse the string as a common datetime format.
 
     :param text: The string to parse.
-    :type text: str
-
-    :rtype: dict or None
     """
     m = COMMON.match(text)
     has_date = False
@@ -202,13 +197,18 @@ class _Interval:
     Special class to handle ISO 8601 intervals
     """
 
-    def __init__(self, start=None, end=None, duration=None):
+    def __init__(
+        self,
+        start: datetime | None = None,
+        end: datetime | None = None,
+        duration: Duration | None = None,
+    ) -> None:
         self.start = start
         self.end = end
         self.duration = duration
 
 
-def _parse_iso8601_interval(text):
+def _parse_iso8601_interval(text: str) -> _Interval:
     if "/" not in text:
         raise ParserError("Invalid interval")
 
@@ -228,4 +228,6 @@ def _parse_iso8601_interval(text):
         start = parse_iso8601(first)
         end = parse_iso8601(last)
 
-    return _Interval(start, end, duration)
+    return _Interval(
+        cast(datetime, start), cast(datetime, end), cast(Duration, duration)
+    )

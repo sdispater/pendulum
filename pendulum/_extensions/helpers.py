@@ -4,6 +4,7 @@ import datetime
 import math
 
 from collections import namedtuple
+from typing import cast
 
 from pendulum.constants import DAY_OF_WEEK_TABLE
 from pendulum.constants import DAYS_PER_L_YEAR
@@ -20,6 +21,8 @@ from pendulum.constants import SECS_PER_MIN
 from pendulum.constants import SECS_PER_YEAR
 from pendulum.constants import TM_DECEMBER
 from pendulum.constants import TM_JANUARY
+from pendulum.tz.timezone import Timezone
+from pendulum.utils._compat import zoneinfo
 
 
 class PreciseDiff(
@@ -28,7 +31,16 @@ class PreciseDiff(
         "years months days " "hours minutes seconds microseconds " "total_days",
     )
 ):
-    def __repr__(self):
+    years: int
+    months: int
+    days: int
+    hours: int
+    minutes: int
+    seconds: int
+    microseconds: int
+    total_days: int
+
+    def __repr__(self) -> str:
         return (
             f"{self.years} years "
             f"{self.months} months "
@@ -45,7 +57,7 @@ def is_leap(year: int) -> bool:
 
 
 def is_long_year(year: int) -> bool:
-    def p(y):
+    def p(y: int) -> int:
         return y + y // 4 - y // 100 + y // 400
 
     return p(year) % 7 == 4 or p(year - 1) % 7 == 3
@@ -103,14 +115,8 @@ def local_time(
     unix_time: int, utc_offset: int, microseconds: int
 ) -> tuple[int, int, int, int, int, int, int]:
     """
-    Returns a UNIX time as a broken down time
+    Returns a UNIX time as a broken-down time
     for a particular transition type.
-
-    :type unix_time: int
-    :type utc_offset: int
-    :type microseconds: int
-
-    :rtype: tuple
     """
     year = EPOCH_YEAR
     seconds = int(math.floor(unix_time))
@@ -173,7 +179,7 @@ def local_time(
     minute = seconds // SECS_PER_MIN
     second = seconds % SECS_PER_MIN
 
-    return (year, month, day, hour, minute, second, microseconds)
+    return year, month, day, hour, minute, second, microseconds
 
 
 def precise_diff(
@@ -183,20 +189,19 @@ def precise_diff(
     Calculate a precise difference between two datetimes.
 
     :param d1: The first datetime
-    :type d1: datetime.datetime or datetime.date
-
     :param d2: The second datetime
-    :type d2: datetime.datetime or datetime.date
-
-    :rtype: PreciseDiff
     """
     sign = 1
 
     if d1 == d2:
         return PreciseDiff(0, 0, 0, 0, 0, 0, 0, 0)
 
-    tzinfo1 = d1.tzinfo if isinstance(d1, datetime.datetime) else None
-    tzinfo2 = d2.tzinfo if isinstance(d2, datetime.datetime) else None
+    tzinfo1: datetime.tzinfo | None = (
+        d1.tzinfo if isinstance(d1, datetime.datetime) else None
+    )
+    tzinfo2: datetime.tzinfo | None = (
+        d2.tzinfo if isinstance(d2, datetime.datetime) else None
+    )
 
     if (
         tzinfo1 is None
@@ -227,22 +232,8 @@ def precise_diff(
     # Trying to figure out the timezone names
     # If we can't find them, we assume different timezones
     if tzinfo1 and tzinfo2:
-        if hasattr(tzinfo1, "key"):
-            # zoneinfo timezone
-            tz1 = tzinfo1.key
-        elif hasattr(tzinfo1, "name"):
-            # Pendulum timezone
-            tz1 = tzinfo1.name
-        elif hasattr(tzinfo1, "zone"):
-            # pytz timezone
-            tz1 = tzinfo1.zone
-
-        if hasattr(tzinfo2, "key"):
-            tz2 = tzinfo2.key
-        elif hasattr(tzinfo2, "name"):
-            tz2 = tzinfo2.name
-        elif hasattr(tzinfo2, "zone"):
-            tz2 = tzinfo2.zone
+        tz1 = _get_tzinfo_name(tzinfo1)
+        tz2 = _get_tzinfo_name(tzinfo2)
 
         in_same_tz = tz1 == tz2 and tz1 is not None
 
@@ -354,3 +345,20 @@ def _day_number(year: int, month: int, day: int) -> int:
         + (month * 306 + 5) // 10
         + (day - 1)
     )
+
+
+def _get_tzinfo_name(tzinfo: datetime.tzinfo | None) -> str | None:
+    if tzinfo is None:
+        return None
+
+    if hasattr(tzinfo, "key"):
+        # zoneinfo timezone
+        return cast(str, cast(zoneinfo.ZoneInfo, tzinfo).key)
+    elif hasattr(tzinfo, "name"):
+        # Pendulum timezone
+        return cast(Timezone, tzinfo).name
+    elif hasattr(tzinfo, "zone"):
+        # pytz timezone
+        return tzinfo.zone  # type: ignore
+
+    return None

@@ -19,10 +19,9 @@ from pendulum.constants import DAYS_PER_MONTHS
 from pendulum.formatting.difference_formatter import DifferenceFormatter
 from pendulum.locales.locale import Locale
 
-
 if TYPE_CHECKING:
     # Prevent import cycles
-    from pendulum.period import Period
+    from pendulum.duration import Duration
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
@@ -34,6 +33,7 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
+    from pendulum._extensions._helpers import PreciseDiff
     from pendulum._extensions._helpers import days_in_year
     from pendulum._extensions._helpers import is_leap
     from pendulum._extensions._helpers import is_long_year
@@ -42,55 +42,55 @@ try:
     from pendulum._extensions._helpers import timestamp
     from pendulum._extensions._helpers import week_day
 except ImportError:
-    from pendulum._extensions.helpers import days_in_year  # noqa: F401
+    from pendulum._extensions.helpers import PreciseDiff  # type: ignore[misc]
+    from pendulum._extensions.helpers import days_in_year
     from pendulum._extensions.helpers import is_leap
-    from pendulum._extensions.helpers import is_long_year  # noqa: F401
-    from pendulum._extensions.helpers import local_time  # noqa: F401
-    from pendulum._extensions.helpers import precise_diff  # noqa: F401
-    from pendulum._extensions.helpers import timestamp  # noqa: F401
-    from pendulum._extensions.helpers import week_day  # noqa: F401
-
+    from pendulum._extensions.helpers import is_long_year
+    from pendulum._extensions.helpers import local_time
+    from pendulum._extensions.helpers import precise_diff  # type: ignore[misc]
+    from pendulum._extensions.helpers import timestamp
+    from pendulum._extensions.helpers import week_day
 
 difference_formatter = DifferenceFormatter()
 
 
 @overload
 def add_duration(
-    dt: _DT,
+    dt: datetime,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
     days: int = 0,
     hours: int = 0,
     minutes: int = 0,
-    seconds: int = 0,
+    seconds: float = 0,
     microseconds: int = 0,
-) -> _DT:
-    pass
+) -> datetime:
+    ...
 
 
 @overload
 def add_duration(
-    dt: _D,
+    dt: date,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
     days: int = 0,
-) -> _D:
+) -> date:
     pass
 
 
 def add_duration(
-    dt,
-    years=0,
-    months=0,
-    weeks=0,
-    days=0,
-    hours=0,
-    minutes=0,
-    seconds=0,
-    microseconds=0,
-):
+    dt: date | datetime,
+    years: int = 0,
+    months: int = 0,
+    weeks: int = 0,
+    days: int = 0,
+    hours: int = 0,
+    minutes: int = 0,
+    seconds: float = 0,
+    microseconds: int = 0,
+) -> date | datetime:
     """
     Adds a duration to a date/datetime instance.
     """
@@ -112,7 +112,7 @@ def add_duration(
 
     if abs(seconds) > 59:
         s = _sign(seconds)
-        div, mod = divmod(seconds * s, 60)
+        div, mod = divmod(seconds * s, 60)  # type: ignore[assignment]
         seconds = mod * s
         minutes += div * s
 
@@ -160,7 +160,10 @@ def add_duration(
 
 
 def format_diff(
-    diff: Period, is_now: bool = True, absolute: bool = False, locale: str | None = None
+    diff: Duration,
+    is_now: bool = True,
+    absolute: bool = False,
+    locale: str | None = None,
 ) -> str:
     if locale is None:
         locale = get_locale()
@@ -168,7 +171,7 @@ def format_diff(
     return difference_formatter.format(diff, is_now, absolute, locale)
 
 
-def _sign(x):
+def _sign(x: float) -> int:
     return int(copysign(1, x))
 
 
@@ -222,3 +225,26 @@ def week_ends_at(wday: int) -> None:
         raise ValueError("Invalid week day as start of week.")
 
     pendulum._WEEK_ENDS_AT = wday
+
+
+__all__ = [
+    "PreciseDiff",
+    "days_in_year",
+    "is_leap",
+    "is_long_year",
+    "local_time",
+    "precise_diff",
+    "timestamp",
+    "week_day",
+    "add_duration",
+    "format_diff",
+    "test",
+    "set_test_now",
+    "get_test_now",
+    "has_test_now",
+    "locale",
+    "set_locale",
+    "get_locale",
+    "week_starts_at",
+    "week_ends_at",
+]

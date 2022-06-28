@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 windows_timezones = {
     "AUS Central Standard Time": "Australia/Darwin",
     "AUS Eastern Standard Time": "Australia/Sydney",
