@@ -186,7 +186,7 @@ Getting started
 ---------------
 
 To work on the Pendulum codebase, you'll want to clone the project locally
-and install the required depedendencies via `poetry <https://poetry.eustace.io>`_.
+and install the required dependencies via `poetry <https://poetry.eustace.io>`_.
 
 .. code-block:: bash
 
