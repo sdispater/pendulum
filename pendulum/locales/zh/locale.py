@@ -104,7 +104,7 @@ locale = {
             "morning1": "清晨",
             "morning2": "上午",
             "afternoon1": "下午",
-            "afternoon2": "下午",
+            "afternoon2": "傍晚",
             "evening1": "晚上",
             "night1": "凌晨",
         },
