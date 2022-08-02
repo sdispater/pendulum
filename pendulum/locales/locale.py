@@ -1,11 +1,16 @@
-import os
 import re
+import sys
 
 from importlib import import_module
 from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Union
+
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 
 class Locale:
@@ -31,8 +36,8 @@ class Locale:
 
         # Checking locale existence
         actual_locale = locale
-        locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
-        while not os.path.exists(locale_path):
+        locale_path = resources.files(__package__).joinpath(actual_locale)
+        while not locale_path.exists():
             if actual_locale == locale:
                 raise ValueError(f"Locale [{locale}] does not exist.")
 
