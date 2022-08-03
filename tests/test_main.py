@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytz
 
 from pendulum import _safe_timezone

@@ -1,9 +1,31 @@
 [flake8]
 max-line-length = 88
-ignore = E501, E203, W503
+ignore =
+    # E501:	Line too long
+    E501,
+    # E203:	Whitespace before ':'
+    E203,
+    #W503: Line break occurred before a binary operator
+    W503
 per-file-ignores =
+    # F401:	Module imported but unused
     __init__.py:F401
+    # F811:	Redefinition of unused name from line n
     pendulum/tz/timezone.py:F811
+min_python_version = 3.7.0
+ban-relative-imports = true
+# flake8-use-fstring: https://github.com/MichaelKim0407/flake8-use-fstring#--percent-greedy-and---format-greedy
+format-greedy = 1
+inline-quotes = double
+enable-extensions = TC, TC1
+type-checking-exempt-modules = typing, typing-extensions
+eradicate-whitelist-extend = ^-.*;
+extend-ignore =
+    # SIM106: Handle error-cases first
+    SIM106,
+extend-exclude =
+    # External to the project's coding standards:
+    docs/*,
 exclude =
     .git
     __pycache__
