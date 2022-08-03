@@ -17,7 +17,6 @@ jobs:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
-      fail-fast: false
       matrix:
         os: [Ubuntu, MacOS, Windows]
         python-version: [3.7, 3.8, 3.9, "3.10"]
