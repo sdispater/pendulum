@@ -27,7 +27,7 @@ instances that generated it, so that it can give access to more methods and prop
 2 # 832 for the duration
 
 # However the days property will still remain the same
-# to keep the compatiblity with the timedelta class
+# to keep the compatibility with the timedelta class
 >>> period.days
 5829
 ```
