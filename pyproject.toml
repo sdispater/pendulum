@@ -60,17 +60,14 @@ script = "build.py"
 profile = "black"
 force_single_line = true
 atomic = true
-include_trailing_comma = true
 lines_after_imports = 2
 lines_between_types = 1
-use_parentheses = true
 skip_glob = [
     "pendulum/locales/**",
     "build.py",
     "pendulum/__version__.py",
 ]
 filter_files = true
-
 known_first_party = "pendulum"
 known_third_party = [
     "babel",
