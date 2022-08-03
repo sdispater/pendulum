@@ -31,10 +31,10 @@ python-dateutil = "^2.6"
 tzdata = ">=2020.1"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^6.2.5"
-pytest-cov = "^2.5"
-pytz = ">=2018.3"
-time-machine = "^2.4.0"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+pytz = ">=2022.1"
+time-machine = "^2.7.1"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs = "^1.0"
@@ -43,14 +43,14 @@ pygments = "^2.2"
 markdown-include = "^0.5.1"
 
 [tool.poetry.group.lint.dependencies]
-black = {version = "^21.12b0", markers = "implementation_name != 'pypy'"}
-isort = "^5.9.1"
-pre-commit = "^2.10.0"
+black = {version = "^22.6.0", markers = "implementation_name != 'pypy'"}
+isort = "^5.10.1"
+pre-commit = "^2.20.0"
 
 [tool.poetry.group.dev.dependencies]
-babel = "^2.5"
-cleo = "^1.0.0a3"
-tox = "^3.0"
+babel = "^2.10.3"
+cleo = "^1.0.0a5"
+tox = "^3.25.1"
 
 [tool.poetry.build]
 generate-setup-file = false
@@ -77,6 +77,11 @@ known_third_party = [
     "pytzdata",
 ]
 
+[tool.mypy]
+strict = true
+files = "pendulum, tests"
+show_error_codes = true
+pretty = true
 
 [build-system]
 requires = ["poetry-core>=1.1.0a6"]
