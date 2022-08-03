@@ -419,9 +419,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise ValueError('Invalid unit "%s" for end_of()' % unit)
+            raise ValueError(f'Invalid unit "{unit}" for end_of()')
 
-        return getattr(self, "_end_of_%s" % unit)()
+        return getattr(self, f"_end_of_{unit}")()
 
     def _start_of_day(self):
         """

@@ -30,7 +30,7 @@ class PendulumTimezone(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def convert(self, dt: datetime, dst_rule: Optional[str] = None) -> datetime:
+    def convert(self, dt: datetime, dst_rule: str | None = None) -> datetime:
         raise NotImplementedError
 
     @abstractmethod
@@ -57,7 +57,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
     >>> tz = Timezone('Europe/Paris')
     """
 
-    def __new__(cls, key: str) -> "Timezone":
+    def __new__(cls, key: str) -> Timezone:
         try:
             return super().__new__(cls, key)
         except zoneinfo.ZoneInfoNotFoundError:
@@ -137,7 +137,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
 
 
 class FixedTimezone(tzinfo, PendulumTimezone):
-    def __init__(self, offset: int, name: Optional[str] = None) -> None:
+    def __init__(self, offset: int, name: str | None = None) -> None:
         sign = "-" if offset < 0 else "+"
 
         minutes = offset / 60
@@ -188,20 +188,20 @@ class FixedTimezone(tzinfo, PendulumTimezone):
     def offset(self) -> int:
         return self._offset
 
-    def utcoffset(self, dt: Optional[datetime]) -> timedelta:
+    def utcoffset(self, dt: datetime | None) -> timedelta:
         return self._utcoffset
 
-    def dst(self, dt: Optional[_datetime]):
+    def dst(self, dt: _datetime | None):
         return timedelta()
 
     def fromutc(self, dt: datetime) -> datetime:
         # Use the stdlib datetime's add method to avoid infinite recursion
         return (datetime.__add__(dt, self._utcoffset)).replace(tzinfo=self)
 
-    def tzname(self, dt: Optional[datetime]) -> Optional[str]:
+    def tzname(self, dt: datetime | None) -> str | None:
         return self._name
 
-    def __getinitargs__(self):  # type: () -> tuple
+    def __getinitargs__(self) -> tuple:
         return self._offset, self._name
 
     def __repr__(self) -> str:

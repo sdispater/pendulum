@@ -53,7 +53,7 @@ from .tz.timezone import FixedTimezone
 from .tz.timezone import Timezone
 
 
-_TEST_NOW = None  # type: Optional[DateTime]
+_TEST_NOW: DateTime | None = None
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
@@ -62,7 +62,7 @@ _formatter = Formatter()
 
 
 def _safe_timezone(
-    obj: Optional[Union[str, float, _datetime.tzinfo, Timezone]]
+    obj: str | float | _datetime.tzinfo | Timezone | None
 ) -> Timezone:
     """
     Creates a timezone instance
@@ -102,8 +102,8 @@ def datetime(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    tz: Optional[Union[str, float, Timezone]] = UTC,
-    fold: Optional[int] = 1,
+    tz: str | float | Timezone | None = UTC,
+    fold: int | None = 1,
     raise_on_unknown_times: bool = False,
 ) -> DateTime:
     """
@@ -148,7 +148,7 @@ def naive(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    fold: Optional[int] = 1,
+    fold: int | None = 1,
 ) -> DateTime:
     """
     Return a naive DateTime.
@@ -171,7 +171,7 @@ def time(hour: int, minute: int = 0, second: int = 0, microsecond: int = 0) -> T
 
 
 def instance(
-    dt: _datetime.datetime, tz: Optional[Union[str, Timezone]] = UTC
+    dt: _datetime.datetime, tz: str | Timezone | None = UTC
 ) -> DateTime:
     """
     Create a DateTime instance from a datetime one.
@@ -200,28 +200,28 @@ def instance(
     )
 
 
-def now(tz: Optional[Union[str, Timezone]] = None) -> DateTime:
+def now(tz: str | Timezone | None = None) -> DateTime:
     """
     Get a DateTime instance for the current date and time.
     """
     return DateTime.now(tz)
 
 
-def today(tz: Union[str, Timezone] = "local") -> DateTime:
+def today(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
     return now(tz).start_of("day")
 
 
-def tomorrow(tz: Union[str, Timezone] = "local") -> DateTime:
+def tomorrow(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
     return today(tz).add(days=1)
 
 
-def yesterday(tz: Union[str, Timezone] = "local") -> DateTime:
+def yesterday(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
@@ -231,8 +231,8 @@ def yesterday(tz: Union[str, Timezone] = "local") -> DateTime:
 def from_format(
     string: str,
     fmt: str,
-    tz: Union[str, Timezone] = UTC,
-    locale: Optional[str] = None,  # noqa
+    tz: str | Timezone = UTC,
+    locale: str | None = None,  # noqa
 ) -> DateTime:
     """
     Creates a DateTime instance from a specific format.
@@ -245,7 +245,7 @@ def from_format(
 
 
 def from_timestamp(
-    timestamp: Union[int, float], tz: Union[str, Timezone] = UTC
+    timestamp: int | float, tz: str | Timezone = UTC
 ) -> DateTime:
     """
     Create a DateTime instance from a timestamp.

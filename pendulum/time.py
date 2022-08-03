@@ -26,7 +26,7 @@ class Time(FormattableMixin, time):
 
         tzinfo = ""
         if self.tzinfo:
-            tzinfo = ", tzinfo={}".format(repr(self.tzinfo))
+            tzinfo = f", tzinfo={repr(self.tzinfo)}"
 
         return "{}({}, {}, {}{}{})".format(
             self.__class__.__name__, self.hour, self.minute, self.second, us, tzinfo

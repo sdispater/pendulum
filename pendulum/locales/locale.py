@@ -48,7 +48,7 @@ class Locale:
     def normalize_locale(cls, locale: str) -> str:
         m = re.match("([a-z]{2})[-_]([a-z]{2})", locale, re.I)
         if m:
-            return "{}_{}".format(m.group(1).lower(), m.group(2).lower())
+            return f"{m.group(1).lower()}_{m.group(2).lower()}"
         else:
             return locale.lower()
 
@@ -78,7 +78,7 @@ class Locale:
         return self._data["ordinal"](number)
 
     def ordinalize(self, number: int) -> str:
-        ordinal = self.get("custom.ordinal.{}".format(self.ordinal(number)))
+        ordinal = self.get(f"custom.ordinal.{self.ordinal(number)}")
 
         if not ordinal:
             return f"{number}"

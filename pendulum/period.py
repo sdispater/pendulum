@@ -238,16 +238,16 @@ class Period(Duration):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    "units.{}.{}".format(unit, locale.plural(abs(count)))
+                    f"units.{unit}.{locale.plural(abs(count))}"
                 )
                 parts.append(translation.format(count))
 
         if not parts:
             if abs(self.microseconds) > 0:
-                unit = "units.second.{}".format(locale.plural(1))
-                count = "{:.2f}".format(abs(self.microseconds) / 1e6)
+                unit = f"units.second.{locale.plural(1)}"
+                count = f"{abs(self.microseconds) / 1e6:.2f}"
             else:
-                unit = "units.microsecond.{}".format(locale.plural(0))
+                unit = f"units.microsecond.{locale.plural(0)}"
                 count = 0
             translation = locale.translation(unit)
             parts.append(translation.format(count))

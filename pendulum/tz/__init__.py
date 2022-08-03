@@ -34,7 +34,7 @@ def timezones():
     return _timezones
 
 
-def timezone(name: Union[str, int]) -> Union[Timezone, FixedTimezone]:
+def timezone(name: str | int) -> Timezone | FixedTimezone:
     """
     Return a Timezone instance given its name.
     """

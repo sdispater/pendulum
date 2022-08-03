@@ -228,8 +228,8 @@ class Formatter:
     }
 
     def format(
-        self, dt, fmt, locale=None
-    ):  # type: (pendulum.DateTime, str, typing.Optional[typing.Union[str, Locale]]) -> str
+        self, dt: pendulum.DateTime, fmt: str, locale: str | Locale | None = None
+    ) -> str:
         """
         Formats a DateTime instance with a given format and locale.
 
@@ -261,8 +261,8 @@ class Formatter:
         return result
 
     def _format_token(
-        self, dt, token, locale
-    ):  # type: (pendulum.DateTime, str, Locale) -> str
+        self, dt: pendulum.DateTime, token: str, locale: Locale
+    ) -> str:
         """
         Formats a DateTime instance with a given token and locale.
 
@@ -309,8 +309,8 @@ class Formatter:
             return f"{sign}{hour:02d}{separator}{minute:02d}"
 
     def _format_localizable_token(
-        self, dt, token, locale
-    ):  # type: (pendulum.DateTime, str, Locale) -> str
+        self, dt: pendulum.DateTime, token: str, locale: Locale
+    ) -> str:
         """
         Formats a DateTime instance
         with a given localizable token and locale.
@@ -361,11 +361,11 @@ class Formatter:
 
     def parse(
         self,
-        time,  # type: str
-        fmt,  # type: str
-        now,  # type: pendulum.DateTime
-        locale=None,  # type:  typing.Optional[str]
-    ):  # type: (...) -> typing.Dict[str, typing.Any]
+        time: str,
+        fmt: str,
+        now: pendulum.DateTime,
+        locale: str | None = None,
+    ) -> dict[str, typing.Any]:
         """
         Parses a time string matching a given format as a tuple.
 
@@ -415,8 +415,8 @@ class Formatter:
         return self._check_parsed(parsed, now)
 
     def _check_parsed(
-        self, parsed, now
-    ):  # type: (typing.Dict[str, typing.Any], pendulum.DateTime) -> typing.Dict[str, typing.Any]
+        self, parsed: dict[str, typing.Any], now: pendulum.DateTime
+    ) -> dict[str, typing.Any]:
         """
         Checks validity of parsed elements.
 
@@ -537,8 +537,8 @@ class Formatter:
         return validated
 
     def _get_parsed_values(
-        self, m, parsed, locale, now
-    ):  # type: (typing.Match[str], typing.Dict[str, typing.Any], Locale, pendulum.DateTime) -> None
+        self, m: typing.Match[str], parsed: dict[str, typing.Any], locale: Locale, now: pendulum.DateTime
+    ) -> None:
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
                 self._get_parsed_locale_value(token, m.group(index), parsed, locale)
@@ -546,8 +546,8 @@ class Formatter:
                 self._get_parsed_value(token, m.group(index), parsed, now)
 
     def _get_parsed_value(
-        self, token, value, parsed, now
-    ):  # type: (str, str, typing.Dict[str, typing.Any], pendulum.DateTime) -> None
+        self, token: str, value: str, parsed: dict[str, typing.Any], now: pendulum.DateTime
+    ) -> None:
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if "Y" in token:
@@ -606,8 +606,8 @@ class Formatter:
             parsed["tz"] = pendulum.timezone(value)
 
     def _get_parsed_locale_value(
-        self, token, value, parsed, locale
-    ):  # type: (str, str, typing.Dict[str, typing.Any], Locale) -> None
+        self, token: str, value: str, parsed: dict[str, typing.Any], locale: Locale
+    ) -> None:
         if token == "MMMM":
             unit = "month"
             match = "months.wide"
@@ -650,7 +650,7 @@ class Formatter:
         if value is None:
             raise ValueError("Invalid date")
 
-    def _replace_tokens(self, token, locale):  # type: (str, Locale) -> str
+    def _replace_tokens(self, token: str, locale: Locale) -> str:
         if token.startswith("[") and token.endswith("]"):
             return token[1:-1]
         elif token.startswith("\\"):

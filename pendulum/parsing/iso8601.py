@@ -182,7 +182,7 @@ def parse_iso8601(text):
             if ambiguous_date:
                 # We can "safely" assume that the ambiguous date
                 # was actually a time in the form hhmmss
-                hhmmss = "{}{:0>2}".format(str(year), str(month))
+                hhmmss = f"{str(year)}{str(month):0>2}"
 
                 return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
 
@@ -394,7 +394,7 @@ def _parse_iso8601_duration(text, **options):
             if "." in _seconds:
                 _seconds, _microseconds = _seconds.split(".")
                 seconds += int(_seconds)
-                microseconds += int("{:0<6}".format(_microseconds[:6]))
+                microseconds += int(f"{_microseconds[:6]:0<6}")
             else:
                 seconds += int(_seconds)
 

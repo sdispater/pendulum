@@ -27,7 +27,7 @@ _mock_local_timezone = None
 _local_timezone = None
 
 
-def get_local_timezone() -> Union[Timezone, FixedTimezone]:
+def get_local_timezone() -> Timezone | FixedTimezone:
     global _local_timezone
 
     if _mock_local_timezone is not None:
@@ -41,7 +41,7 @@ def get_local_timezone() -> Union[Timezone, FixedTimezone]:
     return _local_timezone
 
 
-def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> None
+def set_local_timezone(mock: str | Timezone | None = None) -> None:
     global _mock_local_timezone
 
     _mock_local_timezone = mock
@@ -152,7 +152,7 @@ def _get_darwin_timezone() -> Timezone:
     return Timezone(tzname)
 
 
-def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
+def _get_unix_timezone(_root: str = "/") -> Timezone:
     tzenv = os.environ.get("TZ")
     if tzenv:
         try:
