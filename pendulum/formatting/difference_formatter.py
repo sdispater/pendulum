@@ -16,7 +16,11 @@ class DifferenceFormatter:
         self._locale = Locale.load(locale)
 
     def format(
-        self, diff: pendulum.Period, is_now: bool = True, absolute: bool = False, locale: str | None = None
+        self,
+        diff: pendulum.Period,
+        is_now: bool = True,
+        absolute: bool = False,
+        locale: str | None = None,
     ) -> str:
         """
         Formats a difference.

@@ -61,9 +61,7 @@ _WEEK_ENDS_AT = SUNDAY
 _formatter = Formatter()
 
 
-def _safe_timezone(
-    obj: str | float | _datetime.tzinfo | Timezone | None
-) -> Timezone:
+def _safe_timezone(obj: str | float | _datetime.tzinfo | Timezone | None) -> Timezone:
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -170,9 +168,7 @@ def time(hour: int, minute: int = 0, second: int = 0, microsecond: int = 0) -> T
     return Time(hour, minute, second, microsecond)
 
 
-def instance(
-    dt: _datetime.datetime, tz: str | Timezone | None = UTC
-) -> DateTime:
+def instance(dt: _datetime.datetime, tz: str | Timezone | None = UTC) -> DateTime:
     """
     Create a DateTime instance from a datetime one.
     """
@@ -244,9 +240,7 @@ def from_format(
     return datetime(**parts)
 
 
-def from_timestamp(
-    timestamp: int | float, tz: str | Timezone = UTC
-) -> DateTime:
+def from_timestamp(timestamp: int | float, tz: str | Timezone = UTC) -> DateTime:
     """
     Create a DateTime instance from a timestamp.
     """

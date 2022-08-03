@@ -890,9 +890,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.end_of("day")
 
-    def next(
-        self, day_of_week: int | None = None, keep_time: bool = False
-    ) -> DateTime:
+    def next(self, day_of_week: int | None = None, keep_time: bool = False) -> DateTime:
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -1080,9 +1078,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.on(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
-    def _nth_of_quarter(
-        self, nth: int, day_of_week: int | None = None
-    ) -> DateTime:
+    def _nth_of_quarter(self, nth: int, day_of_week: int | None = None) -> DateTime:
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
@@ -1234,9 +1230,7 @@ class DateTime(datetime.datetime, Date):
     # Native methods override
 
     @classmethod
-    def fromtimestamp(
-        cls, t: float, tz: datetime.tzinfo | None = None
-    ) -> DateTime:
+    def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> DateTime:
         return pendulum.instance(datetime.datetime.fromtimestamp(t, tz=tz), tz=tz)
 
     @classmethod

@@ -260,9 +260,7 @@ class Formatter:
 
         return result
 
-    def _format_token(
-        self, dt: pendulum.DateTime, token: str, locale: Locale
-    ) -> str:
+    def _format_token(self, dt: pendulum.DateTime, token: str, locale: Locale) -> str:
         """
         Formats a DateTime instance with a given token and locale.
 
@@ -537,7 +535,11 @@ class Formatter:
         return validated
 
     def _get_parsed_values(
-        self, m: typing.Match[str], parsed: dict[str, typing.Any], locale: Locale, now: pendulum.DateTime
+        self,
+        m: typing.Match[str],
+        parsed: dict[str, typing.Any],
+        locale: Locale,
+        now: pendulum.DateTime,
     ) -> None:
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
@@ -546,7 +548,11 @@ class Formatter:
                 self._get_parsed_value(token, m.group(index), parsed, now)
 
     def _get_parsed_value(
-        self, token: str, value: str, parsed: dict[str, typing.Any], now: pendulum.DateTime
+        self,
+        token: str,
+        value: str,
+        parsed: dict[str, typing.Any],
+        now: pendulum.DateTime,
     ) -> None:
         parsed_token = self._PARSE_TOKENS[token](value)
 

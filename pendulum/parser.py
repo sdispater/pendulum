@@ -20,9 +20,7 @@ except ImportError:
     CDuration = None
 
 
-def parse(
-    text: str, **options: typing.Any
-) -> Date | Time | DateTime | Duration:
+def parse(text: str, **options: typing.Any) -> Date | Time | DateTime | Duration:
     # Use the mock now value if it exists
     options["now"] = options.get("now", pendulum.get_test_now())
 
