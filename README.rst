@@ -36,7 +36,7 @@ Supports Python **2.7** and **3.4+**.
 
    >>> past = pendulum.now().subtract(minutes=2)
    >>> past.diff_for_humans()
-   >>> '2 minutes ago'
+   '2 minutes ago'
 
    >>> delta = past - last_week
    >>> delta.hours
