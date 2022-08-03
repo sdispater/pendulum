@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Get tag
       id: tag
       run: |
@@ -29,7 +29,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9, "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -43,8 +43,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and set up Poetry
       run: |
-        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-        python get-poetry.py -y
+        curl -fsS https://install.python-poetry.org | python - --preview -y
     - name: Build distributions
       run: |
         source $HOME/.poetry/env
@@ -59,7 +58,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9, "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -74,8 +73,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install and setup Poetry
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -O get-poetry.py
-        python get-poetry.py -y
+        (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python - --preview -y
     - name: Build distributions
       run: |
         $env:Path += ";$env:Userprofile\.poetry\bin"
@@ -104,8 +102,7 @@ jobs:
           path: dist
       - name: Install and set up Poetry
         run: |
-          curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-          python get-poetry.py -y
+          curl -fsS https://install.python-poetry.org | python - --preview -y
       - name: Set up cache
         uses: actions/cache@v1
         with:

@@ -63,7 +63,7 @@ class Formatter:
         "Mo": None,
         "DDDo": None,
         "Do": lambda locale: tuple(
-            fr"\d+{o}" for o in locale.get("custom.ordinal").values()
+            rf"\d+{o}" for o in locale.get("custom.ordinal").values()
         ),
         "dddd": "days.wide",
         "ddd": "days.abbreviated",
