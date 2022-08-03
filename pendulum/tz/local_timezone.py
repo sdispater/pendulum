@@ -6,8 +6,6 @@ import sys
 
 from contextlib import contextmanager
 from typing import Iterator
-from typing import Optional
-from typing import Union
 
 from .exceptions import InvalidTimezone
 from .timezone import FixedTimezone

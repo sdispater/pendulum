@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 import math
-import typing
 
 from collections import namedtuple
 

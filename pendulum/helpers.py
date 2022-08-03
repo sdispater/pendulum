@@ -10,7 +10,6 @@ from datetime import timedelta
 from math import copysign
 from typing import TYPE_CHECKING
 from typing import Iterator
-from typing import Optional
 from typing import TypeVar
 from typing import overload
 
@@ -31,6 +30,7 @@ _DT = TypeVar("_DT", bound=datetime)
 _D = TypeVar("_D", bound=date)
 
 try:
+    # nopycln: file
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 

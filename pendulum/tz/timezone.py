@@ -5,7 +5,6 @@ from abc import abstractmethod
 from datetime import datetime
 from datetime import timedelta
 from datetime import tzinfo
-from typing import Optional
 from typing import TypeVar
 
 from pendulum.utils._compat import zoneinfo
