@@ -13,83 +13,63 @@ on:
       - '**'
 
 jobs:
-  Linting:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.9
-      - name: Linting
-        run: |
-          pip install pre-commit
-          pre-commit run --all-files
-
   Tests:
-    needs: Linting
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         os: [Ubuntu, MacOS, Windows]
         python-version: [3.7, 3.8, 3.9, "3.10"]
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Get full Python version
         id: full-python-version
-        shell: bash
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
+        run: |
+          echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
 
       - name: Install poetry
-        shell: bash
         run: |
-          curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
-          python install-poetry.py --preview -y
+          curl -fsS https://install.python-poetry.org | python - --preview -y
 
       - name: Update PATH
         if: ${{ matrix.os != 'Windows' }}
-        shell: bash
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Update Path for Windows
         if: ${{ matrix.os == 'Windows' }}
-        shell: bash
         run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
 
       - name: Configure poetry
-        shell: bash
         run: poetry config virtualenvs.in-project true
 
       - name: Set up cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        shell: bash
-        run: poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
+        # MacOS does not come with `timeout` command out of the box
+        if: steps.cache.outputs.cache-hit == 'true' && matrix.os != 'MacOS'
+        run: timeout 10s poetry run pip --version || rm -rf .venv
 
       - name: Install dependencies
-        shell: bash
         run: poetry install --only default --only test -vvv
 
       - name: Test Pure Python
-        shell: bash
         run: |
           PENDULUM_EXTENSIONS=0 poetry run pytest -q tests
 
       - name: Test
-        shell: bash
         run: |
           poetry run pytest -q tests
