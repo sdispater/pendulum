@@ -65,7 +65,7 @@ class Formatter:
         "Mo": None,
         "DDDo": None,
         "Do": lambda locale: tuple(
-            fr"\d+{o}" for o in locale.get("custom.ordinal").values()
+            rf"\d+{o}" for o in locale.get("custom.ordinal").values()
         ),
         "dddd": "days.wide",
         "ddd": "days.abbreviated",
@@ -106,8 +106,8 @@ class Formatter:
         # Hour
         "HH": lambda dt: f"{dt.hour:02d}",
         "H": lambda dt: f"{dt.hour:d}",
-        "hh": lambda dt: "{:02d}".format(dt.hour % 12 or 12),
-        "h": lambda dt: "{:d}".format(dt.hour % 12 or 12),
+        "hh": lambda dt: f"{dt.hour % 12 or 12:02d}",
+        "h": lambda dt: f"{dt.hour % 12 or 12:d}",
         # Minute
         "mm": lambda dt: f"{dt.minute:02d}",
         "m": lambda dt: f"{dt.minute:d}",
@@ -115,15 +115,15 @@ class Formatter:
         "ss": lambda dt: f"{dt.second:02d}",
         "s": lambda dt: f"{dt.second:d}",
         # Fractional second
-        "S": lambda dt: "{:01d}".format(dt.microsecond // 100000),
-        "SS": lambda dt: "{:02d}".format(dt.microsecond // 10000),
-        "SSS": lambda dt: "{:03d}".format(dt.microsecond // 1000),
-        "SSSS": lambda dt: "{:04d}".format(dt.microsecond // 100),
-        "SSSSS": lambda dt: "{:05d}".format(dt.microsecond // 10),
+        "S": lambda dt: f"{dt.microsecond // 100000:01d}",
+        "SS": lambda dt: f"{dt.microsecond // 10000:02d}",
+        "SSS": lambda dt: f"{dt.microsecond // 1000:03d}",
+        "SSSS": lambda dt: f"{dt.microsecond // 100:04d}",
+        "SSSSS": lambda dt: f"{dt.microsecond // 10:05d}",
         "SSSSSS": lambda dt: f"{dt.microsecond:06d}",
         # Timestamp
         "X": lambda dt: f"{dt.int_timestamp:d}",
-        "x": lambda dt: "{:d}".format(dt.int_timestamp * 1000 + dt.microsecond // 1000),
+        "x": lambda dt: f"{dt.int_timestamp * 1000 + dt.microsecond // 1000:d}",
         # Timezone
         "zz": lambda dt: "{}".format(dt.tzname() if dt.tzinfo is not None else ""),
         "z": lambda dt: "{}".format(dt.timezone_name or ""),

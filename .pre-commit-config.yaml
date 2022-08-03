@@ -1,3 +1,6 @@
+ci:
+  autofix_prs: false
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
@@ -18,6 +21,12 @@ repos:
     rev: 22.6.0
     hooks:
       - id: black
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: [--add-import, from __future__ import annotations]
 
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
@@ -41,12 +50,6 @@ repos:
     hooks:
       - id: yesqa
         additional_dependencies: *flake8_deps
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
-    hooks:
-      - id: isort
-        args: [--add-import, from __future__ import annotations]
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.37.3
