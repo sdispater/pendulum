@@ -165,7 +165,13 @@ char *_get_tz_name(PyObject *dt)
 
     if (tzinfo != Py_None)
     {
-        if (PyObject_HasAttrString(tzinfo, "name"))
+        if (PyObject_HasAttrString(tzinfo, "key"))
+        {
+            // zoneinfo timezone
+            tz = (char *)PyUnicode_AsUTF8(
+                PyObject_GetAttrString(tzinfo, "name"));
+        }
+        else if (PyObject_HasAttrString(tzinfo, "name"))
         {
             // Pendulum timezone
             tz = (char *)PyUnicode_AsUTF8(
@@ -238,10 +244,7 @@ static int Diff_init(Diff *self, PyObject *args, PyObject *kwargs)
  */
 static PyObject *Diff_repr(Diff *self)
 {
-    char repr[82] = {0};
-
-    sprintf(
-        repr,
+    return PyUnicode_FromFormat(
         "%d years %d months %d days %d hours %d minutes %d seconds %d microseconds",
         self->years,
         self->months,
@@ -250,8 +253,6 @@ static PyObject *Diff_repr(Diff *self)
         self->minutes,
         self->seconds,
         self->microseconds);
-
-    return PyUnicode_FromString(repr);
 }
 
 /*

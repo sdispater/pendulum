@@ -1,23 +1,30 @@
+ci:
+  autofix_prs: false
+
 repos:
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 22.6.0
     hooks:
       - id: black
 
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.8
+    rev: 4.0.1
     hooks:
       - id: flake8
 
   - repo: https://github.com/timothycrosley/isort
-    rev: 4.3.21
+    rev: 5.10.1
     hooks:
       - id: isort
-        additional_dependencies: [toml]
         exclude: ^.*/?setup\.py$
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.29.0
+    hooks:
+      - id: pyupgrade
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.0.1
     hooks:
       - id: trailing-whitespace
         exclude: ^tests/.*/fixtures/.*

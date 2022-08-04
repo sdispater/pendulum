@@ -126,8 +126,8 @@ The following tokens are currently supported:
 |                                | dd            | Mo, Tu, We ...                             |
 |                                | d             | 0, 1, 2 ... 6                              |
 | **Days of ISO Week**           | E             | 1, 2, 3 ... 7                              |
-| **Hour**                       | HH            | 00, 01, 02 ... 23, 24                      |
-|                                | H             | 0, 1, 2 ... 23, 24                         |
+| **Hour**                       | HH            | 00, 01, 02 ... 23                          |
+|                                | H             | 0, 1, 2 ... 23                             |
 |                                | hh            | 01, 02, 03 ... 11, 12                      |
 |                                | h             | 1, 2, 3 ... 11, 12                         |
 | **Minute**                     | mm            | 00, 01, 02 ... 58, 59                      |

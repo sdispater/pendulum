@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 """
 it custom locale file.
 """
-
-from __future__ import unicode_literals
 
 
 translations = {

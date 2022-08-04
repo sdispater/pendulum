@@ -1,7 +1,8 @@
 import datetime
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum.parsing import ParserError
 from pendulum.parsing import parse

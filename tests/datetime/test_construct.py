@@ -2,16 +2,16 @@ import os
 
 from datetime import datetime
 
-from dateutil import tz
-from freezegun import freeze_time
-
-import pendulum
 import pytest
 import pytz
+import time_machine
+
+from dateutil import tz
+
+import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
-from pendulum.utils._compat import PY36
 
 from ..conftest import assert_datetime
 
@@ -104,8 +104,7 @@ def test_now():
     assert now.hour != in_paris.hour
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
-@freeze_time("2016-03-27 00:30:00")
+@time_machine.travel("2016-03-27 00:30:00Z", tick=False)
 def test_now_dst_off():
     utc = pendulum.now("UTC")
     in_paris = pendulum.now("Europe/Paris")
@@ -115,8 +114,7 @@ def test_now_dst_off():
     assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
-@freeze_time("2016-03-27 01:30:00")
+@time_machine.travel("2016-03-27 01:30:00Z", tick=False)
 def test_now_dst_transitioning_on():
     utc = pendulum.now("UTC")
     in_paris = pendulum.now("Europe/Paris")
@@ -126,8 +124,7 @@ def test_now_dst_transitioning_on():
     assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
-@freeze_time("2016-10-30 00:30:00")
+@time_machine.travel("2016-10-30 00:30:00Z", tick=False)
 def test_now_dst_on():
     utc = pendulum.now("UTC")
     in_paris = pendulum.now("Europe/Paris")
@@ -137,8 +134,7 @@ def test_now_dst_on():
     assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
 
-@pytest.mark.skipif(not PY36, reason="fold attribute only present in Python 3.6+")
-@freeze_time("2016-10-30 01:30:00")
+@time_machine.travel("2016-10-30 01:30:00Z", tick=False)
 def test_now_dst_transitioning_off():
     utc = pendulum.now("UTC")
     in_paris = pendulum.now("Europe/Paris")

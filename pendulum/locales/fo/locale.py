@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from .custom import translations as custom_translations
 
 
@@ -12,7 +9,7 @@ It has been generated automatically and must not be modified directly.
 
 
 locale = {
-    "plural": lambda n: "one" if (n == n and ((n == 1))) else "other",
+    "plural": lambda n: "one" if (n == n and (n == 1)) else "other",
     "ordinal": lambda n: "other",
     "translations": {
         "days": {

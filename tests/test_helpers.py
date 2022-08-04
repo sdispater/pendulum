@@ -1,10 +1,9 @@
-from __future__ import absolute_import
-
 from datetime import datetime
 
-import pendulum
 import pytest
 import pytz
+
+import pendulum
 
 from pendulum import timezone
 from pendulum.helpers import days_in_year

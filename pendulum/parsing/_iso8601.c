@@ -228,7 +228,6 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
         return PyUnicode_FromString(self->tzname);
     }
 
-    char tzname_[7] = {0};
     char sign = '+';
     int offset = self->offset;
 
@@ -237,15 +236,12 @@ static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
         offset *= -1;
     }
 
-    sprintf(
-        tzname_,
+    return PyUnicode_FromFormat(
         "%c%02d:%02d",
         sign,
         offset / SECS_PER_HOUR,
         offset / SECS_PER_MIN % SECS_PER_MIN
     );
-
-    return PyUnicode_FromString(tzname_);
 }
 
 /*
@@ -306,9 +302,10 @@ static PyTypeObject FixedOffset_type = {
 static PyObject *new_fixed_offset_ex(int offset, char *name, PyTypeObject *type) {
     FixedOffset *self = (FixedOffset *) (type->tp_alloc(type, 0));
 
-    if (self != NULL)
+    if (self != NULL) {
         self->offset = offset;
         self->tzname = name;
+    }
 
     return (PyObject *) self;
 }
@@ -368,10 +365,7 @@ static int Duration_init(Duration *self, PyObject *args, PyObject *kwargs) {
  *     )
  */
 static PyObject *Duration_repr(Duration *self) {
-    char repr[82] = {0};
-
-    sprintf(
-        repr,
+    return PyUnicode_FromFormat(
         "%d years %d months %d weeks %d days %d hours %d minutes %d seconds %d microseconds",
         self->years,
         self->months,
@@ -382,8 +376,6 @@ static PyObject *Duration_repr(Duration *self) {
         self->seconds,
         self->microseconds
     );
-
-    return PyUnicode_FromString(repr);
 }
 
 /*
@@ -1229,6 +1221,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
         PyErr_SetString(
             PyExc_ValueError, "Invalid parameters"
         );
+        free(parsed);
         return NULL;
     }
 
@@ -1239,6 +1232,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
                 PyExc_ValueError, PARSER_ERRORS[parsed->error]
             );
 
+            free(parsed);
             return NULL;
         }
     } else if (_parse_iso8601_datetime(str, parsed) == NULL) {
@@ -1246,6 +1240,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             PyExc_ValueError, PARSER_ERRORS[parsed->error]
         );
 
+        free(parsed);
         return NULL;
     }
 
@@ -1295,6 +1290,7 @@ PyObject* parse_iso8601(PyObject *self, PyObject *args) {
             parsed->hours, parsed->minutes, parsed->seconds, parsed->microseconds
         );
     } else {
+        free(parsed);
         return NULL;
     }
 

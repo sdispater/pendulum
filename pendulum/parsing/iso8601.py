@@ -1,5 +1,3 @@
-from __future__ import division
-
 import datetime
 import re
 
@@ -120,10 +118,10 @@ def parse_iso8601(text):
                     and not m.group("weekdaysep")
                     and m.group("isoweekday")
                 ):
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 if not m.group("weeksep") and m.group("weekdaysep"):
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 try:
                     date = _get_iso_8601_week(
@@ -132,7 +130,7 @@ def parse_iso8601(text):
                 except ParserError:
                     raise
                 except ValueError:
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 year = date["year"]
                 month = date["month"]
@@ -189,10 +187,10 @@ def parse_iso8601(text):
             return datetime.date(year, month, day)
 
         if ambiguous_date:
-            raise ParserError("Invalid date string: {}".format(text))
+            raise ParserError(f"Invalid date string: {text}")
 
         if is_date and not m.group("timesep"):
-            raise ParserError("Invalid date string: {}".format(text))
+            raise ParserError(f"Invalid date string: {text}")
 
         if not is_date:
             is_time = True
@@ -225,7 +223,7 @@ def parse_iso8601(text):
             # Limiting to 6 chars
             subsecond = m.group("subsecond")[:6]
 
-            microsecond = int("{:0<6}".format(subsecond))
+            microsecond = int(f"{subsecond:0<6}")
 
         # Grabbing timezone, if any
         tz = m.group("tz")
@@ -237,7 +235,7 @@ def parse_iso8601(text):
                 tz = tz[1:]
                 if ":" not in tz:
                     if len(tz) == 2:
-                        tz = "{}00".format(tz)
+                        tz = f"{tz}00"
 
                     off_hour = tz[0:2]
                     off_minute = tz[2:4]
@@ -440,7 +438,7 @@ def _get_iso_8601_week(year, week, weekday):
         year += 1
 
     fmt = "%Y-%j"
-    string = "{}-{}".format(year, ordinal)
+    string = f"{year}-{ordinal}"
 
     dt = datetime.datetime.strptime(string, fmt)
 

@@ -13,6 +13,9 @@ for PYBIN in /opt/python/cp3*/bin; do
   if [ "$PYBIN" == "/opt/python/cp34-cp34m/bin" ]; then
     continue
   fi
+  if [ "$PYBIN" == "/opt/python/cp35-cp35m/bin" ]; then
+    continue
+  fi
   rm -rf build
   "${PYBIN}/python" $HOME/.poetry/bin/poetry build -vvv
 done

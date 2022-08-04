@@ -125,14 +125,14 @@ def _parse(text, **options):
     # so we fallback on the dateutil parser
     # If not strict
     if options.get("strict", True):
-        raise ParserError("Unable to parse string [{}]".format(text))
+        raise ParserError(f"Unable to parse string [{text}]")
 
     try:
         dt = parser.parse(
             text, dayfirst=options["day_first"], yearfirst=options["year_first"]
         )
     except ValueError:
-        raise ParserError("Invalid date string: {}".format(text))
+        raise ParserError(f"Invalid date string: {text}")
 
     return dt
 
@@ -192,7 +192,7 @@ def _parse_common(text, **options):
         # Limiting to 6 chars
         subsecond = m.group("subsecond")[:6]
 
-        microsecond = int("{:0<6}".format(subsecond))
+        microsecond = int(f"{subsecond:0<6}")
 
     if has_date:
         return datetime(year, month, day, hour, minute, second, microsecond)
