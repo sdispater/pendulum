@@ -11,6 +11,7 @@ from .timezone import UTC
 from .timezone import FixedTimezone
 from .timezone import Timezone
 
+
 if sys.version_info >= (3, 9):
     from importlib import resources
 else:

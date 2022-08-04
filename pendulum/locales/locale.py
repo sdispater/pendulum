@@ -7,6 +7,7 @@ from typing import Dict
 from typing import Optional
 from typing import Union
 
+
 if sys.version_info >= (3, 9):
     from importlib import resources
 else:
