@@ -136,6 +136,12 @@ you can use the appropriate methods.
 
 >>> it.total_seconds()
 101700084.001234
+
+>>> it.total_milliseconds()
+101700084001.234
+
+>>> it.total_microseconds()
+101700084001234
 ```
 
 Similarly, the `in_xxx()` methods return the total duration in each
@@ -156,6 +162,12 @@ supported unit as a truncated integer.
 
 >>> it.in_seconds()
 101700084
+
+>>> it.in_milliseconds()
+101700084001
+
+>>> it.in_microseconds()
+10170084001234
 ```
 
 It also has a handy `in_words()` method, which determines the duration representation when printed.

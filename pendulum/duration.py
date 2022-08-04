@@ -4,7 +4,7 @@ import pendulum
 
 from pendulum.utils._compat import PYPY
 
-from .constants import SECONDS_PER_DAY
+from .constants import SECONDS_PER_DAY, US_PER_MS, MS_PER_SECOND
 from .constants import SECONDS_PER_HOUR
 from .constants import SECONDS_PER_MINUTE
 from .constants import US_PER_SECOND
@@ -130,6 +130,12 @@ class Duration(timedelta):
                 + self._microseconds
             ) / US_PER_SECOND
 
+    def total_milliseconds(self):
+        return self.total_seconds() * MS_PER_SECOND + self._microseconds / US_PER_MS
+
+    def total_microseconds(self):
+        return self.total_seconds() * US_PER_SECOND + self._microseconds
+
     @property
     def years(self):
         return self._years
@@ -209,6 +215,12 @@ class Duration(timedelta):
 
     def in_seconds(self):
         return int(self.total_seconds())
+
+    def in_milliseconds(self):
+        return int(self.total_milliseconds())
+
+    def in_microseconds(self):
+        return int(self.total_microseconds())
 
     def in_words(self, locale=None, separator=" "):
         """
