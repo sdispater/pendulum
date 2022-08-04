@@ -1,5 +1,3 @@
-
-
 """
 cs custom locale file.
 """
