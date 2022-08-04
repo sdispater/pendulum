@@ -10,11 +10,11 @@ It has been generated automatically and must not be modified directly.
 
 locale = {
     "plural": lambda n: "few"
-    if ((n == n and ((n >= 2 and n <= 4))) and (0 == 0 and ((0 == 0))))
+    if ((n == n and (n >= 2 and n <= 4)) and (0 == 0 and (0 == 0)))
     else "many"
-    if (not (0 == 0 and ((0 == 0))))
+    if (not (0 == 0 and (0 == 0)))
     else "one"
-    if ((n == n and ((n == 1))) and (0 == 0 and ((0 == 0))))
+    if ((n == n and (n == 1)) and (0 == 0 and (0 == 0)))
     else "other",
     "ordinal": lambda n: "other",
     "translations": {
