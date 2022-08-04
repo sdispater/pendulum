@@ -5,6 +5,19 @@ import pytest
 import pendulum
 
 
+@pytest.fixture(autouse=True)
+def setup():
+    pendulum.set_local_timezone(pendulum.timezone("UTC"))
+
+    yield
+
+    pendulum.set_test_now()
+    pendulum.set_locale("en")
+    pendulum.set_local_timezone()
+    pendulum.week_starts_at(pendulum.MONDAY)
+    pendulum.week_ends_at(pendulum.SUNDAY)
+
+
 @pytest.fixture
 def today():
     return pendulum.today().date()
@@ -136,7 +149,7 @@ def test_diff_for_humans_now_and_month():
     with pendulum.test(pendulum.datetime(2017, 2, 28)):
         today = pendulum.today().date()
 
-        assert "1 month ago" == today.subtract(weeks=4).diff_for_humans()
+        assert "4 weeks ago" == today.subtract(weeks=4).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_months(today):
@@ -189,7 +202,7 @@ def test_diff_for_humans_now_and_future_month():
     with pendulum.test(pendulum.datetime(2017, 3, 31)):
         today = pendulum.today().date()
 
-        assert "in 1 month" == today.add(months=1).diff_for_humans()
+        assert "in 4 weeks" == today.add(months=1).diff_for_humans()
 
     with pendulum.test(pendulum.datetime(2017, 4, 30)):
         today = pendulum.today().date()
@@ -199,7 +212,7 @@ def test_diff_for_humans_now_and_future_month():
     with pendulum.test(pendulum.datetime(2017, 1, 31)):
         today = pendulum.today().date()
 
-        assert "in 1 month" == today.add(weeks=4).diff_for_humans()
+        assert "in 4 weeks" == today.add(weeks=4).diff_for_humans()
 
 
 def test_diff_for_humans_now_and_future_months(today):
@@ -252,7 +265,7 @@ def test_diff_for_humans_other_and_month():
     with pendulum.test(pendulum.datetime(2017, 3, 31)):
         today = pendulum.today().date()
 
-        assert "1 month before" == today.diff_for_humans(today.add(months=1))
+        assert "4 weeks before" == today.diff_for_humans(today.add(months=1))
 
     with pendulum.test(pendulum.datetime(2017, 4, 30)):
         today = pendulum.today().date()
@@ -262,7 +275,7 @@ def test_diff_for_humans_other_and_month():
     with pendulum.test(pendulum.datetime(2017, 1, 31)):
         today = pendulum.today().date()
 
-        assert "1 month before" == today.diff_for_humans(today.add(weeks=4))
+        assert "4 weeks before" == today.diff_for_humans(today.add(weeks=4))
 
 
 def test_diff_for_humans_other_and_months(today):
@@ -315,7 +328,7 @@ def test_diff_for_humans_other_and_future_month():
     with pendulum.test(pendulum.datetime(2017, 2, 28)):
         today = pendulum.today().date()
 
-        assert "1 month after" == today.diff_for_humans(today.subtract(weeks=4))
+        assert "4 weeks after" == today.diff_for_humans(today.subtract(weeks=4))
 
 
 def test_diff_for_humans_other_and_future_months(today):
