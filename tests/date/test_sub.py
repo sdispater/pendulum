@@ -7,7 +7,7 @@ import pytest
 
 import pendulum
 
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_subtract_years_positive():

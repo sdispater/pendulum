@@ -3,8 +3,7 @@ from __future__ import annotations
 import pendulum
 
 from pendulum import timezone
-
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def test_create_from_timestamp_returns_pendulum():

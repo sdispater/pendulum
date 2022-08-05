@@ -15,19 +15,19 @@ def test_to_string():
 def test_to_date_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "1975-12-25" == d.to_date_string()
+    assert d.to_date_string() == "1975-12-25"
 
 
 def test_to_formatted_date_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "Dec 25, 1975" == d.to_formatted_date_string()
+    assert d.to_formatted_date_string() == "Dec 25, 1975"
 
 
 def test_to_timestring():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "14:15:16" == d.to_time_string()
+    assert d.to_time_string() == "14:15:16"
 
 
 def test_to_atom_string():
@@ -113,9 +113,7 @@ def test_repr():
     assert repr(d) == expected
 
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
-    expected = "DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={})".format(
-        repr(d.tzinfo)
-    )
+    expected = f"DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={repr(d.tzinfo)})"
     assert repr(d) == expected
 
 

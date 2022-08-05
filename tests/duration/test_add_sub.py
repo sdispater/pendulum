@@ -4,7 +4,7 @@ from datetime import timedelta
 
 import pendulum
 
-from ..conftest import assert_duration
+from tests.conftest import assert_duration
 
 
 def test_add_interval():

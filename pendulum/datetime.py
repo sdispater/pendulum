@@ -7,35 +7,35 @@ from typing import Callable
 
 import pendulum
 
-from .constants import ATOM
-from .constants import COOKIE
-from .constants import MINUTES_PER_HOUR
-from .constants import MONTHS_PER_YEAR
-from .constants import RFC822
-from .constants import RFC850
-from .constants import RFC1036
-from .constants import RFC1123
-from .constants import RFC2822
-from .constants import RSS
-from .constants import SATURDAY
-from .constants import SECONDS_PER_DAY
-from .constants import SECONDS_PER_MINUTE
-from .constants import SUNDAY
-from .constants import W3C
-from .constants import YEARS_PER_CENTURY
-from .constants import YEARS_PER_DECADE
-from .date import Date
-from .exceptions import PendulumException
-from .helpers import add_duration
-from .helpers import get_test_now
-from .helpers import has_test_now
-from .period import Period
-from .time import Time
-from .tz import UTC
-from .tz import local_timezone
-from .tz.timezone import FixedTimezone
-from .tz.timezone import Timezone
-from .utils._compat import PY38
+from pendulum.constants import ATOM
+from pendulum.constants import COOKIE
+from pendulum.constants import MINUTES_PER_HOUR
+from pendulum.constants import MONTHS_PER_YEAR
+from pendulum.constants import RFC822
+from pendulum.constants import RFC850
+from pendulum.constants import RFC1036
+from pendulum.constants import RFC1123
+from pendulum.constants import RFC2822
+from pendulum.constants import RSS
+from pendulum.constants import SATURDAY
+from pendulum.constants import SECONDS_PER_DAY
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.constants import SUNDAY
+from pendulum.constants import W3C
+from pendulum.constants import YEARS_PER_CENTURY
+from pendulum.constants import YEARS_PER_DECADE
+from pendulum.date import Date
+from pendulum.exceptions import PendulumException
+from pendulum.helpers import add_duration
+from pendulum.helpers import get_test_now
+from pendulum.helpers import has_test_now
+from pendulum.period import Period
+from pendulum.time import Time
+from pendulum.tz import UTC
+from pendulum.tz import local_timezone
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
+from pendulum.utils._compat import PY38
 
 
 class DateTime(datetime.datetime, Date):
@@ -979,9 +979,8 @@ class DateTime(datetime.datetime, Date):
         dt = getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
         if dt is False:
             raise PendulumException(
-                "Unable to find occurence {} of {} in {}".format(
-                    nth, self._days[day_of_week], unit
-                )
+                f"Unable to find occurence {nth}"
+                f" of {self._days[day_of_week]} in {unit}"
             )
 
         return dt
@@ -1045,7 +1044,7 @@ class DateTime(datetime.datetime, Date):
 
         dt = self.first_of("month")
         check = dt.format("%Y-%M")
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if dt.format("%Y-%M") == check:
@@ -1094,7 +1093,7 @@ class DateTime(datetime.datetime, Date):
         last_month = dt.month
         year = dt.year
         dt = dt.first_of("quarter")
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if last_month < dt.month or year != dt.year:
@@ -1133,7 +1132,7 @@ class DateTime(datetime.datetime, Date):
 
         dt = self.first_of("year")
         year = dt.year
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if year != dt.year:

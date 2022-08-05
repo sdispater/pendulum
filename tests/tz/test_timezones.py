@@ -11,6 +11,6 @@ def test_timezones():
     assert "America/Argentina/Buenos_Aires" in zones
 
 
-@pytest.mark.parametrize("zone", [zone for zone in pendulum.timezones()])
+@pytest.mark.parametrize("zone", list(pendulum.timezones()))
 def test_timezones_are_loadable(zone):
     pendulum.timezone(zone)

@@ -5,21 +5,21 @@ import math
 
 from collections import namedtuple
 
-from ..constants import DAY_OF_WEEK_TABLE
-from ..constants import DAYS_PER_L_YEAR
-from ..constants import DAYS_PER_MONTHS
-from ..constants import DAYS_PER_N_YEAR
-from ..constants import EPOCH_YEAR
-from ..constants import MONTHS_OFFSETS
-from ..constants import SECS_PER_4_YEARS
-from ..constants import SECS_PER_100_YEARS
-from ..constants import SECS_PER_400_YEARS
-from ..constants import SECS_PER_DAY
-from ..constants import SECS_PER_HOUR
-from ..constants import SECS_PER_MIN
-from ..constants import SECS_PER_YEAR
-from ..constants import TM_DECEMBER
-from ..constants import TM_JANUARY
+from pendulum.constants import DAY_OF_WEEK_TABLE
+from pendulum.constants import DAYS_PER_L_YEAR
+from pendulum.constants import DAYS_PER_MONTHS
+from pendulum.constants import DAYS_PER_N_YEAR
+from pendulum.constants import EPOCH_YEAR
+from pendulum.constants import MONTHS_OFFSETS
+from pendulum.constants import SECS_PER_4_YEARS
+from pendulum.constants import SECS_PER_100_YEARS
+from pendulum.constants import SECS_PER_400_YEARS
+from pendulum.constants import SECS_PER_DAY
+from pendulum.constants import SECS_PER_HOUR
+from pendulum.constants import SECS_PER_MIN
+from pendulum.constants import SECS_PER_YEAR
+from pendulum.constants import TM_DECEMBER
+from pendulum.constants import TM_JANUARY
 
 
 class PreciseDiff(
@@ -30,21 +30,13 @@ class PreciseDiff(
 ):
     def __repr__(self):
         return (
-            "{years} years "
-            "{months} months "
-            "{days} days "
-            "{hours} hours "
-            "{minutes} minutes "
-            "{seconds} seconds "
-            "{microseconds} microseconds"
-        ).format(
-            years=self.years,
-            months=self.months,
-            days=self.days,
-            hours=self.hours,
-            minutes=self.minutes,
-            seconds=self.seconds,
-            microseconds=self.microseconds,
+            f"{self.years} years "
+            f"{self.months} months "
+            f"{self.days} days "
+            f"{self.hours} hours "
+            f"{self.minutes} minutes "
+            f"{self.seconds} seconds "
+            f"{self.microseconds} microseconds"
         )
 
 

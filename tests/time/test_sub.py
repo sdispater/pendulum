@@ -9,8 +9,7 @@ import pytz
 import pendulum
 
 from pendulum import Time
-
-from ..conftest import assert_duration
+from tests.conftest import assert_duration
 
 
 def test_sub_hours_positive():

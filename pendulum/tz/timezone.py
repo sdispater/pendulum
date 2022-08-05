@@ -7,11 +7,10 @@ from datetime import timedelta
 from datetime import tzinfo
 from typing import TypeVar
 
+from pendulum.tz.exceptions import AmbiguousTime
+from pendulum.tz.exceptions import InvalidTimezone
+from pendulum.tz.exceptions import NonExistingTime
 from pendulum.utils._compat import zoneinfo
-
-from .exceptions import AmbiguousTime
-from .exceptions import InvalidTimezone
-from .exceptions import NonExistingTime
 
 
 POST_TRANSITION = "post"
@@ -105,10 +104,9 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
                     if dt.fold
                     else (offset_before - offset_after)
                 )
-            elif offset_before > offset_after:
+            elif offset_before > offset_after and raise_on_unknown_times:
                 # Repeated time
-                if raise_on_unknown_times:
-                    raise AmbiguousTime(dt)
+                raise AmbiguousTime(dt)
 
             return dt.replace(tzinfo=self)
 

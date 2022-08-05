@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from pendulum import Date
-
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_construct():

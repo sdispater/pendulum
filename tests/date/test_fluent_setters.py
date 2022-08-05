@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pendulum
 
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_fluid_year_setter():

@@ -4,12 +4,11 @@ from datetime import timedelta
 
 import pendulum
 
+from pendulum.constants import SECONDS_PER_DAY
+from pendulum.constants import SECONDS_PER_HOUR
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
-
-from .constants import SECONDS_PER_DAY
-from .constants import SECONDS_PER_HOUR
-from .constants import SECONDS_PER_MINUTE
-from .constants import US_PER_SECOND
 
 
 def _divide_and_round(a, b):

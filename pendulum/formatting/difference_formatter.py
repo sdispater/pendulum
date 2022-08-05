@@ -1,8 +1,12 @@
 from __future__ import annotations
 
-import pendulum
+import typing as t
 
-from ..locales.locale import Locale
+from pendulum.locales.locale import Locale
+
+
+if t.TYPE_CHECKING:
+    from pendulum import Period
 
 
 class DifferenceFormatter:
@@ -15,7 +19,7 @@ class DifferenceFormatter:
 
     def format(
         self,
-        diff: pendulum.Period,
+        diff: Period,
         is_now: bool = True,
         absolute: bool = False,
         locale: str | None = None,
@@ -136,9 +140,8 @@ class DifferenceFormatter:
                 trans = locale.get(key)
                 if not trans:
                     # No special rule
-                    time = locale.get(
-                        f"translations.units.{unit}.{locale.plural(count)}"
-                    ).format(count)
+                    key = f"translations.units.{unit}.{locale.plural(count)}"
+                    time = locale.get(key).format(count)
                 else:
                     time = trans[locale.plural(count)].format(count)
 

@@ -8,9 +8,9 @@ from datetime import timedelta
 
 import pendulum
 
-from .constants import MONTHS_PER_YEAR
-from .duration import Duration
-from .helpers import precise_diff
+from pendulum.constants import MONTHS_PER_YEAR
+from pendulum.duration import Duration
+from pendulum.helpers import precise_diff
 
 
 class Period(Duration):
@@ -20,14 +20,17 @@ class Period(Duration):
     """
 
     def __new__(cls, start, end, absolute=False):
-        if isinstance(start, datetime) and isinstance(end, datetime):
-            if (
+        if (
+            isinstance(start, datetime)
+            and isinstance(end, datetime)
+            and (
                 start.tzinfo is None
                 and end.tzinfo is not None
                 or start.tzinfo is not None
                 and end.tzinfo is None
-            ):
-                raise TypeError("can't compare offset-naive and offset-aware datetimes")
+            )
+        ):
+            raise TypeError("can't compare offset-naive and offset-aware datetimes")
 
         if absolute and start > end:
             end, start = start, end

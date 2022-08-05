@@ -252,7 +252,7 @@ class WindowsTzDump(Command):
 
     def handle(self):
         raw_tznames = get_global("windows_zone_mapping")
-        sorted_names = sorted(list(raw_tznames.keys()))
+        sorted_names = sorted(raw_tznames.keys())
 
         tznames = {}
         for name in sorted_names:

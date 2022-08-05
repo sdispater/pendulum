@@ -15,14 +15,14 @@ from typing import overload
 
 import pendulum
 
-from .constants import DAYS_PER_MONTHS
-from .formatting.difference_formatter import DifferenceFormatter
-from .locales.locale import Locale
+from pendulum.constants import DAYS_PER_MONTHS
+from pendulum.formatting.difference_formatter import DifferenceFormatter
+from pendulum.locales.locale import Locale
 
 
 if TYPE_CHECKING:
     # Prevent import cycles
-    from .period import Period
+    from pendulum.period import Period
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
@@ -30,25 +30,25 @@ _DT = TypeVar("_DT", bound=datetime)
 _D = TypeVar("_D", bound=date)
 
 try:
-    # nopycln: file
+    # nopycln: file # noqa: E800
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from ._extensions._helpers import days_in_year
-    from ._extensions._helpers import is_leap
-    from ._extensions._helpers import is_long_year
-    from ._extensions._helpers import local_time
-    from ._extensions._helpers import precise_diff
-    from ._extensions._helpers import timestamp
-    from ._extensions._helpers import week_day
+    from pendulum._extensions._helpers import days_in_year
+    from pendulum._extensions._helpers import is_leap
+    from pendulum._extensions._helpers import is_long_year
+    from pendulum._extensions._helpers import local_time
+    from pendulum._extensions._helpers import precise_diff
+    from pendulum._extensions._helpers import timestamp
+    from pendulum._extensions._helpers import week_day
 except ImportError:
-    from ._extensions.helpers import days_in_year  # noqa
-    from ._extensions.helpers import is_leap  # noqa
-    from ._extensions.helpers import is_long_year  # noqa
-    from ._extensions.helpers import local_time  # noqa
-    from ._extensions.helpers import precise_diff  # noqa
-    from ._extensions.helpers import timestamp  # noqa
-    from ._extensions.helpers import week_day  # noqa
+    from pendulum._extensions.helpers import days_in_year  # noqa
+    from pendulum._extensions.helpers import is_leap
+    from pendulum._extensions.helpers import is_long_year  # noqa
+    from pendulum._extensions.helpers import local_time  # noqa
+    from pendulum._extensions.helpers import precise_diff  # noqa
+    from pendulum._extensions.helpers import timestamp  # noqa
+    from pendulum._extensions.helpers import week_day  # noqa
 
 
 difference_formatter = DifferenceFormatter()

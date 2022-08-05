@@ -5,8 +5,7 @@ import pytest
 import pendulum
 
 from pendulum import Date
-
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_start_of_day():

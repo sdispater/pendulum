@@ -125,8 +125,8 @@ class Formatter:
         "X": lambda dt: f"{dt.int_timestamp:d}",
         "x": lambda dt: f"{dt.int_timestamp * 1000 + dt.microsecond // 1000:d}",
         # Timezone
-        "zz": lambda dt: "{}".format(dt.tzname() if dt.tzinfo is not None else ""),
-        "z": lambda dt: "{}".format(dt.timezone_name or ""),
+        "zz": lambda dt: f'{dt.tzname() if dt.tzinfo is not None else ""}',
+        "z": lambda dt: f'{dt.timezone_name or ""}',
     }
 
     _DATE_FORMATS = {
@@ -438,7 +438,7 @@ class Formatter:
         if parsed["timestamp"] is not None:
             str_us = str(parsed["timestamp"])
             if "." in str_us:
-                microseconds = int("{}".format(str_us.split(".")[1].ljust(6, "0")))
+                microseconds = int(f'{str_us.split(".")[1].ljust(6, "0")}')
             else:
                 microseconds = 0
 
@@ -474,9 +474,7 @@ class Formatter:
             validated["year"] = now.year
 
         if parsed["day_of_year"] is not None:
-            dt = pendulum.parse(
-                "{}-{:>03d}".format(validated["year"], parsed["day_of_year"])
-            )
+            dt = pendulum.parse(f'{validated["year"]}-{parsed["day_of_year"]:>03d}')
 
             validated["month"] = dt.month
             validated["day"] = dt.day
@@ -561,7 +559,7 @@ class Formatter:
                 parsed_token = now.year // 100 * 100 + parsed_token
 
             parsed["year"] = parsed_token
-        elif "Q" == token:
+        elif token == "Q":
             parsed["quarter"] = parsed_token
         elif token in ["MM", "M"]:
             parsed["month"] = parsed_token
@@ -587,7 +585,7 @@ class Formatter:
         elif token in ["X", "x"]:
             parsed["timestamp"] = parsed_token
         elif token in ["ZZ", "Z"]:
-            negative = True if value.startswith("-") else False
+            negative = bool(value.startswith("-"))
             tz = value[1:]
             if ":" not in tz:
                 if len(tz) == 2:
@@ -641,7 +639,7 @@ class Formatter:
 
             if token == "a":
                 value = value.lower()
-                valid_values = list(map(lambda x: x.lower(), valid_values))
+                valid_values = [x.lower() for x in valid_values]
 
             if value not in valid_values:
                 raise ValueError("Invalid date")
@@ -684,6 +682,6 @@ class Formatter:
         if not isinstance(candidates, tuple):
             candidates = (candidates,)
 
-        pattern = "(?P<{}>{})".format(token, "|".join(candidates))
+        pattern = f'(?P<{token}>{"|".join(candidates)})'
 
         return pattern

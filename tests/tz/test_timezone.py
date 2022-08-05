@@ -11,8 +11,7 @@ from pendulum import timezone
 from pendulum.tz import fixed_timezone
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import NonExistingTime
-
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 @pytest.fixture(autouse=True)
@@ -390,7 +389,7 @@ def test_fixed_timezone():
     tz2 = fixed_timezone(18000)
     dt = datetime(2016, 11, 26, tzinfo=tz)
 
-    assert 18000 == tz2.utcoffset(dt).total_seconds()
+    assert tz2.utcoffset(dt).total_seconds() == 18000
     assert tz2.dst(dt) == timedelta()
 
 
@@ -443,4 +442,4 @@ def test_timezones_are_extended():
 def test_repr():
     tz = timezone("Europe/Paris")
 
-    assert "Timezone('Europe/Paris')" == repr(tz)
+    assert repr(tz) == "Timezone('Europe/Paris')"

@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pendulum
 
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def test_with_datetimes():

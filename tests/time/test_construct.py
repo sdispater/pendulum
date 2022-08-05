@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pendulum
 
-from ..conftest import assert_time
+from tests.conftest import assert_time
 
 
 def test_init():

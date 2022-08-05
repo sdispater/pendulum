@@ -6,7 +6,7 @@ import pytest
 
 import pendulum
 
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def test_add_years_positive():
@@ -115,13 +115,13 @@ def test_add_duration():
     d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 654321)
 
     d = d + duration
-    assert 2017 == d.year
-    assert 6 == d.month
-    assert 20 == d.day
-    assert 3 == d.hour
-    assert 13 == d.minute
-    assert 0 == d.second
-    assert 777777 == d.microsecond
+    assert d.year == 2017
+    assert d.month == 6
+    assert d.day == 20
+    assert d.hour == 3
+    assert d.minute == 13
+    assert d.second == 0
+    assert d.microsecond == 777777
 
 
 def test_addition_invalid_type():

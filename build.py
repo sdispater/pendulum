@@ -51,10 +51,8 @@ class ExtBuilder(build_ext):
             build_ext.build_extension(self, ext)
         except (CCompilerError, DistutilsExecError, DistutilsPlatformError, ValueError):
             print(
-                '  Unable to build the "{}" C extension, '
-                "Pendulum will use the pure python version of the extension.".format(
-                    ext.name
-                )
+                f'  Unable to build the "{ext.name}" C extension, '
+                "Pendulum will use the pure python version of the extension."
             )
 
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..formatting import Formatter
+from pendulum.formatting import Formatter
 
 
 _formatter = Formatter()

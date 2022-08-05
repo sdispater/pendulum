@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from pendulum import Time
-
-from ..conftest import assert_time
+from tests.conftest import assert_time
 
 
 def test_replace():

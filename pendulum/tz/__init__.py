@@ -6,12 +6,12 @@ from typing import Union
 
 import tzdata
 
-from .local_timezone import get_local_timezone
-from .local_timezone import set_local_timezone
-from .local_timezone import test_local_timezone
-from .timezone import UTC
-from .timezone import FixedTimezone
-from .timezone import Timezone
+from pendulum.tz.local_timezone import get_local_timezone
+from pendulum.tz.local_timezone import set_local_timezone
+from pendulum.tz.local_timezone import test_local_timezone
+from pendulum.tz.timezone import UTC
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 
 
 PRE_TRANSITION = "pre"

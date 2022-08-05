@@ -2,7 +2,8 @@
 max-line-length = 88
 per-file-ignores =
     # F401:	Module imported but unused
-    __init__.py:F401
+    # TC001: Move import into type checking block
+    __init__.py:F401, TC001
     # F811:	Redefinition of unused name from line n
     pendulum/tz/timezone.py:F811
 min_python_version = 3.7.0
