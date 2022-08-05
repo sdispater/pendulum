@@ -29,6 +29,7 @@ python = "^3.7"
 python-dateutil = "^2.6"
 "backports.zoneinfo" = {version = "^0.2.1", python = ">=3.7,<3.9"}
 tzdata = ">=2020.1"
+importlib-resources = {version = "^5.9.0", python = ">=3.7,<3.9"}
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.2"
