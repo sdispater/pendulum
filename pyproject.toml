@@ -82,7 +82,7 @@ known_third_party = [
 strict = true
 files = "pendulum, tests"
 show_error_codes = true
-#pretty = true
+pretty = true
 
 # The following whitelist is used to allow for incremental adoption
 # of Mypy. Modules should be removed from this whitelist as and when
