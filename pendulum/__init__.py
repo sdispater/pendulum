@@ -1,57 +1,59 @@
+from __future__ import annotations
+
 import datetime as _datetime
 
 from typing import Optional
 from typing import Union
 
-from .__version__ import __version__
-from .constants import DAYS_PER_WEEK
-from .constants import FRIDAY
-from .constants import HOURS_PER_DAY
-from .constants import MINUTES_PER_HOUR
-from .constants import MONDAY
-from .constants import MONTHS_PER_YEAR
-from .constants import SATURDAY
-from .constants import SECONDS_PER_DAY
-from .constants import SECONDS_PER_HOUR
-from .constants import SECONDS_PER_MINUTE
-from .constants import SUNDAY
-from .constants import THURSDAY
-from .constants import TUESDAY
-from .constants import WEDNESDAY
-from .constants import WEEKS_PER_YEAR
-from .constants import YEARS_PER_CENTURY
-from .constants import YEARS_PER_DECADE
-from .date import Date
-from .datetime import DateTime
-from .duration import Duration
-from .formatting import Formatter
-from .helpers import format_diff
-from .helpers import get_locale
-from .helpers import get_test_now
-from .helpers import has_test_now
-from .helpers import locale
-from .helpers import set_locale
-from .helpers import set_test_now
-from .helpers import test
-from .helpers import week_ends_at
-from .helpers import week_starts_at
-from .parser import parse
-from .period import Period
-from .time import Time
-from .tz import POST_TRANSITION
-from .tz import PRE_TRANSITION
-from .tz import TRANSITION_ERROR
-from .tz import UTC
-from .tz import local_timezone
-from .tz import set_local_timezone
-from .tz import test_local_timezone
-from .tz import timezone
-from .tz import timezones
-from .tz.timezone import FixedTimezone
-from .tz.timezone import Timezone
+from pendulum.__version__ import __version__
+from pendulum.constants import DAYS_PER_WEEK
+from pendulum.constants import FRIDAY
+from pendulum.constants import HOURS_PER_DAY
+from pendulum.constants import MINUTES_PER_HOUR
+from pendulum.constants import MONDAY
+from pendulum.constants import MONTHS_PER_YEAR
+from pendulum.constants import SATURDAY
+from pendulum.constants import SECONDS_PER_DAY
+from pendulum.constants import SECONDS_PER_HOUR
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.constants import SUNDAY
+from pendulum.constants import THURSDAY
+from pendulum.constants import TUESDAY
+from pendulum.constants import WEDNESDAY
+from pendulum.constants import WEEKS_PER_YEAR
+from pendulum.constants import YEARS_PER_CENTURY
+from pendulum.constants import YEARS_PER_DECADE
+from pendulum.date import Date
+from pendulum.datetime import DateTime
+from pendulum.duration import Duration
+from pendulum.formatting import Formatter
+from pendulum.helpers import format_diff
+from pendulum.helpers import get_locale
+from pendulum.helpers import get_test_now
+from pendulum.helpers import has_test_now
+from pendulum.helpers import locale
+from pendulum.helpers import set_locale
+from pendulum.helpers import set_test_now
+from pendulum.helpers import test
+from pendulum.helpers import week_ends_at
+from pendulum.helpers import week_starts_at
+from pendulum.parser import parse
+from pendulum.period import Period
+from pendulum.time import Time
+from pendulum.tz import POST_TRANSITION
+from pendulum.tz import PRE_TRANSITION
+from pendulum.tz import TRANSITION_ERROR
+from pendulum.tz import UTC
+from pendulum.tz import local_timezone
+from pendulum.tz import set_local_timezone
+from pendulum.tz import test_local_timezone
+from pendulum.tz import timezone
+from pendulum.tz import timezones
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 
 
-_TEST_NOW = None  # type: Optional[DateTime]
+_TEST_NOW: DateTime | None = None
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
@@ -59,9 +61,7 @@ _WEEK_ENDS_AT = SUNDAY
 _formatter = Formatter()
 
 
-def _safe_timezone(
-    obj: Optional[Union[str, float, _datetime.tzinfo, Timezone]]
-) -> Timezone:
+def _safe_timezone(obj: str | float | _datetime.tzinfo | Timezone | None) -> Timezone:
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -100,8 +100,8 @@ def datetime(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    tz: Optional[Union[str, float, Timezone]] = UTC,
-    fold: Optional[int] = 1,
+    tz: str | float | Timezone | None = UTC,
+    fold: int | None = 1,
     raise_on_unknown_times: bool = False,
 ) -> DateTime:
     """
@@ -146,7 +146,7 @@ def naive(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    fold: Optional[int] = 1,
+    fold: int | None = 1,
 ) -> DateTime:
     """
     Return a naive DateTime.
@@ -168,9 +168,7 @@ def time(hour: int, minute: int = 0, second: int = 0, microsecond: int = 0) -> T
     return Time(hour, minute, second, microsecond)
 
 
-def instance(
-    dt: _datetime.datetime, tz: Optional[Union[str, Timezone]] = UTC
-) -> DateTime:
+def instance(dt: _datetime.datetime, tz: str | Timezone | None = UTC) -> DateTime:
     """
     Create a DateTime instance from a datetime one.
     """
@@ -198,28 +196,28 @@ def instance(
     )
 
 
-def now(tz: Optional[Union[str, Timezone]] = None) -> DateTime:
+def now(tz: str | Timezone | None = None) -> DateTime:
     """
     Get a DateTime instance for the current date and time.
     """
     return DateTime.now(tz)
 
 
-def today(tz: Union[str, Timezone] = "local") -> DateTime:
+def today(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
     return now(tz).start_of("day")
 
 
-def tomorrow(tz: Union[str, Timezone] = "local") -> DateTime:
+def tomorrow(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
     return today(tz).add(days=1)
 
 
-def yesterday(tz: Union[str, Timezone] = "local") -> DateTime:
+def yesterday(tz: str | Timezone = "local") -> DateTime:
     """
     Create a DateTime instance for today.
     """
@@ -229,8 +227,8 @@ def yesterday(tz: Union[str, Timezone] = "local") -> DateTime:
 def from_format(
     string: str,
     fmt: str,
-    tz: Union[str, Timezone] = UTC,
-    locale: Optional[str] = None,  # noqa
+    tz: str | Timezone = UTC,
+    locale: str | None = None,  # noqa
 ) -> DateTime:
     """
     Creates a DateTime instance from a specific format.
@@ -242,9 +240,7 @@ def from_format(
     return datetime(**parts)
 
 
-def from_timestamp(
-    timestamp: Union[int, float], tz: Union[str, Timezone] = UTC
-) -> DateTime:
+def from_timestamp(timestamp: int | float, tz: str | Timezone = UTC) -> DateTime:
     """
     Create a DateTime instance from a timestamp.
     """

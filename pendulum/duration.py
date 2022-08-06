@@ -1,13 +1,14 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
 import pendulum
 
+from pendulum.constants import SECONDS_PER_DAY
+from pendulum.constants import SECONDS_PER_HOUR
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
-
-from .constants import SECONDS_PER_DAY
-from .constants import SECONDS_PER_HOUR
-from .constants import SECONDS_PER_MINUTE
-from .constants import US_PER_SECOND
 
 
 def _divide_and_round(a, b):
@@ -243,16 +244,16 @@ class Duration(timedelta):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    "units.{}.{}".format(unit, locale.plural(abs(count)))
+                    f"units.{unit}.{locale.plural(abs(count))}"
                 )
                 parts.append(translation.format(count))
 
         if not parts:
             if abs(self.microseconds) > 0:
-                unit = "units.second.{}".format(locale.plural(1))
-                count = "{:.2f}".format(abs(self.microseconds) / 1e6)
+                unit = f"units.second.{locale.plural(1)}"
+                count = f"{abs(self.microseconds) / 1e6:.2f}"
             else:
-                unit = "units.microsecond.{}".format(locale.plural(0))
+                unit = f"units.microsecond.{locale.plural(0)}"
                 count = 0
             translation = locale.translation(unit)
             parts.append(translation.format(count))

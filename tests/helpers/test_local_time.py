@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pendulum
 
 from pendulum.helpers import local_time

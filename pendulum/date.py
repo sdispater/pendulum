@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import calendar
 import math
 
@@ -6,20 +8,20 @@ from datetime import timedelta
 
 import pendulum
 
-from .constants import FRIDAY
-from .constants import MONDAY
-from .constants import MONTHS_PER_YEAR
-from .constants import SATURDAY
-from .constants import SUNDAY
-from .constants import THURSDAY
-from .constants import TUESDAY
-from .constants import WEDNESDAY
-from .constants import YEARS_PER_CENTURY
-from .constants import YEARS_PER_DECADE
-from .exceptions import PendulumException
-from .helpers import add_duration
-from .mixins.default import FormattableMixin
-from .period import Period
+from pendulum.constants import FRIDAY
+from pendulum.constants import MONDAY
+from pendulum.constants import MONTHS_PER_YEAR
+from pendulum.constants import SATURDAY
+from pendulum.constants import SUNDAY
+from pendulum.constants import THURSDAY
+from pendulum.constants import TUESDAY
+from pendulum.constants import WEDNESDAY
+from pendulum.constants import YEARS_PER_CENTURY
+from pendulum.constants import YEARS_PER_DECADE
+from pendulum.exceptions import PendulumException
+from pendulum.helpers import add_duration
+from pendulum.mixins.default import FormattableMixin
+from pendulum.period import Period
 
 
 class Date(FormattableMixin, date):
@@ -103,16 +105,7 @@ class Date(FormattableMixin, date):
         return self.strftime("%b %d, %Y")
 
     def __repr__(self):
-        return (
-            "{klass}("
-            "{year}, {month}, {day}"
-            ")".format(
-                klass=self.__class__.__name__,
-                year=self.year,
-                month=self.month,
-                day=self.day,
-            )
-        )
+        return f"{self.__class__.__name__}({self.year}, {self.month}, {self.day})"
 
     # COMPARISONS
 
@@ -417,9 +410,9 @@ class Date(FormattableMixin, date):
         :rtype: Date
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
-            raise ValueError('Invalid unit "%s" for end_of()' % unit)
+            raise ValueError(f'Invalid unit "{unit}" for end_of()')
 
-        return getattr(self, "_end_of_%s" % unit)()
+        return getattr(self, f"_end_of_{unit}")()
 
     def _start_of_day(self):
         """
@@ -650,9 +643,8 @@ class Date(FormattableMixin, date):
         dt = getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
         if dt is False:
             raise PendulumException(
-                "Unable to find occurence {} of {} in {}".format(
-                    nth, self._days[day_of_week], unit
-                )
+                f"Unable to find occurence {nth}"
+                f" of {self._days[day_of_week]} in {unit}"
             )
 
         return dt
@@ -730,7 +722,7 @@ class Date(FormattableMixin, date):
 
         dt = self.first_of("month")
         check = dt.format("YYYY-MM")
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if dt.format("YYYY-MM") == check:
@@ -787,7 +779,7 @@ class Date(FormattableMixin, date):
         last_month = dt.month
         year = dt.year
         dt = dt.first_of("quarter")
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if last_month < dt.month or year != dt.year:
@@ -840,7 +832,7 @@ class Date(FormattableMixin, date):
 
         dt = self.first_of("year")
         year = dt.year
-        for i in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
+        for _ in range(nth - (1 if dt.day_of_week == day_of_week else 0)):
             dt = dt.next(day_of_week)
 
         if year != dt.year:

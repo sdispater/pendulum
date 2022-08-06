@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import annotations
+
 import glob
 import json
 import os
@@ -191,8 +193,8 @@ translations = {{}}
             else:
                 v = repr(v)
 
-            s.append("{}{!r}: {},\n".format("    " * tab, k, v))
-        s.append("%s}" % ("    " * (tab - 1)))
+            s.append(f"{'    ' * tab}{k!r}: {v},\n")
+        s.append(f'{"    " * (tab - 1)}}}')
 
         return "".join(s)
 
@@ -200,7 +202,7 @@ translations = {{}}
         to_py = _LambdaCompiler().compile
         result = ["lambda n: "]
         for tag, ast in PluralRule.parse(rule).abstract:
-            result.append("'{}' if {} else ".format(tag, to_py(ast)))
+            result.append(f"'{tag}' if {to_py(ast)} else ")
         result.append("'other'")
         return "".join(result)
 
@@ -215,13 +217,13 @@ translations = {{}}
                 limit = PATTERN_CHARS[fieldchar]
                 if limit and fieldnum not in limit:
                     raise ValueError(
-                        "Invalid length for field: %r" % (fieldchar * fieldnum)
+                        f"Invalid length for field: {(fieldchar * fieldnum)!r}"
                     )
                 result.append(
                     self.TOKENS_MAP.get(fieldchar * fieldnum, fieldchar * fieldnum)
                 )
             else:
-                raise NotImplementedError("Unknown token type: %s" % tok_type)
+                raise NotImplementedError(f"Unknown token type: {tok_type}")
 
         return "".join(result)
 
@@ -250,17 +252,16 @@ class WindowsTzDump(Command):
 
     def handle(self):
         raw_tznames = get_global("windows_zone_mapping")
-        sorted_names = sorted(list(raw_tznames.keys()))
+        sorted_names = sorted(raw_tznames.keys())
 
         tznames = {}
         for name in sorted_names:
             tznames[name] = raw_tznames[name]
 
-        mapping = json.dumps(tznames, indent=4)
-        mapping = "windows_timezones = " + mapping.replace('"', "'") + "\n"
+        mapping = json.dumps(tznames, indent=4).replace('"', "'")
 
         with open(os.path.join(self.MAPPING_DIR, "windows.py"), "w") as f:
-            f.write(mapping)
+            f.write(f"windows_timezones = {mapping}\n")
 
 
 app = Application("clock", __version__)

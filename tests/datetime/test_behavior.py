@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pickle
 
 from copy import deepcopy

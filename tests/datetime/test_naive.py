@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import pendulum
 
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def test_naive():

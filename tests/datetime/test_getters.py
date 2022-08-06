@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import struct
 
 import pytest
@@ -6,9 +8,8 @@ import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
-
-from ..conftest import assert_date
-from ..conftest import assert_time
+from tests.conftest import assert_date
+from tests.conftest import assert_time
 
 
 def test_year():

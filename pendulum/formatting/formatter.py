@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import re
 import typing
@@ -104,8 +106,8 @@ class Formatter:
         # Hour
         "HH": lambda dt: f"{dt.hour:02d}",
         "H": lambda dt: f"{dt.hour:d}",
-        "hh": lambda dt: "{:02d}".format(dt.hour % 12 or 12),
-        "h": lambda dt: "{:d}".format(dt.hour % 12 or 12),
+        "hh": lambda dt: f"{dt.hour % 12 or 12:02d}",
+        "h": lambda dt: f"{dt.hour % 12 or 12:d}",
         # Minute
         "mm": lambda dt: f"{dt.minute:02d}",
         "m": lambda dt: f"{dt.minute:d}",
@@ -113,18 +115,18 @@ class Formatter:
         "ss": lambda dt: f"{dt.second:02d}",
         "s": lambda dt: f"{dt.second:d}",
         # Fractional second
-        "S": lambda dt: "{:01d}".format(dt.microsecond // 100000),
-        "SS": lambda dt: "{:02d}".format(dt.microsecond // 10000),
-        "SSS": lambda dt: "{:03d}".format(dt.microsecond // 1000),
-        "SSSS": lambda dt: "{:04d}".format(dt.microsecond // 100),
-        "SSSSS": lambda dt: "{:05d}".format(dt.microsecond // 10),
+        "S": lambda dt: f"{dt.microsecond // 100000:01d}",
+        "SS": lambda dt: f"{dt.microsecond // 10000:02d}",
+        "SSS": lambda dt: f"{dt.microsecond // 1000:03d}",
+        "SSSS": lambda dt: f"{dt.microsecond // 100:04d}",
+        "SSSSS": lambda dt: f"{dt.microsecond // 10:05d}",
         "SSSSSS": lambda dt: f"{dt.microsecond:06d}",
         # Timestamp
         "X": lambda dt: f"{dt.int_timestamp:d}",
-        "x": lambda dt: "{:d}".format(dt.int_timestamp * 1000 + dt.microsecond // 1000),
+        "x": lambda dt: f"{dt.int_timestamp * 1000 + dt.microsecond // 1000:d}",
         # Timezone
-        "zz": lambda dt: "{}".format(dt.tzname() if dt.tzinfo is not None else ""),
-        "z": lambda dt: "{}".format(dt.timezone_name or ""),
+        "zz": lambda dt: f'{dt.tzname() if dt.tzinfo is not None else ""}',
+        "z": lambda dt: f'{dt.timezone_name or ""}',
     }
 
     _DATE_FORMATS = {
@@ -226,8 +228,8 @@ class Formatter:
     }
 
     def format(
-        self, dt, fmt, locale=None
-    ):  # type: (pendulum.DateTime, str, typing.Optional[typing.Union[str, Locale]]) -> str
+        self, dt: pendulum.DateTime, fmt: str, locale: str | Locale | None = None
+    ) -> str:
         """
         Formats a DateTime instance with a given format and locale.
 
@@ -258,9 +260,7 @@ class Formatter:
 
         return result
 
-    def _format_token(
-        self, dt, token, locale
-    ):  # type: (pendulum.DateTime, str, Locale) -> str
+    def _format_token(self, dt: pendulum.DateTime, token: str, locale: Locale) -> str:
         """
         Formats a DateTime instance with a given token and locale.
 
@@ -307,8 +307,8 @@ class Formatter:
             return f"{sign}{hour:02d}{separator}{minute:02d}"
 
     def _format_localizable_token(
-        self, dt, token, locale
-    ):  # type: (pendulum.DateTime, str, Locale) -> str
+        self, dt: pendulum.DateTime, token: str, locale: Locale
+    ) -> str:
         """
         Formats a DateTime instance
         with a given localizable token and locale.
@@ -359,11 +359,11 @@ class Formatter:
 
     def parse(
         self,
-        time,  # type: str
-        fmt,  # type: str
-        now,  # type: pendulum.DateTime
-        locale=None,  # type:  typing.Optional[str]
-    ):  # type: (...) -> typing.Dict[str, typing.Any]
+        time: str,
+        fmt: str,
+        now: pendulum.DateTime,
+        locale: str | None = None,
+    ) -> dict[str, typing.Any]:
         """
         Parses a time string matching a given format as a tuple.
 
@@ -413,8 +413,8 @@ class Formatter:
         return self._check_parsed(parsed, now)
 
     def _check_parsed(
-        self, parsed, now
-    ):  # type: (typing.Dict[str, typing.Any], pendulum.DateTime) -> typing.Dict[str, typing.Any]
+        self, parsed: dict[str, typing.Any], now: pendulum.DateTime
+    ) -> dict[str, typing.Any]:
         """
         Checks validity of parsed elements.
 
@@ -438,7 +438,7 @@ class Formatter:
         if parsed["timestamp"] is not None:
             str_us = str(parsed["timestamp"])
             if "." in str_us:
-                microseconds = int("{}".format(str_us.split(".")[1].ljust(6, "0")))
+                microseconds = int(f'{str_us.split(".")[1].ljust(6, "0")}')
             else:
                 microseconds = 0
 
@@ -474,9 +474,7 @@ class Formatter:
             validated["year"] = now.year
 
         if parsed["day_of_year"] is not None:
-            dt = pendulum.parse(
-                "{}-{:>03d}".format(validated["year"], parsed["day_of_year"])
-            )
+            dt = pendulum.parse(f'{validated["year"]}-{parsed["day_of_year"]:>03d}')
 
             validated["month"] = dt.month
             validated["day"] = dt.day
@@ -535,8 +533,12 @@ class Formatter:
         return validated
 
     def _get_parsed_values(
-        self, m, parsed, locale, now
-    ):  # type: (typing.Match[str], typing.Dict[str, typing.Any], Locale, pendulum.DateTime) -> None
+        self,
+        m: typing.Match[str],
+        parsed: dict[str, typing.Any],
+        locale: Locale,
+        now: pendulum.DateTime,
+    ) -> None:
         for token, index in m.re.groupindex.items():
             if token in self._LOCALIZABLE_TOKENS:
                 self._get_parsed_locale_value(token, m.group(index), parsed, locale)
@@ -544,8 +546,12 @@ class Formatter:
                 self._get_parsed_value(token, m.group(index), parsed, now)
 
     def _get_parsed_value(
-        self, token, value, parsed, now
-    ):  # type: (str, str, typing.Dict[str, typing.Any], pendulum.DateTime) -> None
+        self,
+        token: str,
+        value: str,
+        parsed: dict[str, typing.Any],
+        now: pendulum.DateTime,
+    ) -> None:
         parsed_token = self._PARSE_TOKENS[token](value)
 
         if "Y" in token:
@@ -553,7 +559,7 @@ class Formatter:
                 parsed_token = now.year // 100 * 100 + parsed_token
 
             parsed["year"] = parsed_token
-        elif "Q" == token:
+        elif token == "Q":
             parsed["quarter"] = parsed_token
         elif token in ["MM", "M"]:
             parsed["month"] = parsed_token
@@ -579,7 +585,7 @@ class Formatter:
         elif token in ["X", "x"]:
             parsed["timestamp"] = parsed_token
         elif token in ["ZZ", "Z"]:
-            negative = True if value.startswith("-") else False
+            negative = bool(value.startswith("-"))
             tz = value[1:]
             if ":" not in tz:
                 if len(tz) == 2:
@@ -604,8 +610,8 @@ class Formatter:
             parsed["tz"] = pendulum.timezone(value)
 
     def _get_parsed_locale_value(
-        self, token, value, parsed, locale
-    ):  # type: (str, str, typing.Dict[str, typing.Any], Locale) -> None
+        self, token: str, value: str, parsed: dict[str, typing.Any], locale: Locale
+    ) -> None:
         if token == "MMMM":
             unit = "month"
             match = "months.wide"
@@ -633,7 +639,7 @@ class Formatter:
 
             if token == "a":
                 value = value.lower()
-                valid_values = list(map(lambda x: x.lower(), valid_values))
+                valid_values = [x.lower() for x in valid_values]
 
             if value not in valid_values:
                 raise ValueError("Invalid date")
@@ -648,7 +654,7 @@ class Formatter:
         if value is None:
             raise ValueError("Invalid date")
 
-    def _replace_tokens(self, token, locale):  # type: (str, Locale) -> str
+    def _replace_tokens(self, token: str, locale: Locale) -> str:
         if token.startswith("[") and token.endswith("]"):
             return token[1:-1]
         elif token.startswith("\\"):
@@ -676,6 +682,6 @@ class Formatter:
         if not isinstance(candidates, tuple):
             candidates = (candidates,)
 
-        pattern = "(?P<{}>{})".format(token, "|".join(candidates))
+        pattern = f'(?P<{token}>{"|".join(candidates)})'
 
         return pattern

@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import pytest
 
 import pendulum
 
 from pendulum.exceptions import PendulumException
-
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_start_of_week():

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 from datetime import datetime
@@ -12,8 +14,7 @@ import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
-
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 @pytest.fixture(autouse=True)
@@ -147,7 +148,7 @@ def test_now_dst_transitioning_off():
 def test_now_with_fixed_offset():
     now = pendulum.now(6)
 
-    assert "+06:00" == now.timezone_name
+    assert now.timezone_name == "+06:00"
 
 
 def test_create_with_no_transition_timezone():

@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import pytest
 
 import pendulum
 
-from ..conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def test_from_format_returns_datetime():
     d = pendulum.from_format("1975-05-21 22:32:11", "YYYY-MM-DD HH:mm:ss")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert isinstance(d, pendulum.DateTime)
-    assert "UTC" == d.timezone_name
+    assert d.timezone_name == "UTC"
 
 
 def test_from_format_rejects_extra_text():
@@ -22,7 +24,7 @@ def test_from_format_with_timezone_string():
         "1975-05-21 22:32:11", "YYYY-MM-DD HH:mm:ss", tz="Europe/London"
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert "Europe/London" == d.timezone_name
+    assert d.timezone_name == "Europe/London"
 
 
 def test_from_format_with_timezone():
@@ -32,7 +34,7 @@ def test_from_format_with_timezone():
         tz=pendulum.timezone("Europe/London"),
     )
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert "Europe/London" == d.timezone_name
+    assert d.timezone_name == "Europe/London"
 
 
 def test_from_format_with_square_bracket_in_timezone():
@@ -46,13 +48,13 @@ def test_from_format_with_square_bracket_in_timezone():
 def test_from_format_with_escaped_elements():
     d = pendulum.from_format("1975-05-21T22:32:11+00:00", "YYYY-MM-DD[T]HH:mm:ssZ")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert "+00:00" == d.timezone_name
+    assert d.timezone_name == "+00:00"
 
 
 def test_from_format_with_escaped_elements_valid_tokens():
     d = pendulum.from_format("1975-05-21T22:32:11.123Z", "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
-    assert "UTC" == d.timezone_name
+    assert d.timezone_name == "UTC"
 
 
 def test_from_format_with_millis():
@@ -190,13 +192,12 @@ def test_from_format_with_locale(text, fmt, expected):
 def test_from_format_error(text, fmt, locale):
     now = pendulum.datetime(2018, 2, 2)
 
-    with pendulum.test(now):
-        with pytest.raises(ValueError):
-            pendulum.from_format(text, fmt, locale=locale)
+    with pendulum.test(now), pytest.raises(ValueError):
+        pendulum.from_format(text, fmt, locale=locale)
 
 
 def test_strptime():
     d = pendulum.DateTime.strptime("1975-05-21 22:32:11", "%Y-%m-%d %H:%M:%S")
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert isinstance(d, pendulum.DateTime)
-    assert "UTC" == d.timezone_name
+    assert d.timezone_name == "UTC"

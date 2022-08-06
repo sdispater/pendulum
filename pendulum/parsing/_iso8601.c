@@ -221,7 +221,7 @@ static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *args) {
  *     sign = '+'
  *     if self.offset < 0:
  *         sign = '-'
- *     return "%s%d:%d" % (sign, self.offset / 60, self.offset % 60)
+ *     return f"{sign}{self.offset / 60}:{self.offset % 60}"
  */
 static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
     if (self->tzname != NULL) {

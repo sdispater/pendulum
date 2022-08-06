@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from datetime import time
 
 import pendulum
 
-from ..conftest import assert_time
+from tests.conftest import assert_time
 
 
 def test_equal_to_true():

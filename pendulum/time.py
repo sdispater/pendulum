@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from datetime import time
 from datetime import timedelta
 
 import pendulum
 
-from .constants import SECS_PER_HOUR
-from .constants import SECS_PER_MIN
-from .constants import USECS_PER_SEC
-from .duration import AbsoluteDuration
-from .duration import Duration
-from .mixins.default import FormattableMixin
+from pendulum.constants import SECS_PER_HOUR
+from pendulum.constants import SECS_PER_MIN
+from pendulum.constants import USECS_PER_SEC
+from pendulum.duration import AbsoluteDuration
+from pendulum.duration import Duration
+from pendulum.mixins.default import FormattableMixin
 
 
 class Time(FormattableMixin, time):
@@ -24,10 +26,11 @@ class Time(FormattableMixin, time):
 
         tzinfo = ""
         if self.tzinfo:
-            tzinfo = ", tzinfo={}".format(repr(self.tzinfo))
+            tzinfo = f", tzinfo={repr(self.tzinfo)}"
 
-        return "{}({}, {}, {}{}{})".format(
-            self.__class__.__name__, self.hour, self.minute, self.second, us, tzinfo
+        return (
+            f"{self.__class__.__name__}"
+            f"({self.hour}, {self.minute}, {self.second}{us}{tzinfo})"
         )
 
     # Comparisons
@@ -86,7 +89,7 @@ class Time(FormattableMixin, time):
 
         :rtype: Time
         """
-        from .datetime import DateTime
+        from pendulum.datetime import DateTime
 
         return (
             DateTime.EPOCH.at(self.hour, self.minute, self.second, self.microsecond)
@@ -114,7 +117,7 @@ class Time(FormattableMixin, time):
 
         :rtype: Time
         """
-        from .datetime import DateTime
+        from pendulum.datetime import DateTime
 
         return (
             DateTime.EPOCH.at(self.hour, self.minute, self.second, self.microsecond)

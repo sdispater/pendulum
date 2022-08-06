@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from datetime import date
 
 import pendulum
 
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_equal_to_true():
@@ -241,5 +243,5 @@ def test_is_same_day():
 def test_comparison_to_unsupported():
     dt1 = pendulum.Date.today()
 
-    assert not dt1 == "test"
+    assert dt1 != "test"
     assert dt1 not in ["test"]

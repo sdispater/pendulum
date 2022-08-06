@@ -1,15 +1,16 @@
+from __future__ import annotations
+
+import contextlib
 import os
 import re
 import sys
 
 from contextlib import contextmanager
 from typing import Iterator
-from typing import Optional
-from typing import Union
 
-from .exceptions import InvalidTimezone
-from .timezone import FixedTimezone
-from .timezone import Timezone
+from pendulum.tz.exceptions import InvalidTimezone
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 
 
 try:
@@ -25,7 +26,7 @@ _mock_local_timezone = None
 _local_timezone = None
 
 
-def get_local_timezone() -> Union[Timezone, FixedTimezone]:
+def get_local_timezone() -> Timezone | FixedTimezone:
     global _local_timezone
 
     if _mock_local_timezone is not None:
@@ -39,7 +40,7 @@ def get_local_timezone() -> Union[Timezone, FixedTimezone]:
     return _local_timezone
 
 
-def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> None
+def set_local_timezone(mock: str | Timezone | None = None) -> None:
     global _mock_local_timezone
 
     _mock_local_timezone = mock
@@ -64,7 +65,7 @@ def _get_system_timezone() -> Timezone:
 
 
 def _get_windows_timezone() -> Timezone:
-    from .data.windows import windows_timezones
+    from pendulum.tz.data.windows import windows_timezones
 
     # Windows is special. It has unique time zone names (in several
     # meanings of the word) available, but unfortunately, they can be
@@ -114,14 +115,12 @@ def _get_windows_timezone() -> Timezone:
                 info[data[0]] = data[1]
 
             sub.Close()
-            try:
+            with contextlib.suppress(KeyError):
+                # This timezone didn't have proper configuration.
+                # Ignore it.
                 if info["Std"] == tzwin:
                     tzkeyname = subkey
                     break
-            except KeyError:
-                # This timezone didn't have proper configuration.
-                # Ignore it.
-                pass
 
         tzkey.Close()
         handle.Close()
@@ -150,13 +149,11 @@ def _get_darwin_timezone() -> Timezone:
     return Timezone(tzname)
 
 
-def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
+def _get_unix_timezone(_root: str = "/") -> Timezone:
     tzenv = os.environ.get("TZ")
     if tzenv:
-        try:
+        with contextlib.suppress(ValueError):
             return _tz_from_env(tzenv)
-        except ValueError:
-            pass
 
     # Now look for distribution specific configuration files
     # that contain the timezone name.
@@ -210,10 +207,8 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
                 while parts:
                     tzpath.insert(0, parts.pop(0))
 
-                    try:
+                    with contextlib.suppress(InvalidTimezone):
                         return Timezone(os.path.join(*tzpath))
-                    except InvalidTimezone:
-                        pass
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
@@ -225,10 +220,8 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
         tzpath = []
         while parts:
             tzpath.insert(0, parts.pop(0))
-            try:
+            with contextlib.suppress(InvalidTimezone):
                 return Timezone(os.path.join(*tzpath))
-            except InvalidTimezone:
-                pass
 
     # No explicit setting existed. Use localtime
     for filename in ("etc/localtime", "usr/local/etc/localtime"):

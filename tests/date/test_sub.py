@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -5,7 +7,7 @@ import pytest
 
 import pendulum
 
-from ..conftest import assert_date
+from tests.conftest import assert_date
 
 
 def test_subtract_years_positive():
