@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-
 """
 sk custom locale file.
 """
@@ -13,7 +9,6 @@ translations = {
     "from_now": "o {}",
     "after": "po {0}",
     "before": "pred {0}",
-
     # Date formats
     "date_formats": {
         "LTS": "HH:mm:ss",
