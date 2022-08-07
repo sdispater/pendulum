@@ -12,7 +12,7 @@ keywords = ['datetime', 'date', 'time']
 
 packages = [
     {include = "pendulum"},
-    #{include = "tests", format = "sdist"},
+    {include = "tests", format = "sdist"},
 ]
 include = [
     {path = "pendulum/py.typed"},
