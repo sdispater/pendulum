@@ -136,7 +136,7 @@ If you want to iterate over a period, you can use the `range()` method:
 !!!note
 
     Supported units for `range()` are: `years`, `months`, `weeks`,
-    `days`, `hours`, `minutes` and `seconds`
+    `days`, `hours`, `minutes`, `seconds` and `microseconds`
 
 You can pass an amount for the passed unit to control the length of the gap:
 
