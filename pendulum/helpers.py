@@ -42,13 +42,13 @@ try:
     from pendulum._extensions._helpers import timestamp
     from pendulum._extensions._helpers import week_day
 except ImportError:
-    from pendulum._extensions.helpers import days_in_year  # noqa
+    from pendulum._extensions.helpers import days_in_year  # noqa: F401
     from pendulum._extensions.helpers import is_leap
-    from pendulum._extensions.helpers import is_long_year  # noqa
-    from pendulum._extensions.helpers import local_time  # noqa
-    from pendulum._extensions.helpers import precise_diff  # noqa
-    from pendulum._extensions.helpers import timestamp  # noqa
-    from pendulum._extensions.helpers import week_day  # noqa
+    from pendulum._extensions.helpers import is_long_year  # noqa: F401
+    from pendulum._extensions.helpers import local_time  # noqa: F401
+    from pendulum._extensions.helpers import precise_diff  # noqa: F401
+    from pendulum._extensions.helpers import timestamp  # noqa: F401
+    from pendulum._extensions.helpers import week_day  # noqa: F401
 
 
 difference_formatter = DifferenceFormatter()
