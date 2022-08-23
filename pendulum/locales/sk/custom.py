@@ -3,12 +3,11 @@ sk custom locale file.
 """
 
 translations = {
-    "units": {"few_second": "pár sekúnd"},
     # Relative time
     "ago": "pred {}",
     "from_now": "o {}",
-    "after": "po {0}",
-    "before": "pred {0}",
+    "after": "{0} po",
+    "before": "{0} pred",
     # Date formats
     "date_formats": {
         "LTS": "HH:mm:ss",
