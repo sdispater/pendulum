@@ -108,6 +108,6 @@ def test_format():
     assert d.format("LT", locale=locale) == "07:03"
     assert d.format("LTS", locale=locale) == "07:03:06"
     assert d.format("L", locale=locale) == "29.08.2016"
-    assert d.format("LL", locale=locale) == "29 augusta 2016"
-    assert d.format("LLL", locale=locale) == "29 augusta 2016 07:03"
+    assert d.format("LL", locale=locale) == "29. augusta 2016"
+    assert d.format("LLL", locale=locale) == "29. augusta 2016 07:03"
     assert d.format("LLLL", locale=locale) == "pondelok, 29. augusta 2016 07:03"
