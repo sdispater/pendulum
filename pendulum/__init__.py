@@ -233,7 +233,7 @@ def from_format(
     """
     Creates a DateTime instance from a specific format.
     """
-    parts = _formatter.parse(string, fmt, now(), locale=locale)
+    parts = _formatter.parse(string, fmt, now(tz), locale=locale)
     if parts["tz"] is None:
         parts["tz"] = tz
 
