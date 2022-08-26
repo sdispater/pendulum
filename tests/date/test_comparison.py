@@ -245,3 +245,14 @@ def test_comparison_to_unsupported():
 
     assert dt1 != "test"
     assert dt1 not in ["test"]
+
+
+def test_is_business_day():
+    dt1 = pendulum.Date(2021, 11, 13)  # weekend
+    dt2 = pendulum.Date(2021, 11, 15)  # not weekend
+
+    holidays = [pendulum.Date(2020, 11, 15)]
+
+    assert not dt1.is_business_day()
+    assert dt2.is_business_day()
+    assert not dt2.is_business_day(holidays=holidays)
