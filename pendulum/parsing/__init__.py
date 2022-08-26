@@ -209,10 +209,11 @@ class _Interval:
 
 
 def _parse_iso8601_interval(text):
-    if "/" not in text:
+    if "/" not in text and "--" not in text:
         raise ParserError("Invalid interval")
 
-    first, last = text.split("/")
+    # first, last = text.split("/")
+    first, last = re.split("/|--", text)
     start = end = duration = None
 
     if first[0] == "P":
