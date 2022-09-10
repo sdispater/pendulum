@@ -1,24 +1,25 @@
+from __future__ import annotations
+
 import datetime
 import math
-import typing
 
 from collections import namedtuple
 
-from ..constants import DAY_OF_WEEK_TABLE
-from ..constants import DAYS_PER_L_YEAR
-from ..constants import DAYS_PER_MONTHS
-from ..constants import DAYS_PER_N_YEAR
-from ..constants import EPOCH_YEAR
-from ..constants import MONTHS_OFFSETS
-from ..constants import SECS_PER_4_YEARS
-from ..constants import SECS_PER_100_YEARS
-from ..constants import SECS_PER_400_YEARS
-from ..constants import SECS_PER_DAY
-from ..constants import SECS_PER_HOUR
-from ..constants import SECS_PER_MIN
-from ..constants import SECS_PER_YEAR
-from ..constants import TM_DECEMBER
-from ..constants import TM_JANUARY
+from pendulum.constants import DAY_OF_WEEK_TABLE
+from pendulum.constants import DAYS_PER_L_YEAR
+from pendulum.constants import DAYS_PER_MONTHS
+from pendulum.constants import DAYS_PER_N_YEAR
+from pendulum.constants import EPOCH_YEAR
+from pendulum.constants import MONTHS_OFFSETS
+from pendulum.constants import SECS_PER_4_YEARS
+from pendulum.constants import SECS_PER_100_YEARS
+from pendulum.constants import SECS_PER_400_YEARS
+from pendulum.constants import SECS_PER_DAY
+from pendulum.constants import SECS_PER_HOUR
+from pendulum.constants import SECS_PER_MIN
+from pendulum.constants import SECS_PER_YEAR
+from pendulum.constants import TM_DECEMBER
+from pendulum.constants import TM_JANUARY
 
 
 class PreciseDiff(
@@ -29,36 +30,28 @@ class PreciseDiff(
 ):
     def __repr__(self):
         return (
-            "{years} years "
-            "{months} months "
-            "{days} days "
-            "{hours} hours "
-            "{minutes} minutes "
-            "{seconds} seconds "
-            "{microseconds} microseconds"
-        ).format(
-            years=self.years,
-            months=self.months,
-            days=self.days,
-            hours=self.hours,
-            minutes=self.minutes,
-            seconds=self.seconds,
-            microseconds=self.microseconds,
+            f"{self.years} years "
+            f"{self.months} months "
+            f"{self.days} days "
+            f"{self.hours} hours "
+            f"{self.minutes} minutes "
+            f"{self.seconds} seconds "
+            f"{self.microseconds} microseconds"
         )
 
 
-def is_leap(year):  # type: (int) -> bool
+def is_leap(year: int) -> bool:
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
-def is_long_year(year):  # type: (int) -> bool
+def is_long_year(year: int) -> bool:
     def p(y):
         return y + y // 4 - y // 100 + y // 400
 
     return p(year) % 7 == 4 or p(year - 1) % 7 == 3
 
 
-def week_day(year, month, day):  # type: (int, int, int) -> int
+def week_day(year: int, month: int, day: int) -> int:
     if month < 3:
         year -= 1
 
@@ -77,14 +70,14 @@ def week_day(year, month, day):  # type: (int, int, int) -> int
     return w
 
 
-def days_in_year(year):  # type: (int) -> int
+def days_in_year(year: int) -> int:
     if is_leap(year):
         return DAYS_PER_L_YEAR
 
     return DAYS_PER_N_YEAR
 
 
-def timestamp(dt):  # type: (datetime.datetime) -> int
+def timestamp(dt: datetime.datetime) -> int:
     year = dt.year
 
     result = (year - 1970) * 365 + MONTHS_OFFSETS[0][dt.month]
@@ -107,8 +100,8 @@ def timestamp(dt):  # type: (datetime.datetime) -> int
 
 
 def local_time(
-    unix_time, utc_offset, microseconds
-):  # type: (int, int, int) -> typing.Tuple[int, int, int, int, int, int, int]
+    unix_time: int, utc_offset: int, microseconds: int
+) -> tuple[int, int, int, int, int, int, int]:
     """
     Returns a UNIX time as a broken down time
     for a particular transition type.
@@ -184,8 +177,8 @@ def local_time(
 
 
 def precise_diff(
-    d1, d2
-):  # type: (typing.Union[datetime.datetime, datetime.date], typing.Union[datetime.datetime, datetime.date]) -> PreciseDiff
+    d1: datetime.datetime | datetime.date, d2: datetime.datetime | datetime.date
+) -> PreciseDiff:
     """
     Calculate a precise difference between two datetimes.
 
@@ -234,14 +227,19 @@ def precise_diff(
     # Trying to figure out the timezone names
     # If we can't find them, we assume different timezones
     if tzinfo1 and tzinfo2:
-        if hasattr(tzinfo1, "name"):
+        if hasattr(tzinfo1, "key"):
+            # zoneinfo timezone
+            tz1 = tzinfo1.key
+        elif hasattr(tzinfo1, "name"):
             # Pendulum timezone
             tz1 = tzinfo1.name
         elif hasattr(tzinfo1, "zone"):
             # pytz timezone
             tz1 = tzinfo1.zone
 
-        if hasattr(tzinfo2, "name"):
+        if hasattr(tzinfo2, "key"):
+            tz2 = tzinfo2.key
+        elif hasattr(tzinfo2, "name"):
             tz2 = tzinfo2.name
         elif hasattr(tzinfo2, "zone"):
             tz2 = tzinfo2.zone
@@ -344,7 +342,7 @@ def precise_diff(
     )
 
 
-def _day_number(year, month, day):  # type: (int, int, int) -> int
+def _day_number(year: int, month: int, day: int) -> int:
     month = (month + 9) % 12
     year = year - month // 10
 

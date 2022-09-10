@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
-import pendulum
 import pytest
 
-from pendulum.duration import AbsoluteDuration
+import pendulum
 
-from ..conftest import assert_duration
+from pendulum.duration import AbsoluteDuration
+from tests.conftest import assert_duration
 
 
 def test_defaults():
@@ -16,15 +18,15 @@ def test_defaults():
 def test_years():
     pi = pendulum.duration(years=2)
     assert_duration(pi, years=2, weeks=0)
-    assert 730 == pi.days
-    assert 63072000 == pi.total_seconds()
+    assert pi.days == 730
+    assert pi.total_seconds() == 63072000
 
 
 def test_months():
     pi = pendulum.duration(months=3)
     assert_duration(pi, months=3, weeks=0)
-    assert 90 == pi.days
-    assert 7776000 == pi.total_seconds()
+    assert pi.days == 90
+    assert pi.total_seconds() == 7776000
 
 
 def test_weeks():
@@ -61,14 +63,14 @@ def test_all():
         years=2, months=3, days=1177, seconds=7284, microseconds=1000000
     )
     assert_duration(pi, 2, 3, 168, 1, 2, 1, 25)
-    assert 1997 == pi.days
-    assert 7285 == pi.seconds
+    assert pi.days == 1997
+    assert pi.seconds == 7285
 
 
 def test_absolute_interval():
     pi = AbsoluteDuration(days=-1177, seconds=-7284, microseconds=-1000001)
     assert_duration(pi, 0, 0, 168, 1, 2, 1, 25)
-    assert 1 == pi.microseconds
+    assert pi.microseconds == 1
     assert pi.invert
 
 
@@ -85,8 +87,8 @@ def test_as_timedelta():
     assert_duration(pi, 0, 0, 0, 0, 0, 57, 36, 123456)
     delta = pi.as_timedelta()
     assert isinstance(delta, timedelta)
-    assert 3456.123456 == delta.total_seconds()
-    assert 3456 == delta.seconds
+    assert delta.total_seconds() == 3456.123456
+    assert delta.seconds == 3456
 
 
 def test_float_years_and_months():

@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
-import pendulum
+from __future__ import annotations
+
 import pytest
+
+import pendulum
 
 
 def test_to_string():
@@ -13,19 +15,19 @@ def test_to_string():
 def test_to_date_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "1975-12-25" == d.to_date_string()
+    assert d.to_date_string() == "1975-12-25"
 
 
 def test_to_formatted_date_string():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "Dec 25, 1975" == d.to_formatted_date_string()
+    assert d.to_formatted_date_string() == "Dec 25, 1975"
 
 
 def test_to_timestring():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16)
 
-    assert "14:15:16" == d.to_time_string()
+    assert d.to_time_string() == "14:15:16"
 
 
 def test_to_atom_string():
@@ -107,19 +109,17 @@ def test_to_string_invalid():
 
 def test_repr():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
-    expected = "DateTime(1975, 12, 25, 14, 15, 16, tzinfo={})".format(repr(d.tzinfo))
+    expected = f"DateTime(1975, 12, 25, 14, 15, 16, tzinfo={repr(d.tzinfo)})"
     assert repr(d) == expected
 
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
-    expected = "DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={})".format(
-        repr(d.tzinfo)
-    )
+    expected = f"DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={repr(d.tzinfo)})"
     assert repr(d) == expected
 
 
 def test_format_with_locale():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
-    expected = u"jeudi 25e jour de décembre 1975 02:15:16 PM -05:00"
+    expected = "jeudi 25e jour de décembre 1975 02:15:16 PM -05:00"
     assert d.format("dddd Do [jour de] MMMM YYYY hh:mm:ss A Z", locale="fr") == expected
 
 
@@ -135,7 +135,7 @@ def test_for_json():
 
 def test_format():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="Europe/Paris")
-    assert "{}".format(d) == "1975-12-25T14:15:16+01:00"
-    assert "{:YYYY}".format(d) == "1975"
-    assert "{:%Y}".format(d) == "1975"
-    assert "{:%H:%M %d.%m.%Y}".format(d) == "14:15 25.12.1975"
+    assert f"{d}" == "1975-12-25T14:15:16+01:00"
+    assert f"{d:YYYY}" == "1975"
+    assert f"{d:%Y}" == "1975"
+    assert f"{d:%H:%M %d.%m.%Y}" == "14:15 25.12.1975"

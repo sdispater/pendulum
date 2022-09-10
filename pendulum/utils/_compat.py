@@ -1,54 +1,16 @@
+from __future__ import annotations
+
 import sys
 
 
-PY2 = sys.version_info < (3, 0)
-PY36 = sys.version_info >= (3, 6)
 PYPY = hasattr(sys, "pypy_version_info")
-
-_HAS_FOLD = PY36
-
-
-try:  # Python 2
-    long = long
-    unicode = unicode
-    basestring = basestring
-except NameError:  # Python 3
-    long = int
-    unicode = str
-    basestring = str
+PY38 = sys.version_info[:2] >= (3, 8)
 
 
-def decode(string, encodings=None):
-    if not PY2 and not isinstance(string, bytes):
-        return string
-
-    if PY2 and isinstance(string, unicode):
-        return string
-
-    encodings = encodings or ["utf-8", "latin1", "ascii"]
-
-    for encoding in encodings:
-        try:
-            return string.decode(encoding)
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            pass
-
-    return string.decode(encodings[0], errors="ignore")
+try:
+    from backports import zoneinfo
+except ImportError:
+    import zoneinfo
 
 
-def encode(string, encodings=None):
-    if not PY2 and isinstance(string, bytes):
-        return string
-
-    if PY2 and isinstance(string, str):
-        return string
-
-    encodings = encodings or ["utf-8", "latin1", "ascii"]
-
-    for encoding in encodings:
-        try:
-            return string.encode(encoding)
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            pass
-
-    return string.encode(encodings[0], errors="ignore")
+__all__ = ["zoneinfo"]

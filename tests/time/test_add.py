@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
-import pendulum
 import pytest
+
+import pendulum
 
 
 def test_add_hours_positive():

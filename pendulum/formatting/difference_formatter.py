@@ -1,13 +1,15 @@
-import typing
+from __future__ import annotations
 
-import pendulum
+import typing as t
 
-from pendulum.utils._compat import decode
-
-from ..locales.locale import Locale
+from pendulum.locales.locale import Locale
 
 
-class DifferenceFormatter(object):
+if t.TYPE_CHECKING:
+    from pendulum import Period
+
+
+class DifferenceFormatter:
     """
     Handles formatting differences in text.
     """
@@ -16,8 +18,12 @@ class DifferenceFormatter(object):
         self._locale = Locale.load(locale)
 
     def format(
-        self, diff, is_now=True, absolute=False, locale=None
-    ):  # type: (pendulum.Period, bool, bool, typing.Optional[str]) -> str
+        self,
+        diff: Period,
+        is_now: bool = True,
+        absolute: bool = False,
+        locale: str | None = None,
+    ) -> str:
         """
         Formats a difference.
 
@@ -107,14 +113,14 @@ class DifferenceFormatter(object):
             count = 1
 
         if absolute:
-            key = "translations.units.{}".format(unit)
+            key = f"translations.units.{unit}"
         else:
             is_future = diff.invert
 
             if is_now:
                 # Relative to now, so we can use
                 # the CLDR data
-                key = "translations.relative.{}".format(unit)
+                key = f"translations.relative.{unit}"
 
                 if is_future:
                     key += ".future"
@@ -127,16 +133,15 @@ class DifferenceFormatter(object):
                 # Checking for special pluralization rules
                 key = "custom.units_relative"
                 if is_future:
-                    key += ".{}.future".format(unit)
+                    key += f".{unit}.future"
                 else:
-                    key += ".{}.past".format(unit)
+                    key += f".{unit}.past"
 
                 trans = locale.get(key)
                 if not trans:
                     # No special rule
-                    time = locale.get(
-                        "translations.units.{}.{}".format(unit, locale.plural(count))
-                    ).format(count)
+                    key = f"translations.units.{unit}.{locale.plural(count)}"
+                    time = locale.get(key).format(count)
                 else:
                     time = trans[locale.plural(count)].format(count)
 
@@ -146,8 +151,8 @@ class DifferenceFormatter(object):
                 else:
                     key += ".before"
 
-                return locale.get(key).format(decode(time))
+                return locale.get(key).format(time)
 
-        key += ".{}".format(locale.plural(count))
+        key += f".{locale.plural(count)}"
 
-        return decode(locale.get(key).format(count))
+        return locale.get(key).format(count)

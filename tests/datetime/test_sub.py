@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
-import pendulum
 import pytest
 
-from ..conftest import assert_datetime
+import pendulum
+
+from tests.conftest import assert_datetime
 
 
 def test_sub_years_positive():
@@ -108,13 +111,13 @@ def test_subtract_duration():
     d = pendulum.datetime(2015, 3, 14, 3, 12, 15, 777777)
 
     d = d - duration
-    assert 2012 == d.year
-    assert 12 == d.month
-    assert 8 == d.day
-    assert 3 == d.hour
-    assert 11 == d.minute
-    assert 59 == d.second
-    assert 123456 == d.microsecond
+    assert d.year == 2012
+    assert d.month == 12
+    assert d.day == 8
+    assert d.hour == 3
+    assert d.minute == 11
+    assert d.second == 59
+    assert d.microsecond == 123456
 
 
 def test_subtract_time_to_new_transition_skipped():
@@ -235,7 +238,7 @@ def test_subtract_invalid_type():
 
 def test_subtract_negative_over_dls_transitioning_off():
     just_before_dls_ends = pendulum.datetime(
-        2019, 11, 3, 1, 30, tz="US/Pacific", dst_rule=pendulum.PRE_TRANSITION
+        2019, 11, 3, 1, 30, tz="US/Pacific", fold=0
     )
     plus_10_hours = just_before_dls_ends + timedelta(hours=10)
     minus_neg_10_hours = just_before_dls_ends - timedelta(hours=-10)

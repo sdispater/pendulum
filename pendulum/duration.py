@@ -1,17 +1,14 @@
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import annotations
 
 from datetime import timedelta
 
 import pendulum
 
+from pendulum.constants import SECONDS_PER_DAY
+from pendulum.constants import SECONDS_PER_HOUR
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
-from pendulum.utils._compat import decode
-
-from .constants import SECONDS_PER_DAY
-from .constants import SECONDS_PER_HOUR
-from .constants import SECONDS_PER_MINUTE
-from .constants import US_PER_SECOND
 
 
 def _divide_and_round(a, b):
@@ -24,8 +21,9 @@ def _divide_and_round(a, b):
     # in Objects/longobject.c.
     q, r = divmod(a, b)
 
-    if isinstance(q, float):
-        q = int(q)
+    # The output of divmod() is either a float or an int,
+    # but we always want it to be an int.
+    q = int(q)
 
     # round up if either r / b > 0.5, or r / b == 0.5 and q is odd.
     # The expression r / b > 0.5 is equivalent to 2 * r > b if b is
@@ -246,21 +244,21 @@ class Duration(timedelta):
             unit, count = period
             if abs(count) > 0:
                 translation = locale.translation(
-                    "units.{}.{}".format(unit, locale.plural(abs(count)))
+                    f"units.{unit}.{locale.plural(abs(count))}"
                 )
                 parts.append(translation.format(count))
 
         if not parts:
             if abs(self.microseconds) > 0:
-                unit = "units.second.{}".format(locale.plural(1))
-                count = "{:.2f}".format(abs(self.microseconds) / 1e6)
+                unit = f"units.second.{locale.plural(1)}"
+                count = f"{abs(self.microseconds) / 1e6:.2f}"
             else:
-                unit = "units.microsecond.{}".format(locale.plural(0))
+                unit = f"units.microsecond.{locale.plural(0)}"
                 count = 0
             translation = locale.translation(unit)
             parts.append(translation.format(count))
 
-        return decode(separator.join(parts))
+        return separator.join(parts)
 
     def _sign(self, value):
         if value < 0:
@@ -280,31 +278,31 @@ class Duration(timedelta):
         return self.in_words()
 
     def __repr__(self):
-        rep = "{}(".format(self.__class__.__name__)
+        rep = f"{self.__class__.__name__}("
 
         if self._years:
-            rep += "years={}, ".format(self._years)
+            rep += f"years={self._years}, "
 
         if self._months:
-            rep += "months={}, ".format(self._months)
+            rep += f"months={self._months}, "
 
         if self._weeks:
-            rep += "weeks={}, ".format(self._weeks)
+            rep += f"weeks={self._weeks}, "
 
         if self._days:
-            rep += "days={}, ".format(self._remaining_days)
+            rep += f"days={self._remaining_days}, "
 
         if self.hours:
-            rep += "hours={}, ".format(self.hours)
+            rep += f"hours={self.hours}, "
 
         if self.minutes:
-            rep += "minutes={}, ".format(self.minutes)
+            rep += f"minutes={self.minutes}, "
 
         if self.remaining_seconds:
-            rep += "seconds={}, ".format(self.remaining_seconds)
+            rep += f"seconds={self.remaining_seconds}, "
 
         if self.microseconds:
-            rep += "microseconds={}, ".format(self.microseconds)
+            rep += f"microseconds={self.microseconds}, "
 
         rep += ")"
 

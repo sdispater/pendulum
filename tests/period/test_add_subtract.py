@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import pendulum
 
@@ -43,10 +43,7 @@ def test_negative_difference_subtract():
     start = pendulum.datetime(2018, 5, 28, 12, 34, 56, 123456)
     end = pendulum.datetime(2018, 1, 1)
 
-    print((start - end).in_words())
-
     period = end - start
-    print(period.in_words())
     new_end = start + period
 
     assert new_end == end

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pendulum
 
 from pendulum import Time

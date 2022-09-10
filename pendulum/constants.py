@@ -1,4 +1,7 @@
 # The day constants
+from __future__ import annotations
+
+
 SUNDAY = 0
 MONDAY = 1
 TUESDAY = 2

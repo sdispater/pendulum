@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pickle
 
 from copy import deepcopy
@@ -6,8 +8,9 @@ from datetime import datetime
 from datetime import time
 from datetime import timedelta
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import timezone
 from pendulum.tz.timezone import Timezone

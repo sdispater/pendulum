@@ -1,9 +1,11 @@
-import pendulum
+from __future__ import annotations
+
 import pytest
 
-from pendulum.exceptions import PendulumException
+import pendulum
 
-from ..conftest import assert_datetime
+from pendulum.exceptions import PendulumException
+from tests.conftest import assert_datetime
 
 
 def test_start_of_week():

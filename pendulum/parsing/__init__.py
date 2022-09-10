@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import contextlib
 import copy
 import os
 import re
@@ -9,7 +12,7 @@ from datetime import time
 
 from dateutil import parser
 
-from .exceptions import ParserError
+from pendulum.parsing.exceptions import ParserError
 
 
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
@@ -18,13 +21,13 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from ._iso8601 import parse_iso8601
+    from pendulum.parsing._iso8601 import parse_iso8601
 except ImportError:
-    from .iso8601 import parse_iso8601
+    from pendulum.parsing.iso8601 import parse_iso8601
 
 
 COMMON = re.compile(
-    # Date (optional)
+    # Date (optional)  # noqa: E800
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD)
@@ -35,7 +38,7 @@ COMMON = re.compile(
     "        )?"
     "    )"
     ")?"
-    # Time (optional)
+    # Time (optional)  # noqa: E800
     "(?P<time>"
     r"    (?P<timesep>\ )?"  # Separator (space)
     r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
@@ -106,33 +109,27 @@ def _normalize(parsed, **options):
 
 def _parse(text, **options):
     # Trying to parse ISO8601
-    try:
+    with contextlib.suppress(ValueError):
         return parse_iso8601(text)
-    except ValueError:
-        pass
 
-    try:
+    with contextlib.suppress(ValueError):
         return _parse_iso8601_interval(text)
-    except ValueError:
-        pass
 
-    try:
+    with contextlib.suppress(ParserError):
         return _parse_common(text, **options)
-    except ParserError:
-        pass
 
     # We couldn't parse the string
     # so we fallback on the dateutil parser
     # If not strict
     if options.get("strict", True):
-        raise ParserError("Unable to parse string [{}]".format(text))
+        raise ParserError(f"Unable to parse string [{text}]")
 
     try:
         dt = parser.parse(
             text, dayfirst=options["day_first"], yearfirst=options["year_first"]
         )
     except ValueError:
-        raise ParserError("Invalid date string: {}".format(text))
+        raise ParserError(f"Invalid date string: {text}")
 
     return dt
 
@@ -192,7 +189,7 @@ def _parse_common(text, **options):
         # Limiting to 6 chars
         subsecond = m.group("subsecond")[:6]
 
-        microsecond = int("{:0<6}".format(subsecond))
+        microsecond = int(f"{subsecond:0<6}")
 
     if has_date:
         return datetime(year, month, day, hour, minute, second, microsecond)

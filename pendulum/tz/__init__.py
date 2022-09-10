@@ -1,27 +1,46 @@
-from typing import Tuple
+from __future__ import annotations
+
+import sys
+
 from typing import Union
 
-import pytzdata
+import tzdata
 
-from .local_timezone import get_local_timezone
-from .local_timezone import set_local_timezone
-from .local_timezone import test_local_timezone
-from .timezone import UTC
-from .timezone import FixedTimezone as _FixedTimezone
-from .timezone import Timezone as _Timezone
+from pendulum.tz.local_timezone import get_local_timezone
+from pendulum.tz.local_timezone import set_local_timezone
+from pendulum.tz.local_timezone import test_local_timezone
+from pendulum.tz.timezone import UTC
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
+
+
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 
 PRE_TRANSITION = "pre"
 POST_TRANSITION = "post"
 TRANSITION_ERROR = "error"
 
-timezones = pytzdata.timezones  # type: Tuple[str, ...]
+_timezones = None
 
 
 _tz_cache = {}
 
 
-def timezone(name, extended=True):  # type: (Union[str, int], bool) -> _Timezone
+def timezones():
+    global _timezones
+
+    if _timezones is None:
+        with open(resources.files(tzdata).joinpath("zones")) as f:
+            _timezones = tuple(tz.strip() for tz in f.readlines())
+
+    return _timezones
+
+
+def timezone(name: str | int) -> Timezone | FixedTimezone:
     """
     Return a Timezone instance given its name.
     """
@@ -31,29 +50,23 @@ def timezone(name, extended=True):  # type: (Union[str, int], bool) -> _Timezone
     if name.lower() == "utc":
         return UTC
 
-    if name in _tz_cache:
-        return _tz_cache[name]
-
-    tz = _Timezone(name, extended=extended)
-    _tz_cache[name] = tz
-
-    return tz
+    return Timezone(name)
 
 
-def fixed_timezone(offset):  # type: (int) -> _FixedTimezone
+def fixed_timezone(offset: int) -> FixedTimezone:
     """
     Return a Timezone instance given its offset in seconds.
     """
     if offset in _tz_cache:
-        return _tz_cache[offset]  # type: ignore
+        return _tz_cache[offset]
 
-    tz = _FixedTimezone(offset)
+    tz = FixedTimezone(offset)
     _tz_cache[offset] = tz
 
     return tz
 
 
-def local_timezone():  # type: () -> _Timezone
+def local_timezone() -> Timezone:
     """
     Return the local timezone.
     """

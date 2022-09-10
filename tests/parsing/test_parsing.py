@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import datetime
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum.parsing import ParserError
 from pendulum.parsing import parse
@@ -12,13 +15,13 @@ def test_y():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 1
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -27,13 +30,13 @@ def test_ym():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -42,13 +45,13 @@ def test_ymd():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -57,13 +60,13 @@ def test_ymd_one_character():
 
     parsed = parse(text, strict=False)
 
-    assert 2016 == parsed.year
-    assert 2 == parsed.month
-    assert 6 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 2
+    assert parsed.day == 6
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -72,26 +75,26 @@ def test_ymd_hms():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2016-10-06 12:34:56.123456"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 123456 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 123456
     assert parsed.tzinfo is None
 
 
@@ -100,14 +103,14 @@ def test_rfc_3339():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 0 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 0
+    assert parsed.utcoffset().total_seconds() == 19800
 
 
 def test_rfc_3339_extended():
@@ -115,27 +118,27 @@ def test_rfc_3339_extended():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 123456 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 123456
+    assert parsed.utcoffset().total_seconds() == 19800
 
     text = "2016-10-06T12:34:56.000123+05:30"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 123 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 123
+    assert parsed.utcoffset().total_seconds() == 19800
 
 
 def test_rfc_3339_extended_nanoseconds():
@@ -143,14 +146,14 @@ def test_rfc_3339_extended_nanoseconds():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 6 == parsed.day
-    assert 12 == parsed.hour
-    assert 34 == parsed.minute
-    assert 56 == parsed.second
-    assert 123456 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 6
+    assert parsed.hour == 12
+    assert parsed.minute == 34
+    assert parsed.second == 56
+    assert parsed.microsecond == 123456
+    assert parsed.utcoffset().total_seconds() == 19800
 
 
 def test_iso_8601_date():
@@ -158,52 +161,52 @@ def test_iso_8601_date():
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012-05-03"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 5 == parsed.month
-    assert 3 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 5
+    assert parsed.day == 3
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20120503"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 5 == parsed.month
-    assert 3 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 5
+    assert parsed.day == 3
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012-05"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 5 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 5
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -212,92 +215,92 @@ def test_iso8601_datetime():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2016-10-01T14:30"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 30 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 30
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20161001T14"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20161001T1430"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 30 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 30
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20161001T1430+0530"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 30 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 30
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
+    assert parsed.utcoffset().total_seconds() == 19800
 
     text = "20161001T1430,4+0530"
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 10 == parsed.month
-    assert 1 == parsed.day
-    assert 14 == parsed.hour
-    assert 30 == parsed.minute
-    assert 0 == parsed.second
-    assert 400000 == parsed.microsecond
-    assert 19800 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2016
+    assert parsed.month == 10
+    assert parsed.day == 1
+    assert parsed.hour == 14
+    assert parsed.minute == 30
+    assert parsed.second == 0
+    assert parsed.microsecond == 400000
+    assert parsed.utcoffset().total_seconds() == 19800
 
     text = "2008-09-03T20:56:35.450686+01"
 
     parsed = parse(text)
 
-    assert 2008 == parsed.year
-    assert 9 == parsed.month
-    assert 3 == parsed.day
-    assert 20 == parsed.hour
-    assert 56 == parsed.minute
-    assert 35 == parsed.second
-    assert 450686 == parsed.microsecond
-    assert 3600 == parsed.utcoffset().total_seconds()
+    assert parsed.year == 2008
+    assert parsed.month == 9
+    assert parsed.day == 3
+    assert parsed.hour == 20
+    assert parsed.minute == 56
+    assert parsed.second == 35
+    assert parsed.microsecond == 450686
+    assert parsed.utcoffset().total_seconds() == 3600
 
 
 def test_iso8601_week_number():
@@ -305,26 +308,26 @@ def test_iso8601_week_number():
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 30 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 30
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012W05"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 30 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 30
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     # Long Year
@@ -332,63 +335,63 @@ def test_iso8601_week_number():
 
     parsed = parse(text)
 
-    assert 2015 == parsed.year
-    assert 12 == parsed.month
-    assert 28 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2015
+    assert parsed.month == 12
+    assert parsed.day == 28
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012-W05-5"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 2 == parsed.month
-    assert 3 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 2
+    assert parsed.day == 3
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012W055"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 2 == parsed.month
-    assert 3 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 2
+    assert parsed.day == 3
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2009-W53-7"
     parsed = parse(text)
 
-    assert 2010 == parsed.year
-    assert 1 == parsed.month
-    assert 3 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2010
+    assert parsed.month == 1
+    assert parsed.day == 3
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2009-W01-1"
     parsed = parse(text)
 
-    assert 2008 == parsed.year
-    assert 12 == parsed.month
-    assert 29 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2008
+    assert parsed.month == 12
+    assert parsed.day == 29
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -397,52 +400,52 @@ def test_iso8601_week_number_with_time():
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 30 == parsed.day
-    assert 9 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 30
+    assert parsed.hour == 9
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012W05T09"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 30 == parsed.day
-    assert 9 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 30
+    assert parsed.hour == 9
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012-W05-5T09"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 2 == parsed.month
-    assert 3 == parsed.day
-    assert 9 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 2
+    assert parsed.day == 3
+    assert parsed.hour == 9
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012W055T09"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 2 == parsed.month
-    assert 3 == parsed.day
-    assert 9 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 2
+    assert parsed.day == 3
+    assert parsed.hour == 9
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -451,26 +454,26 @@ def test_iso8601_ordinal():
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 7 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 7
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "2012007"
 
     parsed = parse(text)
 
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 7 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 7
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -481,39 +484,39 @@ def test_iso8601_time():
 
     parsed = parse(text, now=now)
 
-    assert 2015 == parsed.year
-    assert 11 == parsed.month
-    assert 12 == parsed.day
-    assert 20 == parsed.hour
-    assert 12 == parsed.minute
-    assert 5 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2015
+    assert parsed.month == 11
+    assert parsed.day == 12
+    assert parsed.hour == 20
+    assert parsed.minute == 12
+    assert parsed.second == 5
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20:12:05"
 
     parsed = parse(text, now=now)
 
-    assert 2015 == parsed.year
-    assert 11 == parsed.month
-    assert 12 == parsed.day
-    assert 20 == parsed.hour
-    assert 12 == parsed.minute
-    assert 5 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2015
+    assert parsed.month == 11
+    assert parsed.day == 12
+    assert parsed.hour == 20
+    assert parsed.minute == 12
+    assert parsed.second == 5
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "20:12:05.123456"
 
     parsed = parse(text, now=now)
 
-    assert 2015 == parsed.year
-    assert 11 == parsed.month
-    assert 12 == parsed.day
-    assert 20 == parsed.hour
-    assert 12 == parsed.minute
-    assert 5 == parsed.second
-    assert 123456 == parsed.microsecond
+    assert parsed.year == 2015
+    assert parsed.month == 11
+    assert parsed.day == 12
+    assert parsed.hour == 20
+    assert parsed.minute == 12
+    assert parsed.second == 5
+    assert parsed.microsecond == 123456
     assert parsed.tzinfo is None
 
 
@@ -530,104 +533,104 @@ def test_exact():
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.date)
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 1
 
     text = "2012-03"
 
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.date)
-    assert 2012 == parsed.year
-    assert 3 == parsed.month
-    assert 1 == parsed.day
+    assert parsed.year == 2012
+    assert parsed.month == 3
+    assert parsed.day == 1
 
     text = "2012-03-13"
 
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.date)
-    assert 2012 == parsed.year
-    assert 3 == parsed.month
-    assert 13 == parsed.day
+    assert parsed.year == 2012
+    assert parsed.month == 3
+    assert parsed.day == 13
 
     text = "2012W055"
 
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.date)
-    assert 2012 == parsed.year
-    assert 2 == parsed.month
-    assert 3 == parsed.day
+    assert parsed.year == 2012
+    assert parsed.month == 2
+    assert parsed.day == 3
 
     text = "2012007"
 
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.date)
-    assert 2012 == parsed.year
-    assert 1 == parsed.month
-    assert 7 == parsed.day
+    assert parsed.year == 2012
+    assert parsed.month == 1
+    assert parsed.day == 7
 
     text = "20:12:05"
 
     parsed = parse(text, exact=True)
 
     assert isinstance(parsed, datetime.time)
-    assert 20 == parsed.hour
-    assert 12 == parsed.minute
-    assert 5 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.hour == 20
+    assert parsed.minute == 12
+    assert parsed.second == 5
+    assert parsed.microsecond == 0
 
 
 def test_edge_cases():
     text = "2013-11-1"
 
     parsed = parse(text, strict=False)
-    assert 2013 == parsed.year
-    assert 11 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2013
+    assert parsed.month == 11
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "10-01-01"
 
     parsed = parse(text, strict=False)
-    assert 2010 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2010
+    assert parsed.month == 1
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "31-01-01"
 
     parsed = parse(text, strict=False)
-    assert 2031 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2031
+    assert parsed.month == 1
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
     text = "32-01-01"
 
     parsed = parse(text, strict=False)
-    assert 2032 == parsed.year
-    assert 1 == parsed.month
-    assert 1 == parsed.day
-    assert 0 == parsed.hour
-    assert 0 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2032
+    assert parsed.month == 1
+    assert parsed.day == 1
+    assert parsed.hour == 0
+    assert parsed.minute == 0
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -638,13 +641,13 @@ def test_strict():
         parse(text)
 
     parsed = parse(text, strict=False)
-    assert 2015 == parsed.year
-    assert 8 == parsed.month
-    assert 4 == parsed.day
-    assert 23 == parsed.hour
-    assert 20 == parsed.minute
-    assert 0 == parsed.second
-    assert 0 == parsed.microsecond
+    assert parsed.year == 2015
+    assert parsed.month == 8
+    assert parsed.day == 4
+    assert parsed.hour == 23
+    assert parsed.minute == 20
+    assert parsed.second == 0
+    assert parsed.microsecond == 0
     assert parsed.tzinfo is None
 
 
@@ -676,9 +679,9 @@ def test_exif_edge_case():
 
     parsed = parse(text)
 
-    assert 2016 == parsed.year
-    assert 12 == parsed.month
-    assert 26 == parsed.day
-    assert 15 == parsed.hour
-    assert 45 == parsed.minute
-    assert 28 == parsed.second
+    assert parsed.year == 2016
+    assert parsed.month == 12
+    assert parsed.day == 26
+    assert parsed.hour == 15
+    assert parsed.minute == 45
+    assert parsed.second == 28

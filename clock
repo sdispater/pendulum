@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from __future__ import unicode_literals
+
+from __future__ import annotations
 
 import glob
 import json
@@ -16,9 +17,9 @@ from babel.plural import _binary_compiler
 from babel.plural import _GettextCompiler
 from babel.plural import _unary_compiler
 from babel.plural import compile_zero
-from cleo import Application
-from cleo import Command
-from cleo import argument
+from cleo.application import Application
+from cleo.commands.command import Command
+from cleo.helpers import argument
 
 from pendulum import __version__
 
@@ -41,21 +42,18 @@ class _LambdaCompiler(_GettextCompiler):
         code = code.replace("||", "or")
         if method == "in":
             expr = self.compile(expr)
-            code = "(%s == %s and %s)" % (expr, expr, code)
+            code = f"({expr} == {expr} and {code})"
         return code
 
 
 class LocaleCreate(Command):
 
-    name = "create"
+    name = "locale create"
     description = "Creates locale translations."
 
     arguments = [argument("locales", "Locales to dump.", optional=False, multiple=True)]
 
-    TEMPLATE = """# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from .custom import translations as custom_translations
+    TEMPLATE = """from .custom import translations as custom_translations
 
 
 \"\"\"
@@ -73,11 +71,7 @@ locale = {{
 }}
 """
 
-    CUSTOM_TEMPLATE = """# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-
-\"\"\"
+    CUSTOM_TEMPLATE = """\"\"\"
 {locale} custom locale file.
 \"\"\"
 
@@ -99,10 +93,10 @@ translations = {{}}
 
             normalized = normalize_locale(locale.replace("-", "_"))
             if not normalized:
-                self.line("<error>Locale [{}] does not exist.</error>".format(locale))
+                self.line(f"<error>Locale [{locale}] does not exist.</error>")
                 continue
 
-            self.line("<info>Generating <comment>{}</> locale.</>".format(locale))
+            self.line(f"<info>Generating <comment>{locale}</> locale.</>")
 
             content = LocaleDataDict(load(normalized))
 
@@ -140,7 +134,7 @@ translations = {{}}
             ]
             data["units"] = {}
             for unit in units:
-                pattern = patterns["duration-{}".format(unit)]["long"]
+                pattern = patterns[f"duration-{unit}"]["long"]
                 if "per" in pattern:
                     del pattern["per"]
 
@@ -199,8 +193,8 @@ translations = {{}}
             else:
                 v = repr(v)
 
-            s.append("%s%r: %s,\n" % ("    " * tab, k, v))
-        s.append("%s}" % ("    " * (tab - 1)))
+            s.append(f"{'    ' * tab}{k!r}: {v},\n")
+        s.append(f'{"    " * (tab - 1)}}}')
 
         return "".join(s)
 
@@ -208,7 +202,7 @@ translations = {{}}
         to_py = _LambdaCompiler().compile
         result = ["lambda n: "]
         for tag, ast in PluralRule.parse(rule).abstract:
-            result.append("'%s' if %s else " % (tag, to_py(ast)))
+            result.append(f"'{tag}' if {to_py(ast)} else ")
         result.append("'other'")
         return "".join(result)
 
@@ -223,20 +217,20 @@ translations = {{}}
                 limit = PATTERN_CHARS[fieldchar]
                 if limit and fieldnum not in limit:
                     raise ValueError(
-                        "Invalid length for field: %r" % (fieldchar * fieldnum)
+                        f"Invalid length for field: {(fieldchar * fieldnum)!r}"
                     )
                 result.append(
                     self.TOKENS_MAP.get(fieldchar * fieldnum, fieldchar * fieldnum)
                 )
             else:
-                raise NotImplementedError("Unknown token type: %s" % tok_type)
+                raise NotImplementedError(f"Unknown token type: {tok_type}")
 
         return "".join(result)
 
 
 class LocaleRecreate(Command):
 
-    name = "recreate"
+    name = "locale recreate"
     description = "Recreate existing locales."
 
     def handle(self):
@@ -244,58 +238,36 @@ class LocaleRecreate(Command):
 
         locales_dir = os.path.join("pendulum", "locales")
         locales = glob.glob(os.path.join(locales_dir, "*", "locale.py"))
-        locales = [os.path.basename(os.path.dirname(l)) for l in locales]
+        locales = [os.path.basename(os.path.dirname(locale)) for locale in locales]
 
         self.call("locale:create", [("locales", locales)])
 
 
-class LocaleCommand(Command):
-
-    name = "locale"
-    description = "Locale related commands."
-
-    commands = [LocaleCreate()]
-
-    def handle(self):
-        self.call("help", self._config.name)
-
-
 class WindowsTzDump(Command):
 
-    name = "dump-timezones"
+    name = "windows dump-timezones"
     description = "Dumps the mapping of Windows timezones to IANA timezones."
 
     MAPPING_DIR = os.path.join("pendulum", "tz", "data")
 
     def handle(self):
         raw_tznames = get_global("windows_zone_mapping")
-        sorted_names = sorted(list(raw_tznames.keys()))
+        sorted_names = sorted(raw_tznames.keys())
 
         tznames = {}
         for name in sorted_names:
             tznames[name] = raw_tznames[name]
 
-        mapping = json.dumps(tznames, indent=4)
-        mapping = "windows_timezones = " + mapping.replace('"', "'") + "\n"
+        mapping = json.dumps(tznames, indent=4).replace('"', "'")
 
         with open(os.path.join(self.MAPPING_DIR, "windows.py"), "w") as f:
-            f.write(mapping)
-
-
-class WindowsCommand(Command):
-
-    name = "windows"
-    description = "Windows related commands."
-
-    commands = [WindowsTzDump()]
-
-    def handle(self):
-        self.call("help", self._config.name)
+            f.write(f"windows_timezones = {mapping}\n")
 
 
 app = Application("clock", __version__)
-app.add(LocaleCommand())
-app.add(WindowsCommand())
+app.add(LocaleCreate())
+app.add(LocaleRecreate())
+app.add(WindowsTzDump())
 
 
 if __name__ == "__main__":

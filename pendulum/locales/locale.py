@@ -1,16 +1,17 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import os
 import re
+import sys
 
 from importlib import import_module
 from typing import Any
+from typing import Dict
 from typing import Optional
 from typing import Union
 
-from pendulum.utils._compat import basestring
-from pendulum.utils._compat import decode
+
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 
 class Locale:
@@ -20,13 +21,13 @@ class Locale:
 
     _cache = {}
 
-    def __init__(self, locale, data):  # type: (str, Any) -> None
+    def __init__(self, locale: str, data: Any) -> None:
         self._locale = locale
         self._data = data
         self._key_cache = {}
 
     @classmethod
-    def load(cls, locale):  # type: (Union[str, Locale]) -> Locale
+    def load(cls, locale: Union[str, "Locale"]) -> "Locale":
         if isinstance(locale, Locale):
             return locale
 
@@ -36,28 +37,28 @@ class Locale:
 
         # Checking locale existence
         actual_locale = locale
-        locale_path = os.path.join(os.path.dirname(__file__), actual_locale)
-        while not os.path.exists(locale_path):
+        locale_path = resources.files(__package__).joinpath(actual_locale)
+        while not locale_path.exists():
             if actual_locale == locale:
-                raise ValueError("Locale [{}] does not exist.".format(locale))
+                raise ValueError(f"Locale [{locale}] does not exist.")
 
             actual_locale = actual_locale.split("_")[0]
 
-        m = import_module("pendulum.locales.{}.locale".format(actual_locale))
+        m = import_module(f"pendulum.locales.{actual_locale}.locale")
 
         cls._cache[locale] = cls(locale, m.locale)
 
         return cls._cache[locale]
 
     @classmethod
-    def normalize_locale(cls, locale):  # type: (str) -> str
+    def normalize_locale(cls, locale: str) -> str:
         m = re.match("([a-z]{2})[-_]([a-z]{2})", locale, re.I)
         if m:
-            return "{}_{}".format(m.group(1).lower(), m.group(2).lower())
+            return f"{m.group(1).lower()}_{m.group(2).lower()}"
         else:
             return locale.lower()
 
-    def get(self, key, default=None):  # type: (str, Optional[Any]) -> Any
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         if key in self._key_cache:
             return self._key_cache[key]
 
@@ -69,36 +70,33 @@ class Locale:
         except KeyError:
             result = default
 
-        if isinstance(result, basestring):
-            result = decode(result)
-
         self._key_cache[key] = result
 
         return self._key_cache[key]
 
-    def translation(self, key):  # type: (str) -> Any
-        return self.get("translations.{}".format(key))
+    def translation(self, key: str) -> Any:
+        return self.get(f"translations.{key}")
 
-    def plural(self, number):  # type: (int) -> str
-        return decode(self._data["plural"](number))
+    def plural(self, number: int) -> str:
+        return self._data["plural"](number)
 
-    def ordinal(self, number):  # type: (int) -> str
-        return decode(self._data["ordinal"](number))
+    def ordinal(self, number: int) -> str:
+        return self._data["ordinal"](number)
 
-    def ordinalize(self, number):  # type: (int) -> str
-        ordinal = self.get("custom.ordinal.{}".format(self.ordinal(number)))
+    def ordinalize(self, number: int) -> str:
+        ordinal = self.get(f"custom.ordinal.{self.ordinal(number)}")
 
         if not ordinal:
-            return decode("{}".format(number))
+            return f"{number}"
 
-        return decode("{}{}".format(number, ordinal))
+        return f"{number}{ordinal}"
 
-    def match_translation(self, key, value):
+    def match_translation(self, key: str, value: Any) -> Optional[Dict]:
         translations = self.translation(key)
         if value not in translations.values():
             return None
 
         return {v: k for k, v in translations.items()}[value]
 
-    def __repr__(self):
-        return "{}('{}')".format(self.__class__.__name__, self._locale)
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}('{self._locale}')"

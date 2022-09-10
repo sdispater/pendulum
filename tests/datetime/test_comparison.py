@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta, tzinfo
 from dateutil import tz
 from pytz import timezone
 
-import pendulum
 import pytz
 import pytest
 
 
-from ..conftest import assert_datetime
+import pendulum
+
+from tests.conftest import assert_datetime
 
 
 def test_equal_to_true():

@@ -1,14 +1,15 @@
+from __future__ import annotations
+
 import struct
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
-from pendulum.utils._compat import _HAS_FOLD
-
-from ..conftest import assert_date
-from ..conftest import assert_time
+from tests.conftest import assert_date
+from tests.conftest import assert_time
 
 
 def test_year():
@@ -96,26 +97,13 @@ def test_int_timestamp_accuracy():
 
 
 def test_timestamp_with_transition():
-    d_pre = pendulum.datetime(
-        2012, 10, 28, 2, 0, tz="Europe/Warsaw", dst_rule=pendulum.PRE_TRANSITION
-    )
-    d_post = pendulum.datetime(
-        2012, 10, 28, 2, 0, tz="Europe/Warsaw", dst_rule=pendulum.POST_TRANSITION
-    )
+    d_pre = pendulum.datetime(2012, 10, 28, 2, 0, tz="Europe/Warsaw", fold=0)
+    d_post = pendulum.datetime(2012, 10, 28, 2, 0, tz="Europe/Warsaw", fold=1)
 
-    if _HAS_FOLD:
-        # the difference between the timestamps before and after is equal to one hour
-        assert d_post.timestamp() - d_pre.timestamp() == pendulum.SECONDS_PER_HOUR
-        assert d_post.float_timestamp - d_pre.float_timestamp == (
-            pendulum.SECONDS_PER_HOUR
-        )
-        assert d_post.int_timestamp - d_pre.int_timestamp == pendulum.SECONDS_PER_HOUR
-    else:
-        # when the transition is not recognizable
-        # then the difference should be equal to zero hours
-        assert d_post.timestamp() - d_pre.timestamp() == 0
-        assert d_post.float_timestamp - d_pre.float_timestamp == 0
-        assert d_post.int_timestamp - d_pre.int_timestamp == 0
+    # the difference between the timestamps before and after is equal to one hour
+    assert d_post.timestamp() - d_pre.timestamp() == pendulum.SECONDS_PER_HOUR
+    assert d_post.float_timestamp - d_pre.float_timestamp == (pendulum.SECONDS_PER_HOUR)
+    assert d_post.int_timestamp - d_pre.int_timestamp == pendulum.SECONDS_PER_HOUR
 
 
 def test_age():

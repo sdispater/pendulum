@@ -1,15 +1,16 @@
+from __future__ import annotations
+
+import contextlib
 import os
 import re
 import sys
 
 from contextlib import contextmanager
 from typing import Iterator
-from typing import Optional
-from typing import Union
 
-from .timezone import Timezone
-from .timezone import TimezoneFile
-from .zoneinfo.exceptions import InvalidTimezone
+from pendulum.tz.exceptions import InvalidTimezone
+from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 
 
 try:
@@ -25,7 +26,7 @@ _mock_local_timezone = None
 _local_timezone = None
 
 
-def get_local_timezone():  # type: () -> Timezone
+def get_local_timezone() -> Timezone | FixedTimezone:
     global _local_timezone
 
     if _mock_local_timezone is not None:
@@ -39,14 +40,14 @@ def get_local_timezone():  # type: () -> Timezone
     return _local_timezone
 
 
-def set_local_timezone(mock=None):  # type: (Optional[Union[str, Timezone]]) -> None
+def set_local_timezone(mock: str | Timezone | None = None) -> None:
     global _mock_local_timezone
 
     _mock_local_timezone = mock
 
 
 @contextmanager
-def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
+def test_local_timezone(mock: Timezone) -> Iterator[None]:
     set_local_timezone(mock)
 
     yield
@@ -54,7 +55,7 @@ def test_local_timezone(mock):  # type: (Timezone) -> Iterator[None]
     set_local_timezone()
 
 
-def _get_system_timezone():  # type: () -> Timezone
+def _get_system_timezone() -> Timezone:
     if sys.platform == "win32":
         return _get_windows_timezone()
     elif "darwin" in sys.platform:
@@ -63,8 +64,8 @@ def _get_system_timezone():  # type: () -> Timezone
     return _get_unix_timezone()
 
 
-def _get_windows_timezone():  # type: () -> Timezone
-    from .data.windows import windows_timezones
+def _get_windows_timezone() -> Timezone:
+    from pendulum.tz.data.windows import windows_timezones
 
     # Windows is special. It has unique time zone names (in several
     # meanings of the word) available, but unfortunately, they can be
@@ -114,14 +115,12 @@ def _get_windows_timezone():  # type: () -> Timezone
                 info[data[0]] = data[1]
 
             sub.Close()
-            try:
+            with contextlib.suppress(KeyError):
+                # This timezone didn't have proper configuration.
+                # Ignore it.
                 if info["Std"] == tzwin:
                     tzkeyname = subkey
                     break
-            except KeyError:
-                # This timezone didn't have proper configuration.
-                # Ignore it.
-                pass
 
         tzkey.Close()
         handle.Close()
@@ -142,7 +141,7 @@ def _get_windows_timezone():  # type: () -> Timezone
     return Timezone(timezone)
 
 
-def _get_darwin_timezone():  # type: () -> Timezone
+def _get_darwin_timezone() -> Timezone:
     # link will be something like /usr/share/zoneinfo/America/Los_Angeles.
     link = os.readlink("/etc/localtime")
     tzname = link[link.rfind("zoneinfo/") + 9 :]
@@ -150,18 +149,16 @@ def _get_darwin_timezone():  # type: () -> Timezone
     return Timezone(tzname)
 
 
-def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
+def _get_unix_timezone(_root: str = "/") -> Timezone:
     tzenv = os.environ.get("TZ")
     if tzenv:
-        try:
+        with contextlib.suppress(ValueError):
             return _tz_from_env(tzenv)
-        except ValueError:
-            pass
 
     # Now look for distribution specific configuration files
     # that contain the timezone name.
     tzpath = os.path.join(_root, "etc/timezone")
-    if os.path.exists(tzpath):
+    if os.path.isfile(tzpath):
         with open(tzpath, "rb") as tzfile:
             data = tzfile.read()
 
@@ -187,10 +184,10 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
 
     for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):
         tzpath = os.path.join(_root, filename)
-        if not os.path.exists(tzpath):
+        if not os.path.isfile(tzpath):
             continue
 
-        with open(tzpath, "rt") as tzfile:
+        with open(tzpath) as tzfile:
             data = tzfile.readlines()
 
         for line in data:
@@ -210,45 +207,43 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
                 while parts:
                     tzpath.insert(0, parts.pop(0))
 
-                    try:
+                    with contextlib.suppress(InvalidTimezone):
                         return Timezone(os.path.join(*tzpath))
-                    except InvalidTimezone:
-                        pass
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
     tzpath = os.path.join(_root, "etc", "localtime")
-    if os.path.exists(tzpath) and os.path.islink(tzpath):
+    if os.path.isfile(tzpath) and os.path.islink(tzpath):
         parts = list(
             reversed(os.path.realpath(tzpath).replace(" ", "_").split(os.path.sep))
         )
         tzpath = []
         while parts:
             tzpath.insert(0, parts.pop(0))
-            try:
+            with contextlib.suppress(InvalidTimezone):
                 return Timezone(os.path.join(*tzpath))
-            except InvalidTimezone:
-                pass
 
     # No explicit setting existed. Use localtime
     for filename in ("etc/localtime", "usr/local/etc/localtime"):
         tzpath = os.path.join(_root, filename)
 
-        if not os.path.exists(tzpath):
+        if not os.path.isfile(tzpath):
             continue
 
-        return TimezoneFile(tzpath)
+        with open(tzpath, "rb") as f:
+            return Timezone.from_file(f)
 
     raise RuntimeError("Unable to find any timezone configuration")
 
 
-def _tz_from_env(tzenv):  # type: (str) -> Timezone
+def _tz_from_env(tzenv: str) -> Timezone:
     if tzenv[0] == ":":
         tzenv = tzenv[1:]
 
     # TZ specifies a file
-    if os.path.exists(tzenv):
-        return TimezoneFile(tzenv)
+    if os.path.isfile(tzenv):
+        with open(tzenv, "rb") as f:
+            return Timezone.from_file(f)
 
     # TZ specifies a zoneinfo zone.
     try:

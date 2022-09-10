@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import pickle
 
 from datetime import time
 
-import pendulum
 import pytest
+
+import pendulum
 
 from pendulum import Time
 

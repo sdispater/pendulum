@@ -1,9 +1,11 @@
-import pendulum
+from __future__ import annotations
+
 import pytest
 
-from pendulum import Date
+import pendulum
 
-from ..conftest import assert_date
+from pendulum import Date
+from tests.conftest import assert_date
 
 
 def test_start_of_day():

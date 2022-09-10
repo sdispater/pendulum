@@ -1,10 +1,12 @@
-from ..formatting import Formatter
+from __future__ import annotations
+
+from pendulum.formatting import Formatter
 
 
 _formatter = Formatter()
 
 
-class FormattableMixin(object):
+class FormattableMixin:
 
     _formatter = _formatter
 

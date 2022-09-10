@@ -1,28 +1,29 @@
-from __future__ import absolute_import
+from __future__ import annotations
 
 import datetime
-import typing
+import typing as t
 
 import pendulum
 
-from .date import Date
-from .datetime import DateTime
-from .parsing import _Interval
-from .parsing import parse as base_parse
-from .time import Duration
-from .time import Time
-from .tz import UTC
+from pendulum.parsing import _Interval
+from pendulum.parsing import parse as base_parse
+from pendulum.tz import UTC
+
+
+if t.TYPE_CHECKING:
+    from pendulum.date import Date
+    from pendulum.datetime import DateTime
+    from pendulum.time import Duration
+    from pendulum.time import Time
 
 
 try:
-    from .parsing._iso8601 import Duration as CDuration
+    from pendulum.parsing._iso8601 import Duration as CDuration
 except ImportError:
     CDuration = None
 
 
-def parse(
-    text, **options
-):  # type: (str, **typing.Any) -> typing.Union[Date, Time, DateTime, Duration]
+def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
     # Use the mock now value if it exists
     options["now"] = options.get("now", pendulum.get_test_now())
 

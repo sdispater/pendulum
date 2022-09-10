@@ -27,7 +27,7 @@ instances that generated it, so that it can give access to more methods and prop
 2 # 832 for the duration
 
 # However the days property will still remain the same
-# to keep the compatiblity with the timedelta class
+# to keep the compatibility with the timedelta class
 >>> period.days
 5829
 ```
@@ -136,7 +136,7 @@ If you want to iterate over a period, you can use the `range()` method:
 !!!note
 
     Supported units for `range()` are: `years`, `months`, `weeks`,
-    `days`, `hours`, `minutes` and `seconds`
+    `days`, `hours`, `minutes`, `seconds` and `microseconds`
 
 You can pass an amount for the passed unit to control the length of the gap:
 

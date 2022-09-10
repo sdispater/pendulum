@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import sys
 
@@ -36,3 +38,15 @@ def test_windows_timezone():
     timezone = _get_windows_timezone()
 
     assert timezone is not None
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Test only available for UNIX systems"
+)
+def test_unix_etc_timezone_dir():
+    # Should not fail if `/etc/timezone` is a folder
+    local_path = os.path.join(os.path.split(__file__)[0], "..")
+    root_path = os.path.join(local_path, "fixtures", "tz", "timezone_dir")
+    tz = _get_unix_timezone(_root=root_path)
+
+    assert tz.name == "Europe/Paris"

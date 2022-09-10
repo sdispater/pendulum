@@ -1,24 +1,24 @@
-from __future__ import division
+from __future__ import annotations
 
 import datetime
 import re
 
-from ..constants import HOURS_PER_DAY
-from ..constants import MINUTES_PER_HOUR
-from ..constants import MONTHS_OFFSETS
-from ..constants import SECONDS_PER_MINUTE
-from ..duration import Duration
-from ..helpers import days_in_year
-from ..helpers import is_leap
-from ..helpers import is_long_year
-from ..helpers import week_day
-from ..tz.timezone import UTC
-from ..tz.timezone import FixedTimezone
-from .exceptions import ParserError
+from pendulum.constants import HOURS_PER_DAY
+from pendulum.constants import MINUTES_PER_HOUR
+from pendulum.constants import MONTHS_OFFSETS
+from pendulum.constants import SECONDS_PER_MINUTE
+from pendulum.duration import Duration
+from pendulum.helpers import days_in_year
+from pendulum.helpers import is_leap
+from pendulum.helpers import is_long_year
+from pendulum.helpers import week_day
+from pendulum.parsing.exceptions import ParserError
+from pendulum.tz.timezone import UTC
+from pendulum.tz.timezone import FixedTimezone
 
 
 ISO8601_DT = re.compile(
-    # Date (optional)
+    # Date (optional)  # noqa: E800
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
@@ -38,7 +38,7 @@ ISO8601_DT = re.compile(
     r"        (?P<isoweekday>\d)?"  # Weekday (optional)
     "    )"
     ")?"
-    # Time (optional)
+    # Time (optional)  # noqa: E800
     "(?P<time>"
     r"    (?P<timesep>[T\ ])?"  # Separator (T or space)
     r"    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
@@ -59,7 +59,7 @@ ISO8601_DT = re.compile(
 
 ISO8601_DURATION = re.compile(
     "^P"  # Duration P indicator
-    # Years, months and days (optional)
+    # Years, months and days (optional)  # noqa: E800
     "(?P<w>"
     r"    (?P<weeks>\d+(?:[.,]\d+)?W)"
     ")?"
@@ -120,10 +120,10 @@ def parse_iso8601(text):
                     and not m.group("weekdaysep")
                     and m.group("isoweekday")
                 ):
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 if not m.group("weeksep") and m.group("weekdaysep"):
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 try:
                     date = _get_iso_8601_week(
@@ -132,7 +132,7 @@ def parse_iso8601(text):
                 except ParserError:
                     raise
                 except ValueError:
-                    raise ParserError("Invalid date string: {}".format(text))
+                    raise ParserError(f"Invalid date string: {text}")
 
                 year = date["year"]
                 month = date["month"]
@@ -182,17 +182,17 @@ def parse_iso8601(text):
             if ambiguous_date:
                 # We can "safely" assume that the ambiguous date
                 # was actually a time in the form hhmmss
-                hhmmss = "{}{:0>2}".format(str(year), str(month))
+                hhmmss = f"{str(year)}{str(month):0>2}"
 
                 return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
 
             return datetime.date(year, month, day)
 
         if ambiguous_date:
-            raise ParserError("Invalid date string: {}".format(text))
+            raise ParserError(f"Invalid date string: {text}")
 
         if is_date and not m.group("timesep"):
-            raise ParserError("Invalid date string: {}".format(text))
+            raise ParserError(f"Invalid date string: {text}")
 
         if not is_date:
             is_time = True
@@ -225,7 +225,7 @@ def parse_iso8601(text):
             # Limiting to 6 chars
             subsecond = m.group("subsecond")[:6]
 
-            microsecond = int("{:0<6}".format(subsecond))
+            microsecond = int(f"{subsecond:0<6}")
 
         # Grabbing timezone, if any
         tz = m.group("tz")
@@ -233,11 +233,11 @@ def parse_iso8601(text):
             if tz == "Z":
                 tzinfo = UTC
             else:
-                negative = True if tz.startswith("-") else False
+                negative = bool(tz.startswith("-"))
                 tz = tz[1:]
                 if ":" not in tz:
                     if len(tz) == 2:
-                        tz = "{}00".format(tz)
+                        tz = f"{tz}00"
 
                     off_hour = tz[0:2]
                     off_minute = tz[2:4]
@@ -394,7 +394,7 @@ def _parse_iso8601_duration(text, **options):
             if "." in _seconds:
                 _seconds, _microseconds = _seconds.split(".")
                 seconds += int(_seconds)
-                microseconds += int("{:0<6}".format(_microseconds[:6]))
+                microseconds += int(f"{_microseconds[:6]:0<6}")
             else:
                 seconds += int(_seconds)
 
@@ -440,7 +440,7 @@ def _get_iso_8601_week(year, week, weekday):
         year += 1
 
     fmt = "%Y-%j"
-    string = "{}-{}".format(year, ordinal)
+    string = f"{year}-{ordinal}"
 
     dt = datetime.datetime.strptime(string, fmt)
 

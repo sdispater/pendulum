@@ -1,17 +1,17 @@
-from __future__ import absolute_import
+from __future__ import annotations
 
 from datetime import datetime
 
-import pendulum
 import pytest
 import pytz
+
+import pendulum
 
 from pendulum import timezone
 from pendulum.helpers import days_in_year
 from pendulum.helpers import precise_diff
 from pendulum.helpers import week_day
-
-from .conftest import assert_datetime
+from tests.conftest import assert_datetime
 
 
 def assert_diff(
@@ -115,13 +115,13 @@ def test_precise_diff_timezone():
 
 
 def test_week_day():
-    assert 5 == week_day(2017, 6, 2)
-    assert 7 == week_day(2017, 1, 1)
+    assert week_day(2017, 6, 2) == 5
+    assert week_day(2017, 1, 1) == 7
 
 
 def test_days_in_years():
-    assert 365 == days_in_year(2017)
-    assert 366 == days_in_year(2016)
+    assert days_in_year(2017) == 365
+    assert days_in_year(2016) == 366
 
 
 def test_test_now():
@@ -204,9 +204,8 @@ def test_with_test():
     assert pendulum.now() != t
 
     # Also make sure that it restores things after an exception
-    with pytest.raises(RuntimeError):
-        with pendulum.test(t):
-            assert pendulum.now() == t
-            raise RuntimeError
+    with pytest.raises(RuntimeError), pendulum.test(t):
+        assert pendulum.now() == t
+        raise RuntimeError
 
     assert pendulum.now() != t

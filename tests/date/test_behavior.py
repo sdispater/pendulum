@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import pickle
 
 from datetime import date
 
-import pendulum
 import pytest
+
+import pendulum
 
 
 @pytest.fixture()

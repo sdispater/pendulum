@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pendulum"
-version = "2.1.1"
+version = "3.0.0a0"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
@@ -25,57 +25,167 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "^3.7"
 python-dateutil = "^2.6"
-pytzdata = ">=2020.1"
+"backports.zoneinfo" = {version = "^0.2.1", python = ">=3.7,<3.9"}
+tzdata = ">=2020.1"
+importlib-resources = {version = "^5.9.0", python = ">=3.7,<3.9"}
 
-# typing is needed for Python < 3.5
-typing = { version = "^3.6", python = "<3.5" }
+[tool.poetry.group.test.dependencies]
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+pytz = ">=2022.1"
+time-machine = "^2.7.1"
 
-[tool.poetry.dev-dependencies]
-pytest = "^4.6"
-pytest-cov = "^2.5"
-pytz = ">=2018.3"
-babel = "^2.5"
-cleo = "^0.8.1"
-tox = "^3.0"
-black = { version = "^19.3b0", markers = "python_version >= '3.6' and python_version < '4.0' and implementation_name != 'pypy'" }
-isort = { version = "^4.3.21", markers = "python_version >= '3.6' and python_version < '4.0'" }
-pre-commit = "^1.10"
-mkdocs = { version = "^1.0", python = "^3.5" }
+[tool.poetry.group.doc.dependencies]
+mkdocs = "^1.0"
 pymdown-extensions = "^6.0"
 pygments = "^2.2"
 markdown-include = "^0.5.1"
-freezegun = "^0.3.15"
+
+[tool.poetry.group.lint.dependencies]
+black = {version = "^22.6.0", markers = "implementation_name != 'pypy'"}
+isort = "^5.10.1"
+pre-commit = "^2.20.0"
+
+[tool.poetry.group.dev.dependencies]
+babel = "^2.10.3"
+cleo = "^1.0.0a5"
+tox = "^3.25.1"
 
 [tool.poetry.build]
 generate-setup-file = false
 script = "build.py"
 
 [tool.isort]
-line_length = 88
+profile = "black"
 force_single_line = true
-force_grid_wrap = 0
 atomic = true
-include_trailing_comma = true
 lines_after_imports = 2
 lines_between_types = 1
-multi_line_output = 3
-use_parentheses = true
-not_skip = "__init__.py"
-skip_glob = ["*/setup.py"]
+skip_glob = [
+    "pendulum/locales/**",
+    "build.py",
+    "pendulum/__version__.py",
+]
 filter_files = true
-
 known_first_party = "pendulum"
 known_third_party = [
     "babel",
     "cleo",
     "dateutil",
-    "freezegun",
+    "time_machine",
     "pytzdata",
 ]
 
+[tool.mypy]
+strict = true
+files = "pendulum, tests"
+show_error_codes = true
+pretty = true
+
+# The following whitelist is used to allow for incremental adoption
+# of Mypy. Modules should be removed from this whitelist as and when
+# their respective type errors have been addressed. No new modules
+# should be added to this whitelist.
+
+[[tool.mypy.overrides]]
+module = [
+    "pendulum",
+    "pendulum._extensions.helpers",
+    "pendulum.date",
+    "pendulum.datetime",
+    "pendulum.duration",
+    "pendulum.formatting.formatter",
+    "pendulum.formatting.difference_formatter",
+    "pendulum.helpers",
+    "pendulum.locales.locale",
+    "pendulum.mixins.default",
+    "pendulum.parser",
+    "pendulum.parsing",
+    "pendulum.parsing.iso8601",
+    "pendulum.period",
+    "pendulum.time",
+    "pendulum.tz",
+    "pendulum.tz.exceptions",
+    "pendulum.tz.local_timezone",
+    "pendulum.tz.timezone",
+    "pendulum.utils._compat",
+    "tests.conftest",
+    "tests.test_helpers",
+    "tests.test_main",
+    "tests.test_parsing",
+    "tests.date.test_add",
+    "tests.date.test_behavior",
+    "tests.date.test_construct",
+    "tests.date.test_comparison",
+    "tests.date.test_day_of_week_modifiers",
+    "tests.date.test_diff",
+    "tests.date.test_fluent_setters",
+    "tests.date.test_getters",
+    "tests.date.test_start_end_of",
+    "tests.date.test_strings",
+    "tests.date.test_sub",
+    "tests.datetime.test_add",
+    "tests.datetime.test_behavior",
+    "tests.datetime.test_construct",
+    "tests.datetime.test_comparison",
+    "tests.datetime.test_create_from_timestamp",
+    "tests.datetime.test_day_of_week_modifiers",
+    "tests.datetime.test_diff",
+    "tests.datetime.test_fluent_setters",
+    "tests.datetime.test_from_format",
+    "tests.datetime.test_getters",
+    "tests.datetime.test_naive",
+    "tests.datetime.test_replace",
+    "tests.datetime.test_start_end_of",
+    "tests.datetime.test_strings",
+    "tests.datetime.test_sub",
+    "tests.datetime.test_timezone",
+    "tests.duration.test_add_sub",
+    "tests.duration.test_arithmetic",
+    "tests.duration.test_behavior",
+    "tests.duration.test_construct",
+    "tests.duration.test_in_methods",
+    "tests.duration.test_in_words",
+    "tests.duration.test_total_methods",
+    "tests.formatting.test_formatter",
+    "tests.helpers.test_local_time",
+    "tests.localization.*",
+    "tests.parsing.test_parsing",
+    "tests.parsing.test_parsing_duration",
+    "tests.parsing.test_parse_iso8601",
+    "tests.period.test_add_subtract",
+    "tests.period.test_arithmetic",
+    "tests.period.test_behavior",
+    "tests.period.test_construct",
+    "tests.period.test_hashing",
+    "tests.period.test_in_words",
+    "tests.period.test_range",
+    "tests.time.test_add",
+    "tests.time.test_behavior",
+    "tests.time.test_comparison",
+    "tests.time.test_construct",
+    "tests.time.test_diff",
+    "tests.time.test_fluent_setters",
+    "tests.time.test_strings",
+    "tests.time.test_sub",
+    "tests.tz.test_helpers",
+    "tests.tz.test_local_timezone",
+    "tests.tz.test_timezone",
+    "tests.tz.test_timezones",
+]
+ignore_errors = true
+
+[tool.coverage.run]
+omit = [
+    "pendulum/locales/*",
+    "pendulum/__version__.py,",
+    "pendulum/_extensions/*",
+    "pendulum/parsing/iso8601.py",
+    "pendulum/utils/_compat.py",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0a9"]
+requires = ["poetry-core>=1.1.0a6"]
 build-backend = "poetry.core.masonry.api"

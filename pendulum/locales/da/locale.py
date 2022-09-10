@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from .custom import translations as custom_translations
 
 
@@ -14,8 +11,8 @@ It has been generated automatically and must not be modified directly.
 locale = {
     "plural": lambda n: "one"
     if (
-        (n == n and ((n == 1)))
-        or ((not (0 == 0 and ((0 == 0)))) and (n == n and ((n == 0) or (n == 1))))
+        (n == n and (n == 1))
+        or ((not (0 == 0 and (0 == 0))) and (n == n and ((n == 0) or (n == 1))))
     )
     else "other",
     "ordinal": lambda n: "other",

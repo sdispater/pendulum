@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import pendulum
 
-from .conftest import assert_date
-from .conftest import assert_datetime
-from .conftest import assert_duration
-from .conftest import assert_time
+from tests.conftest import assert_date
+from tests.conftest import assert_datetime
+from tests.conftest import assert_duration
+from tests.conftest import assert_time
 
 
 def test_parse():
@@ -13,8 +15,8 @@ def test_parse():
 
     assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
-    assert "+01:30" == dt.tz.name
-    assert 5400 == dt.offset
+    assert dt.tz.name == "+01:30"
+    assert dt.offset == 5400
 
     text = "2016-10-16"
 
@@ -22,7 +24,7 @@ def test_parse():
 
     assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2016, 10, 16, 0, 0, 0, 0)
-    assert 0 == dt.offset
+    assert dt.offset == 0
 
     with pendulum.test(pendulum.datetime(2015, 11, 12)):
         text = "12:34:56.123456"
@@ -31,7 +33,7 @@ def test_parse():
 
     assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2015, 11, 12, 12, 34, 56, 123456)
-    assert 0 == dt.offset
+    assert dt.offset == 0
 
 
 def test_parse_with_timezone():
@@ -39,8 +41,8 @@ def test_parse_with_timezone():
 
     dt = pendulum.parse(text, tz="Europe/Paris")
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
-    assert "Europe/Paris" == dt.tz.name
-    assert 7200 == dt.offset
+    assert dt.tz.name == "Europe/Paris"
+    assert dt.offset == 7200
 
 
 def test_parse_exact():
@@ -50,7 +52,7 @@ def test_parse_exact():
 
     assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
-    assert 5400 == dt.offset
+    assert dt.offset == 5400
 
     text = "2016-10-16"
 
@@ -136,4 +138,4 @@ def test_parse_now():
 def test_parse_with_utc_timezone():
     dt = pendulum.parse("2020-02-05T20:05:37.364951Z")
 
-    assert "2020-02-05T20:05:37.364951Z" == dt.to_iso8601_string()
+    assert dt.to_iso8601_string() == "2020-02-05T20:05:37.364951Z"
