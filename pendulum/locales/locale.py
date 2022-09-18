@@ -1,12 +1,12 @@
-import re
-import sys
+from __future__ import annotations
 
 from importlib import import_module
-from typing import Any
-from typing import Dict
-from typing import Optional
-from typing import Union
+from pathlib import Path
 
+import re
+import sys
+from typing import Any, cast
+from typing import Dict
 
 if sys.version_info >= (3, 9):
     from importlib import resources
@@ -19,15 +19,15 @@ class Locale:
     Represent a specific locale.
     """
 
-    _cache = {}
+    _cache: dict[str, Locale] = {}
 
     def __init__(self, locale: str, data: Any) -> None:
-        self._locale = locale
-        self._data = data
-        self._key_cache = {}
+        self._locale: str = locale
+        self._data: Any = data
+        self._key_cache: dict[str, str] = {}
 
     @classmethod
-    def load(cls, locale: Union[str, "Locale"]) -> "Locale":
+    def load(cls, locale: str | Locale) -> Locale:
         if isinstance(locale, Locale):
             return locale
 
@@ -37,7 +37,7 @@ class Locale:
 
         # Checking locale existence
         actual_locale = locale
-        locale_path = resources.files(__package__).joinpath(actual_locale)
+        locale_path = cast(Path, resources.files(__package__).joinpath(actual_locale))
         while not locale_path.exists():
             if actual_locale == locale:
                 raise ValueError(f"Locale [{locale}] does not exist.")
@@ -58,7 +58,7 @@ class Locale:
         else:
             return locale.lower()
 
-    def get(self, key: str, default: Optional[Any] = None) -> Any:
+    def get(self, key: str, default: Any | None = None) -> Any:
         if key in self._key_cache:
             return self._key_cache[key]
 
@@ -78,10 +78,10 @@ class Locale:
         return self.get(f"translations.{key}")
 
     def plural(self, number: int) -> str:
-        return self._data["plural"](number)
+        return cast(str, self._data["plural"](number))
 
     def ordinal(self, number: int) -> str:
-        return self._data["ordinal"](number)
+        return cast(str, self._data["ordinal"](number))
 
     def ordinalize(self, number: int) -> str:
         ordinal = self.get(f"custom.ordinal.{self.ordinal(number)}")
@@ -91,12 +91,12 @@ class Locale:
 
         return f"{number}{ordinal}"
 
-    def match_translation(self, key: str, value: Any) -> Optional[Dict]:
+    def match_translation(self, key: str, value: Any) -> dict[str, str] | None:
         translations = self.translation(key)
         if value not in translations.values():
             return None
 
-        return {v: k for k, v in translations.items()}[value]
+        return cast(Dict[str, str], {v: k for k, v in translations.items()}[value])
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}('{self._locale}')"

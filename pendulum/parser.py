@@ -7,20 +7,19 @@ import pendulum
 
 from pendulum.parsing import _Interval
 from pendulum.parsing import parse as base_parse
-from pendulum.tz import UTC
-
+from pendulum.tz.timezone import UTC
 
 if t.TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.datetime import DateTime
-    from pendulum.time import Duration
+    from pendulum.duration import Duration
+    from pendulum.period import Period
     from pendulum.time import Time
-
 
 try:
     from pendulum.parsing._iso8601 import Duration as CDuration
 except ImportError:
-    CDuration = None
+    CDuration = None  # type: ignore[misc, assignment]
 
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
@@ -30,14 +29,11 @@ def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
     return _parse(text, **options)
 
 
-def _parse(text, **options):
+def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | Period:
     """
     Parses a string with the given options.
 
     :param text: The string to parse.
-    :type text: str
-
-    :rtype: mixed
     """
     # Handling special cases
     if text == "now":
@@ -86,7 +82,9 @@ def _parse(text, **options):
                     ),
                 )
 
-            dt = pendulum.instance(parsed.end, tz=options.get("tz", UTC))
+            dt = pendulum.instance(
+                t.cast(datetime.datetime, parsed.end), tz=options.get("tz", UTC)
+            )
 
             return pendulum.period(
                 dt.subtract(
@@ -103,8 +101,12 @@ def _parse(text, **options):
             )
 
         return pendulum.period(
-            pendulum.instance(parsed.start, tz=options.get("tz", UTC)),
-            pendulum.instance(parsed.end, tz=options.get("tz", UTC)),
+            pendulum.instance(
+                t.cast(datetime.datetime, parsed.start), tz=options.get("tz", UTC)
+            ),
+            pendulum.instance(
+                t.cast(datetime.datetime, parsed.end), tz=options.get("tz", UTC)
+            ),
         )
 
     if CDuration and isinstance(parsed, CDuration):

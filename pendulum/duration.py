@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from typing import cast
+from typing import overload
 
 import pendulum
 
@@ -11,7 +13,7 @@ from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
 
 
-def _divide_and_round(a, b):
+def _divide_and_round(a: float, b: float) -> int:
     """divide a by b and round result to the nearest integer
 
     When the ratio is exactly half-way between two integers,
@@ -43,6 +45,15 @@ class Duration(timedelta):
     Provides several improvements over the base class.
     """
 
+    _total: float = 0
+    _years: int = 0
+    _months: int = 0
+    _weeks: int = 0
+    _days: int = 0
+    _remaining_days: int = 0
+    _seconds: int = 0
+    _microseconds: int = 0
+
     _y = None
     _m = None
     _w = None
@@ -54,16 +65,16 @@ class Duration(timedelta):
 
     def __new__(
         cls,
-        days=0,
-        seconds=0,
-        microseconds=0,
-        milliseconds=0,
-        minutes=0,
-        hours=0,
-        weeks=0,
-        years=0,
-        months=0,
-    ):
+        days: float = 0,
+        seconds: float = 0,
+        microseconds: float = 0,
+        milliseconds: float = 0,
+        minutes: float = 0,
+        hours: float = 0,
+        weeks: float = 0,
+        years: float = 0,
+        months: float = 0,
+    ) -> Duration:
         if not isinstance(years, int) or not isinstance(months, int):
             raise ValueError("Float year and months are not supported")
 
@@ -98,21 +109,21 @@ class Duration(timedelta):
 
         return self
 
-    def total_minutes(self):
+    def total_minutes(self) -> float:
         return self.total_seconds() / SECONDS_PER_MINUTE
 
-    def total_hours(self):
+    def total_hours(self) -> float:
         return self.total_seconds() / SECONDS_PER_HOUR
 
-    def total_days(self):
+    def total_days(self) -> float:
         return self.total_seconds() / SECONDS_PER_DAY
 
-    def total_weeks(self):
+    def total_weeks(self) -> float:
         return self.total_days() / 7
 
     if PYPY:
 
-        def total_seconds(self):
+        def total_seconds(self) -> float:
             days = 0
 
             if hasattr(self, "_years"):
@@ -132,29 +143,29 @@ class Duration(timedelta):
             ) / US_PER_SECOND
 
     @property
-    def years(self):
+    def years(self) -> int:
         return self._years
 
     @property
-    def months(self):
+    def months(self) -> int:
         return self._months
 
     @property
-    def weeks(self):
+    def weeks(self) -> int:
         return self._weeks
 
     if PYPY:
 
         @property
-        def days(self):
+        def days(self) -> int:
             return self._years * 365 + self._months * 30 + self._days
 
     @property
-    def remaining_days(self):
+    def remaining_days(self) -> int:
         return self._remaining_days
 
     @property
-    def hours(self):
+    def hours(self) -> int:
         if self._h is None:
             seconds = self._seconds
             self._h = 0
@@ -164,7 +175,7 @@ class Duration(timedelta):
         return self._h
 
     @property
-    def minutes(self):
+    def minutes(self) -> int:
         if self._i is None:
             seconds = self._seconds
             self._i = 0
@@ -174,11 +185,11 @@ class Duration(timedelta):
         return self._i
 
     @property
-    def seconds(self):
+    def seconds(self) -> int:
         return self._seconds
 
     @property
-    def remaining_seconds(self):
+    def remaining_seconds(self) -> int:
         if self._s is None:
             self._s = self._seconds
             self._s = abs(self._s) % 60 * self._sign(self._s)
@@ -186,44 +197,39 @@ class Duration(timedelta):
         return self._s
 
     @property
-    def microseconds(self):
+    def microseconds(self) -> int:
         return self._microseconds
 
     @property
-    def invert(self):
+    def invert(self) -> bool:
         if self._invert is None:
             self._invert = self.total_seconds() < 0
 
         return self._invert
 
-    def in_weeks(self):
+    def in_weeks(self) -> int:
         return int(self.total_weeks())
 
-    def in_days(self):
+    def in_days(self) -> int:
         return int(self.total_days())
 
-    def in_hours(self):
+    def in_hours(self) -> int:
         return int(self.total_hours())
 
-    def in_minutes(self):
+    def in_minutes(self) -> int:
         return int(self.total_minutes())
 
-    def in_seconds(self):
+    def in_seconds(self) -> int:
         return int(self.total_seconds())
 
-    def in_words(self, locale=None, separator=" "):
+    def in_words(self, locale: str | None = None, separator: str = " ") -> str:
         """
         Get the current interval in words in the current locale.
 
         Ex: 6 jours 23 heures 58 minutes
 
         :param locale: The locale to use. Defaults to current locale.
-        :type locale: str
-
         :param separator: The separator to use between each unit
-        :type separator: str
-
-        :rtype: str
         """
         periods = [
             ("year", self.years),
@@ -238,46 +244,45 @@ class Duration(timedelta):
         if locale is None:
             locale = pendulum.get_locale()
 
-        locale = pendulum.locale(locale)
+        loaded_locale = pendulum.locale(locale)
+
         parts = []
         for period in periods:
-            unit, count = period
-            if abs(count) > 0:
-                translation = locale.translation(
-                    f"units.{unit}.{locale.plural(abs(count))}"
+            unit, period_count = period
+            if abs(period_count) > 0:
+                translation = loaded_locale.translation(
+                    f"units.{unit}.{loaded_locale.plural(abs(period_count))}"
                 )
-                parts.append(translation.format(count))
+                parts.append(translation.format(period_count))
 
         if not parts:
+            count: int | str = 0
             if abs(self.microseconds) > 0:
-                unit = f"units.second.{locale.plural(1)}"
+                unit = f"units.second.{loaded_locale.plural(1)}"
                 count = f"{abs(self.microseconds) / 1e6:.2f}"
             else:
-                unit = f"units.microsecond.{locale.plural(0)}"
-                count = 0
-            translation = locale.translation(unit)
+                unit = f"units.microsecond.{loaded_locale.plural(0)}"
+            translation = loaded_locale.translation(unit)
             parts.append(translation.format(count))
 
         return separator.join(parts)
 
-    def _sign(self, value):
+    def _sign(self, value: float) -> int:
         if value < 0:
             return -1
 
         return 1
 
-    def as_timedelta(self):
+    def as_timedelta(self) -> timedelta:
         """
         Return the interval as a native timedelta.
-
-        :rtype: timedelta
         """
         return timedelta(seconds=self.total_seconds())
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.in_words()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         rep = f"{self.__class__.__name__}("
 
         if self._years:
@@ -308,7 +313,7 @@ class Duration(timedelta):
 
         return rep.replace(", )", ")")
 
-    def __add__(self, other):
+    def __add__(self, other: timedelta) -> Duration:
         if isinstance(other, timedelta):
             return self.__class__(seconds=self.total_seconds() + other.total_seconds())
 
@@ -316,13 +321,13 @@ class Duration(timedelta):
 
     __radd__ = __add__
 
-    def __sub__(self, other):
+    def __sub__(self, other: timedelta) -> Duration:
         if isinstance(other, timedelta):
             return self.__class__(seconds=self.total_seconds() - other.total_seconds())
 
         return NotImplemented
 
-    def __neg__(self):
+    def __neg__(self) -> Duration:
         return self.__class__(
             years=-self._years,
             months=-self._months,
@@ -332,10 +337,10 @@ class Duration(timedelta):
             microseconds=-self._microseconds,
         )
 
-    def _to_microseconds(self):
+    def _to_microseconds(self) -> int:
         return (self._days * (24 * 3600) + self._seconds) * 1000000 + self._microseconds
 
-    def __mul__(self, other):
+    def __mul__(self, other: int | float) -> Duration:
         if isinstance(other, int):
             return self.__class__(
                 years=self._years * other,
@@ -353,13 +358,21 @@ class Duration(timedelta):
 
     __rmul__ = __mul__
 
-    def __floordiv__(self, other):
+    @overload
+    def __floordiv__(self, other: timedelta) -> int:
+        ...
+
+    @overload
+    def __floordiv__(self, other: int) -> Duration:
+        ...
+
+    def __floordiv__(self, other: int | timedelta) -> int | Duration:
         if not isinstance(other, (int, timedelta)):
             return NotImplemented
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return usec // other._to_microseconds()
+            return cast(int, usec // other._to_microseconds())  # type: ignore[attr-defined]
 
         if isinstance(other, int):
             return self.__class__(
@@ -370,13 +383,21 @@ class Duration(timedelta):
                 months=self._months // other,
             )
 
-    def __truediv__(self, other):
+    @overload
+    def __truediv__(self, other: timedelta) -> float:
+        ...
+
+    @overload
+    def __truediv__(self, other: float) -> Duration:
+        ...
+
+    def __truediv__(self, other: int | float | timedelta) -> Duration | float:
         if not isinstance(other, (int, float, timedelta)):
             return NotImplemented
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return usec / other._to_microseconds()
+            return cast(float, usec / other._to_microseconds())  # type: ignore[attr-defined]
 
         if isinstance(other, int):
             return self.__class__(
@@ -400,17 +421,17 @@ class Duration(timedelta):
 
     __div__ = __floordiv__
 
-    def __mod__(self, other):
+    def __mod__(self, other: timedelta) -> Duration:
         if isinstance(other, timedelta):
-            r = self._to_microseconds() % other._to_microseconds()
+            r = self._to_microseconds() % other._to_microseconds()  # type: ignore[attr-defined]
 
             return self.__class__(0, 0, r)
 
         return NotImplemented
 
-    def __divmod__(self, other):
+    def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         if isinstance(other, timedelta):
-            q, r = divmod(self._to_microseconds(), other._to_microseconds())
+            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined]
 
             return q, self.__class__(0, 0, r)
 
@@ -431,16 +452,16 @@ class AbsoluteDuration(Duration):
 
     def __new__(
         cls,
-        days=0,
-        seconds=0,
-        microseconds=0,
-        milliseconds=0,
-        minutes=0,
-        hours=0,
-        weeks=0,
-        years=0,
-        months=0,
-    ):
+        days: float = 0,
+        seconds: float = 0,
+        microseconds: float = 0,
+        milliseconds: float = 0,
+        minutes: float = 0,
+        hours: float = 0,
+        weeks: float = 0,
+        years: float = 0,
+        months: float = 0,
+    ) -> AbsoluteDuration:
         if not isinstance(years, int) or not isinstance(months, int):
             raise ValueError("Float year and months are not supported")
 
@@ -470,11 +491,11 @@ class AbsoluteDuration(Duration):
 
         return self
 
-    def total_seconds(self):
+    def total_seconds(self) -> float:
         return abs(self._total)
 
     @property
-    def invert(self):
+    def invert(self) -> bool:
         if self._invert is None:
             self._invert = self._total < 0
 

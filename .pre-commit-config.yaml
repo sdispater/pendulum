@@ -15,7 +15,7 @@ repos:
     rev: v2.1.1
     hooks:
       - id: pycln
-        args: [--all]
+        args: [ --all ]
 
   - repo: https://github.com/psf/black
     rev: 22.6.0
@@ -26,7 +26,7 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        args: [--add-import, from __future__ import annotations]
+        args: [ --add-import, from __future__ import annotations, --lines-after-imports, "-1" ]
 
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
@@ -67,3 +67,5 @@ repos:
         exclude: ^build\.py$
         additional_dependencies:
           - pytest>=7.1.2
+          - types-backports
+          - types-python-dateutil
