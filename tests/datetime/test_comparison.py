@@ -241,7 +241,7 @@ def test_less_than_or_equal_with_timezone_false():
 
 
 def test_is_anniversary():
-    with pendulum.test(pendulum.now()):
+    with pendulum.travel_to(pendulum.now()):
         d = pendulum.now()
         an_anniversary = d.subtract(years=1)
         assert an_anniversary.is_anniversary()
@@ -258,7 +258,7 @@ def test_is_anniversary():
 
 
 def test_is_birthday():  # backward compatibility
-    with pendulum.test(pendulum.now()):
+    with pendulum.travel_to(pendulum.now()):
         d = pendulum.now()
         an_anniversary = d.subtract(years=1)
         assert an_anniversary.is_birthday()

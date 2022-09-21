@@ -29,16 +29,13 @@ from pendulum.duration import Duration
 from pendulum.formatting import Formatter
 from pendulum.helpers import format_diff
 from pendulum.helpers import get_locale
-from pendulum.helpers import get_test_now
-from pendulum.helpers import has_test_now
 from pendulum.helpers import locale
 from pendulum.helpers import set_locale
-from pendulum.helpers import set_test_now
-from pendulum.helpers import test
 from pendulum.helpers import week_ends_at
 from pendulum.helpers import week_starts_at
 from pendulum.parser import parse
 from pendulum.period import Period
+from pendulum.testing.traveller import Traveller
 from pendulum.time import Time
 from pendulum.tz import UTC
 from pendulum.tz import local_timezone
@@ -239,8 +236,7 @@ def from_format(
     """
     Creates a DateTime instance from a specific format.
     """
-    parts = _formatter.parse(string, fmt, now(), locale=locale)
-
+    parts = _formatter.parse(string, fmt, now(tz=tz), locale=locale)
     if parts["tz"] is None:
         parts["tz"] = tz
 
@@ -297,6 +293,15 @@ def period(start: DateTime, end: DateTime, absolute: bool = False) -> Period:
     return Period(start, end, absolute=absolute)
 
 
+# Testing
+
+_traveller = Traveller(DateTime)
+
+freeze = _traveller.freeze
+travel = _traveller.travel
+travel_to = _traveller.travel_to
+travel_back = _traveller.travel_back
+
 __all__ = [
     "__version__",
     "DAYS_PER_WEEK",
@@ -324,11 +329,10 @@ __all__ = [
     "datetime",
     "duration",
     "format_diff",
+    "freeze",
     "from_format",
     "from_timestamp",
     "get_locale",
-    "get_test_now",
-    "has_test_now",
     "instance",
     "local",
     "locale",
@@ -336,8 +340,6 @@ __all__ = [
     "now",
     "period",
     "set_locale",
-    "set_test_now",
-    "test",
     "week_ends_at",
     "week_starts_at",
     "parse",
@@ -352,6 +354,9 @@ __all__ = [
     "timezones",
     "today",
     "tomorrow",
+    "travel",
+    "travel_back",
+    "travel_to",
     "FixedTimezone",
     "Timezone",
     "yesterday",
