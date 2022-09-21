@@ -12,9 +12,10 @@ keywords = ['datetime', 'date', 'time']
 
 packages = [
     { include = "pendulum" },
-    #{include = "tests", format = "sdist"},
+    { include = "tests", format = "sdist" },
 ]
 include = [
+    { path = "meson.build", format = "sdist" },
     { path = "pendulum/py.typed" },
     # C extensions must be included in the wheel distributions
     { path = "pendulum/_extensions/*.so", format = "wheel" },
@@ -55,6 +56,13 @@ types-python-dateutil = "^2.8.19"
 babel = "^2.10.3"
 cleo = "^1.0.0a5"
 tox = "^3.25.1"
+
+[tool.poetry.group.build]
+optional = true
+
+[tool.poetry.group.build.dependencies]
+meson = "^0.63.2"
+ninja = "^1.10.2.3"
 
 [tool.poetry.build]
 generate-setup-file = false
@@ -171,5 +179,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0a6"]
+requires = ["poetry-core>=1.1.0a6", "meson", "ninja"]
 build-backend = "poetry.core.masonry.api"
