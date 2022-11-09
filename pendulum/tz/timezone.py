@@ -42,7 +42,7 @@ class PendulumTimezone(ABC):
         raise NotImplementedError
 
 
-class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):  # type: ignore[misc]
+class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
     """
     Represents a named timezone.
 
@@ -54,13 +54,13 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):  # type: ignore[misc]
 
     def __new__(cls, key: str) -> Timezone:
         try:
-            return cast(Timezone, super().__new__(cls, key))
+            return super().__new__(cls, key)  # type: ignore[call-arg]
         except zoneinfo.ZoneInfoNotFoundError:
             raise InvalidTimezone(key)
 
     @property
     def name(self) -> str:
-        return cast(str, self.key)
+        return self.key
 
     def convert(
         self, dt: datetime_.datetime, raise_on_unknown_times: bool = False
@@ -86,11 +86,24 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):  # type: ignore[misc]
         '2013-03-30T21:30:00-04:00'
         """
         if dt.tzinfo is None:
-            offset_before = (
-                self.utcoffset(dt.replace(fold=0)) if dt.fold else self.utcoffset(dt)
+            # Technically, utcoffset() can return None, but none of the zone information
+            # in tzdata sets _tti_before to None. This can be checked with the following
+            # code:
+            #
+            # >>> import zoneinfo
+            # >>> from zoneinfo._zoneinfo import ZoneInfo
+            #
+            # >>> for tzname in zoneinfo.available_timezones():
+            # >>>     if ZoneInfo(tzname)._tti_before is None:
+            # >>>         print(tzname)
+
+            offset_before = cast(
+                datetime_.timedelta,
+                (self.utcoffset(dt.replace(fold=0)) if dt.fold else self.utcoffset(dt)),
             )
-            offset_after = (
-                self.utcoffset(dt) if dt.fold else self.utcoffset(dt.replace(fold=1))
+            offset_after = cast(
+                datetime_.timedelta,
+                (self.utcoffset(dt) if dt.fold else self.utcoffset(dt.replace(fold=1))),
             )
 
             if offset_after > offset_before:

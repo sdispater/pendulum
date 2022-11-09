@@ -239,7 +239,7 @@ def _get_unix_timezone(_root: str = "/") -> Timezone:
             continue
 
         with open(tzpath, "rb") as f:
-            return cast(Timezone, Timezone.from_file(f))
+            return Timezone.from_file(f)
 
     raise RuntimeError("Unable to find any timezone configuration")
 
@@ -251,7 +251,7 @@ def _tz_from_env(tzenv: str) -> Timezone:
     # TZ specifies a file
     if os.path.isfile(tzenv):
         with open(tzenv, "rb") as f:
-            return cast(Timezone, Timezone.from_file(f))
+            return Timezone.from_file(f)
 
     # TZ specifies a zoneinfo zone.
     try:

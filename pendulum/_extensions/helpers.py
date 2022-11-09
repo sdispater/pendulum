@@ -353,7 +353,7 @@ def _get_tzinfo_name(tzinfo: datetime.tzinfo | None) -> str | None:
 
     if hasattr(tzinfo, "key"):
         # zoneinfo timezone
-        return cast(str, cast(zoneinfo.ZoneInfo, tzinfo).key)
+        return cast(zoneinfo.ZoneInfo, tzinfo).key
     elif hasattr(tzinfo, "name"):
         # Pendulum timezone
         return cast(Timezone, tzinfo).name
