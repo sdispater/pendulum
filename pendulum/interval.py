@@ -24,10 +24,9 @@ if TYPE_CHECKING:
     from pendulum.locales.locale import Locale  # noqa
 
 
-class Period(Duration):
+class Interval(Duration):
     """
-    Duration class that is aware of the datetimes that generated the
-    time difference.
+    A period of time between two datetimes.
     """
 
     @overload
@@ -36,7 +35,7 @@ class Period(Duration):
         start: pendulum.DateTime | datetime,
         end: pendulum.DateTime | datetime,
         absolute: bool = False,
-    ) -> Period:
+    ) -> Interval:
         ...
 
     @overload
@@ -45,7 +44,7 @@ class Period(Duration):
         start: pendulum.Date | date,
         end: pendulum.Date | date,
         absolute: bool = False,
-    ) -> Period:
+    ) -> Interval:
         ...
 
     def __new__(
@@ -53,7 +52,7 @@ class Period(Duration):
         start: pendulum.DateTime | pendulum.Date | datetime | date,
         end: pendulum.DateTime | pendulum.Date | datetime | date,
         absolute: bool = False,
-    ) -> Period:
+    ) -> Interval:
         if (
             isinstance(start, datetime)
             and not isinstance(end, datetime)
@@ -126,7 +125,7 @@ class Period(Duration):
 
         delta: timedelta = _end - _start  # type: ignore[operator]
 
-        return cast(Period, super().__new__(cls, seconds=delta.total_seconds()))
+        return cast(Interval, super().__new__(cls, seconds=delta.total_seconds()))
 
     def __init__(
         self,
@@ -339,7 +338,7 @@ class Period(Duration):
     def __sub__(self, other: timedelta) -> Duration:
         return self.as_interval().__sub__(other)
 
-    def __neg__(self) -> Period:
+    def __neg__(self) -> Interval:
         return self.__class__(self.end, self.start, self._absolute)
 
     def __mul__(self, other: int | float) -> Duration:
@@ -377,7 +376,7 @@ class Period(Duration):
     def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         return self.as_interval().__divmod__(other)
 
-    def __abs__(self) -> Period:
+    def __abs__(self) -> Interval:
         return self.__class__(self.start, self.end, absolute=True)
 
     def __repr__(self) -> str:
@@ -390,7 +389,7 @@ class Period(Duration):
         # Only needed for PyPy
         assert isinstance(other, timedelta)
 
-        if isinstance(other, Period):
+        if isinstance(other, Interval):
             other = other.as_timedelta()
 
         td = self.as_timedelta()
@@ -414,7 +413,7 @@ class Period(Duration):
     def __reduce__(
         self,
     ) -> tuple[
-        type[Period],
+        type[Interval],
         tuple[
             pendulum.DateTime | pendulum.Date | datetime | date,
             pendulum.DateTime | pendulum.Date | datetime | date,
@@ -426,7 +425,7 @@ class Period(Duration):
     def __reduce_ex__(
         self, protocol: SupportsIndex
     ) -> tuple[
-        type[Period],
+        type[Interval],
         tuple[
             pendulum.DateTime | pendulum.Date | datetime | date,
             pendulum.DateTime | pendulum.Date | datetime | date,
@@ -439,7 +438,7 @@ class Period(Duration):
         return hash((self.start, self.end, self._absolute))
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, Period):
+        if isinstance(other, Interval):
             return (self.start, self.end, self._absolute) == (
                 other.start,
                 other.end,

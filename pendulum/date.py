@@ -24,8 +24,8 @@ from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
+from pendulum.interval import Interval
 from pendulum.mixins.default import FormattableMixin
-from pendulum.period import Period
 
 
 class Date(FormattableMixin, date):
@@ -267,10 +267,10 @@ class Date(FormattableMixin, date):
         ...
 
     @overload
-    def __sub__(self, dt: Date) -> Period:
+    def __sub__(self, dt: Date) -> Interval:
         ...
 
-    def __sub__(self, other: timedelta | date) -> Date | Period:
+    def __sub__(self, other: timedelta | date) -> Date | Interval:
         if isinstance(other, timedelta):
             return self._subtract_timedelta(other)
 
@@ -283,9 +283,9 @@ class Date(FormattableMixin, date):
 
     # DIFFERENCES
 
-    def diff(self, dt: date | None = None, abs: bool = True) -> Period:
+    def diff(self, dt: date | None = None, abs: bool = True) -> Interval:
         """
-        Returns the difference between two Date objects as a Period.
+        Returns the difference between two Date objects as an Interval.
 
         :param dt: The date to compare to (defaults to today)
         :param abs: Whether to return an absolute interval or not
@@ -293,7 +293,7 @@ class Date(FormattableMixin, date):
         if dt is None:
             dt = self.today()
 
-        return Period(self, Date(dt.year, dt.month, dt.day), absolute=abs)
+        return Interval(self, Date(dt.year, dt.month, dt.day), absolute=abs)
 
     def diff_for_humans(
         self,

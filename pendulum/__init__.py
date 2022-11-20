@@ -33,8 +33,8 @@ from pendulum.helpers import locale
 from pendulum.helpers import set_locale
 from pendulum.helpers import week_ends_at
 from pendulum.helpers import week_starts_at
+from pendulum.interval import Interval
 from pendulum.parser import parse
-from pendulum.period import Period
 from pendulum.testing.traveller import Traveller
 from pendulum.time import Time
 from pendulum.tz import UTC
@@ -286,11 +286,11 @@ def duration(
     )
 
 
-def period(start: DateTime, end: DateTime, absolute: bool = False) -> Period:
+def interval(start: DateTime, end: DateTime, absolute: bool = False) -> Interval:
     """
-    Create a Period instance.
+    Create an Interval instance.
     """
-    return Period(start, end, absolute=absolute)
+    return Interval(start, end, absolute=absolute)
 
 
 # Testing
@@ -334,16 +334,16 @@ __all__ = [
     "from_timestamp",
     "get_locale",
     "instance",
+    "interval",
     "local",
     "locale",
     "naive",
     "now",
-    "period",
     "set_locale",
     "week_ends_at",
     "week_starts_at",
     "parse",
-    "Period",
+    "Interval",
     "Time",
     "UTC",
     "local_timezone",
