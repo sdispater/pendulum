@@ -97,7 +97,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
@@ -107,7 +107,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
@@ -117,7 +117,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)

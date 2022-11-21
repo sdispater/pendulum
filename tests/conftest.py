@@ -62,7 +62,7 @@ def assert_duration(
     minutes=None,
     seconds=None,
     microseconds=None,
-):
+) -> None:
     expected = {}
     actual = {}
 

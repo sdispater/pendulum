@@ -32,7 +32,7 @@ from pendulum.constants import YEARS_PER_DECADE
 from pendulum.date import Date
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
-from pendulum.period import Period
+from pendulum.interval import Interval
 from pendulum.time import Time
 from pendulum.tz import UTC
 from pendulum.tz import local_timezone
@@ -645,7 +645,7 @@ class DateTime(datetime.datetime, Date):
         """
         Add timedelta duration to the instance.
         """
-        if isinstance(delta, pendulum.Period):
+        if isinstance(delta, pendulum.Interval):
             return self.add(
                 years=delta.years,
                 months=delta.months,
@@ -678,14 +678,14 @@ class DateTime(datetime.datetime, Date):
 
     def diff(  # type: ignore[override]
         self, dt: datetime.datetime | None = None, abs: bool = True
-    ) -> Period:
+    ) -> Interval:
         """
-        Returns the difference between two DateTime objects represented as a Period.
+        Returns the difference between two DateTime objects represented as an Interval.
         """
         if dt is None:
             dt = self.now(self.tz)
 
-        return Period(self, dt, absolute=abs)
+        return Interval(self, dt, absolute=abs)
 
     def diff_for_humans(  # type: ignore[override]
         self,
@@ -1170,12 +1170,12 @@ class DateTime(datetime.datetime, Date):
         ...
 
     @overload
-    def __sub__(self, other: DateTime) -> Period:
+    def __sub__(self, other: DateTime) -> Interval:
         ...
 
     def __sub__(
         self, other: datetime.datetime | datetime.timedelta
-    ) -> DateTime | Period:
+    ) -> DateTime | Interval:
         if isinstance(other, datetime.timedelta):
             return self._subtract_timedelta(other)
 
@@ -1198,7 +1198,7 @@ class DateTime(datetime.datetime, Date):
 
         return other.diff(self, False)
 
-    def __rsub__(self, other: datetime.datetime) -> Period:
+    def __rsub__(self, other: datetime.datetime) -> Interval:
         if not isinstance(other, datetime.datetime):
             return NotImplemented
 

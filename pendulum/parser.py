@@ -13,7 +13,7 @@ if t.TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.datetime import DateTime
     from pendulum.duration import Duration
-    from pendulum.period import Period
+    from pendulum.interval import Interval
     from pendulum.time import Time
 
 try:
@@ -29,7 +29,7 @@ def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
     return _parse(text, **options)
 
 
-def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | Period:
+def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | Interval:
     """
     Parses a string with the given options.
 
@@ -68,7 +68,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | P
             if parsed.start is not None:
                 dt = pendulum.instance(parsed.start, tz=options.get("tz", UTC))
 
-                return pendulum.period(
+                return pendulum.interval(
                     dt,
                     dt.add(
                         years=duration.years,
@@ -86,7 +86,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | P
                 t.cast(datetime.datetime, parsed.end), tz=options.get("tz", UTC)
             )
 
-            return pendulum.period(
+            return pendulum.interval(
                 dt.subtract(
                     years=duration.years,
                     months=duration.months,
@@ -100,7 +100,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | P
                 dt,
             )
 
-        return pendulum.period(
+        return pendulum.interval(
             pendulum.instance(
                 t.cast(datetime.datetime, parsed.start), tz=options.get("tz", UTC)
             ),
