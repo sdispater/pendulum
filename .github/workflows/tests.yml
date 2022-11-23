@@ -65,7 +65,10 @@ jobs:
         run: timeout 10s poetry run pip --version || rm -rf .venv
 
       - name: Install dependencies
-        run: poetry install --only main --only test -vvv
+        run: poetry install --only main --only test --only typing -vvv
+
+      - name: Run type checking
+        run: poetry run mypy
 
       - name: Test Pure Python
         run: |
