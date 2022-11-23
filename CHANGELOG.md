@@ -1,5 +1,27 @@
 # Change Log
 
+## [3.0.0a1] - 2022-11-23
+
+### Added
+
+- Added new testing helpers to time travel. [#626](https://github.com/sdispater/pendulum/pull/626)
+
+### Changed
+
+- Dropped support for Python 2.7, 3.5 and 3.6. [#569](https://github.com/sdispater/pendulum/pull/569)
+- The `Timezone` class now relies on the native `zoneinfo.ZoneInfo` class. [#569](https://github.com/sdispater/pendulum/pull/569)
+- Renamed the `Period` class to `Interval`. [#676](https://github.com/sdispater/pendulum/pull/676)
+- Renamed the `period` helper to `interval`. [#676](https://github.com/sdispater/pendulum/pull/676)
+- Removed existing testing helpers: `test()` and `set_test_now()`. [#626](https://github.com/sdispater/pendulum/pull/626)
+
+### Locales
+
+- Added the `sk` locale. [#575](https://github.com/sdispater/pendulum/pull/575)
+- Added the `ja` locale. [#610](https://github.com/sdispater/pendulum/pull/610)
+- Added the `he` locale. [#585](https://github.com/sdispater/pendulum/pull/585)
+- Added the `sv` locale. [#562](https://github.com/sdispater/pendulum/pull/562)
+
+
 ## [2.1.1] - 2020-07-13
 
 ### Fixed
@@ -143,7 +165,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/2.1.1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/3.0.0a1...master
+[3.0.0a1]: https://github.com/sdispater/pendulum/releases/tag/3.0.0a1
 [2.1.1]: https://github.com/sdispater/pendulum/releases/tag/2.1.1
 [2.1.0]: https://github.com/sdispater/pendulum/releases/tag/2.1.0
 [2.0.5]: https://github.com/sdispater/pendulum/releases/tag/2.0.5

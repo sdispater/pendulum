@@ -31,7 +31,7 @@ jobs:
           path: ./dist/*
 
   Release:
-    needs: [ build-wheel ]
+    needs: [ build ]
     runs-on: ubuntu-latest
 
     steps:
