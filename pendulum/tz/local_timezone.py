@@ -141,7 +141,7 @@ if sys.platform == "win32":
 
 else:
 
-    def _get_windows_timezone() -> Timezone:
+    def _get_windows_timezone() -> Timezone:  # type: ignore[empty-body]
         ...
 
 

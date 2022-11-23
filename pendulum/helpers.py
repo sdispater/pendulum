@@ -40,12 +40,12 @@ try:
     from pendulum._extensions._helpers import timestamp
     from pendulum._extensions._helpers import week_day
 except ImportError:
-    from pendulum._extensions.helpers import PreciseDiff  # type: ignore[misc]
+    from pendulum._extensions.helpers import PreciseDiff  # type: ignore[assignment]
     from pendulum._extensions.helpers import days_in_year
     from pendulum._extensions.helpers import is_leap
     from pendulum._extensions.helpers import is_long_year
     from pendulum._extensions.helpers import local_time
-    from pendulum._extensions.helpers import precise_diff  # type: ignore[misc]
+    from pendulum._extensions.helpers import precise_diff  # type: ignore[assignment]
     from pendulum._extensions.helpers import timestamp
     from pendulum._extensions.helpers import week_day
 
