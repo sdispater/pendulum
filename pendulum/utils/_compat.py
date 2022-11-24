@@ -5,9 +5,9 @@ import sys
 PYPY = hasattr(sys, "pypy_version_info")
 PY38 = sys.version_info[:2] >= (3, 8)
 
-try:
+if sys.version_info < (3, 9):
     from backports import zoneinfo
-except ImportError:
-    import zoneinfo  # type: ignore[no-redef]
+else:
+    import zoneinfo
 
 __all__ = ["zoneinfo"]

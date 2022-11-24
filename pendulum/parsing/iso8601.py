@@ -17,6 +17,7 @@ from pendulum.helpers import week_day
 from pendulum.parsing.exceptions import ParserError
 from pendulum.tz.timezone import UTC
 from pendulum.tz.timezone import FixedTimezone
+from pendulum.tz.timezone import Timezone
 
 ISO8601_DT = re.compile(
     # Date (optional)  # noqa: E800
@@ -107,7 +108,7 @@ def parse_iso8601(
     minute = 0
     second = 0
     microsecond = 0
-    tzinfo: FixedTimezone | None = None
+    tzinfo: FixedTimezone | Timezone | None = None
 
     if m.group("date"):
         # A date has been specified

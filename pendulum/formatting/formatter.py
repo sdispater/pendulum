@@ -448,7 +448,7 @@ class Formatter:
 
         if parsed["quarter"] is not None:
             if validated["year"] is not None:
-                dt = pendulum.datetime(validated["year"], 1, 1)
+                dt = pendulum.datetime(cast(int, validated["year"]), 1, 1)
             else:
                 dt = now
 
@@ -476,8 +476,8 @@ class Formatter:
         if parsed["day_of_week"] is not None:
             dt = pendulum.datetime(
                 cast(int, validated["year"]),
-                validated["month"] or now.month,
-                validated["day"] or now.day,
+                cast(int, validated["month"]) or now.month,
+                cast(int, validated["day"]) or now.day,
             )
             dt = dt.start_of("week").subtract(days=1)
             dt = dt.next(parsed["day_of_week"])
@@ -502,9 +502,9 @@ class Formatter:
                 raise ValueError("Invalid date")
 
             pm = parsed["meridiem"] == "pm"
-            validated["hour"] %= 12
+            validated["hour"] %= 12  # type: ignore
             if pm:
-                validated["hour"] += 12
+                validated["hour"] += 12  # type: ignore
 
         if validated["month"] is None:
             if parsed["year"] is not None:
