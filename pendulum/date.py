@@ -258,7 +258,7 @@ class Date(FormattableMixin, date):
 
         return self._add_timedelta(other)
 
-    @overload
+    @overload  # type: ignore[override]
     def __sub__(self, delta: timedelta) -> Date:
         ...
 

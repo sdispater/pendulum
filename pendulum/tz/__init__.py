@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-import sys
-
 from pendulum.tz.local_timezone import get_local_timezone
 from pendulum.tz.local_timezone import set_local_timezone
 from pendulum.tz.local_timezone import test_local_timezone
 from pendulum.tz.timezone import UTC
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
-
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
+from pendulum.utils._compat import resources
 
 PRE_TRANSITION = "pre"
 POST_TRANSITION = "post"
@@ -27,7 +21,7 @@ def timezones() -> tuple[str, ...]:
     global _timezones
 
     if _timezones is None:
-        with resources.files("tzdata").joinpath("zones").open() as f:
+        with resources.files("tzdata").joinpath("zones").open() as f:  # type: ignore[no-untyped-call]
             _timezones = tuple(tz.strip() for tz in f.readlines())
 
     return _timezones

@@ -41,7 +41,7 @@ from pendulum.tz.timezone import Timezone
 from pendulum.utils._compat import PY38
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from pendulum.utils._compat import Literal
 
 
 class DateTime(datetime.datetime, Date):
@@ -1349,7 +1349,7 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(  # type: ignore[override]
+    def __reduce_ex__(
         self, protocol: int
     ) -> tuple[
         type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]

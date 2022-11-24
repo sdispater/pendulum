@@ -18,10 +18,9 @@ from pendulum.duration import Duration
 from pendulum.helpers import precise_diff
 
 if TYPE_CHECKING:
-    from typing import SupportsIndex
-
     from pendulum.helpers import PreciseDiff
     from pendulum.locales.locale import Locale  # noqa
+    from pendulum.utils._compat import SupportsIndex
 
 
 class Interval(Duration):
