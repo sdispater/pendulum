@@ -204,7 +204,7 @@ static int FixedOffset_init(FixedOffset *self, PyObject *args, PyObject *kwargs)
  * def utcoffset(self, dt):
  *     return timedelta(seconds=self.offset * 60)
  */
-static PyObject *FixedOffset_utcoffset(FixedOffset *self, PyObject *args) {
+static PyObject *FixedOffset_utcoffset(FixedOffset *self, PyObject *dt) {
     return PyDelta_FromDSU(0, self->offset, 0);
 }
 
@@ -212,7 +212,7 @@ static PyObject *FixedOffset_utcoffset(FixedOffset *self, PyObject *args) {
  * def dst(self, dt):
  *     return timedelta(seconds=self.offset * 60)
  */
-static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *args) {
+static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *dt) {
     return PyDelta_FromDSU(0, self->offset, 0);
 }
 
@@ -223,7 +223,7 @@ static PyObject *FixedOffset_dst(FixedOffset *self, PyObject *args) {
  *         sign = '-'
  *     return f"{sign}{self.offset / 60}:{self.offset % 60}"
  */
-static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *args) {
+static PyObject *FixedOffset_tzname(FixedOffset *self, PyObject *dt) {
     if (self->tzname != NULL) {
         return PyUnicode_FromString(self->tzname);
     }
@@ -264,9 +264,9 @@ static PyMemberDef FixedOffset_members[] = {
  * Class methods
  */
 static PyMethodDef FixedOffset_methods[] = {
-    {"utcoffset", (PyCFunction)FixedOffset_utcoffset, METH_VARARGS, ""},
-    {"dst",       (PyCFunction)FixedOffset_dst,       METH_VARARGS, ""},
-    {"tzname",    (PyCFunction)FixedOffset_tzname,    METH_VARARGS, ""},
+    {"utcoffset", (PyCFunction)FixedOffset_utcoffset, METH_O, ""},
+    {"dst",       (PyCFunction)FixedOffset_dst,       METH_O, ""},
+    {"tzname",    (PyCFunction)FixedOffset_tzname,    METH_O, ""},
     {NULL}
 };
 
@@ -512,8 +512,8 @@ Parsed* new_parsed() {
 
 /* -------------------------- Functions --------------------------*/
 
-Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
-    char* c;
+Parsed* _parse_iso8601_datetime(const char *str, Parsed *parsed) {
+    const char* c;
     int monthday = 0;
     int week = 0;
     int weekday = 1;
@@ -927,8 +927,8 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
 }
 
 
-Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
-    char* c;
+Parsed* _parse_iso8601_duration(const char *str, Parsed *parsed) {
+    const char* c;
     int value = 0;
     int grabbed = 0;
     int in_time = 0;
@@ -1205,19 +1205,22 @@ Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
 }
 
 
-PyObject* parse_iso8601(PyObject *self, PyObject *args) {
-    char* str;
+PyObject* parse_iso8601(PyObject *self, PyObject *dtstr) {
+    const char* str;
     PyObject *obj;
     PyObject *tzinfo;
+    Py_ssize_t len;
+
     Parsed *parsed = new_parsed();
 
-    if (!PyArg_ParseTuple(args, "s", &str)) {
-        PyErr_SetString(
-            PyExc_ValueError, "Invalid parameters"
-        );
+    if (!PyUnicode_Check(dtstr)) {
+        PyErr_SetString(PyExc_ValueError,
+                        "Invalid parameters");
         free(parsed);
         return NULL;
     }
+
+    str = PyUnicode_AsUTF8AndSize(dtstr, &len);
 
     if (*str == 'P') {
         // Duration (or interval)
@@ -1300,7 +1303,7 @@ static PyMethodDef helpers_methods[] = {
     {
         "parse_iso8601",
         (PyCFunction) parse_iso8601,
-        METH_VARARGS,
+        METH_O,
         PyDoc_STR("Parses a ISO8601 string into a tuple.")
     },
     {NULL}
