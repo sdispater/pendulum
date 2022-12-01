@@ -73,7 +73,7 @@ def _safe_timezone(
     elif isinstance(obj, _datetime.tzinfo):
         # zoneinfo
         if hasattr(obj, "key"):
-            obj = obj.key  # type: ignore
+            obj = obj.key
         # pytz
         elif hasattr(obj, "localize"):
             obj = obj.zone  # type: ignore

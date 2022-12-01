@@ -19,7 +19,8 @@ from pendulum.duration import Duration
 from pendulum.mixins.default import FormattableMixin
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from typing_extensions import Literal
+    from typing_extensions import SupportsIndex
 
 
 class Time(FormattableMixin, time):
@@ -281,7 +282,7 @@ class Time(FormattableMixin, time):
         return (self,)
 
     def _get_state(
-        self, protocol: int = 3
+        self, protocol: SupportsIndex = 3
     ) -> tuple[int, int, int, int, datetime.tzinfo | None]:
         tz = self.tzinfo
 
@@ -292,8 +293,8 @@ class Time(FormattableMixin, time):
     ) -> tuple[type[Time], tuple[int, int, int, int, datetime.tzinfo | None]]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(  # type: ignore[override]
-        self, protocol: int
+    def __reduce_ex__(
+        self, protocol: SupportsIndex
     ) -> tuple[type[Time], tuple[int, int, int, int, datetime.tzinfo | None]]:
         return self.__class__, self._get_state(protocol)
 

@@ -41,7 +41,8 @@ from pendulum.tz.timezone import Timezone
 from pendulum.utils._compat import PY38
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from typing_extensions import Literal
+    from typing_extensions import SupportsIndex
 
 
 class DateTime(datetime.datetime, Date):
@@ -1329,7 +1330,7 @@ class DateTime(datetime.datetime, Date):
         return (self,)
 
     def _getstate(
-        self, protocol: int = 3
+        self, protocol: SupportsIndex = 3
     ) -> tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]:
         return (
             self.year,
@@ -1349,8 +1350,8 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(  # type: ignore[override]
-        self, protocol: int
+    def __reduce_ex__(
+        self, protocol: SupportsIndex
     ) -> tuple[
         type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:

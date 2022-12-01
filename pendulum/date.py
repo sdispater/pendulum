@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import calendar
 import math
+import sys
 
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
 from typing import NoReturn
+from typing import TypeVar
 from typing import cast
 from typing import overload
 
@@ -26,6 +28,8 @@ from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
 from pendulum.interval import Interval
 from pendulum.mixins.default import FormattableMixin
+
+_D = TypeVar("_D", bound="Date")
 
 
 class Date(FormattableMixin, date):
@@ -266,9 +270,17 @@ class Date(FormattableMixin, date):
     def __sub__(self, dt: datetime) -> NoReturn:
         ...
 
-    @overload
-    def __sub__(self, dt: Date) -> Interval:
-        ...
+    if sys.version_info >= (3, 8):
+
+        @overload
+        def __sub__(self: _D, dt: _D) -> Interval:
+            ...
+
+    else:
+
+        @overload
+        def __sub__(self, dt: date) -> Interval:
+            ...
 
     def __sub__(self, other: timedelta | date) -> Date | Interval:
         if isinstance(other, timedelta):
