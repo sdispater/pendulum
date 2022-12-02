@@ -1359,12 +1359,12 @@ class DateTime(datetime.datetime, Date):
     def __le__(self, other: datetime.date) -> bool:
         if isinstance(other, DateTime):
             return self._cmp(other) <= 0
-        return super().__le__(other.date)
+        return super().__le__(other.date())
 
     def __lt__(self, other: datetime.date) -> bool:
         if isinstance(other, DateTime):
             return self._cmp(other) < 0
-        return super().__lt__(other.date)
+        return super().__lt__(other.date())
 
     def __ge__(self, other: datetime.date) -> bool:
         # Will default to the negative of its reflection
