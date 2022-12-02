@@ -1373,10 +1373,22 @@ class DateTime(datetime.datetime, Date):
         # Will default to the negative of its reflection
         return NotImplemented
 
-    def _cmp(self, other, **kwargs):
-        sts = self.timestamp()
-        ots = other.timestamp()
-        return 0 if sts == ots else 1 if sts > ots else -1
+    def _cmp(self, other: datetime.datetime, **kwargs: Any) -> int:
+        # Fix for pypy which compares using this method
+        # which would lead to infinite recursion if we didn't override
+        dt = datetime.datetime(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            self.second,
+            self.microsecond,
+            tzinfo=self.tz,
+            fold=self.fold,
+        )
+
+        return 0 if dt == other else 1 if dt > other else -1
 
 
 DateTime.min: DateTime = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)  # type: ignore[misc]
