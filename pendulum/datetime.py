@@ -1356,21 +1356,21 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__class__, self._getstate(protocol)
 
-    def __le__(self, other: datetime.datetime) -> bool:
+    def __le__(self, other: datetime.date) -> bool:
         if isinstance(other, DateTime):
             return self._cmp(other) <= 0
         return super().__le__(other)
 
-    def __lt__(self, other: datetime.datetime) -> bool:
+    def __lt__(self, other: datetime.date) -> bool:
         if isinstance(other, DateTime):
             return self._cmp(other) < 0
         return super().__lt__(other)
 
-    def __ge__(self, other: datetime.datetime) -> bool:
+    def __ge__(self, other: datetime.date) -> bool:
         # Will default to the negative of its reflection
         return NotImplemented
 
-    def __gt__(self, other: datetime.datetime) -> bool:
+    def __gt__(self, other: datetime.date) -> bool:
         # Will default to the negative of its reflection
         return NotImplemented
 
