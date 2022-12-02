@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import datetime as _datetime
 
-from typing import Optional
 from typing import Union
+from typing import cast
 
 from pendulum.__version__ import __version__
 from pendulum.constants import DAYS_PER_WEEK
@@ -29,20 +29,14 @@ from pendulum.duration import Duration
 from pendulum.formatting import Formatter
 from pendulum.helpers import format_diff
 from pendulum.helpers import get_locale
-from pendulum.helpers import get_test_now
-from pendulum.helpers import has_test_now
 from pendulum.helpers import locale
 from pendulum.helpers import set_locale
-from pendulum.helpers import set_test_now
-from pendulum.helpers import test
 from pendulum.helpers import week_ends_at
 from pendulum.helpers import week_starts_at
+from pendulum.interval import Interval
 from pendulum.parser import parse
-from pendulum.period import Period
+from pendulum.testing.traveller import Traveller
 from pendulum.time import Time
-from pendulum.tz import POST_TRANSITION
-from pendulum.tz import PRE_TRANSITION
-from pendulum.tz import TRANSITION_ERROR
 from pendulum.tz import UTC
 from pendulum.tz import local_timezone
 from pendulum.tz import set_local_timezone
@@ -52,7 +46,6 @@ from pendulum.tz import timezones
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
-
 _TEST_NOW: DateTime | None = None
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
@@ -61,7 +54,10 @@ _WEEK_ENDS_AT = SUNDAY
 _formatter = Formatter()
 
 
-def _safe_timezone(obj: str | float | _datetime.tzinfo | Timezone | None) -> Timezone:
+def _safe_timezone(
+    obj: str | float | _datetime.tzinfo | Timezone | FixedTimezone | None,
+    dt: _datetime.datetime | None = None,
+) -> Timezone | FixedTimezone:
     """
     Creates a timezone instance
     from a string, Timezone, TimezoneInfo or integer offset.
@@ -75,18 +71,23 @@ def _safe_timezone(obj: str | float | _datetime.tzinfo | Timezone | None) -> Tim
     if isinstance(obj, (int, float)):
         obj = int(obj * 60 * 60)
     elif isinstance(obj, _datetime.tzinfo):
+        # zoneinfo
+        if hasattr(obj, "key"):
+            obj = obj.key  # type: ignore
         # pytz
-        if hasattr(obj, "localize"):
-            obj = obj.zone
+        elif hasattr(obj, "localize"):
+            obj = obj.zone  # type: ignore
         elif obj.tzname(None) == "UTC":
             return UTC
         else:
-            offset = obj.utcoffset(None)
+            offset = obj.utcoffset(dt)
 
             if offset is None:
                 offset = _datetime.timedelta(0)
 
             obj = int(offset.total_seconds())
+
+    obj = cast(Union[str, int], obj)
 
     return timezone(obj)
 
@@ -100,8 +101,8 @@ def datetime(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    tz: str | float | Timezone | None = UTC,
-    fold: int | None = 1,
+    tz: str | float | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
+    fold: int = 1,
     raise_on_unknown_times: bool = False,
 ) -> DateTime:
     """
@@ -146,7 +147,7 @@ def naive(
     minute: int = 0,
     second: int = 0,
     microsecond: int = 0,
-    fold: int | None = 1,
+    fold: int = 1,
 ) -> DateTime:
     """
     Return a naive DateTime.
@@ -168,7 +169,10 @@ def time(hour: int, minute: int = 0, second: int = 0, microsecond: int = 0) -> T
     return Time(hour, minute, second, microsecond)
 
 
-def instance(dt: _datetime.datetime, tz: str | Timezone | None = UTC) -> DateTime:
+def instance(
+    dt: _datetime.datetime,
+    tz: str | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
+) -> DateTime:
     """
     Create a DateTime instance from a datetime one.
     """
@@ -180,19 +184,18 @@ def instance(dt: _datetime.datetime, tz: str | Timezone | None = UTC) -> DateTim
 
     tz = dt.tzinfo or tz
 
-    # Checking for pytz/tzinfo
-    if isinstance(tz, _datetime.tzinfo) and not isinstance(tz, Timezone):
-        # pytz
-        if hasattr(tz, "localize") and tz.zone:
-            tz = tz.zone
-        else:
-            # We have no sure way to figure out
-            # the timezone name, we fallback
-            # on a fixed offset
-            tz = tz.utcoffset(dt).total_seconds() / 3600
+    if tz is not None:
+        tz = _safe_timezone(tz, dt=dt)
 
     return datetime(
-        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, tz=tz
+        dt.year,
+        dt.month,
+        dt.day,
+        dt.hour,
+        dt.minute,
+        dt.second,
+        dt.microsecond,
+        tz=cast(Union[str, int, Timezone, FixedTimezone, None], tz),
     )
 
 
@@ -228,12 +231,12 @@ def from_format(
     string: str,
     fmt: str,
     tz: str | Timezone = UTC,
-    locale: str | None = None,  # noqa
+    locale: str | None = None,
 ) -> DateTime:
     """
     Creates a DateTime instance from a specific format.
     """
-    parts = _formatter.parse(string, fmt, now(), locale=locale)
+    parts = _formatter.parse(string, fmt, now(tz=tz), locale=locale)
     if parts["tz"] is None:
         parts["tz"] = tz
 
@@ -283,8 +286,78 @@ def duration(
     )
 
 
-def period(start: DateTime, end: DateTime, absolute: bool = False) -> Period:
+def interval(start: DateTime, end: DateTime, absolute: bool = False) -> Interval:
     """
-    Create a Period instance.
+    Create an Interval instance.
     """
-    return Period(start, end, absolute=absolute)
+    return Interval(start, end, absolute=absolute)
+
+
+# Testing
+
+_traveller = Traveller(DateTime)
+
+freeze = _traveller.freeze
+travel = _traveller.travel
+travel_to = _traveller.travel_to
+travel_back = _traveller.travel_back
+
+__all__ = [
+    "__version__",
+    "DAYS_PER_WEEK",
+    "FRIDAY",
+    "HOURS_PER_DAY",
+    "MINUTES_PER_HOUR",
+    "MONDAY",
+    "MONTHS_PER_YEAR",
+    "SATURDAY",
+    "SECONDS_PER_DAY",
+    "SECONDS_PER_HOUR",
+    "SECONDS_PER_MINUTE",
+    "SUNDAY",
+    "THURSDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "WEEKS_PER_YEAR",
+    "YEARS_PER_CENTURY",
+    "YEARS_PER_DECADE",
+    "Date",
+    "DateTime",
+    "Duration",
+    "Formatter",
+    "date",
+    "datetime",
+    "duration",
+    "format_diff",
+    "freeze",
+    "from_format",
+    "from_timestamp",
+    "get_locale",
+    "instance",
+    "interval",
+    "local",
+    "locale",
+    "naive",
+    "now",
+    "set_locale",
+    "week_ends_at",
+    "week_starts_at",
+    "parse",
+    "Interval",
+    "Time",
+    "UTC",
+    "local_timezone",
+    "set_local_timezone",
+    "test_local_timezone",
+    "time",
+    "timezone",
+    "timezones",
+    "today",
+    "tomorrow",
+    "travel",
+    "travel_back",
+    "travel_to",
+    "FixedTimezone",
+    "Timezone",
+    "yesterday",
+]

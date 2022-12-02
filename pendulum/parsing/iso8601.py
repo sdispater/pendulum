@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 import re
 
+from typing import cast
+
 from pendulum.constants import HOURS_PER_DAY
 from pendulum.constants import MINUTES_PER_HOUR
 from pendulum.constants import MONTHS_OFFSETS
@@ -15,7 +17,7 @@ from pendulum.helpers import week_day
 from pendulum.parsing.exceptions import ParserError
 from pendulum.tz.timezone import UTC
 from pendulum.tz.timezone import FixedTimezone
-
+from pendulum.tz.timezone import Timezone
 
 ISO8601_DT = re.compile(
     # Date (optional)  # noqa: E800
@@ -56,7 +58,6 @@ ISO8601_DT = re.compile(
     re.VERBOSE,
 )
 
-
 ISO8601_DURATION = re.compile(
     "^P"  # Duration P indicator
     # Years, months and days (optional)  # noqa: E800
@@ -79,7 +80,9 @@ ISO8601_DURATION = re.compile(
 )
 
 
-def parse_iso8601(text):
+def parse_iso8601(
+    text: str,
+) -> datetime.datetime | datetime.date | datetime.time | Duration:
     """
     ISO 8601 compliant parser.
 
@@ -105,175 +108,178 @@ def parse_iso8601(text):
     minute = 0
     second = 0
     microsecond = 0
-    tzinfo = None
+    tzinfo: FixedTimezone | Timezone | None = None
 
-    if m:
-        if m.group("date"):
-            # A date has been specified
-            is_date = True
+    if m.group("date"):
+        # A date has been specified
+        is_date = True
 
-            if m.group("isocalendar"):
-                # We have a ISO 8601 string defined
-                # by week number
-                if (
-                    m.group("weeksep")
-                    and not m.group("weekdaysep")
-                    and m.group("isoweekday")
-                ):
-                    raise ParserError(f"Invalid date string: {text}")
+        if m.group("isocalendar"):
+            # We have a ISO 8601 string defined
+            # by week number
+            if (
+                m.group("weeksep")
+                and not m.group("weekdaysep")
+                and m.group("isoweekday")
+            ):
+                raise ParserError(f"Invalid date string: {text}")
 
-                if not m.group("weeksep") and m.group("weekdaysep"):
-                    raise ParserError(f"Invalid date string: {text}")
+            if not m.group("weeksep") and m.group("weekdaysep"):
+                raise ParserError(f"Invalid date string: {text}")
 
-                try:
-                    date = _get_iso_8601_week(
-                        m.group("isoyear"), m.group("isoweek"), m.group("isoweekday")
-                    )
-                except ParserError:
-                    raise
-                except ValueError:
-                    raise ParserError(f"Invalid date string: {text}")
+            try:
+                date = _get_iso_8601_week(
+                    m.group("isoyear"), m.group("isoweek"), m.group("isoweekday")
+                )
+            except ParserError:
+                raise
+            except ValueError:
+                raise ParserError(f"Invalid date string: {text}")
 
-                year = date["year"]
-                month = date["month"]
-                day = date["day"]
+            year = date["year"]
+            month = date["month"]
+            day = date["day"]
+        else:
+            # We have a classic date representation
+            year = int(m.group("year"))
+
+            if not m.group("monthday"):
+                # No month and day
+                month = 1
+                day = 1
             else:
-                # We have a classic date representation
-                year = int(m.group("year"))
+                if m.group("month") and m.group("day"):
+                    # Month and day
+                    if not m.group("daysep") and len(m.group("day")) == 1:
+                        # Ordinal day
+                        ordinal = int(m.group("month") + m.group("day"))
+                        leap = is_leap(year)
+                        months_offsets = MONTHS_OFFSETS[leap]
 
-                if not m.group("monthday"):
-                    # No month and day
-                    month = 1
-                    day = 1
-                else:
-                    if m.group("month") and m.group("day"):
-                        # Month and day
-                        if not m.group("daysep") and len(m.group("day")) == 1:
-                            # Ordinal day
-                            ordinal = int(m.group("month") + m.group("day"))
-                            leap = is_leap(year)
-                            months_offsets = MONTHS_OFFSETS[leap]
+                        if ordinal > months_offsets[13]:
+                            raise ParserError("Ordinal day is out of range")
 
-                            if ordinal > months_offsets[13]:
-                                raise ParserError("Ordinal day is out of range")
+                        for i in range(1, 14):
+                            if ordinal <= months_offsets[i]:
+                                day = ordinal - months_offsets[i - 1]
+                                month = i - 1
 
-                            for i in range(1, 14):
-                                if ordinal <= months_offsets[i]:
-                                    day = ordinal - months_offsets[i - 1]
-                                    month = i - 1
-
-                                    break
-                        else:
-                            month = int(m.group("month"))
-                            day = int(m.group("day"))
+                                break
                     else:
-                        # Only month
-                        if not m.group("monthsep"):
-                            # The date looks like 201207
-                            # which is invalid for a date
-                            # But it might be a time in the form hhmmss
-                            ambiguous_date = True
-
                         month = int(m.group("month"))
-                        day = 1
-
-        if not m.group("time"):
-            # No time has been specified
-            if ambiguous_date:
-                # We can "safely" assume that the ambiguous date
-                # was actually a time in the form hhmmss
-                hhmmss = f"{str(year)}{str(month):0>2}"
-
-                return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
-
-            return datetime.date(year, month, day)
-
-        if ambiguous_date:
-            raise ParserError(f"Invalid date string: {text}")
-
-        if is_date and not m.group("timesep"):
-            raise ParserError(f"Invalid date string: {text}")
-
-        if not is_date:
-            is_time = True
-
-        # Grabbing hh:mm:ss
-        hour = int(m.group("hour"))
-        minsep = m.group("minsep")
-
-        if m.group("minute"):
-            minute = int(m.group("minute"))
-        elif minsep:
-            raise ParserError("Invalid ISO 8601 time part")
-
-        secsep = m.group("secsep")
-        if secsep and not minsep and m.group("minute"):
-            # minute/second separator but no hour/minute separator
-            raise ParserError("Invalid ISO 8601 time part")
-
-        if m.group("second"):
-            if not secsep and minsep:
-                # No minute/second separator but hour/minute separator
-                raise ParserError("Invalid ISO 8601 time part")
-
-            second = int(m.group("second"))
-        elif secsep:
-            raise ParserError("Invalid ISO 8601 time part")
-
-        # Grabbing subseconds, if any
-        if m.group("subsecondsection"):
-            # Limiting to 6 chars
-            subsecond = m.group("subsecond")[:6]
-
-            microsecond = int(f"{subsecond:0<6}")
-
-        # Grabbing timezone, if any
-        tz = m.group("tz")
-        if tz:
-            if tz == "Z":
-                tzinfo = UTC
-            else:
-                negative = bool(tz.startswith("-"))
-                tz = tz[1:]
-                if ":" not in tz:
-                    if len(tz) == 2:
-                        tz = f"{tz}00"
-
-                    off_hour = tz[0:2]
-                    off_minute = tz[2:4]
+                        day = int(m.group("day"))
                 else:
-                    off_hour, off_minute = tz.split(":")
+                    # Only month
+                    if not m.group("monthsep"):
+                        # The date looks like 201207
+                        # which is invalid for a date
+                        # But it might be a time in the form hhmmss
+                        ambiguous_date = True
 
-                offset = ((int(off_hour) * 60) + int(off_minute)) * 60
+                    month = int(m.group("month"))
+                    day = 1
 
-                if negative:
-                    offset = -1 * offset
+    if not m.group("time"):
+        # No time has been specified
+        if ambiguous_date:
+            # We can "safely" assume that the ambiguous date
+            # was actually a time in the form hhmmss
+            hhmmss = f"{str(year)}{str(month):0>2}"
 
-                tzinfo = FixedTimezone(offset)
+            return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
 
-        if is_time:
-            return datetime.time(hour, minute, second, microsecond)
+        return datetime.date(year, month, day)
 
-        return datetime.datetime(
-            year, month, day, hour, minute, second, microsecond, tzinfo=tzinfo
-        )
+    if ambiguous_date:
+        raise ParserError(f"Invalid date string: {text}")
+
+    if is_date and not m.group("timesep"):
+        raise ParserError(f"Invalid date string: {text}")
+
+    if not is_date:
+        is_time = True
+
+    # Grabbing hh:mm:ss
+    hour = int(m.group("hour"))
+    minsep = m.group("minsep")
+
+    if m.group("minute"):
+        minute = int(m.group("minute"))
+    elif minsep:
+        raise ParserError("Invalid ISO 8601 time part")
+
+    secsep = m.group("secsep")
+    if secsep and not minsep and m.group("minute"):
+        # minute/second separator but no hour/minute separator
+        raise ParserError("Invalid ISO 8601 time part")
+
+    if m.group("second"):
+        if not secsep and minsep:
+            # No minute/second separator but hour/minute separator
+            raise ParserError("Invalid ISO 8601 time part")
+
+        second = int(m.group("second"))
+    elif secsep:
+        raise ParserError("Invalid ISO 8601 time part")
+
+    # Grabbing subseconds, if any
+    if m.group("subsecondsection"):
+        # Limiting to 6 chars
+        subsecond = m.group("subsecond")[:6]
+
+        microsecond = int(f"{subsecond:0<6}")
+
+    # Grabbing timezone, if any
+    tz = m.group("tz")
+    if tz:
+        if tz == "Z":
+            tzinfo = UTC
+        else:
+            negative = bool(tz.startswith("-"))
+            tz = tz[1:]
+            if ":" not in tz:
+                if len(tz) == 2:
+                    tz = f"{tz}00"
+
+                off_hour = tz[0:2]
+                off_minute = tz[2:4]
+            else:
+                off_hour, off_minute = tz.split(":")
+
+            offset = ((int(off_hour) * 60) + int(off_minute)) * 60
+
+            if negative:
+                offset = -1 * offset
+
+            tzinfo = FixedTimezone(offset)
+
+    if is_time:
+        return datetime.time(hour, minute, second, microsecond)
+
+    return datetime.datetime(
+        year, month, day, hour, minute, second, microsecond, tzinfo=tzinfo
+    )
 
 
-def _parse_iso8601_duration(text, **options):
+def _parse_iso8601_duration(text: str, **options: str) -> Duration | None:
     m = ISO8601_DURATION.match(text)
     if not m:
-        return
+        return None
 
     years = 0
     months = 0
     weeks = 0
-    days = 0
-    hours = 0
-    minutes = 0
-    seconds = 0
-    microseconds = 0
+    days: int | float = 0
+    hours: int | float = 0
+    minutes: int | float = 0
+    seconds: int | float = 0
+    microseconds: int | float = 0
     fractional = False
 
+    _days: str | float
+    _hour: str | int | None
+    _minutes: str | int | None
+    _seconds: str | int | None
     if m.group("w"):
         # Weeks
         if m.group("ymd") or m.group("hms"):
@@ -289,7 +295,7 @@ def _parse_iso8601_duration(text, **options):
             _weeks, portion = _weeks.split(".")
             weeks = int(_weeks)
             _days = int(portion) / 10 * 7
-            days, hours = int(_days // 1), _days % 1 * HOURS_PER_DAY
+            days, hours = int(_days // 1), int(_days % 1 * HOURS_PER_DAY)
         else:
             weeks = int(_weeks)
 
@@ -359,7 +365,7 @@ def _parse_iso8601_duration(text, **options):
             if fractional:
                 raise ParserError("Invalid duration")
 
-            _hours = _hours.replace(",", ".").replace("H", "")
+            _hours = cast(str, _hours).replace(",", ".").replace("H", "")
 
             if "." in _hours:
                 fractional = True
@@ -374,7 +380,7 @@ def _parse_iso8601_duration(text, **options):
             if fractional:
                 raise ParserError("Invalid duration")
 
-            _minutes = _minutes.replace(",", ".").replace("M", "")
+            _minutes = cast(str, _minutes).replace(",", ".").replace("M", "")
 
             if "." in _minutes:
                 fractional = True
@@ -389,7 +395,7 @@ def _parse_iso8601_duration(text, **options):
             if fractional:
                 raise ParserError("Invalid duration")
 
-            _seconds = _seconds.replace(",", ".").replace("S", "")
+            _seconds = cast(str, _seconds).replace(",", ".").replace("S", "")
 
             if "." in _seconds:
                 _seconds, _microseconds = _seconds.split(".")
@@ -410,7 +416,9 @@ def _parse_iso8601_duration(text, **options):
     )
 
 
-def _get_iso_8601_week(year, week, weekday):
+def _get_iso_8601_week(
+    year: int | str, week: int | str, weekday: int | str
+) -> dict[str, int]:
     if not weekday:
         weekday = 1
     else:

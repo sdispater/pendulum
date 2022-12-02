@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import datetime
+
 from datetime import time
 from datetime import timedelta
+from typing import TYPE_CHECKING
+from typing import Optional
+from typing import cast
+from typing import overload
 
 import pendulum
 
@@ -12,6 +18,9 @@ from pendulum.duration import AbsoluteDuration
 from pendulum.duration import Duration
 from pendulum.mixins.default import FormattableMixin
 
+if TYPE_CHECKING:
+    from typing import Literal
+
 
 class Time(FormattableMixin, time):
     """
@@ -19,7 +28,7 @@ class Time(FormattableMixin, time):
     """
 
     # String formatting
-    def __repr__(self):
+    def __repr__(self) -> str:
         us = ""
         if self.microsecond:
             us = f", {self.microsecond}"
@@ -35,14 +44,9 @@ class Time(FormattableMixin, time):
 
     # Comparisons
 
-    def closest(self, dt1, dt2):
+    def closest(self, dt1: Time | time, dt2: Time | time) -> Time:
         """
         Get the closest time from the instance.
-
-        :type dt1: Time or time
-        :type dt2: Time or time
-
-        :rtype: Time
         """
         dt1 = self.__class__(dt1.hour, dt1.minute, dt1.second, dt1.microsecond)
         dt2 = self.__class__(dt2.hour, dt2.minute, dt2.second, dt2.microsecond)
@@ -52,14 +56,9 @@ class Time(FormattableMixin, time):
 
         return dt2
 
-    def farthest(self, dt1, dt2):
+    def farthest(self, dt1: Time | time, dt2: Time | time) -> Time:
         """
         Get the farthest time from the instance.
-
-        :type dt1: Time or time
-        :type dt2: Time or time
-
-        :rtype: Time
         """
         dt1 = self.__class__(dt1.hour, dt1.minute, dt1.second, dt1.microsecond)
         dt2 = self.__class__(dt2.hour, dt2.minute, dt2.second, dt2.microsecond)
@@ -71,23 +70,16 @@ class Time(FormattableMixin, time):
 
     # ADDITIONS AND SUBSTRACTIONS
 
-    def add(self, hours=0, minutes=0, seconds=0, microseconds=0):
+    def add(
+        self, hours: int = 0, minutes: int = 0, seconds: int = 0, microseconds: int = 0
+    ) -> Time:
         """
         Add duration to the instance.
 
         :param hours: The number of hours
-        :type hours: int
-
         :param minutes: The number of minutes
-        :type minutes: int
-
         :param seconds: The number of seconds
-        :type seconds: int
-
         :param microseconds: The number of microseconds
-        :type microseconds: int
-
-        :rtype: Time
         """
         from pendulum.datetime import DateTime
 
@@ -99,7 +91,9 @@ class Time(FormattableMixin, time):
             .time()
         )
 
-    def subtract(self, hours=0, minutes=0, seconds=0, microseconds=0):
+    def subtract(
+        self, hours: int = 0, minutes: int = 0, seconds: int = 0, microseconds: int = 0
+    ) -> Time:
         """
         Add duration to the instance.
 
@@ -127,41 +121,43 @@ class Time(FormattableMixin, time):
             .time()
         )
 
-    def add_timedelta(self, delta):
+    def add_timedelta(self, delta: datetime.timedelta) -> Time:
         """
         Add timedelta duration to the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
-
-        :rtype: Time
         """
         if delta.days:
             raise TypeError("Cannot add timedelta with days to Time.")
 
         return self.add(seconds=delta.seconds, microseconds=delta.microseconds)
 
-    def subtract_timedelta(self, delta):
+    def subtract_timedelta(self, delta: datetime.timedelta) -> Time:
         """
         Remove timedelta duration from the instance.
 
         :param delta: The timedelta instance
-        :type delta: datetime.timedelta
-
-        :rtype: Time
         """
         if delta.days:
             raise TypeError("Cannot subtract timedelta with days to Time.")
 
         return self.subtract(seconds=delta.seconds, microseconds=delta.microseconds)
 
-    def __add__(self, other):
+    def __add__(self, other: datetime.timedelta) -> Time:
         if not isinstance(other, timedelta):
             return NotImplemented
 
         return self.add_timedelta(other)
 
-    def __sub__(self, other):
+    @overload
+    def __sub__(self, other: time) -> pendulum.Duration:
+        ...
+
+    @overload
+    def __sub__(self, other: datetime.timedelta) -> Time:
+        ...
+
+    def __sub__(self, other: time | datetime.timedelta) -> pendulum.Duration | Time:
         if not isinstance(other, (Time, time, timedelta)):
             return NotImplemented
 
@@ -178,7 +174,15 @@ class Time(FormattableMixin, time):
 
         return other.diff(self, False)
 
-    def __rsub__(self, other):
+    @overload
+    def __rsub__(self, other: time) -> pendulum.Duration:
+        ...
+
+    @overload
+    def __rsub__(self, other: datetime.timedelta) -> Time:
+        ...
+
+    def __rsub__(self, other: time | datetime.timedelta) -> pendulum.Duration | Time:
         if not isinstance(other, (Time, time)):
             return NotImplemented
 
@@ -194,16 +198,12 @@ class Time(FormattableMixin, time):
 
     # DIFFERENCES
 
-    def diff(self, dt=None, abs=True):
+    def diff(self, dt: time | None = None, abs: bool = True) -> Duration:
         """
         Returns the difference between two Time objects as an Duration.
 
-        :type dt: Time or None
-
-        :param abs: Whether to return an absolute interval or not
-        :type abs: bool
-
-        :rtype: Duration
+        :param dt: The time to subtract from
+        :param abs: Whether to return an absolute duration or not
         """
         if dt is None:
             dt = pendulum.now().time()
@@ -224,19 +224,18 @@ class Time(FormattableMixin, time):
 
         return klass(microseconds=us2 - us1)
 
-    def diff_for_humans(self, other=None, absolute=False, locale=None):
+    def diff_for_humans(
+        self,
+        other: time | None = None,
+        absolute: bool = False,
+        locale: str | None = None,
+    ) -> str:
         """
         Get the difference in a human readable format in the current locale.
 
-        :type other: Time or time
-
+        :param dt: The time to subtract from
         :param absolute: removes time difference modifiers ago, after, etc
-        :type absolute: bool
-
         :param locale: The locale to use for localization
-        :type locale: str
-
-        :rtype: str
         """
         is_now = other is None
 
@@ -250,8 +249,14 @@ class Time(FormattableMixin, time):
     # Compatibility methods
 
     def replace(
-        self, hour=None, minute=None, second=None, microsecond=None, tzinfo=True
-    ):
+        self,
+        hour: int | None = None,
+        minute: int | None = None,
+        second: int | None = None,
+        microsecond: int | None = None,
+        tzinfo: bool | datetime.tzinfo | Literal[True] | None = True,
+        fold: int = 0,
+    ) -> Time:
         if tzinfo is True:
             tzinfo = self.tzinfo
 
@@ -260,23 +265,36 @@ class Time(FormattableMixin, time):
         second = second if second is not None else self.second
         microsecond = microsecond if microsecond is not None else self.microsecond
 
-        t = super().replace(hour, minute, second, microsecond, tzinfo=tzinfo)
+        t = super().replace(
+            hour,
+            minute,
+            second,
+            microsecond,
+            tzinfo=cast(Optional[datetime.tzinfo], tzinfo),
+            fold=fold,
+        )
         return self.__class__(
             t.hour, t.minute, t.second, t.microsecond, tzinfo=t.tzinfo
         )
 
-    def __getnewargs__(self):
+    def __getnewargs__(self) -> tuple[Time]:
         return (self,)
 
-    def _get_state(self, protocol=3):
+    def _get_state(
+        self, protocol: int = 3
+    ) -> tuple[int, int, int, int, datetime.tzinfo | None]:
         tz = self.tzinfo
 
-        return (self.hour, self.minute, self.second, self.microsecond, tz)
+        return self.hour, self.minute, self.second, self.microsecond, tz
 
-    def __reduce__(self):
+    def __reduce__(
+        self,
+    ) -> tuple[type[Time], tuple[int, int, int, int, datetime.tzinfo | None]]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(self, protocol):
+    def __reduce_ex__(  # type: ignore[override]
+        self, protocol: int
+    ) -> tuple[type[Time], tuple[int, int, int, int, datetime.tzinfo | None]]:
         return self.__class__, self._get_state(protocol)
 
 

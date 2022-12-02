@@ -4,9 +4,8 @@ import typing as t
 
 from pendulum.locales.locale import Locale
 
-
 if t.TYPE_CHECKING:
-    from pendulum import Period
+    from pendulum import Duration
 
 
 class DifferenceFormatter:
@@ -14,39 +13,28 @@ class DifferenceFormatter:
     Handles formatting differences in text.
     """
 
-    def __init__(self, locale="en"):
+    def __init__(self, locale: str = "en") -> None:
         self._locale = Locale.load(locale)
 
     def format(
         self,
-        diff: Period,
+        diff: Duration,
         is_now: bool = True,
         absolute: bool = False,
-        locale: str | None = None,
+        locale: str | Locale | None = None,
     ) -> str:
         """
         Formats a difference.
 
         :param diff: The difference to format
-        :type diff: pendulum.period.Period
-
         :param is_now: Whether the difference includes now
-        :type is_now: bool
-
         :param absolute: Whether it's an absolute difference or not
-        :type absolute: bool
-
         :param locale: The locale to use
-        :type locale: str or None
-
-        :rtype: str
         """
         if locale is None:
             locale = self._locale
         else:
             locale = Locale.load(locale)
-
-        count = diff.remaining_seconds
 
         if diff.years > 0:
             unit = "year"
@@ -89,7 +77,7 @@ class DifferenceFormatter:
             time = locale.get("custom.units.few_second")
             if time is not None:
                 if absolute:
-                    return time
+                    return t.cast(str, time)
 
                 key = "custom"
                 is_future = diff.invert
@@ -104,7 +92,7 @@ class DifferenceFormatter:
                     else:
                         key += ".before"
 
-                return locale.get(key).format(time)
+                return t.cast(str, locale.get(key).format(time))
             else:
                 unit = "second"
                 count = diff.remaining_seconds
@@ -151,8 +139,8 @@ class DifferenceFormatter:
                 else:
                     key += ".before"
 
-                return locale.get(key).format(time)
+                return t.cast(str, locale.get(key).format(time))
 
         key += f".{locale.plural(count)}"
 
-        return locale.get(key).format(count)
+        return t.cast(str, locale.get(key).format(count))

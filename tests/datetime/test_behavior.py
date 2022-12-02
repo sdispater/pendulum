@@ -6,7 +6,6 @@ from copy import deepcopy
 from datetime import date
 from datetime import datetime
 from datetime import time
-from datetime import timedelta
 
 import pytest
 
@@ -14,6 +13,7 @@ import pendulum
 
 from pendulum import timezone
 from pendulum.tz.timezone import Timezone
+from pendulum.utils._compat import zoneinfo
 
 
 @pytest.fixture
@@ -147,8 +147,9 @@ def test_pickle_with_integer_tzinfo():
 
 def test_proper_dst():
     dt = pendulum.datetime(1941, 7, 1, tz="Europe/Amsterdam")
+    native_dt = datetime(1941, 7, 1, tzinfo=zoneinfo.ZoneInfo("Europe/Amsterdam"))
 
-    assert dt.dst() == timedelta(0, 6000)
+    assert dt.dst() == native_dt.dst()
 
 
 def test_deepcopy():

@@ -10,7 +10,7 @@ from tests.conftest import assert_datetime
 def test_with_datetimes():
     dt1 = datetime(2000, 1, 1)
     dt2 = datetime(2000, 1, 31)
-    p = pendulum.period(dt1, dt2)
+    p = pendulum.interval(dt1, dt2)
 
     assert isinstance(p.start, pendulum.DateTime)
     assert isinstance(p.end, pendulum.DateTime)
@@ -21,7 +21,7 @@ def test_with_datetimes():
 def test_with_pendulum():
     dt1 = pendulum.DateTime(2000, 1, 1)
     dt2 = pendulum.DateTime(2000, 1, 31)
-    p = pendulum.period(dt1, dt2)
+    p = pendulum.interval(dt1, dt2)
 
     assert_datetime(p.start, 2000, 1, 1)
     assert_datetime(p.end, 2000, 1, 31)
@@ -30,7 +30,7 @@ def test_with_pendulum():
 def test_inverted():
     dt1 = pendulum.DateTime(2000, 1, 1)
     dt2 = pendulum.DateTime(2000, 1, 31)
-    p = pendulum.period(dt2, dt1)
+    p = pendulum.interval(dt2, dt1)
 
     assert_datetime(p.start, 2000, 1, 31)
     assert_datetime(p.end, 2000, 1, 1)
@@ -39,7 +39,7 @@ def test_inverted():
 def test_inverted_and_absolute():
     dt1 = pendulum.DateTime(2000, 1, 1)
     dt2 = pendulum.DateTime(2000, 1, 31)
-    p = pendulum.period(dt2, dt1, True)
+    p = pendulum.interval(dt2, dt1, True)
 
     assert_datetime(p.start, 2000, 1, 1)
     assert_datetime(p.end, 2000, 1, 31)
@@ -49,8 +49,8 @@ def test_accuracy():
     dt1 = pendulum.DateTime(2000, 11, 20)
     dt2 = pendulum.DateTime(2000, 11, 25)
     dt3 = pendulum.DateTime(2016, 11, 5)
-    p1 = pendulum.period(dt1, dt3)
-    p2 = pendulum.period(dt2, dt3)
+    p1 = pendulum.interval(dt1, dt3)
+    p2 = pendulum.interval(dt2, dt3)
 
     assert p1.years == 15
     assert p1.in_years() == 15
@@ -90,8 +90,8 @@ def test_timedelta_behavior():
     dt2 = pendulum.DateTime(2000, 11, 25, 2)
     dt3 = pendulum.DateTime(2016, 11, 5, 3)
 
-    p1 = pendulum.period(dt1, dt3)
-    p2 = pendulum.period(dt2, dt3)
+    p1 = pendulum.interval(dt1, dt3)
+    p2 = pendulum.interval(dt2, dt3)
     it1 = p1.as_timedelta()
     it2 = p2.as_timedelta()
 

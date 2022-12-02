@@ -2,12 +2,20 @@ from __future__ import annotations
 
 import datetime
 import re
-import typing
+
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import Callable
+from typing import Match
+from typing import Sequence
+from typing import cast
 
 import pendulum
 
 from pendulum.locales.locale import Locale
 
+if TYPE_CHECKING:
+    from pendulum import Timezone
 
 _MATCH_1 = r"\d"
 _MATCH_2 = r"\d\d"
@@ -35,8 +43,7 @@ _MATCH_TIMEZONE = "[A-Za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
 
 
 class Formatter:
-
-    _TOKENS = (
+    _TOKENS: str = (
         r"\[([^\[]*)\]|\\(.)|"
         "("
         "Mo|MM?M?M?"
@@ -54,11 +61,11 @@ class Formatter:
         ")"
     )
 
-    _FORMAT_RE = re.compile(_TOKENS)
+    _FORMAT_RE: re.Pattern[str] = re.compile(_TOKENS)
 
-    _FROM_FORMAT_RE = re.compile(r"(?<!\\\[)" + _TOKENS + r"(?!\\\])")
+    _FROM_FORMAT_RE: re.Pattern[str] = re.compile(r"(?<!\\\[)" + _TOKENS + r"(?!\\\])")
 
-    _LOCALIZABLE_TOKENS = {
+    _LOCALIZABLE_TOKENS: dict[str, str | Callable[[Locale], Sequence[str]] | None] = {
         "Qo": None,
         "MMMM": "months.wide",
         "MMM": "months.abbreviated",
@@ -83,7 +90,7 @@ class Formatter:
         ),
     }
 
-    _TOKENS_RULES = {
+    _TOKENS_RULES: dict[str, Callable[[pendulum.DateTime], str]] = {
         # Year
         "YYYY": lambda dt: f"{dt.year:d}",
         "YY": lambda dt: f"{dt.year:d}"[2:],
@@ -147,7 +154,7 @@ class Formatter:
         "LLLL": "dddd, MMMM D, YYYY h:mm A",
     }
 
-    _REGEX_TOKENS = {
+    _REGEX_TOKENS: dict[str, str | Sequence[str] | None] = {
         "Y": _MATCH_SIGNED,
         "YY": (_MATCH_1_TO_2, _MATCH_2),
         "YYYY": (_MATCH_1_TO_4, _MATCH_4),
@@ -188,7 +195,7 @@ class Formatter:
         "z": _MATCH_TIMEZONE,
     }
 
-    _PARSE_TOKENS = {
+    _PARSE_TOKENS: dict[str, Callable[[str], Any]] = {
         "YYYY": lambda year: int(year),
         "YY": lambda year: int(year),
         "Q": lambda quarter: int(quarter),
@@ -234,27 +241,17 @@ class Formatter:
         Formats a DateTime instance with a given format and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.DateTime
-
         :param fmt: The format to use
-        :type fmt: str
-
         :param locale: The locale to use
-        :type locale: str or Locale or None
-
-        :rtype: str
         """
-        if not locale:
-            locale = pendulum.get_locale()
-
-        locale = Locale.load(locale)
+        loaded_locale: Locale = Locale.load(locale or pendulum.get_locale())
 
         result = self._FORMAT_RE.sub(
             lambda m: m.group(1)
             if m.group(1)
             else m.group(2)
             if m.group(2)
-            else self._format_token(dt, m.group(3), locale),
+            else self._format_token(dt, m.group(3), loaded_locale),
             fmt,
         )
 
@@ -265,15 +262,8 @@ class Formatter:
         Formats a DateTime instance with a given token and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.DateTime
-
         :param token: The token to use
-        :type token: str
-
         :param locale: The locale to use
-        :type locale: Locale
-
-        :rtype: str
         """
         if token in self._DATE_FORMATS:
             fmt = locale.get(f"custom.date_formats.{token}")
@@ -306,6 +296,8 @@ class Formatter:
 
             return f"{sign}{hour:02d}{separator}{minute:02d}"
 
+        return token
+
     def _format_localizable_token(
         self, dt: pendulum.DateTime, token: str, locale: Locale
     ) -> str:
@@ -314,26 +306,21 @@ class Formatter:
         with a given localizable token and locale.
 
         :param dt: The instance to format
-        :type dt: pendulum.DateTime
-
         :param token: The token to use
-        :type token: str
-
         :param locale: The locale to use
-        :type locale: Locale
-
-        :rtype: str
         """
         if token == "MMM":
-            return locale.get("translations.months.abbreviated")[dt.month]
+            return cast(str, locale.get("translations.months.abbreviated")[dt.month])
         elif token == "MMMM":
-            return locale.get("translations.months.wide")[dt.month]
+            return cast(str, locale.get("translations.months.wide")[dt.month])
         elif token == "dd":
-            return locale.get("translations.days.short")[dt.day_of_week]
+            return cast(str, locale.get("translations.days.short")[dt.day_of_week])
         elif token == "ddd":
-            return locale.get("translations.days.abbreviated")[dt.day_of_week]
+            return cast(
+                str, locale.get("translations.days.abbreviated")[dt.day_of_week]
+            )
         elif token == "dddd":
-            return locale.get("translations.days.wide")[dt.day_of_week]
+            return cast(str, locale.get("translations.days.wide")[dt.day_of_week])
         elif token == "Do":
             return locale.ordinalize(dt.day)
         elif token == "do":
@@ -353,7 +340,7 @@ class Formatter:
             else:
                 key += ".am"
 
-            return locale.get(key)
+            return cast(str, locale.get(key))
         else:
             return token
 
@@ -363,7 +350,7 @@ class Formatter:
         fmt: str,
         now: pendulum.DateTime,
         locale: str | None = None,
-    ) -> dict[str, typing.Any]:
+    ) -> dict[str, Any]:
         """
         Parses a time string matching a given format as a tuple.
 
@@ -378,12 +365,12 @@ class Formatter:
 
         tokens = self._FROM_FORMAT_RE.findall(escaped_fmt)
         if not tokens:
-            return time
+            raise ValueError("The given time string does not match the given format")
 
         if not locale:
             locale = pendulum.get_locale()
 
-        locale = Locale.load(locale)
+        loaded_locale: Locale = Locale.load(locale)
 
         parsed = {
             "year": None,
@@ -402,19 +389,23 @@ class Formatter:
         }
 
         pattern = self._FROM_FORMAT_RE.sub(
-            lambda m: self._replace_tokens(m.group(0), locale), escaped_fmt
+            lambda m: self._replace_tokens(m.group(0), loaded_locale), escaped_fmt
         )
 
         if not re.search("^" + pattern + "$", time):
             raise ValueError(f"String does not match format {fmt}")
 
-        re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)
+        _get_parsed_values: Callable[
+            [Match[str]], Any
+        ] = lambda m: self._get_parsed_values(m, parsed, loaded_locale, now)
+
+        re.sub(pattern, _get_parsed_values, time)
 
         return self._check_parsed(parsed, now)
 
     def _check_parsed(
-        self, parsed: dict[str, typing.Any], now: pendulum.DateTime
-    ) -> dict[str, typing.Any]:
+        self, parsed: dict[str, Any], now: pendulum.DateTime
+    ) -> dict[str, Any]:
         """
         Checks validity of parsed elements.
 
@@ -422,7 +413,7 @@ class Formatter:
 
         :return: The validated elements.
         """
-        validated = {
+        validated: dict[str, int | Timezone | None] = {
             "year": parsed["year"],
             "month": parsed["month"],
             "day": parsed["day"],
@@ -457,7 +448,7 @@ class Formatter:
 
         if parsed["quarter"] is not None:
             if validated["year"] is not None:
-                dt = pendulum.datetime(validated["year"], 1, 1)
+                dt = pendulum.datetime(cast(int, validated["year"]), 1, 1)
             else:
                 dt = now
 
@@ -474,16 +465,19 @@ class Formatter:
             validated["year"] = now.year
 
         if parsed["day_of_year"] is not None:
-            dt = pendulum.parse(f'{validated["year"]}-{parsed["day_of_year"]:>03d}')
+            dt = cast(
+                pendulum.DateTime,
+                pendulum.parse(f'{validated["year"]}-{parsed["day_of_year"]:>03d}'),
+            )
 
             validated["month"] = dt.month
             validated["day"] = dt.day
 
         if parsed["day_of_week"] is not None:
             dt = pendulum.datetime(
-                validated["year"],
-                validated["month"] or now.month,
-                validated["day"] or now.day,
+                cast(int, validated["year"]),
+                cast(int, validated["month"]) or now.month,
+                cast(int, validated["day"]) or now.day,
             )
             dt = dt.start_of("week").subtract(days=1)
             dt = dt.next(parsed["day_of_week"])
@@ -508,9 +502,9 @@ class Formatter:
                 raise ValueError("Invalid date")
 
             pm = parsed["meridiem"] == "pm"
-            validated["hour"] %= 12
+            validated["hour"] %= 12  # type: ignore
             if pm:
-                validated["hour"] += 12
+                validated["hour"] += 12  # type: ignore
 
         if validated["month"] is None:
             if parsed["year"] is not None:
@@ -534,8 +528,8 @@ class Formatter:
 
     def _get_parsed_values(
         self,
-        m: typing.Match[str],
-        parsed: dict[str, typing.Any],
+        m: Match[str],
+        parsed: dict[str, Any],
         locale: Locale,
         now: pendulum.DateTime,
     ) -> None:
@@ -549,7 +543,7 @@ class Formatter:
         self,
         token: str,
         value: str,
-        parsed: dict[str, typing.Any],
+        parsed: dict[str, Any],
         now: pendulum.DateTime,
     ) -> None:
         parsed_token = self._PARSE_TOKENS[token](value)
@@ -610,7 +604,7 @@ class Formatter:
             parsed["tz"] = pendulum.timezone(value)
 
     def _get_parsed_locale_value(
-        self, token: str, value: str, parsed: dict[str, typing.Any], locale: Locale
+        self, token: str, value: str, parsed: dict[str, Any], locale: Locale
     ) -> None:
         if token == "MMMM":
             unit = "month"
@@ -619,7 +613,7 @@ class Formatter:
             unit = "month"
             match = "months.abbreviated"
         elif token == "Do":
-            parsed["day"] = int(re.match(r"(\d+)", value).group(1))
+            parsed["day"] = int(cast(Match[str], re.match(r"(\d+)", value)).group(1))
 
             return
         elif token == "dddd":
@@ -671,16 +665,18 @@ class Formatter:
                 candidates = values(locale)
             else:
                 candidates = tuple(
-                    locale.translation(self._LOCALIZABLE_TOKENS[token]).values()
+                    locale.translation(
+                        cast(str, self._LOCALIZABLE_TOKENS[token])
+                    ).values()
                 )
         else:
-            candidates = self._REGEX_TOKENS[token]
+            candidates = cast(Sequence[str], self._REGEX_TOKENS[token])
 
         if not candidates:
             raise ValueError(f"Unsupported token: {token}")
 
         if not isinstance(candidates, tuple):
-            candidates = (candidates,)
+            candidates = (cast(str, candidates),)
 
         pattern = f'(?P<{token}>{"|".join(candidates)})'
 

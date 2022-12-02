@@ -5,6 +5,11 @@ import operator
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from typing import TYPE_CHECKING
+from typing import Iterator
+from typing import Union
+from typing import cast
+from typing import overload
 
 import pendulum
 
@@ -12,14 +17,50 @@ from pendulum.constants import MONTHS_PER_YEAR
 from pendulum.duration import Duration
 from pendulum.helpers import precise_diff
 
+if TYPE_CHECKING:
+    from typing import SupportsIndex
 
-class Period(Duration):
+    from pendulum.helpers import PreciseDiff
+    from pendulum.locales.locale import Locale  # noqa
+
+
+class Interval(Duration):
     """
-    Duration class that is aware of the datetimes that generated the
-    time difference.
+    A period of time between two datetimes.
     """
 
-    def __new__(cls, start, end, absolute=False):
+    @overload
+    def __new__(
+        cls,
+        start: pendulum.DateTime | datetime,
+        end: pendulum.DateTime | datetime,
+        absolute: bool = False,
+    ) -> Interval:
+        ...
+
+    @overload
+    def __new__(
+        cls,
+        start: pendulum.Date | date,
+        end: pendulum.Date | date,
+        absolute: bool = False,
+    ) -> Interval:
+        ...
+
+    def __new__(
+        cls,
+        start: pendulum.DateTime | pendulum.Date | datetime | date,
+        end: pendulum.DateTime | pendulum.Date | datetime | date,
+        absolute: bool = False,
+    ) -> Interval:
+        if (
+            isinstance(start, datetime)
+            and not isinstance(end, datetime)
+            or not isinstance(start, datetime)
+            and isinstance(end, datetime)
+        ):
+            raise ValueError("Both start and end of a Period must have the same type")
+
         if (
             isinstance(start, datetime)
             and isinstance(end, datetime)
@@ -75,18 +116,26 @@ class Period(Duration):
             and _start.tzinfo is _end.tzinfo
         ):
             if _start.tzinfo is not None:
-                _start = (_start - start.utcoffset()).replace(tzinfo=None)
+                offset = cast(timedelta, cast(datetime, start).utcoffset())
+                _start = (_start - offset).replace(tzinfo=None)
 
             if isinstance(end, datetime) and _end.tzinfo is not None:
-                _end = (_end - end.utcoffset()).replace(tzinfo=None)
+                offset = cast(timedelta, end.utcoffset())
+                _end = (_end - offset).replace(tzinfo=None)
 
-        delta = _end - _start
+        delta: timedelta = _end - _start  # type: ignore[operator]
 
-        return super().__new__(cls, seconds=delta.total_seconds())
+        return cast(Interval, super().__new__(cls, seconds=delta.total_seconds()))
 
-    def __init__(self, start, end, absolute=False):
+    def __init__(
+        self,
+        start: pendulum.DateTime | pendulum.Date | datetime | date,
+        end: pendulum.DateTime | pendulum.Date | datetime | date,
+        absolute: bool = False,
+    ) -> None:
         super().__init__()
 
+        _start: pendulum.DateTime | pendulum.Date | datetime | date
         if not isinstance(start, pendulum.Date):
             if isinstance(start, datetime):
                 start = pendulum.instance(start)
@@ -109,6 +158,7 @@ class Period(Duration):
             else:
                 _start = date(start.year, start.month, start.day)
 
+        _end: pendulum.DateTime | pendulum.Date | datetime | date
         if not isinstance(end, pendulum.Date):
             if isinstance(end, datetime):
                 end = pendulum.instance(end)
@@ -140,63 +190,59 @@ class Period(Duration):
                 _end, _start = _start, _end
 
         self._absolute = absolute
-        self._start = start
-        self._end = end
-        self._delta = precise_diff(_start, _end)
+        self._start: pendulum.DateTime | pendulum.Date = start
+        self._end: pendulum.DateTime | pendulum.Date = end
+        self._delta: PreciseDiff = precise_diff(_start, _end)
 
     @property
-    def years(self):
+    def years(self) -> int:
         return self._delta.years
 
     @property
-    def months(self):
+    def months(self) -> int:
         return self._delta.months
 
     @property
-    def weeks(self):
+    def weeks(self) -> int:
         return abs(self._delta.days) // 7 * self._sign(self._delta.days)
 
     @property
-    def days(self):
+    def days(self) -> int:
         return self._days
 
     @property
-    def remaining_days(self):
+    def remaining_days(self) -> int:
         return abs(self._delta.days) % 7 * self._sign(self._days)
 
     @property
-    def hours(self):
+    def hours(self) -> int:
         return self._delta.hours
 
     @property
-    def minutes(self):
+    def minutes(self) -> int:
         return self._delta.minutes
 
     @property
-    def start(self):
+    def start(self) -> pendulum.DateTime | pendulum.Date | datetime | date:
         return self._start
 
     @property
-    def end(self):
+    def end(self) -> pendulum.DateTime | pendulum.Date | datetime | date:
         return self._end
 
-    def in_years(self):
+    def in_years(self) -> int:
         """
         Gives the duration of the Period in full years.
-
-        :rtype: int
         """
         return self.years
 
-    def in_months(self):
+    def in_months(self) -> int:
         """
         Gives the duration of the Period in full months.
-
-        :rtype: int
         """
         return self.years * MONTHS_PER_YEAR + self.months
 
-    def in_weeks(self):
+    def in_weeks(self) -> int:
         days = self.in_days()
         sign = 1
 
@@ -205,23 +251,20 @@ class Period(Duration):
 
         return sign * (abs(days) // 7)
 
-    def in_days(self):
+    def in_days(self) -> int:
         return self._delta.total_days
 
-    def in_words(self, locale=None, separator=" "):
+    def in_words(self, locale: str | None = None, separator: str = " ") -> str:
         """
         Get the current interval in words in the current locale.
 
         Ex: 6 jours 23 heures 58 minutes
 
         :param locale: The locale to use. Defaults to current locale.
-        :type locale: str
-
         :param separator: The separator to use between each unit
-        :type separator: str
-
-        :rtype: str
         """
+        from pendulum.locales.locale import Locale  # noqa
+
         periods = [
             ("year", self.years),
             ("month", self.months),
@@ -231,33 +274,32 @@ class Period(Duration):
             ("minute", self.minutes),
             ("second", self.remaining_seconds),
         ]
-
-        if locale is None:
-            locale = pendulum.get_locale()
-
-        locale = pendulum.locale(locale)
+        loaded_locale: Locale = Locale.load(locale or pendulum.get_locale())
         parts = []
         for period in periods:
-            unit, count = period
-            if abs(count) > 0:
-                translation = locale.translation(
-                    f"units.{unit}.{locale.plural(abs(count))}"
+            unit, period_count = period
+            if abs(period_count) > 0:
+                translation = loaded_locale.translation(
+                    f"units.{unit}.{loaded_locale.plural(abs(period_count))}"
                 )
-                parts.append(translation.format(count))
+                parts.append(translation.format(period_count))
 
         if not parts:
+            count: str | int = 0
             if abs(self.microseconds) > 0:
-                unit = f"units.second.{locale.plural(1)}"
+                unit = f"units.second.{loaded_locale.plural(1)}"
                 count = f"{abs(self.microseconds) / 1e6:.2f}"
             else:
-                unit = f"units.microsecond.{locale.plural(0)}"
-                count = 0
-            translation = locale.translation(unit)
+                unit = f"units.microsecond.{loaded_locale.plural(0)}"
+
+            translation = loaded_locale.translation(unit)
             parts.append(translation.format(count))
 
         return separator.join(parts)
 
-    def range(self, unit, amount=1):
+    def range(
+        self, unit: str, amount: int = 1
+    ) -> Iterator[pendulum.DateTime | pendulum.Date]:
         method = "add"
         op = operator.le
         if not self._absolute and self.invert:
@@ -268,95 +310,135 @@ class Period(Duration):
 
         i = amount
         while op(start, end):
-            yield start
+            yield cast(Union[pendulum.DateTime, pendulum.Date], start)
 
             start = getattr(self.start, method)(**{unit: i})
 
             i += amount
 
-    def as_interval(self):
+    def as_interval(self) -> Duration:
         """
-        Return the Period as an Duration.
-
-        :rtype: Duration
+        Return the Period as a Duration.
         """
         return Duration(seconds=self.total_seconds())
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[pendulum.DateTime | pendulum.Date]:
         return self.range("days")
 
-    def __contains__(self, item):
+    def __contains__(
+        self, item: datetime | date | pendulum.DateTime | pendulum.Date
+    ) -> bool:
         return self.start <= item <= self.end
 
-    def __add__(self, other):
+    def __add__(self, other: timedelta) -> Duration:
         return self.as_interval().__add__(other)
 
     __radd__ = __add__
 
-    def __sub__(self, other):
+    def __sub__(self, other: timedelta) -> Duration:
         return self.as_interval().__sub__(other)
 
-    def __neg__(self):
+    def __neg__(self) -> Interval:
         return self.__class__(self.end, self.start, self._absolute)
 
-    def __mul__(self, other):
+    def __mul__(self, other: int | float) -> Duration:
         return self.as_interval().__mul__(other)
 
     __rmul__ = __mul__
 
-    def __floordiv__(self, other):
+    @overload
+    def __floordiv__(self, other: timedelta) -> int:
+        ...
+
+    @overload
+    def __floordiv__(self, other: int) -> Duration:
+        ...
+
+    def __floordiv__(self, other: int | timedelta) -> int | Duration:
         return self.as_interval().__floordiv__(other)
 
-    def __truediv__(self, other):
+    __div__ = __floordiv__  # type: ignore[assignment]
+
+    @overload
+    def __truediv__(self, other: timedelta) -> float:
+        ...
+
+    @overload
+    def __truediv__(self, other: float) -> Duration:
+        ...
+
+    def __truediv__(self, other: float | timedelta) -> Duration | float:
         return self.as_interval().__truediv__(other)
 
-    __div__ = __floordiv__
-
-    def __mod__(self, other):
+    def __mod__(self, other: timedelta) -> Duration:
         return self.as_interval().__mod__(other)
 
-    def __divmod__(self, other):
+    def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         return self.as_interval().__divmod__(other)
 
-    def __abs__(self):
-        return self.__class__(self.start, self.end, True)
+    def __abs__(self) -> Interval:
+        return self.__class__(self.start, self.end, absolute=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Period [{self._start} -> {self._end}]>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__repr__()
 
-    def _cmp(self, other):
+    def _cmp(self, other: timedelta) -> int:
         # Only needed for PyPy
         assert isinstance(other, timedelta)
 
-        if isinstance(other, Period):
+        if isinstance(other, Interval):
             other = other.as_timedelta()
 
         td = self.as_timedelta()
 
         return 0 if td == other else 1 if td > other else -1
 
-    def _getstate(self, protocol=3):
+    def _getstate(
+        self, protocol: SupportsIndex = 3
+    ) -> tuple[
+        pendulum.DateTime | pendulum.Date | datetime | date,
+        pendulum.DateTime | pendulum.Date | datetime | date,
+        bool,
+    ]:
         start, end = self.start, self.end
 
         if self._invert and self._absolute:
             end, start = start, end
 
-        return (start, end, self._absolute)
+        return start, end, self._absolute
 
-    def __reduce__(self):
+    def __reduce__(
+        self,
+    ) -> tuple[
+        type[Interval],
+        tuple[
+            pendulum.DateTime | pendulum.Date | datetime | date,
+            pendulum.DateTime | pendulum.Date | datetime | date,
+            bool,
+        ],
+    ]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(self, protocol):
+    def __reduce_ex__(
+        self, protocol: SupportsIndex
+    ) -> tuple[
+        type[Interval],
+        tuple[
+            pendulum.DateTime | pendulum.Date | datetime | date,
+            pendulum.DateTime | pendulum.Date | datetime | date,
+            bool,
+        ],
+    ]:
         return self.__class__, self._getstate(protocol)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.start, self.end, self._absolute))
 
-    def __eq__(self, other):
-        if isinstance(other, Period):
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Interval):
             return (self.start, self.end, self._absolute) == (
                 other.start,
                 other.end,

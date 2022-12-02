@@ -11,7 +11,6 @@ def setup():
 
     yield
 
-    pendulum.set_test_now()
     pendulum.set_locale("en")
     pendulum.set_local_timezone()
     pendulum.week_starts_at(pendulum.MONDAY)
@@ -63,7 +62,7 @@ def assert_duration(
     minutes=None,
     seconds=None,
     microseconds=None,
-):
+) -> None:
     expected = {}
     actual = {}
 

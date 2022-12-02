@@ -7,20 +7,17 @@ import sys
 
 from contextlib import contextmanager
 from typing import Iterator
+from typing import cast
 
 from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
-
-try:
-    import _winreg as winreg
-except ImportError:
+if sys.platform == "win32":
     try:
+        import _winreg as winreg
+    except (ImportError, AttributeError):
         import winreg
-    except ImportError:
-        winreg = None
-
 
 _mock_local_timezone = None
 _local_timezone = None
@@ -64,81 +61,88 @@ def _get_system_timezone() -> Timezone:
     return _get_unix_timezone()
 
 
-def _get_windows_timezone() -> Timezone:
-    from pendulum.tz.data.windows import windows_timezones
+if sys.platform == "win32":
 
-    # Windows is special. It has unique time zone names (in several
-    # meanings of the word) available, but unfortunately, they can be
-    # translated to the language of the operating system, so we need to
-    # do a backwards lookup, by going through all time zones and see which
-    # one matches.
-    handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+    def _get_windows_timezone() -> Timezone:
+        from pendulum.tz.data.windows import windows_timezones
 
-    tz_local_key_name = r"SYSTEM\CurrentControlSet\Control\TimeZoneInformation"
-    localtz = winreg.OpenKey(handle, tz_local_key_name)
+        # Windows is special. It has unique time zone names (in several
+        # meanings of the word) available, but unfortunately, they can be
+        # translated to the language of the operating system, so we need to
+        # do a backwards lookup, by going through all time zones and see which
+        # one matches.
+        handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
 
-    timezone_info = {}
-    size = winreg.QueryInfoKey(localtz)[1]
-    for i in range(size):
-        data = winreg.EnumValue(localtz, i)
-        timezone_info[data[0]] = data[1]
+        tz_local_key_name = r"SYSTEM\CurrentControlSet\Control\TimeZoneInformation"
+        localtz = winreg.OpenKey(handle, tz_local_key_name)
 
-    localtz.Close()
+        timezone_info = {}
+        size = winreg.QueryInfoKey(localtz)[1]
+        for i in range(size):
+            data = winreg.EnumValue(localtz, i)
+            timezone_info[data[0]] = data[1]
 
-    if "TimeZoneKeyName" in timezone_info:
-        # Windows 7 (and Vista?)
+        localtz.Close()
 
-        # For some reason this returns a string with loads of NUL bytes at
-        # least on some systems. I don't know if this is a bug somewhere, I
-        # just work around it.
-        tzkeyname = timezone_info["TimeZoneKeyName"].split("\x00", 1)[0]
-    else:
-        # Windows 2000 or XP
+        if "TimeZoneKeyName" in timezone_info:
+            # Windows 7 (and Vista?)
 
-        # This is the localized name:
-        tzwin = timezone_info["StandardName"]
+            # For some reason this returns a string with loads of NUL bytes at
+            # least on some systems. I don't know if this is a bug somewhere, I
+            # just work around it.
+            tzkeyname = timezone_info["TimeZoneKeyName"].split("\x00", 1)[0]
+        else:
+            # Windows 2000 or XP
 
-        # Open the list of timezones to look up the real name:
-        tz_key_name = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones"
-        tzkey = winreg.OpenKey(handle, tz_key_name)
+            # This is the localized name:
+            tzwin = timezone_info["StandardName"]
 
-        # Now, match this value to Time Zone information
-        tzkeyname = None
-        for i in range(winreg.QueryInfoKey(tzkey)[0]):
-            subkey = winreg.EnumKey(tzkey, i)
-            sub = winreg.OpenKey(tzkey, subkey)
+            # Open the list of timezones to look up the real name:
+            tz_key_name = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones"
+            tzkey = winreg.OpenKey(handle, tz_key_name)
 
-            info = {}
-            size = winreg.QueryInfoKey(sub)[1]
-            for i in range(size):
-                data = winreg.EnumValue(sub, i)
-                info[data[0]] = data[1]
+            # Now, match this value to Time Zone information
+            tzkeyname = None
+            for i in range(winreg.QueryInfoKey(tzkey)[0]):
+                subkey = winreg.EnumKey(tzkey, i)
+                sub = winreg.OpenKey(tzkey, subkey)
 
-            sub.Close()
-            with contextlib.suppress(KeyError):
-                # This timezone didn't have proper configuration.
-                # Ignore it.
-                if info["Std"] == tzwin:
-                    tzkeyname = subkey
-                    break
+                info = {}
+                size = winreg.QueryInfoKey(sub)[1]
+                for i in range(size):
+                    data = winreg.EnumValue(sub, i)
+                    info[data[0]] = data[1]
 
-        tzkey.Close()
-        handle.Close()
+                sub.Close()
+                with contextlib.suppress(KeyError):
+                    # This timezone didn't have proper configuration.
+                    # Ignore it.
+                    if info["Std"] == tzwin:
+                        tzkeyname = subkey
+                        break
 
-    if tzkeyname is None:
-        raise LookupError("Can not find Windows timezone configuration")
+            tzkey.Close()
+            handle.Close()
 
-    timezone = windows_timezones.get(tzkeyname)
-    if timezone is None:
-        # Nope, that didn't work. Try adding "Standard Time",
-        # it seems to work a lot of times:
-        timezone = windows_timezones.get(tzkeyname + " Standard Time")
+        if tzkeyname is None:
+            raise LookupError("Can not find Windows timezone configuration")
 
-    # Return what we have.
-    if timezone is None:
-        raise LookupError("Unable to find timezone " + tzkeyname)
+        timezone = windows_timezones.get(tzkeyname)
+        if timezone is None:
+            # Nope, that didn't work. Try adding "Standard Time",
+            # it seems to work a lot of times:
+            timezone = windows_timezones.get(tzkeyname + " Standard Time")
 
-    return Timezone(timezone)
+        # Return what we have.
+        if timezone is None:
+            raise LookupError("Unable to find timezone " + tzkeyname)
+
+        return Timezone(timezone)
+
+else:
+
+    def _get_windows_timezone() -> Timezone:
+        ...
 
 
 def _get_darwin_timezone() -> Timezone:
@@ -160,12 +164,12 @@ def _get_unix_timezone(_root: str = "/") -> Timezone:
     tzpath = os.path.join(_root, "etc/timezone")
     if os.path.isfile(tzpath):
         with open(tzpath, "rb") as tzfile:
-            data = tzfile.read()
+            tzfile_data = tzfile.read()
 
             # Issue #3 was that /etc/timezone was a zoneinfo file.
             # That's a misconfiguration, but we need to handle it gracefully:
-            if data[:5] != "TZif2":
-                etctz = data.strip().decode()
+            if tzfile_data[:5] != b"TZif2":
+                etctz = tzfile_data.strip().decode()
                 # Get rid of host definitions and comments:
                 if " " in etctz:
                     etctz, dummy = etctz.split(" ", 1)
@@ -200,15 +204,19 @@ def _get_unix_timezone(_root: str = "/") -> Timezone:
             if match is not None:
                 # Some setting existed
                 line = line[match.end() :]
-                etctz = line[: end_re.search(line).start()]
+                etctz = line[
+                    : cast(
+                        re.Match, end_re.search(line)  # type: ignore[type-arg]
+                    ).start()
+                ]
 
                 parts = list(reversed(etctz.replace(" ", "_").split(os.path.sep)))
-                tzpath = []
+                tzpath_parts: list[str] = []
                 while parts:
-                    tzpath.insert(0, parts.pop(0))
+                    tzpath_parts.insert(0, parts.pop(0))
 
                     with contextlib.suppress(InvalidTimezone):
-                        return Timezone(os.path.join(*tzpath))
+                        return Timezone(os.path.join(*tzpath_parts))
 
     # systemd distributions use symlinks that include the zone name,
     # see manpage of localtime(5) and timedatectl(1)
@@ -217,11 +225,11 @@ def _get_unix_timezone(_root: str = "/") -> Timezone:
         parts = list(
             reversed(os.path.realpath(tzpath).replace(" ", "_").split(os.path.sep))
         )
-        tzpath = []
+        tzpath_parts: list[str] = []  # type: ignore[no-redef]
         while parts:
-            tzpath.insert(0, parts.pop(0))
+            tzpath_parts.insert(0, parts.pop(0))
             with contextlib.suppress(InvalidTimezone):
-                return Timezone(os.path.join(*tzpath))
+                return Timezone(os.path.join(*tzpath_parts))
 
     # No explicit setting existed. Use localtime
     for filename in ("etc/localtime", "usr/local/etc/localtime"):

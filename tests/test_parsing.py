@@ -26,7 +26,7 @@ def test_parse():
     assert_datetime(dt, 2016, 10, 16, 0, 0, 0, 0)
     assert dt.offset == 0
 
-    with pendulum.test(pendulum.datetime(2015, 11, 12)):
+    with pendulum.travel_to(pendulum.datetime(2015, 11, 12), freeze=True):
         text = "12:34:56.123456"
 
         dt = pendulum.parse(text)
@@ -97,7 +97,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
@@ -107,7 +107,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
@@ -117,7 +117,7 @@ def test_parse_interval():
 
     period = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Period)
+    assert isinstance(period, pendulum.Interval)
     assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
     assert period.start.offset == 0
     assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
@@ -131,7 +131,7 @@ def test_parse_now():
 
     mock_now = pendulum.yesterday()
 
-    with pendulum.test(mock_now):
+    with pendulum.travel_to(mock_now, freeze=True):
         assert pendulum.parse("now") == mock_now
 
 

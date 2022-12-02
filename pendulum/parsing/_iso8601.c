@@ -522,7 +522,6 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
     int leap = 0;
     int separators = 0;
     int time = 0;
-    int has_hour = 0;
     int i;
     int j;
 
@@ -773,7 +772,6 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
                 }
 
                 parsed->hour = time;
-                has_hour = 1;
                 break;
             case 4:
                 // Hours and minutes
@@ -786,7 +784,6 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
 
                 parsed->hour = time / 100;
                 parsed->minute = time % 100;
-                has_hour = 1;
                 break;
             case 6:
                 // Hours, minutes and seconds
@@ -800,7 +797,6 @@ Parsed* _parse_iso8601_datetime(char *str, Parsed *parsed) {
                 parsed->hour = time / 10000;
                 parsed->minute = time / 100 % 100;
                 parsed->second = time % 100;
-                has_hour = 1;
                 break;
             default:
                 // Any other case is wrong
@@ -942,7 +938,6 @@ Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
     int fraction = 0;
     int has_ymd = 0;
     int has_week = 0;
-    int has_year = 0;
     int has_month = 0;
     int has_day = 0;
     int has_hour = 0;
@@ -979,7 +974,6 @@ Parsed* _parse_iso8601_duration(char *str, Parsed *parsed) {
                 fraction = 0;
                 in_fraction = 0;
                 has_ymd = 1;
-                has_year = 1;
 
                 break;
             case 'M':

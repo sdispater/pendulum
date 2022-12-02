@@ -11,6 +11,7 @@ from pendulum import timezone
 from pendulum.tz import fixed_timezone
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import NonExistingTime
+from pendulum.utils._compat import zoneinfo
 from tests.conftest import assert_datetime
 
 
@@ -232,8 +233,9 @@ def test_utcoffset_pre_transition():
 def test_dst():
     tz = pendulum.timezone("Europe/Amsterdam")
     dst = tz.dst(datetime(1940, 7, 1))
+    native_tz = zoneinfo.ZoneInfo("Europe/Amsterdam")
 
-    assert dst == timedelta(0, 6000)
+    assert dst == native_tz.dst(datetime(1940, 7, 1))
 
 
 def test_short_timezones_should_not_modify_time():

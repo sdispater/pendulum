@@ -4,7 +4,11 @@ import calendar
 import math
 
 from datetime import date
+from datetime import datetime
 from datetime import timedelta
+from typing import NoReturn
+from typing import cast
+from typing import overload
 
 import pendulum
 
@@ -20,12 +24,11 @@ from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
+from pendulum.interval import Interval
 from pendulum.mixins.default import FormattableMixin
-from pendulum.period import Period
 
 
 class Date(FormattableMixin, date):
-
     # Names of days of the week
     _days = {
         SUNDAY: "Sunday",
@@ -41,54 +44,52 @@ class Date(FormattableMixin, date):
 
     # Getters/Setters
 
-    def set(self, year=None, month=None, day=None):
+    def set(
+        self, year: int | None = None, month: int | None = None, day: int | None = None
+    ) -> Date:
         return self.replace(year=year, month=month, day=day)
 
     @property
-    def day_of_week(self):
+    def day_of_week(self) -> int:
         """
         Returns the day of the week (0-6).
-
-        :rtype: int
         """
         return self.isoweekday() % 7
 
     @property
-    def day_of_year(self):
+    def day_of_year(self) -> int:
         """
         Returns the day of the year (1-366).
-
-        :rtype: int
         """
         k = 1 if self.is_leap_year() else 2
 
         return (275 * self.month) // 9 - k * ((self.month + 9) // 12) + self.day - 30
 
     @property
-    def week_of_year(self):
+    def week_of_year(self) -> int:
         return self.isocalendar()[1]
 
     @property
-    def days_in_month(self):
+    def days_in_month(self) -> int:
         return calendar.monthrange(self.year, self.month)[1]
 
     @property
-    def week_of_month(self):
+    def week_of_month(self) -> int:
         first_day_of_month = self.replace(day=1)
 
         return self.week_of_year - first_day_of_month.week_of_year + 1
 
     @property
-    def age(self):
+    def age(self) -> int:
         return self.diff(abs=False).in_years()
 
     @property
-    def quarter(self):
+    def quarter(self) -> int:
         return int(math.ceil(self.month / 3))
 
     # String Formatting
 
-    def to_date_string(self):
+    def to_date_string(self) -> str:
         """
         Format the instance as date.
 
@@ -96,7 +97,7 @@ class Date(FormattableMixin, date):
         """
         return self.strftime("%Y-%m-%d")
 
-    def to_formatted_date_string(self):
+    def to_formatted_date_string(self) -> str:
         """
         Format the instance as a readable date.
 
@@ -104,19 +105,14 @@ class Date(FormattableMixin, date):
         """
         return self.strftime("%b %d, %Y")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.year}, {self.month}, {self.day})"
 
     # COMPARISONS
 
-    def closest(self, dt1, dt2):
+    def closest(self, dt1: date, dt2: date) -> Date:
         """
         Get the closest date from the instance.
-
-        :type dt1: Date or date
-        :type dt2: Date or date
-
-        :rtype: Date
         """
         dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
         dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
@@ -126,14 +122,9 @@ class Date(FormattableMixin, date):
 
         return dt2
 
-    def farthest(self, dt1, dt2):
+    def farthest(self, dt1: date, dt2: date) -> Date:
         """
         Get the farthest date from the instance.
-
-        :type dt1: Date or date
-        :type dt2: Date or date
-
-        :rtype: Date
         """
         dt1 = self.__class__(dt1.year, dt1.month, dt1.day)
         dt2 = self.__class__(dt2.year, dt2.month, dt2.day)
@@ -143,57 +134,43 @@ class Date(FormattableMixin, date):
 
         return dt2
 
-    def is_future(self):
+    def is_future(self) -> bool:
         """
         Determines if the instance is in the future, ie. greater than now.
-
-        :rtype: bool
         """
         return self > self.today()
 
-    def is_past(self):
+    def is_past(self) -> bool:
         """
         Determines if the instance is in the past, ie. less than now.
-
-        :rtype: bool
         """
         return self < self.today()
 
-    def is_leap_year(self):
+    def is_leap_year(self) -> bool:
         """
         Determines if the instance is a leap year.
-
-        :rtype: bool
         """
         return calendar.isleap(self.year)
 
-    def is_long_year(self):
+    def is_long_year(self) -> bool:
         """
         Determines if the instance is a long year
 
         See link `<https://en.wikipedia.org/wiki/ISO_8601#Week_dates>`_
-
-        :rtype: bool
         """
         return Date(self.year, 12, 28).isocalendar()[1] == 53
 
-    def is_same_day(self, dt):
+    def is_same_day(self, dt: date) -> bool:
         """
         Checks if the passed in date is the same day as the instance current day.
-
-        :type dt: Date or date
-
-        :rtype: bool
         """
         return self == dt
 
-    def is_anniversary(self, dt=None):
+    def is_anniversary(self, dt: date | None = None) -> bool:
         """
-        Check if its the anniversary.
+        Check if it's the anniversary.
 
         Compares the date/month values of the two dates.
-
-        :rtype: bool
         """
         if dt is None:
             dt = Date.today()
@@ -207,25 +184,18 @@ class Date(FormattableMixin, date):
     # the old name can be completely replaced with the new in one of the future versions
     is_birthday = is_anniversary
 
-    # ADDITIONS AND SUBSTRACTIONS
+    # ADDITIONS AND SUBTRACTIONS
 
-    def add(self, years=0, months=0, weeks=0, days=0):
+    def add(
+        self, years: int = 0, months: int = 0, weeks: int = 0, days: int = 0
+    ) -> Date:
         """
         Add duration to the instance.
 
         :param years: The number of years
-        :type years: int
-
         :param months: The number of months
-        :type months: int
-
         :param weeks: The number of weeks
-        :type weeks: int
-
         :param days: The number of days
-        :type days: int
-
-        :rtype: Date
         """
         dt = add_duration(
             date(self.year, self.month, self.day),
@@ -237,34 +207,24 @@ class Date(FormattableMixin, date):
 
         return self.__class__(dt.year, dt.month, dt.day)
 
-    def subtract(self, years=0, months=0, weeks=0, days=0):
+    def subtract(
+        self, years: int = 0, months: int = 0, weeks: int = 0, days: int = 0
+    ) -> Date:
         """
         Remove duration from the instance.
 
         :param years: The number of years
-        :type years: int
-
         :param months: The number of months
-        :type months: int
-
         :param weeks: The number of weeks
-        :type weeks: int
-
         :param days: The number of days
-        :type days: int
-
-        :rtype: Date
         """
         return self.add(years=-years, months=-months, weeks=-weeks, days=-days)
 
-    def _add_timedelta(self, delta):
+    def _add_timedelta(self, delta: timedelta) -> Date:
         """
         Add timedelta duration to the instance.
 
         :param delta: The timedelta instance
-        :type delta: pendulum.Duration or datetime.timedelta
-
-        :rtype: Date
         """
         if isinstance(delta, pendulum.Duration):
             return self.add(
@@ -276,14 +236,11 @@ class Date(FormattableMixin, date):
 
         return self.add(days=delta.days)
 
-    def _subtract_timedelta(self, delta):
+    def _subtract_timedelta(self, delta: timedelta) -> Date:
         """
         Remove timedelta duration from the instance.
 
         :param delta: The timedelta instance
-        :type delta: pendulum.Duration or datetime.timedelta
-
-        :rtype: Date
         """
         if isinstance(delta, pendulum.Duration):
             return self.subtract(
@@ -295,13 +252,25 @@ class Date(FormattableMixin, date):
 
         return self.subtract(days=delta.days)
 
-    def __add__(self, other):
+    def __add__(self, other: timedelta) -> Date:
         if not isinstance(other, timedelta):
             return NotImplemented
 
         return self._add_timedelta(other)
 
-    def __sub__(self, other):
+    @overload
+    def __sub__(self, delta: timedelta) -> Date:
+        ...
+
+    @overload
+    def __sub__(self, dt: datetime) -> NoReturn:
+        ...
+
+    @overload
+    def __sub__(self, dt: Date) -> Interval:
+        ...
+
+    def __sub__(self, other: timedelta | date) -> Date | Interval:
         if isinstance(other, timedelta):
             return self._subtract_timedelta(other)
 
@@ -314,23 +283,24 @@ class Date(FormattableMixin, date):
 
     # DIFFERENCES
 
-    def diff(self, dt=None, abs=True):
+    def diff(self, dt: date | None = None, abs: bool = True) -> Interval:
         """
-        Returns the difference between two Date objects as a Period.
+        Returns the difference between two Date objects as an Interval.
 
-        :type dt: Date or None
-
+        :param dt: The date to compare to (defaults to today)
         :param abs: Whether to return an absolute interval or not
-        :type abs: bool
-
-        :rtype: Period
         """
         if dt is None:
             dt = self.today()
 
-        return Period(self, Date(dt.year, dt.month, dt.day), absolute=abs)
+        return Interval(self, Date(dt.year, dt.month, dt.day), absolute=abs)
 
-    def diff_for_humans(self, other=None, absolute=False, locale=None):
+    def diff_for_humans(
+        self,
+        other: date | None = None,
+        absolute: bool = False,
+        locale: str | None = None,
+    ) -> str:
         """
         Get the difference in a human readable format in the current locale.
 
@@ -350,15 +320,9 @@ class Date(FormattableMixin, date):
         1 day after
         5 months after
 
-        :type other: Date
-
+        :param other: The date to compare to (defaults to today)
         :param absolute: removes time difference modifiers ago, after, etc
-        :type absolute: bool
-
         :param locale: The locale to use for localization
-        :type locale: str
-
-        :rtype: str
         """
         is_now = other is None
 
@@ -371,7 +335,7 @@ class Date(FormattableMixin, date):
 
     # MODIFIERS
 
-    def start_of(self, unit):
+    def start_of(self, unit: str) -> Date:
         """
         Returns a copy of the instance with the time reset
         with the following rules:
@@ -384,16 +348,13 @@ class Date(FormattableMixin, date):
         * century: date to first day of century and time to 00:00:00
 
         :param unit: The unit to reset to
-        :type unit: str
-
-        :rtype: Date
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError(f'Invalid unit "{unit}" for start_of()')
 
-        return getattr(self, f"_start_of_{unit}")()
+        return cast(Date, getattr(self, f"_start_of_{unit}")())
 
-    def end_of(self, unit):
+    def end_of(self, unit: str) -> Date:
         """
         Returns a copy of the instance with the time reset
         with the following rules:
@@ -405,108 +366,83 @@ class Date(FormattableMixin, date):
         * century: date to last day of century
 
         :param unit: The unit to reset to
-        :type unit: str
-
-        :rtype: Date
         """
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError(f'Invalid unit "{unit}" for end_of()')
 
-        return getattr(self, f"_end_of_{unit}")()
+        return cast(Date, getattr(self, f"_end_of_{unit}")())
 
-    def _start_of_day(self):
+    def _start_of_day(self) -> Date:
         """
         Compatibility method.
-
-        :rtype: Date
         """
         return self
 
-    def _end_of_day(self):
+    def _end_of_day(self) -> Date:
         """
         Compatibility method
-
-        :rtype: Date
         """
         return self
 
-    def _start_of_month(self):
+    def _start_of_month(self) -> Date:
         """
         Reset the date to the first day of the month.
-
-        :rtype: Date
         """
         return self.set(self.year, self.month, 1)
 
-    def _end_of_month(self):
+    def _end_of_month(self) -> Date:
         """
         Reset the date to the last day of the month.
-
-        :rtype: Date
         """
         return self.set(self.year, self.month, self.days_in_month)
 
-    def _start_of_year(self):
+    def _start_of_year(self) -> Date:
         """
         Reset the date to the first day of the year.
-
-        :rtype: Date
         """
         return self.set(self.year, 1, 1)
 
-    def _end_of_year(self):
+    def _end_of_year(self) -> Date:
         """
         Reset the date to the last day of the year.
-
-        :rtype: Date
         """
         return self.set(self.year, 12, 31)
 
-    def _start_of_decade(self):
+    def _start_of_decade(self) -> Date:
         """
         Reset the date to the first day of the decade.
-
-        :rtype: Date
         """
         year = self.year - self.year % YEARS_PER_DECADE
 
         return self.set(year, 1, 1)
 
-    def _end_of_decade(self):
+    def _end_of_decade(self) -> Date:
         """
         Reset the date to the last day of the decade.
-
-        :rtype: Date
         """
         year = self.year - self.year % YEARS_PER_DECADE + YEARS_PER_DECADE - 1
 
         return self.set(year, 12, 31)
 
-    def _start_of_century(self):
+    def _start_of_century(self) -> Date:
         """
         Reset the date to the first day of the century.
-
-        :rtype: Date
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + 1
 
         return self.set(year, 1, 1)
 
-    def _end_of_century(self):
+    def _end_of_century(self) -> Date:
         """
         Reset the date to the last day of the century.
-
-        :rtype: Date
         """
         year = self.year - 1 - (self.year - 1) % YEARS_PER_CENTURY + YEARS_PER_CENTURY
 
         return self.set(year, 12, 31)
 
-    def _start_of_week(self):
+    def _start_of_week(self) -> Date:
         """
         Reset the date to the first day of the week.
-
-        :rtype: Date
         """
         dt = self
 
@@ -515,11 +451,9 @@ class Date(FormattableMixin, date):
 
         return dt.start_of("day")
 
-    def _end_of_week(self):
+    def _end_of_week(self) -> Date:
         """
         Reset the date to the last day of the week.
-
-        :rtype: Date
         """
         dt = self
 
@@ -528,7 +462,7 @@ class Date(FormattableMixin, date):
 
         return dt.end_of("day")
 
-    def next(self, day_of_week=None):
+    def next(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -536,9 +470,6 @@ class Date(FormattableMixin, date):
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
 
         :param day_of_week: The next day of week to reset to.
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
@@ -552,7 +483,7 @@ class Date(FormattableMixin, date):
 
         return dt
 
-    def previous(self, day_of_week=None):
+    def previous(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -560,9 +491,6 @@ class Date(FormattableMixin, date):
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
 
         :param day_of_week: The previous day of week to reset to.
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         if day_of_week is None:
             day_of_week = self.day_of_week
@@ -576,7 +504,7 @@ class Date(FormattableMixin, date):
 
         return dt
 
-    def first_of(self, unit, day_of_week=None):
+    def first_of(self, unit: str, day_of_week: int | None = None) -> Date:
         """
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
@@ -586,18 +514,14 @@ class Date(FormattableMixin, date):
         Supported units are month, quarter and year.
 
         :param unit: The unit to use
-        :type unit: str
-
-        :type day_of_week: int or None
-
-        :rtype: Date
+        :param day_of_week: The day of week to reset to.
         """
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, f"_first_of_{unit}")(day_of_week)
+        return cast(Date, getattr(self, f"_first_of_{unit}")(day_of_week))
 
-    def last_of(self, unit, day_of_week=None):
+    def last_of(self, unit: str, day_of_week: int | None = None) -> Date:
         """
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
@@ -607,18 +531,14 @@ class Date(FormattableMixin, date):
         Supported units are month, quarter and year.
 
         :param unit: The unit to use
-        :type unit: str
-
-        :type day_of_week: int or None
-
-        :rtype: Date
+        :param day_of_week: The day of week to reset to.
         """
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return getattr(self, f"_last_of_{unit}")(day_of_week)
+        return cast(Date, getattr(self, f"_last_of_{unit}")(day_of_week))
 
-    def nth_of(self, unit, nth, day_of_week):
+    def nth_of(self, unit: str, nth: int, day_of_week: int) -> Date:
         """
         Returns a new instance set to the given occurrence
         of a given day of the week in the current unit.
@@ -629,19 +549,14 @@ class Date(FormattableMixin, date):
         Supported units are month, quarter and year.
 
         :param unit: The unit to use
-        :type unit: str
-
-        :type nth: int
-
-        :type day_of_week: int or None
-
-        :rtype: Date
+        :param nth: The occurrence to use
+        :param day_of_week: The day of week to set to.
         """
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        dt = getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
-        if dt is False:
+        dt = cast(Date, getattr(self, f"_nth_of_{unit}")(nth, day_of_week))
+        if not dt:
             raise PendulumException(
                 f"Unable to find occurence {nth}"
                 f" of {self._days[day_of_week]} in {unit}"
@@ -649,16 +564,14 @@ class Date(FormattableMixin, date):
 
         return dt
 
-    def _first_of_month(self, day_of_week):
+    def _first_of_month(self, day_of_week: int) -> Date:
         """
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
         modify to the first day of the month. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
 
-        :type day_of_week: int
-
-        :rtype: Date
+        :param day_of_week: The day of week to set to.
         """
         dt = self
 
@@ -676,16 +589,14 @@ class Date(FormattableMixin, date):
 
         return dt.set(day=day_of_month)
 
-    def _last_of_month(self, day_of_week=None):
+    def _last_of_month(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
         modify to the last day of the month. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
 
-        :type day_of_week: int or None
-
-        :rtype: Date
+        :param day_of_week: The day of week to set to.
         """
         dt = self
 
@@ -703,19 +614,13 @@ class Date(FormattableMixin, date):
 
         return dt.set(day=day_of_month)
 
-    def _nth_of_month(self, nth, day_of_week):
+    def _nth_of_month(self, nth: int, day_of_week: int) -> Date | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current month. If the calculated occurrence is outside,
         the scope of the current month, then return False and no
         modifications are made. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type nth: int
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         if nth == 1:
             return self.first_of("month", day_of_week)
@@ -728,49 +633,35 @@ class Date(FormattableMixin, date):
         if dt.format("YYYY-MM") == check:
             return self.set(day=dt.day)
 
-        return False
+        return None
 
-    def _first_of_quarter(self, day_of_week=None):
+    def _first_of_quarter(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
         modify to the first day of the quarter. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         return self.set(self.year, self.quarter * 3 - 2, 1).first_of(
             "month", day_of_week
         )
 
-    def _last_of_quarter(self, day_of_week=None):
+    def _last_of_quarter(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
         modify to the last day of the quarter. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         return self.set(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
-    def _nth_of_quarter(self, nth, day_of_week):
+    def _nth_of_quarter(self, nth: int, day_of_week: int) -> Date | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
         the scope of the current quarter, then return False and no
         modifications are made. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type nth: int
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         if nth == 1:
             return self.first_of("quarter", day_of_week)
@@ -783,49 +674,35 @@ class Date(FormattableMixin, date):
             dt = dt.next(day_of_week)
 
         if last_month < dt.month or year != dt.year:
-            return False
+            return None
 
         return self.set(self.year, dt.month, dt.day)
 
-    def _first_of_year(self, day_of_week=None):
+    def _first_of_year(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
         modify to the first day of the year. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         return self.set(month=1).first_of("month", day_of_week)
 
-    def _last_of_year(self, day_of_week=None):
+    def _last_of_year(self, day_of_week: int | None = None) -> Date:
         """
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
         modify to the last day of the year. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         return self.set(month=MONTHS_PER_YEAR).last_of("month", day_of_week)
 
-    def _nth_of_year(self, nth, day_of_week):
+    def _nth_of_year(self, nth: int, day_of_week: int) -> Date | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current year. If the calculated occurrence is outside,
         the scope of the current year, then return False and no
         modifications are made. Use the supplied consts
         to indicate the desired day_of_week, ex. pendulum.MONDAY.
-
-        :type nth: int
-
-        :type day_of_week: int or None
-
-        :rtype: Date
         """
         if nth == 1:
             return self.first_of("year", day_of_week)
@@ -836,18 +713,14 @@ class Date(FormattableMixin, date):
             dt = dt.next(day_of_week)
 
         if year != dt.year:
-            return False
+            return None
 
         return self.set(self.year, dt.month, dt.day)
 
-    def average(self, dt=None):
+    def average(self, dt: date | None = None) -> Date:
         """
         Modify the current instance to the average
         of a given instance (default now) and the current instance.
-
-        :type dt: Date or date
-
-        :rtype: Date
         """
         if dt is None:
             dt = Date.today()
@@ -857,22 +730,29 @@ class Date(FormattableMixin, date):
     # Native methods override
 
     @classmethod
-    def today(cls):
-        return pendulum.today().date()
+    def today(cls) -> Date:
+        dt = date.today()
+
+        return cls(dt.year, dt.month, dt.day)
 
     @classmethod
-    def fromtimestamp(cls, t):
+    def fromtimestamp(cls, t: float) -> Date:
         dt = super().fromtimestamp(t)
 
         return cls(dt.year, dt.month, dt.day)
 
     @classmethod
-    def fromordinal(cls, n):
+    def fromordinal(cls, n: int) -> Date:
         dt = super().fromordinal(n)
 
         return cls(dt.year, dt.month, dt.day)
 
-    def replace(self, year=None, month=None, day=None):
+    def replace(
+        self,
+        year: int | None = None,
+        month: int | None = None,
+        day: int | None = None,
+    ) -> Date:
         year = year if year is not None else self.year
         month = month if month is not None else self.month
         day = day if day is not None else self.day

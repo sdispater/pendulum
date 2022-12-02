@@ -6,7 +6,6 @@ from datetime import datetime
 
 import pytest
 import pytz
-import time_machine
 
 from dateutil import tz
 
@@ -14,7 +13,13 @@ import pendulum
 
 from pendulum import DateTime
 from pendulum.tz import timezone
+from pendulum.utils._compat import PYPY
 from tests.conftest import assert_datetime
+
+if not PYPY:
+    import time_machine
+else:
+    time_machine = None
 
 
 @pytest.fixture(autouse=True)
@@ -105,44 +110,43 @@ def test_now():
     assert now.hour != in_paris.hour
 
 
-@time_machine.travel("2016-03-27 00:30:00Z", tick=False)
-def test_now_dst_off():
-    utc = pendulum.now("UTC")
-    in_paris = pendulum.now("Europe/Paris")
-    in_paris_from_utc = utc.in_tz("Europe/Paris")
-    assert in_paris.hour == 1
-    assert not in_paris.is_dst()
-    assert in_paris.isoformat() == in_paris_from_utc.isoformat()
+if time_machine:
 
+    @time_machine.travel("2016-03-27 00:30:00Z", tick=False)
+    def test_now_dst_off():
+        utc = pendulum.now("UTC")
+        in_paris = pendulum.now("Europe/Paris")
+        in_paris_from_utc = utc.in_tz("Europe/Paris")
+        assert in_paris.hour == 1
+        assert not in_paris.is_dst()
+        assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
-@time_machine.travel("2016-03-27 01:30:00Z", tick=False)
-def test_now_dst_transitioning_on():
-    utc = pendulum.now("UTC")
-    in_paris = pendulum.now("Europe/Paris")
-    in_paris_from_utc = utc.in_tz("Europe/Paris")
-    assert in_paris.hour == 3
-    assert in_paris.is_dst()
-    assert in_paris.isoformat() == in_paris_from_utc.isoformat()
+    @time_machine.travel("2016-03-27 01:30:00Z", tick=False)
+    def test_now_dst_transitioning_on():
+        utc = pendulum.now("UTC")
+        in_paris = pendulum.now("Europe/Paris")
+        in_paris_from_utc = utc.in_tz("Europe/Paris")
+        assert in_paris.hour == 3
+        assert in_paris.is_dst()
+        assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
+    @time_machine.travel("2016-10-30 00:30:00Z", tick=False)
+    def test_now_dst_on():
+        utc = pendulum.now("UTC")
+        in_paris = pendulum.now("Europe/Paris")
+        in_paris_from_utc = utc.in_tz("Europe/Paris")
+        assert in_paris.hour == 2
+        assert in_paris.is_dst()
+        assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
-@time_machine.travel("2016-10-30 00:30:00Z", tick=False)
-def test_now_dst_on():
-    utc = pendulum.now("UTC")
-    in_paris = pendulum.now("Europe/Paris")
-    in_paris_from_utc = utc.in_tz("Europe/Paris")
-    assert in_paris.hour == 2
-    assert in_paris.is_dst()
-    assert in_paris.isoformat() == in_paris_from_utc.isoformat()
-
-
-@time_machine.travel("2016-10-30 01:30:00Z", tick=False)
-def test_now_dst_transitioning_off():
-    utc = pendulum.now("UTC")
-    in_paris = pendulum.now("Europe/Paris")
-    in_paris_from_utc = utc.in_tz("Europe/Paris")
-    assert in_paris.hour == 2
-    assert not in_paris.is_dst()
-    assert in_paris.isoformat() == in_paris_from_utc.isoformat()
+    @time_machine.travel("2016-10-30 01:30:00Z", tick=False)
+    def test_now_dst_transitioning_off():
+        utc = pendulum.now("UTC")
+        in_paris = pendulum.now("Europe/Paris")
+        in_paris_from_utc = utc.in_tz("Europe/Paris")
+        assert in_paris.hour == 2
+        assert not in_paris.is_dst()
+        assert in_paris.isoformat() == in_paris_from_utc.isoformat()
 
 
 def test_now_with_fixed_offset():
