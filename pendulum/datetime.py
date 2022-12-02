@@ -4,6 +4,7 @@ import calendar
 import datetime
 
 from typing import TYPE_CHECKING
+from typing import Any
 from typing import Callable
 from typing import Optional
 from typing import cast
@@ -1355,21 +1356,21 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__class__, self._getstate(protocol)
 
-    def __le__(self, other):
+    def __le__(self, other: DateTime) -> Bool:
         if isinstance(other, DateTime):
             return self._cmp(other) <= 0
         return super().__le__(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other: DateTime) -> Bool:
         if isinstance(other, DateTime):
             return self._cmp(other) < 0
         return super().__lt__(other)
 
-    def __ge__(self, other):
+    def __ge__(self, other: DateTime):
         # Will default to the negative of its reflection
         return NotImplemented
 
-    def __gt__(self, other):
+    def __gt__(self, other: DateTime):
         # Will default to the negative of its reflection
         return NotImplemented
 
