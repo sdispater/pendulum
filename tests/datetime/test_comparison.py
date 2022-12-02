@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, tzinfo
-from dateutil import tz
-from pytz import timezone
+from datetime import datetime
+from datetime import timedelta
 
-import pytz
 import pytest
+import pytz
 
+from pytz import timezone
 
 import pendulum
 
@@ -200,13 +200,13 @@ def test_less_than_with_timezone_false():
 
 
 @pytest.mark.parametrize(
-    'truth_fun',
+    "truth_fun",
     (
         lambda earlier, later: earlier < later,
         lambda earlier, later: earlier <= later,
         lambda earlier, later: later > earlier,
         lambda earlier, later: later >= earlier,
-    )
+    ),
 )
 def test_comparison_crossing_dst_transitioning_off_pendulum_pendulum(truth_fun):
     # We only need to test turning off DST, since that's when the time
@@ -221,13 +221,13 @@ def test_comparison_crossing_dst_transitioning_off_pendulum_pendulum(truth_fun):
 
 
 @pytest.mark.parametrize(
-    'truth_fun',
+    "truth_fun",
     (
         lambda earlier, later: earlier < later,
         lambda earlier, later: earlier <= later,
         lambda earlier, later: later > earlier,
         lambda earlier, later: later >= earlier,
-    )
+    ),
 )
 def test_comparison_crossing_dst_transitioning_off_pendulum_datetime(truth_fun):
     # We only need to test turning off DST, since that's when the time
@@ -244,13 +244,13 @@ def test_comparison_crossing_dst_transitioning_off_pendulum_datetime(truth_fun):
 
 
 @pytest.mark.parametrize(
-    'truth_fun',
+    "truth_fun",
     (
         lambda earlier, later: earlier < later,
         lambda earlier, later: earlier <= later,
         lambda earlier, later: later > earlier,
         lambda earlier, later: later >= earlier,
-    )
+    ),
 )
 def test_comparison_crossing_dst_transitioning_off_datetime_pendulum(truth_fun):
     # We only need to test turning off DST, since that's when the time
@@ -267,13 +267,13 @@ def test_comparison_crossing_dst_transitioning_off_datetime_pendulum(truth_fun):
 
 
 @pytest.mark.parametrize(
-    'truth_fun',
+    "truth_fun",
     (
         lambda earlier, later: earlier < later,
         lambda earlier, later: earlier <= later,
         lambda earlier, later: later > earlier,
         lambda earlier, later: later >= earlier,
-    )
+    ),
 )
 def test_comparison_crossing_dst_transitioning_off_datetime_datetime(truth_fun):
     # We only need to test turning off DST, since that's when the time
