@@ -202,32 +202,59 @@ def time(hour: int, minute: int = 0, second: int = 0, microsecond: int = 0) -> T
     return Time(hour, minute, second, microsecond)
 
 
+@overload
 def instance(
-    dt: _datetime.datetime,
+    obj: _datetime.datetime,
     tz: str | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
 ) -> DateTime:
-    """
-    Create a DateTime instance from a datetime one.
-    """
-    if not isinstance(dt, _datetime.datetime):
-        raise ValueError("instance() only accepts datetime objects.")
+    ...
 
-    if isinstance(dt, DateTime):
-        return dt
 
-    tz = dt.tzinfo or tz
+@overload
+def instance(
+    obj: _datetime.date,
+    tz: str | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
+) -> Date:
+    ...
+
+
+@overload
+def instance(
+    obj: _datetime.time,
+    tz: str | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
+) -> Time:
+    ...
+
+
+def instance(
+    obj: _datetime.datetime | _datetime.date | _datetime.time,
+    tz: str | Timezone | FixedTimezone | _datetime.tzinfo | None = UTC,
+) -> DateTime | Date | Time:
+    """
+    Create a DateTime/Date/Time instance from a datetime/date/time native one.
+    """
+    if isinstance(obj, (DateTime, Date, Time)):
+        return obj
+
+    if isinstance(obj, _datetime.date) and not isinstance(obj, _datetime.datetime):
+        return date(obj.year, obj.month, obj.day)
+
+    tz = obj.tzinfo or tz
 
     if tz is not None:
-        tz = _safe_timezone(tz, dt=dt)
+        tz = _safe_timezone(tz, dt=obj if isinstance(obj, _datetime.datetime) else None)
+
+    if isinstance(obj, _datetime.time):
+        return Time(obj.hour, obj.minute, obj.second, obj.microsecond, tzinfo=tz)
 
     return datetime(
-        dt.year,
-        dt.month,
-        dt.day,
-        dt.hour,
-        dt.minute,
-        dt.second,
-        dt.microsecond,
+        obj.year,
+        obj.month,
+        obj.day,
+        obj.hour,
+        obj.minute,
+        obj.second,
+        obj.microsecond,
         tz=cast(Union[str, int, Timezone, FixedTimezone, None], tz),
     )
 
