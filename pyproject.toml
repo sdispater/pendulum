@@ -35,9 +35,9 @@ importlib-resources = { version = "^5.9.0", python = ">=3.7,<3.9" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.2"
-pytest-cov = "^3.0.0"
 pytz = ">=2022.1"
 time-machine = "^2.7.1"
+pytest-benchmark = "^4.0.0"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs = "^1.0"
@@ -63,6 +63,9 @@ optional = true
 [tool.poetry.group.build.dependencies]
 meson = "^0.63.2"
 ninja = "^1.10.2.3"
+
+[tool.poetry.group.benchmark.dependencies]
+pytest-codspeed = "^1.2.2"
 
 [tool.poetry.build]
 generate-setup-file = false
