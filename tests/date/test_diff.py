@@ -9,7 +9,7 @@ import pendulum
 
 @pytest.fixture
 def today():
-    return pendulum.today().date()
+    return pendulum.Date.today()
 
 
 def test_diff_in_years_positive():
