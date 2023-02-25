@@ -173,7 +173,7 @@ class Date(FormattableMixin, date):
         Compares the date/month values of the two dates.
         """
         if dt is None:
-            dt = Date.today()
+            dt = self.__class__.today()
 
         instance = self.__class__(dt.year, dt.month, dt.day)
 
