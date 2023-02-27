@@ -22,6 +22,9 @@ include = [
     { path = "pendulum/_extensions/*.pyd", format = "wheel" },
     { path = "pendulum/parsing/*.so", format = "wheel" },
     { path = "pendulum/parsing/*.pyd", format = "wheel" },
+    # Rust extension
+    { path = "_pendulum*.so", format = "wheel" },
+    { path = "_pendulum*.pyd", format = "wheel" },
 ]
 
 
@@ -219,5 +222,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0a6", "meson", "ninja"]
+requires = ["poetry-core>=1.1.0a6", "meson", "ninja", "maturin>=0.14,<0.15"]
 build-backend = "poetry.core.masonry.api"
