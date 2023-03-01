@@ -215,14 +215,14 @@ def today(tz: str | Timezone = "local") -> DateTime:
 
 def tomorrow(tz: str | Timezone = "local") -> DateTime:
     """
-    Create a DateTime instance for today.
+    Create a DateTime instance for tommorow.
     """
     return today(tz).add(days=1)
 
 
 def yesterday(tz: str | Timezone = "local") -> DateTime:
     """
-    Create a DateTime instance for today.
+    Create a DateTime instance for yesterday.
     """
     return today(tz).subtract(days=1)
 
