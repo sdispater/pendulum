@@ -79,7 +79,7 @@ def add_duration(
 
 
 def add_duration(
-    dt: _D,
+    dt: date | datetime,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
@@ -88,7 +88,7 @@ def add_duration(
     minutes: int = 0,
     seconds: float = 0,
     microseconds: int = 0,
-) -> _D:
+) -> date | datetime:
     """
     Adds a duration to a date/datetime instance.
     """

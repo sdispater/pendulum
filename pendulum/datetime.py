@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import calendar
 import datetime
+import sys
 
 from typing import TYPE_CHECKING
 from typing import Any
@@ -38,7 +39,6 @@ from pendulum.tz import UTC
 from pendulum.tz import local_timezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
-from pendulum.utils._compat import PY38
 
 if TYPE_CHECKING:
     from typing_extensions import Literal
@@ -1214,7 +1214,7 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
 
-        if PY38:
+        if sys.version_info >= (3, 8):
             # This is a workaround for Python 3.8+
             # since calling astimezone() will call this method
             # instead of the base datetime class one.

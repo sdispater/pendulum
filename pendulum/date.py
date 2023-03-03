@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import calendar
 import math
-import sys
 
 from datetime import date
 from datetime import datetime
@@ -275,17 +274,9 @@ class Date(FormattableMixin, date):
     def __sub__(self, __dt: datetime) -> NoReturn:
         ...
 
-    if sys.version_info >= (3, 8):
-
-        @overload
-        def __sub__(self: _D, __dt: _D) -> Interval:
-            ...
-
-    else:
-
-        @overload
-        def __sub__(self, __dt: date) -> Interval:
-            ...
+    @overload
+    def __sub__(self: _D, __dt: _D) -> Interval:
+        ...
 
     def __sub__(self, other: timedelta | date) -> Self | Interval:
         if isinstance(other, timedelta):

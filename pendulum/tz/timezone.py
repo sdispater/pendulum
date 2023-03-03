@@ -1,3 +1,4 @@
+# mypy: no-warn-redundant-casts
 from __future__ import annotations
 
 import datetime as _datetime
@@ -89,6 +90,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
         >>> in_new_york.isoformat()
         '2013-03-30T21:30:00-04:00'
         """
+
         if dt.tzinfo is None:
             # Technically, utcoffset() can return None, but none of the zone information
             # in tzdata sets _tti_before to None. This can be checked with the following
@@ -115,10 +117,14 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
                 if raise_on_unknown_times:
                     raise NonExistingTime(dt)
 
-                dt += (
-                    (offset_after - offset_before)
-                    if dt.fold
-                    else (offset_before - offset_after)
+                dt = cast(
+                    _DT,
+                    dt
+                    + (
+                        (offset_after - offset_before)
+                        if dt.fold
+                        else (offset_before - offset_after)
+                    ),
                 )
             elif offset_before > offset_after and raise_on_unknown_times:
                 # Repeated time
@@ -126,7 +132,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
 
             return dt.replace(tzinfo=self)
 
-        return dt.astimezone(self)
+        return cast(_DT, dt.astimezone(self))
 
     def datetime(
         self,
@@ -183,7 +189,7 @@ class FixedTimezone(_datetime.tzinfo, PendulumTimezone):
                 fold=0,
             )
 
-        return dt.astimezone(self)
+        return cast(_DT, dt.astimezone(self))
 
     def datetime(
         self,
