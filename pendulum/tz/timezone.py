@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-import datetime as datetime_
+import datetime as _datetime
 
 from abc import ABC
 from abc import abstractmethod
+from typing import TYPE_CHECKING
+from typing import TypeVar
 from typing import cast
 
 from pendulum.tz.exceptions import AmbiguousTime
@@ -11,9 +13,15 @@ from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.exceptions import NonExistingTime
 from pendulum.utils._compat import zoneinfo
 
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
 POST_TRANSITION = "post"
 PRE_TRANSITION = "pre"
 TRANSITION_ERROR = "error"
+
+
+_DT = TypeVar("_DT", bound=_datetime.datetime)
 
 
 class PendulumTimezone(ABC):
@@ -23,9 +31,7 @@ class PendulumTimezone(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def convert(
-        self, dt: datetime_.datetime, raise_on_unknown_times: bool = False
-    ) -> datetime_.datetime:
+    def convert(self, dt: _DT, raise_on_unknown_times: bool = False) -> _DT:
         raise NotImplementedError
 
     @abstractmethod
@@ -38,7 +44,7 @@ class PendulumTimezone(ABC):
         minute: int = 0,
         second: int = 0,
         microsecond: int = 0,
-    ) -> datetime_.datetime:
+    ) -> _datetime.datetime:
         raise NotImplementedError
 
 
@@ -52,7 +58,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
     >>> tz = Timezone('Europe/Paris')
     """
 
-    def __new__(cls, key: str) -> Timezone:
+    def __new__(cls, key: str) -> Self:
         try:
             return super().__new__(cls, key)  # type: ignore[call-arg]
         except zoneinfo.ZoneInfoNotFoundError:
@@ -62,9 +68,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
     def name(self) -> str:
         return self.key
 
-    def convert(
-        self, dt: datetime_.datetime, raise_on_unknown_times: bool = False
-    ) -> datetime_.datetime:
+    def convert(self, dt: _DT, raise_on_unknown_times: bool = False) -> _DT:
         """
         Converts a datetime in the current timezone.
 
@@ -98,11 +102,11 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
             # >>>         print(tzname)
 
             offset_before = cast(
-                datetime_.timedelta,
+                _datetime.timedelta,
                 (self.utcoffset(dt.replace(fold=0)) if dt.fold else self.utcoffset(dt)),
             )
             offset_after = cast(
-                datetime_.timedelta,
+                _datetime.timedelta,
                 (self.utcoffset(dt) if dt.fold else self.utcoffset(dt.replace(fold=1))),
             )
 
@@ -133,12 +137,12 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
         minute: int = 0,
         second: int = 0,
         microsecond: int = 0,
-    ) -> datetime_.datetime:
+    ) -> _datetime.datetime:
         """
         Return a normalized datetime for the current timezone.
         """
         return self.convert(
-            datetime_.datetime(
+            _datetime.datetime(
                 year, month, day, hour, minute, second, microsecond, fold=1
             )
         )
@@ -147,7 +151,7 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
         return f"{self.__class__.__name__}('{self.name}')"
 
 
-class FixedTimezone(datetime_.tzinfo, PendulumTimezone):
+class FixedTimezone(_datetime.tzinfo, PendulumTimezone):
     def __init__(self, offset: int, name: str | None = None) -> None:
         sign = "-" if offset < 0 else "+"
 
@@ -159,15 +163,13 @@ class FixedTimezone(datetime_.tzinfo, PendulumTimezone):
 
         self._name = name
         self._offset = offset
-        self._utcoffset = datetime_.timedelta(seconds=offset)
+        self._utcoffset = _datetime.timedelta(seconds=offset)
 
     @property
     def name(self) -> str:
         return self._name
 
-    def convert(
-        self, dt: datetime_.datetime, raise_on_unknown_times: bool = False
-    ) -> datetime_.datetime:
+    def convert(self, dt: _DT, raise_on_unknown_times: bool = False) -> _DT:
         if dt.tzinfo is None:
             return dt.__class__(
                 dt.year,
@@ -192,9 +194,9 @@ class FixedTimezone(datetime_.tzinfo, PendulumTimezone):
         minute: int = 0,
         second: int = 0,
         microsecond: int = 0,
-    ) -> datetime_.datetime:
+    ) -> _datetime.datetime:
         return self.convert(
-            datetime_.datetime(
+            _datetime.datetime(
                 year, month, day, hour, minute, second, microsecond, fold=1
             )
         )
@@ -203,17 +205,17 @@ class FixedTimezone(datetime_.tzinfo, PendulumTimezone):
     def offset(self) -> int:
         return self._offset
 
-    def utcoffset(self, dt: datetime_.datetime | None) -> datetime_.timedelta:
+    def utcoffset(self, dt: _datetime.datetime | None) -> _datetime.timedelta:
         return self._utcoffset
 
-    def dst(self, dt: datetime_.datetime | None) -> datetime_.timedelta:
-        return datetime_.timedelta()
+    def dst(self, dt: _datetime.datetime | None) -> _datetime.timedelta:
+        return _datetime.timedelta()
 
-    def fromutc(self, dt: datetime_.datetime) -> datetime_.datetime:
+    def fromutc(self, dt: _datetime.datetime) -> _datetime.datetime:
         # Use the stdlib datetime's add method to avoid infinite recursion
-        return (datetime_.datetime.__add__(dt, self._utcoffset)).replace(tzinfo=self)
+        return (_datetime.datetime.__add__(dt, self._utcoffset)).replace(tzinfo=self)
 
-    def tzname(self, dt: datetime_.datetime | None) -> str | None:
+    def tzname(self, dt: _datetime.datetime | None) -> str | None:
         return self._name
 
     def __getinitargs__(self) -> tuple[int, str]:

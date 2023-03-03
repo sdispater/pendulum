@@ -54,7 +54,7 @@ difference_formatter = DifferenceFormatter()
 
 @overload
 def add_duration(
-    dt: datetime,
+    dt: _DT,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
@@ -63,23 +63,23 @@ def add_duration(
     minutes: int = 0,
     seconds: float = 0,
     microseconds: int = 0,
-) -> datetime:
+) -> _DT:
     ...
 
 
 @overload
 def add_duration(
-    dt: date,
+    dt: _D,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
     days: int = 0,
-) -> date:
+) -> _D:
     pass
 
 
 def add_duration(
-    dt: date | datetime,
+    dt: _D,
     years: int = 0,
     months: int = 0,
     weeks: int = 0,
@@ -88,7 +88,7 @@ def add_duration(
     minutes: int = 0,
     seconds: float = 0,
     microseconds: int = 0,
-) -> date | datetime:
+) -> _D:
     """
     Adds a duration to a date/datetime instance.
     """

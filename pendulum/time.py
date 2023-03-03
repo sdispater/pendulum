@@ -20,6 +20,7 @@ from pendulum.mixins.default import FormattableMixin
 
 if TYPE_CHECKING:
     from typing_extensions import Literal
+    from typing_extensions import Self
     from typing_extensions import SupportsIndex
 
 
@@ -45,7 +46,7 @@ class Time(FormattableMixin, time):
 
     # Comparisons
 
-    def closest(self, dt1: Time | time, dt2: Time | time) -> Time:
+    def closest(self, dt1: Time | time, dt2: Time | time) -> Self:
         """
         Get the closest time from the instance.
         """
@@ -57,7 +58,7 @@ class Time(FormattableMixin, time):
 
         return dt2
 
-    def farthest(self, dt1: Time | time, dt2: Time | time) -> Time:
+    def farthest(self, dt1: Time | time, dt2: Time | time) -> Self:
         """
         Get the farthest time from the instance.
         """
@@ -257,7 +258,7 @@ class Time(FormattableMixin, time):
         microsecond: int | None = None,
         tzinfo: bool | datetime.tzinfo | Literal[True] | None = True,
         fold: int = 0,
-    ) -> Time:
+    ) -> Self:
         if tzinfo is True:
             tzinfo = self.tzinfo
 
