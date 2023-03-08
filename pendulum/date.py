@@ -8,7 +8,6 @@ from datetime import datetime
 from datetime import timedelta
 from typing import TYPE_CHECKING
 from typing import NoReturn
-from typing import TypeVar
 from typing import cast
 from typing import overload
 
@@ -31,9 +30,6 @@ from pendulum.mixins.default import FormattableMixin
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-
-
-_D = TypeVar("_D", bound="Date")
 
 
 class Date(FormattableMixin, date):
@@ -275,7 +271,7 @@ class Date(FormattableMixin, date):
         ...
 
     @overload
-    def __sub__(self: _D, __dt: _D) -> Interval:
+    def __sub__(self, __dt: Self) -> Interval:
         ...
 
     def __sub__(self, other: timedelta | date) -> Self | Interval:
