@@ -42,6 +42,11 @@ def test_basic_convert():
     assert dt.tzinfo.dst(dt) == timedelta(seconds=3600)
 
 
+def test_equality():
+    assert timezone("Europe/Paris") == timezone("Europe/Paris")
+    assert timezone("Europe/Paris") != timezone("Europe/Berlin")
+
+
 def test_skipped_time_with_pre_rule():
     dt = datetime(2013, 3, 31, 2, 30, 45, 123456, fold=0)
     tz = timezone("Europe/Paris")
