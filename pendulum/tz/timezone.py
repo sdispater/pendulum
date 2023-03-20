@@ -4,7 +4,7 @@ import datetime as datetime_
 
 from abc import ABC
 from abc import abstractmethod
-from typing import cast
+from typing import Any, cast
 
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import InvalidTimezone
@@ -57,6 +57,9 @@ class Timezone(zoneinfo.ZoneInfo, PendulumTimezone):
             return super().__new__(cls, key)  # type: ignore[call-arg]
         except zoneinfo.ZoneInfoNotFoundError:
             raise InvalidTimezone(key)
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, PendulumTimezone) and self.key == other.key
 
     @property
     def name(self) -> str:
