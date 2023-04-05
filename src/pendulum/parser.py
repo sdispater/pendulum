@@ -38,7 +38,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
     """
     # Handling special cases
     if text == "now":
-        return pendulum.now()
+        return pendulum.now(tz=options.get("tz", UTC))
 
     parsed = base_parse(text, **options)
 
