@@ -550,7 +550,10 @@ class Formatter:
 
         if "Y" in token:
             if token == "YY":
-                parsed_token = now.year // 100 * 100 + parsed_token
+                if parsed_token <= 68:
+                    parsed_token += 2000
+                else:
+                    parsed_token += 1900
 
             parsed["year"] = parsed_token
         elif token == "Q":

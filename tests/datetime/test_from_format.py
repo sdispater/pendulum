@@ -81,9 +81,8 @@ def test_from_format_with_invalid_padded_day():
         ("12/02/1999", "DD/MM/YYYY", "1999-02-12T00:00:00+00:00", None),
         ("12_02_1999", "DD_MM_YYYY", "1999-02-12T00:00:00+00:00", None),
         ("12:02:1999", "DD:MM:YYYY", "1999-02-12T00:00:00+00:00", None),
-        ("2-2-99", "D-M-YY", "2099-02-02T00:00:00+00:00", None),
-        ("2-2-99", "D-M-YY", "1999-02-02T00:00:00+00:00", "1990-01-01"),
-        ("99", "YY", "2099-01-01T00:00:00+00:00", None),
+        ("2-2-99", "D-M-YY", "1999-02-02T00:00:00+00:00", None),
+        ("99", "YY", "1999-01-01T00:00:00+00:00", None),
         ("300-1999", "DDD-YYYY", "1999-10-27T00:00:00+00:00", None),
         ("12-02-1999 2:45:10", "DD-MM-YYYY h:m:s", "1999-02-12T02:45:10+00:00", None),
         ("12-02-1999 12:45:10", "DD-MM-YYYY h:m:s", "1999-02-12T12:45:10+00:00", None),
@@ -201,3 +200,25 @@ def test_strptime():
     assert_datetime(d, 1975, 5, 21, 22, 32, 11)
     assert isinstance(d, pendulum.DateTime)
     assert d.timezone_name == "UTC"
+
+
+def test_from_format_2_digit_year():
+    """
+    Complies with open group spec for 2 digit years
+    https://pubs.opengroup.org/onlinepubs/9699919799/
+
+    "If century is not specified, then values in the range [69,99] shall
+    refer to years 1969 to 1999 inclusive, and values in the
+    range [00,68] shall refer to years 2000 to 2068 inclusive."
+    """
+    d = pendulum.from_format("00", "YY")
+    assert d.year == 2000
+
+    d = pendulum.from_format("68", "YY")
+    assert d.year == 2068
+
+    d = pendulum.from_format("69", "YY")
+    assert d.year == 1969
+
+    d = pendulum.from_format("99", "YY")
+    assert d.year == 1999
