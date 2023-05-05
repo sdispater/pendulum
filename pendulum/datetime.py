@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
 from typing import Optional
+from typing import Union
 from typing import cast
 from typing import overload
 
@@ -116,6 +117,37 @@ class DateTime(datetime.datetime, Date):
             fold=dt.fold,
         )
 
+    @classmethod
+    def _instance(
+        cls,
+        dt: datetime.datetime,
+        tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = UTC,
+    ) -> DateTime:
+        """
+        Create a DateTime instance from a datetime one.
+        """
+        if not isinstance(dt, datetime.datetime):
+            raise ValueError("instance() only accepts datetime objects.")
+
+        if isinstance(dt, DateTime):
+            return dt
+
+        tz = dt.tzinfo or tz
+
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz, dt=dt)
+
+        return cls.create(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            tz=cast(Union[str, int, Timezone, FixedTimezone, None], tz),
+        )
+
     @overload
     @classmethod
     def now(cls, tz: datetime.tzinfo | None = None) -> DateTime:
@@ -167,7 +199,7 @@ class DateTime(datetime.datetime, Date):
 
     @classmethod
     def strptime(cls, time: str, fmt: str) -> DateTime:
-        return pendulum.instance(datetime.datetime.strptime(time, fmt))
+        return cls._instance(datetime.datetime.strptime(time, fmt))
 
     # Getters/Setters
 
@@ -199,9 +231,7 @@ class DateTime(datetime.datetime, Date):
         if tz is None:
             tz = self.tz
 
-        return DateTime.create(
-            year, month, day, hour, minute, second, microsecond, tz=tz
-        )
+        return self.create(year, month, day, hour, minute, second, microsecond, tz=tz)
 
     @property
     def float_timestamp(self) -> float:
@@ -470,7 +500,7 @@ class DateTime(datetime.datetime, Date):
         """
         Get the farthest date from the instance.
         """
-        pdts = [pendulum.instance(x) for x in dts]
+        pdts = [self._instance(x) for x in dts]
 
         return min((abs(self - dt), dt) for dt in pdts)[1]
 
@@ -478,7 +508,7 @@ class DateTime(datetime.datetime, Date):
         """
         Get the farthest date from the instance.
         """
-        pdts = [pendulum.instance(x) for x in dts]
+        pdts = [self._instance(x) for x in dts]
 
         return max((abs(self - dt), dt) for dt in pdts)[1]
 
@@ -510,7 +540,7 @@ class DateTime(datetime.datetime, Date):
         Checks if the passed in date is the same day
         as the instance current day.
         """
-        dt = pendulum.instance(dt)
+        dt = self._instance(dt)
 
         return self.to_date_string() == dt.to_date_string()
 
@@ -524,7 +554,7 @@ class DateTime(datetime.datetime, Date):
         if dt is None:
             dt = self.now(self.tz)
 
-        instance = pendulum.instance(dt)
+        instance = self._instance(dt)
 
         return (self.month, self.day) == (instance.month, instance.day)
 
@@ -1184,7 +1214,7 @@ class DateTime(datetime.datetime, Date):
 
         if not isinstance(other, self.__class__):
             if other.tzinfo is None:
-                other = pendulum.naive(
+                other = self.__class__(
                     other.year,
                     other.month,
                     other.day,
@@ -1194,7 +1224,7 @@ class DateTime(datetime.datetime, Date):
                     other.microsecond,
                 )
             else:
-                other = pendulum.instance(other)
+                other = self._instance(other)
 
         return other.diff(self, False)
 
@@ -1204,7 +1234,7 @@ class DateTime(datetime.datetime, Date):
 
         if not isinstance(other, self.__class__):
             if other.tzinfo is None:
-                other = pendulum.naive(
+                other = self.__class__(
                     other.year,
                     other.month,
                     other.day,
@@ -1214,7 +1244,7 @@ class DateTime(datetime.datetime, Date):
                     other.microsecond,
                 )
             else:
-                other = pendulum.instance(other)
+                other = self._instance(other)
 
         return self.diff(other, False)
 
@@ -1243,17 +1273,15 @@ class DateTime(datetime.datetime, Date):
     def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> DateTime:
         tzinfo = pendulum._safe_timezone(tz)
 
-        return pendulum.instance(
-            datetime.datetime.fromtimestamp(t, tz=tzinfo), tz=tzinfo
-        )
+        return cls._instance(datetime.datetime.fromtimestamp(t, tz=tzinfo), tz=tzinfo)
 
     @classmethod
     def utcfromtimestamp(cls, t: float) -> DateTime:
-        return pendulum.instance(datetime.datetime.utcfromtimestamp(t), tz=None)
+        return cls._instance(datetime.datetime.utcfromtimestamp(t), tz=None)
 
     @classmethod
     def fromordinal(cls, n: int) -> DateTime:
-        return pendulum.instance(datetime.datetime.fromordinal(n), tz=None)
+        return cls._instance(datetime.datetime.fromordinal(n), tz=None)
 
     @classmethod
     def combine(
@@ -1262,7 +1290,7 @@ class DateTime(datetime.datetime, Date):
         time: datetime.time,
         tzinfo: datetime.tzinfo | None = None,
     ) -> DateTime:
-        return pendulum.instance(datetime.datetime.combine(date, time), tz=tzinfo)
+        return cls._instance(datetime.datetime.combine(date, time), tz=tzinfo)
 
     def astimezone(self, tz: datetime.tzinfo | None = None) -> DateTime:
         dt = super().astimezone(tz)
@@ -1313,7 +1341,7 @@ class DateTime(datetime.datetime, Date):
         if tzinfo is not None:
             tzinfo = pendulum._safe_timezone(tzinfo)
 
-        return DateTime.create(
+        return self.__class__(
             year,
             month,
             day,
@@ -1321,7 +1349,7 @@ class DateTime(datetime.datetime, Date):
             minute,
             second,
             microsecond,
-            tz=tzinfo,
+            tzinfo=tzinfo,
             fold=fold,
         )
 

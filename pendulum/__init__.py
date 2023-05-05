@@ -176,27 +176,7 @@ def instance(
     """
     Create a DateTime instance from a datetime one.
     """
-    if not isinstance(dt, _datetime.datetime):
-        raise ValueError("instance() only accepts datetime objects.")
-
-    if isinstance(dt, DateTime):
-        return dt
-
-    tz = dt.tzinfo or tz
-
-    if tz is not None:
-        tz = _safe_timezone(tz, dt=dt)
-
-    return datetime(
-        dt.year,
-        dt.month,
-        dt.day,
-        dt.hour,
-        dt.minute,
-        dt.second,
-        dt.microsecond,
-        tz=cast(Union[str, int, Timezone, FixedTimezone, None], tz),
-    )
+    return DateTime._instance(dt, tz)
 
 
 def now(tz: str | Timezone | None = None) -> DateTime:
