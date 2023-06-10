@@ -252,10 +252,10 @@ class Time(FormattableMixin, time):
 
     def replace(
         self,
-        hour: int | None = None,
-        minute: int | None = None,
-        second: int | None = None,
-        microsecond: int | None = None,
+        hour: SupportsIndex | None = None,
+        minute: SupportsIndex | None = None,
+        second: SupportsIndex | None = None,
+        microsecond: SupportsIndex | None = None,
         tzinfo: bool | datetime.tzinfo | Literal[True] | None = True,
         fold: int = 0,
     ) -> Self:

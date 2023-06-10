@@ -30,6 +30,7 @@ from pendulum.mixins.default import FormattableMixin
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+    from typing_extensions import SupportsIndex
 
 
 class Date(FormattableMixin, date):
@@ -262,7 +263,7 @@ class Date(FormattableMixin, date):
 
         return self._add_timedelta(other)
 
-    @overload  # type: ignore[override]
+    @overload
     def __sub__(self, __delta: timedelta) -> Self:
         ...
 
@@ -753,9 +754,9 @@ class Date(FormattableMixin, date):
 
     def replace(
         self,
-        year: int | None = None,
-        month: int | None = None,
-        day: int | None = None,
+        year: SupportsIndex | None = None,
+        month: SupportsIndex | None = None,
+        day: SupportsIndex | None = None,
     ) -> Self:
         year = year if year is not None else self.year
         month = month if month is not None else self.month
