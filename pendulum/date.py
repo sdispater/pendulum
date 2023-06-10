@@ -1,3 +1,5 @@
+# The following is only needed because of Python 3.7
+# mypy: no-warn-unused-ignores
 from __future__ import annotations
 
 import calendar
@@ -263,7 +265,7 @@ class Date(FormattableMixin, date):
 
         return self._add_timedelta(other)
 
-    @overload
+    @overload  # type: ignore[override]  # this is only needed because of Python 3.7
     def __sub__(self, __delta: timedelta) -> Self:
         ...
 
