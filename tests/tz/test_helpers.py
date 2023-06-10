@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from pendulum.tz import timezone
+from pendulum import timezone
 from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone

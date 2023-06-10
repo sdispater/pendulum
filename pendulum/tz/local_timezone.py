@@ -14,10 +14,7 @@ from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
 if sys.platform == "win32":
-    try:
-        import _winreg as winreg
-    except (ImportError, AttributeError):
-        import winreg
+    import winreg
 
 _mock_local_timezone = None
 _local_timezone = None
@@ -142,7 +139,7 @@ if sys.platform == "win32":
 else:
 
     def _get_windows_timezone() -> Timezone:
-        ...
+        raise NotImplementedError
 
 
 def _get_darwin_timezone() -> Timezone:

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from collections import namedtuple
 from datetime import date
 from datetime import datetime
+from typing import NamedTuple
 
 def days_in_year(year: int) -> int: ...
 def is_leap(year: int) -> bool: ...
@@ -11,12 +11,7 @@ def local_time(
     unix_time: int, utc_offset: int, microseconds: int
 ) -> tuple[int, int, int, int, int, int, int]: ...
 
-class PreciseDiff(
-    namedtuple(
-        "PreciseDiff",
-        "years months days " "hours minutes seconds microseconds " "total_days",
-    )
-):
+class PreciseDiff(NamedTuple):
     years: int
     months: int
     days: int

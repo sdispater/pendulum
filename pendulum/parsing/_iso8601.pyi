@@ -5,7 +5,6 @@ from datetime import datetime
 from datetime import time
 
 class Duration:
-
     years: int = 0
     months: int = 0
     weeks: int = 0

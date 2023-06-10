@@ -109,7 +109,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
             ),
         )
 
-    if CDuration and isinstance(parsed, CDuration):
+    if CDuration and isinstance(parsed, CDuration):  # type: ignore[truthy-function]
         return pendulum.duration(
             years=parsed.years,
             months=parsed.months,
