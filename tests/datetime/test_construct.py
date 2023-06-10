@@ -12,7 +12,7 @@ from dateutil import tz
 import pendulum
 
 from pendulum import DateTime
-from pendulum.tz import timezone
+from pendulum import timezone
 from pendulum.utils._compat import PYPY
 from tests.conftest import assert_datetime
 

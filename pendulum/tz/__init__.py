@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import cast
-from typing import overload
 
 from pendulum.tz.local_timezone import get_local_timezone
 from pendulum.tz.local_timezone import set_local_timezone
@@ -29,34 +28,6 @@ def timezones() -> tuple[str, ...]:
             _timezones = tuple(tz.strip() for tz in f.readlines())
 
     return _timezones
-
-
-@overload
-def timezone(name: int) -> FixedTimezone:
-    ...
-
-
-@overload
-def timezone(name: str) -> Timezone:
-    ...
-
-
-@overload
-def timezone(name: str | int) -> Timezone | FixedTimezone:
-    ...
-
-
-def timezone(name: str | int) -> Timezone | FixedTimezone:
-    """
-    Return a Timezone instance given its name.
-    """
-    if isinstance(name, int):
-        return fixed_timezone(name)
-
-    if name.lower() == "utc":
-        return UTC
-
-    return Timezone(name)
 
 
 def fixed_timezone(offset: int) -> FixedTimezone:
@@ -86,7 +57,6 @@ __all__ = [
     "set_local_timezone",
     "get_local_timezone",
     "test_local_timezone",
-    "timezone",
     "fixed_timezone",
     "local_timezone",
     "timezones",

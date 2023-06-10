@@ -4,6 +4,7 @@ import datetime as _datetime
 
 from typing import Union
 from typing import cast
+from typing import overload
 
 from pendulum.__version__ import __version__
 from pendulum.constants import DAYS_PER_WEEK
@@ -38,10 +39,10 @@ from pendulum.parser import parse
 from pendulum.testing.traveller import Traveller
 from pendulum.time import Time
 from pendulum.tz import UTC
+from pendulum.tz import fixed_timezone
 from pendulum.tz import local_timezone
 from pendulum.tz import set_local_timezone
 from pendulum.tz import test_local_timezone
-from pendulum.tz import timezone
 from pendulum.tz import timezones
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
@@ -52,6 +53,34 @@ _WEEK_STARTS_AT = MONDAY
 _WEEK_ENDS_AT = SUNDAY
 
 _formatter = Formatter()
+
+
+@overload
+def timezone(name: int) -> FixedTimezone:
+    ...
+
+
+@overload
+def timezone(name: str) -> Timezone:
+    ...
+
+
+@overload
+def timezone(name: str | int) -> Timezone | FixedTimezone:
+    ...
+
+
+def timezone(name: str | int) -> Timezone | FixedTimezone:
+    """
+    Return a Timezone instance given its name.
+    """
+    if isinstance(name, int):
+        return fixed_timezone(name)
+
+    if name.lower() == "utc":
+        return UTC
+
+    return Timezone(name)
 
 
 def _safe_timezone(

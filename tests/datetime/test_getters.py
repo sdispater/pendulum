@@ -7,7 +7,7 @@ import pytest
 import pendulum
 
 from pendulum import DateTime
-from pendulum.tz import timezone
+from pendulum import timezone
 from tests.conftest import assert_date
 from tests.conftest import assert_time
 
