@@ -7,6 +7,7 @@ import sys
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import ClassVar
 from typing import Optional
 from typing import cast
 from typing import overload
@@ -47,7 +48,9 @@ if TYPE_CHECKING:
 
 
 class DateTime(datetime.datetime, Date):
-    EPOCH: DateTime
+    EPOCH: ClassVar[DateTime]
+    min: ClassVar[DateTime]
+    max: ClassVar[DateTime]
 
     # Formats
 
@@ -1366,8 +1369,6 @@ class DateTime(datetime.datetime, Date):
         return 0 if dt == other else 1 if dt > other else -1
 
 
-DateTime.min: DateTime = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)  # type: ignore[misc]
-DateTime.max: DateTime = DateTime(  # type: ignore[misc]
-    9999, 12, 31, 23, 59, 59, 999999, tzinfo=UTC
-)
-DateTime.EPOCH: DateTime = DateTime(1970, 1, 1, tzinfo=UTC)  # type: ignore[misc]
+DateTime.min = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)
+DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999, tzinfo=UTC)
+DateTime.EPOCH = DateTime(1970, 1, 1, tzinfo=UTC)
