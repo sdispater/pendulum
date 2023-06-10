@@ -13,6 +13,7 @@ from pendulum.constants import SECONDS_PER_MINUTE
 from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
 
+
 if TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -376,7 +377,9 @@ class Duration(timedelta):
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return cast(int, usec // other._to_microseconds())  # type: ignore[attr-defined]
+            return cast(
+                int, usec // other._to_microseconds()  # type: ignore[attr-defined]
+            )
 
         if isinstance(other, int):
             return self.__class__(
@@ -401,7 +404,9 @@ class Duration(timedelta):
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return cast(float, usec / other._to_microseconds())  # type: ignore[attr-defined]
+            return cast(
+                float, usec / other._to_microseconds()  # type: ignore[attr-defined]
+            )
 
         if isinstance(other, int):
             return self.__class__(
@@ -427,7 +432,7 @@ class Duration(timedelta):
 
     def __mod__(self, other: timedelta) -> Self:
         if isinstance(other, timedelta):
-            r = self._to_microseconds() % other._to_microseconds()  # type: ignore[attr-defined]
+            r = self._to_microseconds() % other._to_microseconds()  # type: ignore[attr-defined] # noqa: E501
 
             return self.__class__(0, 0, r)
 
@@ -435,7 +440,7 @@ class Duration(timedelta):
 
     def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         if isinstance(other, timedelta):
-            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined]
+            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined] # noqa: E501
 
             return q, self.__class__(0, 0, r)
 

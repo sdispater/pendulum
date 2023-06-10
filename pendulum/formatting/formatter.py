@@ -14,6 +14,7 @@ import pendulum
 
 from pendulum.locales.locale import Locale
 
+
 if TYPE_CHECKING:
     from pendulum import Timezone
 
@@ -287,10 +288,7 @@ class Formatter:
             offset = dt.utcoffset() or datetime.timedelta()
             minutes = offset.total_seconds() / 60
 
-            if minutes >= 0:
-                sign = "+"
-            else:
-                sign = "-"
+            sign = "+" if minutes >= 0 else "-"
 
             hour, minute = divmod(abs(int(minutes)), 60)
 
@@ -395,9 +393,8 @@ class Formatter:
         if not re.search("^" + pattern + "$", time):
             raise ValueError(f"String does not match format {fmt}")
 
-        _get_parsed_values: Callable[
-            [Match[str]], Any
-        ] = lambda m: self._get_parsed_values(m, parsed, loaded_locale, now)
+        def _get_parsed_values(m: Match[str]) -> Any:
+            return self._get_parsed_values(m, parsed, loaded_locale, now)
 
         re.sub(pattern, _get_parsed_values, time)
 
@@ -502,9 +499,9 @@ class Formatter:
                 raise ValueError("Invalid date")
 
             pm = parsed["meridiem"] == "pm"
-            validated["hour"] %= 12  # type: ignore
+            validated["hour"] %= 12  # type: ignore[operator]
             if pm:
-                validated["hour"] += 12  # type: ignore
+                validated["hour"] += 12  # type: ignore[operator]
 
         if validated["month"] is None:
             if parsed["year"] is not None:

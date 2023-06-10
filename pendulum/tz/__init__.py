@@ -11,6 +11,7 @@ from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 from pendulum.utils._compat import resources
 
+
 PRE_TRANSITION = "pre"
 POST_TRANSITION = "post"
 TRANSITION_ERROR = "error"

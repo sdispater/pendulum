@@ -18,6 +18,7 @@ from pendulum.duration import AbsoluteDuration
 from pendulum.duration import Duration
 from pendulum.mixins.default import FormattableMixin
 
+
 if TYPE_CHECKING:
     from typing_extensions import Literal
     from typing_extensions import Self
@@ -37,7 +38,7 @@ class Time(FormattableMixin, time):
 
         tzinfo = ""
         if self.tzinfo:
-            tzinfo = f", tzinfo={repr(self.tzinfo)}"
+            tzinfo = f", tzinfo={self.tzinfo!r}"
 
         return (
             f"{self.__class__.__name__}"

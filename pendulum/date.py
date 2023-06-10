@@ -30,6 +30,7 @@ from pendulum.helpers import add_duration
 from pendulum.interval import Interval
 from pendulum.mixins.default import FormattableMixin
 
+
 if TYPE_CHECKING:
     from typing_extensions import Self
     from typing_extensions import SupportsIndex
@@ -187,8 +188,9 @@ class Date(FormattableMixin, date):
         return (self.month, self.day) == (instance.month, instance.day)
 
     # the additional method for checking if today is the anniversary day
-    # the alias is provided to start using a new name and keep the backward compatibility
-    # the old name can be completely replaced with the new in one of the future versions
+    # the alias is provided to start using a new name and keep the backward
+    # compatibility the old name can be completely replaced with the new in
+    # one of the future versions
     is_birthday = is_anniversary
 
     # ADDITIONS AND SUBTRACTIONS
@@ -516,7 +518,8 @@ class Date(FormattableMixin, date):
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the first day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. pendulum.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. pendulum.MONDAY.
 
         Supported units are month, quarter and year.
 
@@ -533,7 +536,8 @@ class Date(FormattableMixin, date):
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the last day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. pendulum.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. pendulum.MONDAY.
 
         Supported units are month, quarter and year.
 

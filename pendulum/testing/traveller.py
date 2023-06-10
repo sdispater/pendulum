@@ -6,6 +6,7 @@ from typing import cast
 from pendulum.datetime import DateTime
 from pendulum.utils._compat import PYPY
 
+
 if TYPE_CHECKING:
     from types import TracebackType
 
@@ -148,5 +149,4 @@ if not PYPY:
 else:
 
     class Traveller(BaseTraveller):  # type: ignore[no-redef]
-
         ...

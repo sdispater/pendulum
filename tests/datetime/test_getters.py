@@ -126,7 +126,8 @@ def test_utc():
     assert pendulum.datetime(2012, 1, 1, tz="UTC").is_utc()
     assert pendulum.datetime(2012, 1, 1, tz=0).is_utc()
     assert not pendulum.datetime(2012, 1, 1, tz=5).is_utc()
-    # There is no time difference between Greenwich Mean Time and Coordinated Universal Time
+    # There is no time difference between Greenwich Mean Time
+    # and Coordinated Universal Time
     assert pendulum.datetime(2012, 1, 1, tz="GMT").is_utc()
 
 

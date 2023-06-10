@@ -13,6 +13,7 @@ from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
+
 if sys.platform == "win32":
     import winreg
 

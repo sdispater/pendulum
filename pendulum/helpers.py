@@ -17,6 +17,7 @@ from pendulum.constants import DAYS_PER_MONTHS
 from pendulum.formatting.difference_formatter import DifferenceFormatter
 from pendulum.locales.locale import Locale
 
+
 if TYPE_CHECKING:
     # Prevent import cycles
     from pendulum.duration import Duration
@@ -27,7 +28,6 @@ _DT = TypeVar("_DT", bound=datetime)
 _D = TypeVar("_D", bound=date)
 
 try:
-    # nopycln: file # noqa: E800
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 

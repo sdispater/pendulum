@@ -14,6 +14,7 @@ from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.exceptions import NonExistingTime
 from pendulum.utils._compat import zoneinfo
 
+
 if TYPE_CHECKING:
     from typing_extensions import Self
 

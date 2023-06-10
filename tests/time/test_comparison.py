@@ -28,7 +28,7 @@ def test_equal_to_false():
 def test_not_equal_to_none():
     t1 = pendulum.time(1, 2, 3)
 
-    assert t1 != None  # noqa
+    assert t1 is not None
 
 
 def test_greater_than_true():

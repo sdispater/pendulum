@@ -274,7 +274,10 @@ def test_after_last_transition():
 
 
 @pytest.mark.skip(
-    reason="zoneinfo does not currently support POSIX transition rules to go beyond the last fixed transition."
+    reason=(
+        "zoneinfo does not currently support POSIX transition"
+        " rules to go beyond the last fixed transition."
+    )
 )
 def test_on_last_transition():
     tz = pendulum.timezone("Europe/Paris")
@@ -406,7 +409,10 @@ def test_just_before_last_transition():
 
 
 @pytest.mark.skip(
-    reason="zoneinfo does not currently support POSIX transition rules to go beyond the last fixed transition."
+    reason=(
+        "zoneinfo does not currently support POSIX transition"
+        " rules to go beyond the last fixed transition."
+    )
 )
 def test_timezones_are_extended():
     tz = pendulum.timezone("Europe/Paris")

@@ -47,6 +47,7 @@ from pendulum.tz import timezones
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
+
 _TEST_NOW: DateTime | None = None
 _LOCALE = "en"
 _WEEK_STARTS_AT = MONDAY
@@ -105,7 +106,7 @@ def _safe_timezone(
             obj = obj.key
         # pytz
         elif hasattr(obj, "localize"):
-            obj = obj.zone  # type: ignore
+            obj = obj.zone  # type: ignore[attr-defined]
         elif obj.tzname(None) == "UTC":
             return UTC
         else:

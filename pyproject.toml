@@ -74,32 +74,68 @@ pytest-codspeed = "^1.2.2"
 generate-setup-file = false
 script = "build.py"
 
-[tool.isort]
-profile = "black"
-force_single_line = true
-atomic = true
-lines_after_imports = -1
-lines_between_types = 1
-skip_glob = [
-    "pendulum/locales/**",
-    "build.py",
-    "pendulum/__version__.py",
+
+[tool.ruff]
+fix = true
+unfixable = [
+    "ERA", # do not autoremove commented out code
 ]
-filter_files = true
-known_first_party = "pendulum"
-known_third_party = [
+target-version = "py37"
+line-length = 88
+extend-select = [
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "ERA", # flake8-eradicate/eradicate
+    "I",   # isort
+    "N",   # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+]
+ignore = [
+    "B904", # use 'raise ... from err'
+    "B905", # use explicit 'strict=' parameter with 'zip()'
+    "N818", #  Exception name should be named with an Error suffix
+]
+extend-exclude = [
+    # External to the project's coding standards:
+    "docs/*",
+    # Machine-generated, too many false-positives
+    "pendulum/locales/*",
+    # ruff disagrees with black when it comes to formatting
+    "*.pyi",
+]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.isort]
+force-single-line = true
+lines-between-types = 1
+lines-after-imports = 2
+known-first-party = ["pendulum"]
+known-third-party = [
     "babel",
     "cleo",
     "dateutil",
     "time_machine",
     "pytzdata",
 ]
+required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.extend-per-file-ignores]
+"build.py" = ["I002"]
 
 [tool.mypy]
 strict = true
 files = "pendulum, tests"
 show_error_codes = true
 pretty = true
+warn_unused_ignores = true
 exclude = [
     "^build\\.py$"
 ]
