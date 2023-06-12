@@ -128,12 +128,12 @@ class DateTime(datetime.datetime, Date):
 
     @overload
     @classmethod
-    def now(cls, tz: str | Timezone | FixedTimezone | None = None) -> Self:
+    def now(cls, tz: str | float | Timezone | FixedTimezone | None = None) -> Self:
         ...
 
     @classmethod
     def now(
-        cls, tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = None
+        cls, tz: str | float | Timezone | FixedTimezone | datetime.tzinfo | None = None
     ) -> Self:
         """
         Get a DateTime instance for the current date and time.

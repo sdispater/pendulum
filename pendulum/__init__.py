@@ -228,7 +228,7 @@ def instance(
     )
 
 
-def now(tz: str | Timezone | None = None) -> DateTime:
+def now(tz: str | float | Timezone | None = None) -> DateTime:
     """
     Get a DateTime instance for the current date and time.
     """
