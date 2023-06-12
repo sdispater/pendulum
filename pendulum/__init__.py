@@ -259,7 +259,7 @@ def yesterday(tz: str | Timezone = "local") -> DateTime:
 def from_format(
     string: str,
     fmt: str,
-    tz: str | Timezone = UTC,
+    tz: str | float | Timezone | None = UTC,
     locale: str | None = None,
 ) -> DateTime:
     """
