@@ -205,7 +205,7 @@ class DateTime(datetime.datetime, Date):
             tz = self.tz
 
         return self.__class__.create(
-            year, month, day, hour, minute, second, microsecond, tz=tz
+            year, month, day, hour, minute, second, microsecond, tz=tz, fold=self.fold
         )
 
     @property

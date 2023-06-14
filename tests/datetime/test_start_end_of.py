@@ -277,9 +277,49 @@ def test_start_of_with_transition():
     assert d.start_of("year").offset == 3600
 
 
+def test_start_of_on_date_before_transition():
+    d = pendulum.datetime(2013, 10, 27, 0, 59, 59, tz="UTC").in_timezone("Europe/Paris")
+    assert d.offset == 7200
+    assert d.start_of("minute").offset == 7200
+    assert d.start_of("hour").offset == 7200
+    assert d.start_of("day").offset == 7200
+    assert d.start_of("month").offset == 7200
+    assert d.start_of("year").offset == 3600
+
+
+def test_start_of_on_date_after_transition():
+    d = pendulum.datetime(2013, 10, 27, 1, 59, 59, tz="UTC").in_timezone("Europe/Paris")
+    assert d.offset == 3600
+    assert d.start_of("minute").offset == 3600
+    assert d.start_of("hour").offset == 3600
+    assert d.start_of("day").offset == 7200
+    assert d.start_of("month").offset == 7200
+    assert d.start_of("year").offset == 3600
+
+
 def test_end_of_with_transition():
     d = pendulum.datetime(2013, 3, 31, tz="Europe/Paris")
     assert d.offset == 3600
     assert d.end_of("month").offset == 7200
     assert d.end_of("day").offset == 7200
+    assert d.end_of("year").offset == 3600
+
+
+def test_end_of_on_date_before_transition():
+    d = pendulum.datetime(2013, 10, 27, 0, 0, 0, tz="UTC").in_timezone("Europe/Paris")
+    assert d.offset == 7200
+    assert d.end_of("minute").offset == 7200
+    assert d.end_of("hour").offset == 7200
+    assert d.end_of("day").offset == 3600
+    assert d.end_of("month").offset == 3600
+    assert d.end_of("year").offset == 3600
+
+
+def test_end_of_on_date_after_transition():
+    d = pendulum.datetime(2013, 10, 27, 1, 0, 0, tz="UTC").in_timezone("Europe/Paris")
+    assert d.offset == 3600
+    assert d.end_of("minute").offset == 3600
+    assert d.end_of("hour").offset == 3600
+    assert d.end_of("day").offset == 3600
+    assert d.end_of("month").offset == 3600
     assert d.end_of("year").offset == 3600
