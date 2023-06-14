@@ -54,13 +54,14 @@ impl<'a> ParsedDateTime {
 }
 
 pub struct ParsedDuration {
-    pub years: i32,
-    pub months: i32,
-    pub days: i32,
-    pub hours: i32,
-    pub minutes: i32,
-    pub seconds: i32,
-    pub microseconds: i32,
+    pub years: u32,
+    pub months: u32,
+    pub weeks: u32,
+    pub days: u32,
+    pub hours: u32,
+    pub minutes: u32,
+    pub seconds: u32,
+    pub microseconds: u32,
 }
 
 impl<'a> ParsedDuration {
@@ -68,6 +69,7 @@ impl<'a> ParsedDuration {
         ParsedDuration {
             years: 0,
             months: 0,
+            weeks: 0,
             days: 0,
             hours: 0,
             minutes: 0,
@@ -200,8 +202,9 @@ impl<'a> Parser<'a> {
 
         if self.current == 'P' {
             // Duration (and possibly time interval)
+            self.parse_duration(&mut parsed)?;
         } else {
-            self.parse_datetime(&mut parsed);
+            self.parse_datetime(&mut parsed)?;
         }
 
         Ok(parsed)
@@ -493,7 +496,7 @@ impl<'a> Parser<'a> {
                     self.inc();
 
                     tzminute = self.parse_integer(2, "timezone minute")? as i32;
-                } else {
+                } else if !self.end() {
                     tzminute = self.parse_integer(2, "timezone minute")? as i32;
                 }
             }
@@ -513,6 +516,22 @@ impl<'a> Parser<'a> {
         }
 
         if !self.end() {
+            if self.current == '/' && parsed.datetime.is_none() && parsed.duration.is_none() {
+                // Interval
+                parsed.datetime = Some(datetime);
+
+                self.inc();
+
+                if self.current == 'P' {
+                    // Duration
+                    self.parse_duration(parsed)?;
+                } else {
+                    self.parse_datetime(parsed)?;
+                }
+
+                return Ok(());
+            }
+
             return Err(self.parse_error(format!("Unconverted data remains")));
         }
 
@@ -531,6 +550,210 @@ impl<'a> Parser<'a> {
         }
 
         Ok(())
+    }
+
+    fn parse_duration(&mut self, parsed: &mut Parsed) -> Result<(), ParseError> {
+        // Removing P operator
+        self.inc();
+
+        let mut duration: ParsedDuration = ParsedDuration::new();
+        let mut got_t: bool = false;
+        let mut last_had_fraction = false;
+
+        loop {
+            match self.current {
+                'T' => {
+                    if got_t {
+                        return Err(
+                            self.parse_error(format!("Repeated time declaration in duration"))
+                        );
+                    }
+
+                    got_t = true;
+                }
+                _c => {
+                    let (value, op_fraction) = self.parse_duration_number_frac()?;
+                    if last_had_fraction {
+                        return Err(self.parse_error(format!("Invalid duration fraction")));
+                    }
+
+                    if op_fraction.is_some() {
+                        last_had_fraction = true;
+                    }
+
+                    if got_t {
+                        match self.current {
+                            'H' => {
+                                duration.hours += value;
+
+                                if let Some(fraction) = op_fraction {
+                                    let extra_minutes = fraction * 60 as f64;
+                                    let extra_full_minutes: f64 = extra_minutes.trunc();
+                                    duration.minutes += extra_full_minutes as u32;
+                                    let extra_seconds =
+                                        ((extra_minutes - extra_full_minutes) * 60.0).round();
+                                    let extra_full_seconds = extra_seconds.trunc();
+                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    let micro_extra = ((extra_seconds - extra_full_seconds)
+                                        * 1_000_000.0)
+                                        .round()
+                                        as u32;
+                                    duration.microseconds = duration.microseconds + micro_extra;
+                                }
+                            }
+                            'M' => {
+                                duration.minutes += value;
+
+                                if let Some(fraction) = op_fraction {
+                                    let extra_seconds = fraction * 60 as f64;
+                                    let extra_full_seconds = extra_seconds.trunc();
+                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    let micro_extra = ((extra_seconds - extra_full_seconds)
+                                        * 1_000_000.0)
+                                        .round()
+                                        as u32;
+                                    duration.microseconds = duration.microseconds + micro_extra;
+                                }
+                            }
+                            'S' => {
+                                duration.seconds = value;
+
+                                if let Some(fraction) = op_fraction {
+                                    duration.microseconds +=
+                                        (fraction * 1_000_000.0).round() as u32;
+                                }
+                            }
+                            _ => {
+                                return Err(self.parse_error(format!("Invalid duration time unit")))
+                            }
+                        }
+                    } else {
+                        match self.current {
+                            'Y' => {
+                                if last_had_fraction {
+                                    return Err(self.parse_error(format!(
+                                        "Fractional years in duration are not supported"
+                                    )));
+                                }
+
+                                duration.years = value;
+                            }
+                            'M' => {
+                                if last_had_fraction {
+                                    return Err(self.parse_error(format!(
+                                        "Fractional months in duration are not supported"
+                                    )));
+                                }
+
+                                duration.months = value;
+                            }
+                            'W' => {
+                                duration.weeks = value;
+
+                                if let Some(fraction) = op_fraction {
+                                    let extra_days = fraction * 7 as f64;
+                                    let extra_full_days = extra_days.trunc();
+                                    duration.days = duration.days + extra_full_days as u32;
+                                    let extra_hours = (extra_days - extra_full_days) * 24.0;
+                                    let extra_full_hours = extra_hours.trunc();
+                                    duration.hours += extra_full_hours as u32;
+                                    let extra_minutes =
+                                        ((extra_hours - extra_full_hours) * 60.0).round();
+                                    let extra_full_minutes: f64 = extra_minutes.trunc();
+                                    duration.minutes += extra_full_minutes as u32;
+                                    let extra_seconds =
+                                        ((extra_minutes - extra_full_minutes) * 60.0).round();
+                                    let extra_full_seconds = extra_seconds.trunc();
+                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    let micro_extra = ((extra_seconds - extra_full_seconds)
+                                        * 1_000_000.0)
+                                        .round()
+                                        as u32;
+                                    duration.microseconds = duration.microseconds + micro_extra;
+                                }
+                            }
+                            'D' => {
+                                duration.days += value;
+                                if let Some(fraction) = op_fraction {
+                                    let extra_hours = fraction * 24.0;
+                                    let extra_full_hours = extra_hours.trunc();
+                                    duration.hours += extra_full_hours as u32;
+                                    let extra_minutes =
+                                        ((extra_hours - extra_full_hours) * 60.0).round();
+                                    let extra_full_minutes: f64 = extra_minutes.trunc();
+                                    duration.minutes += extra_full_minutes as u32;
+                                    let extra_seconds =
+                                        ((extra_minutes - extra_full_minutes) * 60.0).round();
+                                    let extra_full_seconds = extra_seconds.trunc();
+                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    let micro_extra = ((extra_seconds - extra_full_seconds)
+                                        * 1_000_000.0)
+                                        .round()
+                                        as u32;
+                                    duration.microseconds = duration.microseconds + micro_extra;
+                                }
+                            }
+                            _ => {
+                                return Err(self.parse_error(format!("Invalid duration time unit")))
+                            }
+                        }
+                    }
+                }
+                _ => break,
+            }
+            self.inc();
+
+            if self.end() {
+                break;
+            }
+        }
+
+        parsed.duration = Some(duration);
+
+        return Ok(());
+    }
+
+    fn parse_duration_number_frac(&mut self) -> Result<(u32, Option<f64>), ParseError> {
+        let value = self.parse_duration_number()?;
+        if self.current == '.' || self.current == ',' {
+            let mut decimal = 0_f64;
+            let mut denominator = 1_f64;
+            loop {
+                self.inc();
+
+                match self.current {
+                    c if c.is_ascii_digit() => {
+                        decimal *= 10.0;
+                        decimal += c.to_digit(10).unwrap() as f64;
+                        denominator *= 10.0;
+                    }
+                    _ => return Ok((value, Some(decimal / denominator))),
+                }
+            }
+        } else {
+            Ok((value, None))
+        }
+    }
+
+    fn parse_duration_number(&mut self) -> Result<u32, ParseError> {
+        let mut value = match self.current {
+            c if c.is_ascii_digit() => c.to_digit(10).unwrap() as u32,
+            _ => {
+                return Err(self.parse_error(format!("Invalid number in duration")));
+            }
+        };
+
+        loop {
+            self.inc();
+
+            match self.current {
+                c if c.is_ascii_digit() => {
+                    value = value * 10;
+                    value = value + c.to_digit(10).unwrap() as u32;
+                }
+                _ => return Ok(value),
+            }
+        }
     }
 
     fn iso_to_ymd(

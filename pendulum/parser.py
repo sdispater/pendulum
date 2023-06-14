@@ -18,9 +18,9 @@ if t.TYPE_CHECKING:
     from pendulum.time import Time
 
 try:
-    from pendulum.parsing._iso8601 import Duration as CDuration
+    from _pendulum import Duration as CDuration
 except ImportError:
-    CDuration = None  # type: ignore[misc, assignment]
+    CDuration = None
 
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
@@ -122,4 +122,4 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
             microseconds=parsed.microseconds,
         )
 
-    return parsed
+    raise NotImplementedError

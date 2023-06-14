@@ -2,7 +2,7 @@ use pyo3::exceptions;
 use pyo3::{prelude::*, types::PyDateTime};
 
 use crate::parsing::Parser;
-use crate::python::types::FixedTimezone;
+use crate::python::types::{Duration, FixedTimezone};
 
 #[pyfunction]
 pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
@@ -46,6 +46,22 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                     return Ok(dt.to_object(py));
                 }
             },
+            (None, Some(duration), None) => {
+                return Ok(Py::new(
+                    py,
+                    Duration::new(
+                        Some(duration.years),
+                        Some(duration.months),
+                        Some(duration.weeks),
+                        Some(duration.days),
+                        Some(duration.hours),
+                        Some(duration.minutes),
+                        Some(duration.seconds),
+                        Some(duration.microseconds),
+                    ),
+                )?
+                .to_object(py));
+            }
             (_, _, _) => todo!(),
         },
         Err(error) => Err(exceptions::PyValueError::new_err(format!("{}", error))),
