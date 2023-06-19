@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from datetime import datetime
+from datetime import time
 
 import pytest
 
@@ -17,17 +18,29 @@ except ImportError:
 @pytest.mark.parametrize(
     ["text", "expected"],
     [
-        ("2016-10", datetime(2016, 10, 1)),
-        ("2016-10-06", datetime(2016, 10, 6)),
+        ("2016-10", date(2016, 10, 1)),
+        ("2016-10-06", date(2016, 10, 6)),
         # Ordinal date
-        ("2012-007", datetime(2012, 1, 7)),
-        ("2012007", datetime(2012, 1, 7)),
-        ("2017-079", datetime(2017, 3, 20)),
+        ("2012-007", date(2012, 1, 7)),
+        ("2012007", date(2012, 1, 7)),
+        ("2017-079", date(2017, 3, 20)),
         # Week date
-        ("2012-W05", datetime(2012, 1, 30)),
-        ("2008-W39-6", datetime(2008, 9, 27)),
-        ("2009-W53-7", datetime(2010, 1, 3)),
-        ("2009-W01-1", datetime(2008, 12, 29)),
+        ("2012-W05", date(2012, 1, 30)),
+        ("2008-W39-6", date(2008, 9, 27)),
+        ("2009-W53-7", date(2010, 1, 3)),
+        ("2009-W01-1", date(2008, 12, 29)),
+        # Time
+        ("12:34", time(12, 34, 0)),
+        ("12:34:56", time(12, 34, 56)),
+        ("12:34:56.123", time(12, 34, 56, 123000)),
+        ("12:34:56.123456", time(12, 34, 56, 123456)),
+        ("12:34+05:30", time(12, 34, 0, tzinfo=FixedTimezone(19800))),
+        ("12:34:56+05:30", time(12, 34, 56, tzinfo=FixedTimezone(19800))),
+        ("12:34:56.123+05:30", time(12, 34, 56, 123000, tzinfo=FixedTimezone(19800))),
+        (
+            "12:34:56.123456+05:30",
+            time(12, 34, 56, 123456, tzinfo=FixedTimezone(19800)),
+        ),
         # Datetime
         ("2016-10-06T12:34:56.123456", datetime(2016, 10, 6, 12, 34, 56, 123456)),
         ("2016-10-06T12:34:56.123", datetime(2016, 10, 6, 12, 34, 56, 123000)),

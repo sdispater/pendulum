@@ -1,7 +1,8 @@
 use pyo3::prelude::*;
-use pyo3::types::{PyDateTime, PyDelta, PyTzInfo};
+use pyo3::types::{PyDateTime, PyDelta, PyDict, PyTzInfo};
 
 #[pyclass(module = "_pendulum", extends = PyTzInfo)]
+#[derive(Clone)]
 pub struct FixedTimezone {
     offset: i32,
     name: Option<String>,
@@ -14,15 +15,15 @@ impl FixedTimezone {
         Self { offset, name }
     }
 
-    fn utcoffset<'p>(&self, py: Python<'p>, _dt: &PyDateTime) -> PyResult<&'p PyDelta> {
+    fn utcoffset<'p>(&self, py: Python<'p>, _dt: &PyAny) -> PyResult<&'p PyDelta> {
         PyDelta::new(py, 0, self.offset, 0, true)
     }
 
-    fn tzname(&self, _dt: &PyDateTime) -> String {
+    fn tzname(&self, _dt: &PyAny) -> String {
         self.__str__()
     }
 
-    fn dst<'p>(&self, py: Python<'p>, _dt: &PyDateTime) -> PyResult<&'p PyDelta> {
+    fn dst<'p>(&self, py: Python<'p>, _dt: &PyAny) -> PyResult<&'p PyDelta> {
         PyDelta::new(py, 0, 0, 0, true)
     }
 
@@ -44,5 +45,9 @@ impl FixedTimezone {
                 format!("{}{:.2}:{:.2}", sign, hour, minute)
             }
         }
+    }
+
+    fn __deepcopy__(&self, py: Python, _memo: &PyDict) -> PyResult<Py<Self>> {
+        Py::new(py, self.clone())
     }
 }

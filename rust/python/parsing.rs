@@ -1,7 +1,10 @@
 use pyo3::exceptions;
-use pyo3::{prelude::*, types::PyDateTime};
+use pyo3::prelude::*;
+use pyo3::types::PyDate;
+use pyo3::types::PyDateTime;
+use pyo3::types::PyTime;
 
-use crate::parsing::Parser;
+use crate::parsing::{ParseError, Parser};
 use crate::python::types::{Duration, FixedTimezone};
 
 #[pyfunction]
@@ -10,41 +13,84 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
 
     match parsed {
         Ok(parsed) => match (parsed.datetime, parsed.duration, parsed.second_datetime) {
-            (Some(datetime), None, None) => match datetime.offset {
-                Some(offset) => {
-                    let dt = PyDateTime::new(
+            (Some(datetime), None, None) => match (datetime.has_date, datetime.has_time) {
+                (true, true) => match datetime.offset {
+                    Some(offset) => {
+                        let dt = PyDateTime::new(
+                            py,
+                            datetime.year as i32,
+                            datetime.month as u8,
+                            datetime.day as u8,
+                            datetime.hour as u8,
+                            datetime.minute as u8,
+                            datetime.second as u8,
+                            datetime.microsecond as u32,
+                            Some(
+                                Py::new(py, FixedTimezone::new(offset, None))?
+                                    .to_object(py)
+                                    .extract(py)?,
+                            ),
+                        )?;
+
+                        return Ok(dt.to_object(py));
+                    }
+                    None => {
+                        let dt = PyDateTime::new(
+                            py,
+                            datetime.year as i32,
+                            datetime.month as u8,
+                            datetime.day as u8,
+                            datetime.hour as u8,
+                            datetime.minute as u8,
+                            datetime.second as u8,
+                            datetime.microsecond as u32,
+                            None,
+                        )?;
+
+                        return Ok(dt.to_object(py));
+                    }
+                },
+                (true, false) => {
+                    let dt = PyDate::new(
                         py,
                         datetime.year as i32,
                         datetime.month as u8,
                         datetime.day as u8,
-                        datetime.hour as u8,
-                        datetime.minute as u8,
-                        datetime.second as u8,
-                        datetime.microsecond as u32,
-                        Some(
-                            Py::new(py, FixedTimezone::new(offset, None))?
-                                .to_object(py)
-                                .extract(py)?,
-                        ),
                     )?;
 
                     return Ok(dt.to_object(py));
                 }
-                None => {
-                    let dt = PyDateTime::new(
-                        py,
-                        datetime.year as i32,
-                        datetime.month as u8,
-                        datetime.day as u8,
-                        datetime.hour as u8,
-                        datetime.minute as u8,
-                        datetime.second as u8,
-                        datetime.microsecond as u32,
-                        None,
-                    )?;
+                (false, true) => match datetime.offset {
+                    Some(offset) => {
+                        let dt = PyTime::new(
+                            py,
+                            datetime.hour as u8,
+                            datetime.minute as u8,
+                            datetime.second as u8,
+                            datetime.microsecond as u32,
+                            Some(
+                                Py::new(py, FixedTimezone::new(offset, None))?
+                                    .to_object(py)
+                                    .extract(py)?,
+                            ),
+                        )?;
 
-                    return Ok(dt.to_object(py));
-                }
+                        return Ok(dt.to_object(py));
+                    }
+                    None => {
+                        let dt = PyTime::new(
+                            py,
+                            datetime.hour as u8,
+                            datetime.minute as u8,
+                            datetime.second as u8,
+                            datetime.microsecond as u32,
+                            None,
+                        )?;
+
+                        return Ok(dt.to_object(py));
+                    }
+                },
+                (_, _) => Err(exceptions::PyValueError::new_err(format!("Parsing error"))),
             },
             (None, Some(duration), None) => {
                 return Ok(Py::new(

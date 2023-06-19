@@ -33,6 +33,9 @@ pub struct ParsedDateTime {
     pub microsecond: u32,
     pub offset: Option<i32>,
     pub has_offset: bool,
+    pub has_date: bool,
+    pub has_time: bool,
+    pub extended_date_format: bool,
     pub time_is_midnight: bool,
 }
 
@@ -48,6 +51,9 @@ impl<'a> ParsedDateTime {
             microsecond: 0,
             offset: None,
             has_offset: false,
+            has_date: false,
+            has_time: false,
+            extended_date_format: false,
             time_is_midnight: false,
         }
     }
@@ -212,13 +218,67 @@ impl<'a> Parser<'a> {
 
     fn parse_datetime(&mut self, parsed: &mut Parsed) -> Result<(), ParseError> {
         let mut datetime = ParsedDateTime::new();
-        let mut extended_date_format: bool = false;
 
-        datetime.year = self.parse_integer(4, "year")?;
+        if self.current == 'T' {
+            self.parse_time(&mut datetime, false)?;
+
+            if !self.end() {
+                return Err(self.parse_error(format!("Unconverted data remains")));
+            }
+
+            match &parsed.datetime {
+                Some(_) => {
+                    parsed.second_datetime = Some(datetime);
+                }
+                None => match &parsed.duration {
+                    Some(_) => {
+                        parsed.second_datetime = Some(datetime);
+                    }
+                    None => {
+                        parsed.datetime = Some(datetime);
+                    }
+                },
+            }
+
+            return Ok(());
+        }
+
+        datetime.year = self.parse_integer(2, "year")?;
+
+        if self.current == ':' {
+            // Time in extended format
+            datetime.hour = datetime.year;
+            datetime.year = 0;
+            datetime.extended_date_format = true;
+            self.parse_time(&mut datetime, true)?;
+
+            if !self.end() {
+                return Err(self.parse_error(format!("Unconverted data remains")));
+            }
+
+            match &parsed.datetime {
+                Some(_) => {
+                    parsed.second_datetime = Some(datetime);
+                }
+                None => match &parsed.duration {
+                    Some(_) => {
+                        parsed.second_datetime = Some(datetime);
+                    }
+                    None => {
+                        parsed.datetime = Some(datetime);
+                    }
+                },
+            }
+
+            return Ok(());
+        }
+
+        datetime.has_date = true;
+        datetime.year = datetime.year * 100 + self.parse_integer(2, "year")?;
 
         if self.current == '-' {
             self.inc();
-            extended_date_format = true;
+            datetime.extended_date_format = true;
 
             if self.current == 'W' {
                 // ISO week and day in extended format (i.e. Www-D)
@@ -327,137 +387,179 @@ impl<'a> Parser<'a> {
         }
 
         if !self.end() {
-            // Date/Time separator
-            if self.current != 'T' && self.current != ' ' {
-                return Err(self.parse_error(format!(
-                    "Invalid character \"{}\" while parsing {}",
-                    self.current, "date and time separator (\"T\" or \" \")"
-                )));
+            self.parse_time(&mut datetime, false)?;
+        }
+
+        if !self.end() {
+            if self.current == '/' && parsed.datetime.is_none() && parsed.duration.is_none() {
+                // Interval
+                parsed.datetime = Some(datetime);
+
+                self.inc();
+
+                if self.current == 'P' {
+                    // Duration
+                    self.parse_duration(parsed)?;
+                } else {
+                    self.parse_datetime(parsed)?;
+                }
+
+                return Ok(());
             }
 
+            return Err(self.parse_error(format!("Unconverted data remains")));
+        }
+
+        match &parsed.datetime {
+            Some(_) => {
+                parsed.second_datetime = Some(datetime);
+            }
+            None => match &parsed.duration {
+                Some(_) => {
+                    parsed.second_datetime = Some(datetime);
+                }
+                None => {
+                    parsed.datetime = Some(datetime);
+                }
+            },
+        }
+
+        Ok(())
+    }
+
+    fn parse_time(
+        &mut self,
+        datetime: &mut ParsedDateTime,
+        skip_hour: bool,
+    ) -> Result<(), ParseError> {
+        // Date/Time separator
+        if self.current != 'T' && self.current != ' ' && !skip_hour {
+            return Err(self.parse_error(format!(
+                "Invalid character \"{}\" while parsing {}",
+                self.current, "date and time separator (\"T\" or \" \")"
+            )));
+        }
+
+        datetime.has_time = true;
+
+        if !skip_hour {
             self.inc();
 
             // Hour
             datetime.hour = self.parse_integer(2, "hour")?;
+        }
 
-            if !self.end() && self.current != 'Z' && self.current != '+' && self.current != '-' {
-                // Optional minute and second
-                if self.current == ':' {
-                    // Minute and second in extended format (mm:ss)
+        if !self.end() && self.current != 'Z' && self.current != '+' && self.current != '-' {
+            // Optional minute and second
+            if self.current == ':' {
+                // Minute and second in extended format (mm:ss)
+                self.inc();
+
+                // Minute
+                datetime.minute = self.parse_integer(2, "minute")?;
+
+                if !self.end() && self.current != 'Z' && self.current != '+' && self.current != '-'
+                {
+                    // Optional second
+                    if self.current != ':' {
+                        return Err(self.parse_error(format!(
+                            "Invalid character \"{}\" while parsing {}",
+                            self.current, "time separator (\":\")"
+                        )));
+                    }
+
                     self.inc();
 
-                    // Minute
-                    datetime.minute = self.parse_integer(2, "minute")?;
+                    // Second
+                    datetime.second = self.parse_integer(2, "second")?;
 
-                    if !self.end()
-                        && self.current != 'Z'
-                        && self.current != '+'
-                        && self.current != '-'
-                    {
-                        // Optional second
-                        if self.current != ':' {
-                            return Err(self.parse_error(format!(
-                                "Invalid character \"{}\" while parsing {}",
-                                self.current, "time separator (\":\")"
-                            )));
-                        }
-
+                    if self.current == '.' || self.current == ',' {
+                        // Optional fractional second
                         self.inc();
 
-                        // Second
-                        datetime.second = self.parse_integer(2, "second")?;
+                        datetime.microsecond = 0;
+                        let mut i: u8 = 0;
 
-                        if self.current == '.' || self.current == ',' {
-                            // Optional fractional second
+                        while i < 6 {
+                            if self.current >= '0' && self.current <= '9' {
+                                datetime.microsecond =
+                                    datetime.microsecond * 10 + self.current.to_digit(10).unwrap();
+                            } else if i == 0 {
+                                // One digit minimum is required
+                                return Err(self.unexpected_character_error("subsecond", 1));
+                            } else {
+                                break;
+                            }
+
                             self.inc();
-
-                            datetime.microsecond = 0;
-                            let mut i: u8 = 0;
-
-                            while i < 6 {
-                                if self.current >= '0' && self.current <= '9' {
-                                    datetime.microsecond = datetime.microsecond * 10
-                                        + self.current.to_digit(10).unwrap();
-                                } else if i == 0 {
-                                    // One digit minimum is required
-                                    return Err(self.unexpected_character_error("subsecond", 1));
-                                } else {
-                                    break;
-                                }
-
-                                self.inc();
-                                i += 1;
-                            }
-
-                            // Drop extraneous digits
-                            while self.current >= '0' && self.current <= '9' {
-                                self.inc();
-                            }
-
-                            // Expand missing microsecond
-                            while i < 6 {
-                                datetime.microsecond *= 10;
-                                i += 1;
-                            }
+                            i += 1;
                         }
 
-                        if !extended_date_format {
-                            return Err(self.parse_error(format!("Cannot combine \"basic\" date format with \"extended\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
-                        }
-                    }
-                } else {
-                    // Minute and second in compact format (mmss)
-
-                    // Minute
-                    datetime.minute = self.parse_integer(2, "minute")?;
-
-                    if !self.end()
-                        && self.current != 'Z'
-                        && self.current != '+'
-                        && self.current != '-'
-                    {
-                        // Optional second
-
-                        datetime.second = self.parse_integer(2, "second")?;
-
-                        if self.current == '.' || self.current == ',' {
-                            // Optional fractional second
+                        // Drop extraneous digits
+                        while self.current >= '0' && self.current <= '9' {
                             self.inc();
+                        }
 
-                            datetime.microsecond = 0;
-                            let mut i: u8 = 0;
-
-                            while i < 6 {
-                                if self.current >= '0' && self.current <= '9' {
-                                    datetime.microsecond = datetime.microsecond * 10
-                                        + self.current.to_digit(10).unwrap();
-                                } else if i == 0 {
-                                    // One digit minimum is required
-                                    return Err(self.unexpected_character_error("subsecond", 1));
-                                } else {
-                                    break;
-                                }
-
-                                self.inc();
-                                i += 1;
-                            }
-
-                            // Drop extraneous digits
-                            while self.current >= '0' && self.current <= '9' {
-                                self.inc();
-                            }
-
-                            // Expand missing microsecond
-                            while i < 6 {
-                                datetime.microsecond *= 10;
-                                i += 1;
-                            }
+                        // Expand missing microsecond
+                        while i < 6 {
+                            datetime.microsecond *= 10;
+                            i += 1;
                         }
                     }
 
-                    if extended_date_format {
-                        return Err(self.parse_error(format!("Cannot combine \"extended\" date format with \"basic\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
+                    if !datetime.extended_date_format {
+                        return Err(self.parse_error(format!("Cannot combine \"basic\" date format with \"extended\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
                     }
+                }
+            } else {
+                // Minute and second in compact format (mmss)
+
+                // Minute
+                datetime.minute = self.parse_integer(2, "minute")?;
+
+                if !self.end() && self.current != 'Z' && self.current != '+' && self.current != '-'
+                {
+                    // Optional second
+
+                    datetime.second = self.parse_integer(2, "second")?;
+
+                    if self.current == '.' || self.current == ',' {
+                        // Optional fractional second
+                        self.inc();
+
+                        datetime.microsecond = 0;
+                        let mut i: u8 = 0;
+
+                        while i < 6 {
+                            if self.current >= '0' && self.current <= '9' {
+                                datetime.microsecond =
+                                    datetime.microsecond * 10 + self.current.to_digit(10).unwrap();
+                            } else if i == 0 {
+                                // One digit minimum is required
+                                return Err(self.unexpected_character_error("subsecond", 1));
+                            } else {
+                                break;
+                            }
+
+                            self.inc();
+                            i += 1;
+                        }
+
+                        // Drop extraneous digits
+                        while self.current >= '0' && self.current <= '9' {
+                            self.inc();
+                        }
+
+                        // Expand missing microsecond
+                        while i < 6 {
+                            datetime.microsecond *= 10;
+                            i += 1;
+                        }
+                    }
+                }
+
+                if datetime.extended_date_format {
+                    return Err(self.parse_error(format!("Cannot combine \"extended\" date format with \"basic\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
                 }
             }
         }
@@ -515,41 +617,7 @@ impl<'a> Parser<'a> {
             datetime.offset = Some(tzminute * 60);
         }
 
-        if !self.end() {
-            if self.current == '/' && parsed.datetime.is_none() && parsed.duration.is_none() {
-                // Interval
-                parsed.datetime = Some(datetime);
-
-                self.inc();
-
-                if self.current == 'P' {
-                    // Duration
-                    self.parse_duration(parsed)?;
-                } else {
-                    self.parse_datetime(parsed)?;
-                }
-
-                return Ok(());
-            }
-
-            return Err(self.parse_error(format!("Unconverted data remains")));
-        }
-
-        match &parsed.datetime {
-            Some(_) => {
-                parsed.second_datetime = Some(datetime);
-            }
-            None => match &parsed.duration {
-                Some(_) => {
-                    parsed.second_datetime = Some(datetime);
-                }
-                None => {
-                    parsed.datetime = Some(datetime);
-                }
-            },
-        }
-
-        Ok(())
+        return Ok(());
     }
 
     fn parse_duration(&mut self, parsed: &mut Parsed) -> Result<(), ParseError> {
