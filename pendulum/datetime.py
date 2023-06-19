@@ -129,7 +129,7 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(dt, datetime.datetime):
             raise ValueError("instance() only accepts datetime objects.")
 
-        if isinstance(dt, DateTime):
+        if isinstance(dt, cls):
             return dt
 
         tz = dt.tzinfo or tz
