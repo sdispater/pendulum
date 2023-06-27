@@ -204,6 +204,16 @@ def week_ends_at(wday: int) -> None:
     pendulum._WEEK_ENDS_AT = wday
 
 
+def days_of_week() -> None:
+    return [
+        i % pendulum.DAYS_PER_WEEK
+        for i in range(
+            pendulum._WEEK_STARTS_AT,
+            pendulum._WEEK_STARTS_AT + pendulum.DAYS_PER_WEEK,
+        )
+    ]
+
+
 __all__ = [
     "PreciseDiff",
     "days_in_year",
@@ -220,4 +230,5 @@ __all__ = [
     "get_locale",
     "week_starts_at",
     "week_ends_at",
+    "days_of_week",
 ]

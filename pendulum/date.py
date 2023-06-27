@@ -27,6 +27,7 @@ from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
+from pendulum.helpers import days_of_week
 from pendulum.interval import Interval
 from pendulum.mixins.default import FormattableMixin
 
@@ -83,8 +84,11 @@ class Date(FormattableMixin, date):
     @property
     def week_of_month(self) -> int:
         first_day_of_month = self.replace(day=1)
-
-        return self.week_of_year - first_day_of_month.week_of_year + 1
+        week_days = days_of_week()
+        first_day_index = week_days.index(first_day_of_month.day_of_week)
+        days_in_first_week = pendulum.DAYS_PER_WEEK - first_day_index
+        days_after_first_week = self.day - days_in_first_week
+        return math.ceil(days_after_first_week / pendulum.DAYS_PER_WEEK) + 1
 
     @property
     def age(self) -> int:

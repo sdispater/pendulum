@@ -61,6 +61,9 @@ def test_week_of_month():
     assert pendulum.date(2020, 1, 1).week_of_month == 1
     assert pendulum.date(2020, 1, 7).week_of_month == 2
     assert pendulum.date(2020, 1, 14).week_of_month == 3
+    assert pendulum.date(2023, 1, 1).week_of_month == 1
+    assert pendulum.date(2023, 1, 2).week_of_month == 2
+    assert pendulum.date(2023, 1, 31).week_of_month == 6
 
 
 def test_week_of_year_first_week():

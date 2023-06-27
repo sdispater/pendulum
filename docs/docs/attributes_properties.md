@@ -27,7 +27,7 @@ Pendulum gives access to more attributes and properties than the default ``datet
 >>> dt.day_of_year
 248
 >>> dt.week_of_month
-1
+2
 >>> dt.week_of_year
 36
 >>> dt.days_in_month
