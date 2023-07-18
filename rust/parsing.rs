@@ -33,6 +33,7 @@ pub struct ParsedDateTime {
     pub microsecond: u32,
     pub offset: Option<i32>,
     pub has_offset: bool,
+    pub tzname: Option<String>,
     pub has_date: bool,
     pub has_time: bool,
     pub extended_date_format: bool,
@@ -51,6 +52,7 @@ impl<'a> ParsedDateTime {
             microsecond: 0,
             offset: None,
             has_offset: false,
+            tzname: None,
             has_date: false,
             has_time: false,
             extended_date_format: false,
@@ -432,6 +434,8 @@ impl<'a> Parser<'a> {
         datetime: &mut ParsedDateTime,
         skip_hour: bool,
     ) -> Result<(), ParseError> {
+        // TODO: Add support for decimal units
+
         // Date/Time separator
         if self.current != 'T' && self.current != ' ' && !skip_hour {
             return Err(self.parse_error(format!(
@@ -601,6 +605,8 @@ impl<'a> Parser<'a> {
                 } else if !self.end() {
                     tzminute = self.parse_integer(2, "timezone minute")? as i32;
                 }
+            } else {
+                datetime.tzname = Some("UTC".to_string())
             }
 
             if tzminute > 59 {
@@ -652,6 +658,15 @@ impl<'a> Parser<'a> {
                     if got_t {
                         match self.current {
                             'H' => {
+                                if duration.minutes != 0
+                                    || duration.seconds != 0
+                                    || duration.microseconds != 0
+                                {
+                                    return Err(
+                                        self.parse_error(format!("Duration units out of order"))
+                                    );
+                                }
+
                                 duration.hours += value;
 
                                 if let Some(fraction) = op_fraction {
@@ -670,6 +685,12 @@ impl<'a> Parser<'a> {
                                 }
                             }
                             'M' => {
+                                if duration.seconds != 0 || duration.microseconds != 0 {
+                                    return Err(
+                                        self.parse_error(format!("Duration units out of order"))
+                                    );
+                                }
+
                                 duration.minutes += value;
 
                                 if let Some(fraction) = op_fraction {
@@ -704,6 +725,12 @@ impl<'a> Parser<'a> {
                                     )));
                                 }
 
+                                if duration.months != 0 || duration.days != 0 {
+                                    return Err(
+                                        self.parse_error(format!("Duration units out of order"))
+                                    );
+                                }
+
                                 duration.years = value;
                             }
                             'M' => {
@@ -713,9 +740,21 @@ impl<'a> Parser<'a> {
                                     )));
                                 }
 
+                                if duration.days != 0 {
+                                    return Err(
+                                        self.parse_error(format!("Duration units out of order"))
+                                    );
+                                }
+
                                 duration.months = value;
                             }
                             'W' => {
+                                if duration.years != 0 || duration.months != 0 {
+                                    return Err(self.parse_error(format!(
+                                        "Basic format durations cannot have weeks"
+                                    )));
+                                }
+
                                 duration.weeks = value;
 
                                 if let Some(fraction) = op_fraction {
@@ -741,6 +780,12 @@ impl<'a> Parser<'a> {
                                 }
                             }
                             'D' => {
+                                if duration.weeks != 0 {
+                                    return Err(self.parse_error(format!(
+                                        "Week format durations cannot have days"
+                                    )));
+                                }
+
                                 duration.days += value;
                                 if let Some(fraction) = op_fraction {
                                     let extra_hours = fraction * 24.0;

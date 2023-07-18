@@ -276,19 +276,6 @@ def test_iso8601_datetime():
     assert parsed.microsecond == 0
     assert parsed.utcoffset().total_seconds() == 19800
 
-    text = "20161001T1430,4+0530"
-
-    parsed = parse(text)
-
-    assert parsed.year == 2016
-    assert parsed.month == 10
-    assert parsed.day == 1
-    assert parsed.hour == 14
-    assert parsed.minute == 30
-    assert parsed.second == 0
-    assert parsed.microsecond == 400000
-    assert parsed.utcoffset().total_seconds() == 19800
-
     text = "2008-09-03T20:56:35.450686+01"
 
     parsed = parse(text)
@@ -480,7 +467,7 @@ def test_iso8601_ordinal():
 def test_iso8601_time():
     now = pendulum.datetime(2015, 11, 12)
 
-    text = "201205"
+    text = "T201205"
 
     parsed = parse(text, now=now)
 

@@ -26,7 +26,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.second as u8,
                             datetime.microsecond as u32,
                             Some(
-                                Py::new(py, FixedTimezone::new(offset, None))?
+                                Py::new(py, FixedTimezone::new(offset, datetime.tzname))?
                                     .to_object(py)
                                     .extract(py)?,
                             ),
@@ -69,7 +69,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.second as u8,
                             datetime.microsecond as u32,
                             Some(
-                                Py::new(py, FixedTimezone::new(offset, None))?
+                                Py::new(py, FixedTimezone::new(offset, datetime.tzname))?
                                     .to_object(py)
                                     .extract(py)?,
                             ),
@@ -108,7 +108,9 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                 )?
                 .to_object(py));
             }
-            (_, _, _) => todo!(),
+            (_, _, _) => Err(exceptions::PyValueError::new_err(format!(
+                "Not yet implemented"
+            ))),
         },
         Err(error) => Err(exceptions::PyValueError::new_err(format!("{}", error))),
     }
