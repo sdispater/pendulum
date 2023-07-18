@@ -13,6 +13,7 @@ keywords = ['datetime', 'date', 'time']
 packages = [
     { include = "pendulum" },
     { include = "tests", format = "sdist" },
+    { include = "*.pyi"},
 ]
 include = [
     { path = "meson.build", format = "sdist" },

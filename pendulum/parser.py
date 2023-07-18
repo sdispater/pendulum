@@ -20,7 +20,7 @@ if t.TYPE_CHECKING:
 try:
     from _pendulum import Duration as CDuration
 except ImportError:
-    CDuration = None
+    CDuration = None  # type: ignore[assignment,misc]
 
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
