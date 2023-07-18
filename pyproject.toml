@@ -12,6 +12,7 @@ keywords = ['datetime', 'date', 'time']
 
 packages = [
     { include = "pendulum" },
+    { include = "rust", format = "sdist" },
     { include = "tests", format = "sdist" },
     { include = "*.pyi"},
 ]
