@@ -6,7 +6,6 @@ py_dep = py.dependency()
 
 extensions = [
   ['_helpers', 'pendulum/_extensions/_helpers.c', meson.source_root() / 'pendulum/_extensions/'],
-  ['_iso8601', 'pendulum/parsing/_iso8601.c', meson.source_root() / 'pendulum/parsing/'],
 ]
 
 foreach extension : extensions

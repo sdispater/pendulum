@@ -20,8 +20,6 @@ include = [
     # C extensions must be included in the wheel distributions
     { path = "pendulum/_extensions/*.so", format = "wheel" },
     { path = "pendulum/_extensions/*.pyd", format = "wheel" },
-    { path = "pendulum/parsing/*.so", format = "wheel" },
-    { path = "pendulum/parsing/*.pyd", format = "wheel" },
     # Rust extension
     { path = "_pendulum*.so", format = "wheel" },
     { path = "_pendulum*.pyd", format = "wheel" },
