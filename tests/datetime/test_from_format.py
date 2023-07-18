@@ -150,10 +150,7 @@ def test_from_format_with_invalid_padded_day():
     ],
 )
 def test_from_format(text, fmt, expected, now):
-    if now is None:
-        now = pendulum.datetime(2015, 11, 12)
-    else:
-        now = pendulum.parse(now)
+    now = pendulum.datetime(2015, 11, 12) if now is None else pendulum.parse(now)
 
     with pendulum.travel_to(now, freeze=True):
         assert pendulum.from_format(text, fmt).isoformat() == expected

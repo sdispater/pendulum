@@ -9,6 +9,7 @@ from pendulum.parsing import _Interval
 from pendulum.parsing import parse as base_parse
 from pendulum.tz.timezone import UTC
 
+
 if t.TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.datetime import DateTime

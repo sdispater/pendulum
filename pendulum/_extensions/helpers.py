@@ -354,6 +354,6 @@ def _get_tzinfo_name(tzinfo: datetime.tzinfo | None) -> str | None:
         return cast(Timezone, tzinfo).name
     elif hasattr(tzinfo, "zone"):
         # pytz timezone
-        return tzinfo.zone  # type: ignore
+        return tzinfo.zone  # type: ignore[no-any-return]
 
     return None

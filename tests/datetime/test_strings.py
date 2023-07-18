@@ -109,11 +109,11 @@ def test_to_string_invalid():
 
 def test_repr():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="local")
-    expected = f"DateTime(1975, 12, 25, 14, 15, 16, tzinfo={repr(d.tzinfo)})"
+    expected = f"DateTime(1975, 12, 25, 14, 15, 16, tzinfo={d.tzinfo!r})"
     assert repr(d) == expected
 
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, 123456, tz="local")
-    expected = f"DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={repr(d.tzinfo)})"
+    expected = f"DateTime(1975, 12, 25, 14, 15, 16, 123456, tzinfo={d.tzinfo!r})"
     assert repr(d) == expected
 
 

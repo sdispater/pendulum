@@ -17,12 +17,13 @@ from pendulum.constants import MONTHS_PER_YEAR
 from pendulum.duration import Duration
 from pendulum.helpers import precise_diff
 
+
 if TYPE_CHECKING:
     from typing_extensions import Self
     from typing_extensions import SupportsIndex
 
     from pendulum.helpers import PreciseDiff
-    from pendulum.locales.locale import Locale  # noqa
+    from pendulum.locales.locale import Locale
 
 
 class Interval(Duration):
@@ -264,7 +265,7 @@ class Interval(Duration):
         :param locale: The locale to use. Defaults to current locale.
         :param separator: The separator to use between each unit
         """
-        from pendulum.locales.locale import Locale  # noqa
+        from pendulum.locales.locale import Locale
 
         periods = [
             ("year", self.years),

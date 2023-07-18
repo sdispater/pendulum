@@ -4,6 +4,7 @@ import sys
 
 from typing import TYPE_CHECKING
 
+
 if sys.version_info < (3, 9):
     # Works around https://github.com/pganssle/zoneinfo/issues/125
     from backports.zoneinfo import TZPATH

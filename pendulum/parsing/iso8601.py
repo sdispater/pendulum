@@ -19,8 +19,9 @@ from pendulum.tz.timezone import UTC
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
+
 ISO8601_DT = re.compile(
-    # Date (optional)  # noqa: E800
+    # Date (optional)  # noqa: ERA001
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
@@ -40,10 +41,10 @@ ISO8601_DT = re.compile(
     r"        (?P<isoweekday>\d)?"  # Weekday (optional)
     "    )"
     ")?"
-    # Time (optional)  # noqa: E800
-    "(?P<time>"
-    r"    (?P<timesep>[T\ ])?"  # Separator (T or space)
-    r"    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
+    # Time (optional)  # noqa: ERA001
+    "(?P<time>" r"    (?P<timesep>[T\ ])?"  # Separator (T or space)
+    # HH:mm:ss (optional mm and ss)
+    r"    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # noqa: E501
     # Subsecond part (optional)
     "    (?P<subsecondsection>"
     "        (?:[.,])"  # Subsecond separator (optional)
@@ -60,7 +61,7 @@ ISO8601_DT = re.compile(
 
 ISO8601_DURATION = re.compile(
     "^P"  # Duration P indicator
-    # Years, months and days (optional)  # noqa: E800
+    # Years, months and days (optional)  # noqa: ERA001
     "(?P<w>"
     r"    (?P<weeks>\d+(?:[.,]\d+)?W)"
     ")?"
@@ -184,7 +185,7 @@ def parse_iso8601(
         if ambiguous_date:
             # We can "safely" assume that the ambiguous date
             # was actually a time in the form hhmmss
-            hhmmss = f"{str(year)}{str(month):0>2}"
+            hhmmss = f"{year!s}{str(month):0>2}"
 
             return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
 
@@ -419,10 +420,7 @@ def _parse_iso8601_duration(text: str, **options: str) -> Duration | None:
 def _get_iso_8601_week(
     year: int | str, week: int | str, weekday: int | str
 ) -> dict[str, int]:
-    if not weekday:
-        weekday = 1
-    else:
-        weekday = int(weekday)
+    weekday = 1 if not weekday else int(weekday)
 
     year = int(year)
     week = int(week)

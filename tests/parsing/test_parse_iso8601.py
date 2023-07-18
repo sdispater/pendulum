@@ -8,6 +8,7 @@ import pytest
 
 from pendulum.parsing import parse_iso8601
 
+
 try:
     from pendulum.parsing._extension import TZFixedOffset as FixedTimezone
 except ImportError:

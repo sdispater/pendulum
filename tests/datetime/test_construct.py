@@ -16,6 +16,7 @@ from pendulum import timezone
 from pendulum.utils._compat import PYPY
 from tests.conftest import assert_datetime
 
+
 if not PYPY:
     import time_machine
 else:

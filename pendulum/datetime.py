@@ -41,6 +41,7 @@ from pendulum.tz import local_timezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
+
 if TYPE_CHECKING:
     from typing_extensions import Literal
     from typing_extensions import Self
@@ -913,10 +914,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
             raise ValueError("Invalid day of week")
 
-        if keep_time:
-            dt = self
-        else:
-            dt = self.start_of("day")
+        dt = self if keep_time else self.start_of("day")
 
         dt = dt.add(days=1)
         while dt.day_of_week != day_of_week:
@@ -937,10 +935,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
             raise ValueError("Invalid day of week")
 
-        if keep_time:
-            dt = self
-        else:
-            dt = self.start_of("day")
+        dt = self if keep_time else self.start_of("day")
 
         dt = dt.subtract(days=1)
         while dt.day_of_week != day_of_week:
@@ -953,7 +948,8 @@ class DateTime(datetime.datetime, Date):
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the first day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
         """
@@ -967,7 +963,8 @@ class DateTime(datetime.datetime, Date):
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the last day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
         """

@@ -4,6 +4,7 @@ import typing as t
 
 from pendulum.locales.locale import Locale
 
+
 if t.TYPE_CHECKING:
     from pendulum import Duration
 
@@ -31,10 +32,7 @@ class DifferenceFormatter:
         :param absolute: Whether it's an absolute difference or not
         :param locale: The locale to use
         """
-        if locale is None:
-            locale = self._locale
-        else:
-            locale = Locale.load(locale)
+        locale = self._locale if locale is None else Locale.load(locale)
 
         if diff.years > 0:
             unit = "year"

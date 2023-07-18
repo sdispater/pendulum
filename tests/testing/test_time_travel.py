@@ -9,6 +9,7 @@ import pendulum
 
 from pendulum.utils._compat import PYPY
 
+
 if TYPE_CHECKING:
     from typing import Generator
 

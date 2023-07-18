@@ -6,6 +6,7 @@ import pytest
 
 import pendulum
 
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
 

@@ -47,7 +47,7 @@ def test_iter():
     dt2 = pendulum.datetime(2000, 1, 31, 12, 45, 37)
 
     p = Interval(dt1, dt2)
-    i = 0  # noqa: SIM113 (suggests use of enumerate)
+    i = 0
     for dt in p:
         assert isinstance(dt, pendulum.DateTime)
         i += 1
