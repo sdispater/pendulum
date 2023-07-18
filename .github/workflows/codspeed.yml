@@ -39,7 +39,12 @@ jobs:
         run: poetry config virtualenvs.create false
 
       - name: Install dependencies
-        run: poetry install --only main --only test --only benchmark -vvv
+        run: poetry install --only main --only test --only benchmark -vvv --no-root
+
+      - name: Install pendulum and check extensions
+        run: |
+          poetry install --only-root
+          python -c 'import _pendulum; from pendulum._extensions import _helpers'
 
       - name: Run benchmarks
         uses: CodSpeedHQ/action@v1
