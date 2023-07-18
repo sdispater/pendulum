@@ -17,5 +17,8 @@ pub fn _pendulum(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_iso8601, m)?)?;
     m.add_class::<Duration>()?;
 
+    #[cfg(not(feature = "mimalloc"))]
+    m.setattr("__pendulum_default_allocator__", true)?; // uses setattr so this is not in __all__
+
     Ok(())
 }

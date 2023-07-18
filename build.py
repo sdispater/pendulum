@@ -1,3 +1,5 @@
+import os
+import shlex
 import shutil
 import subprocess
 import zipfile
@@ -25,7 +27,10 @@ def _build():
     if wheels_dir.exists():
         shutil.rmtree(wheels_dir)
 
-    maturin("build", "-r")
+    if os.getenv("MATURIN_BUILD_ARGS"):
+        cargo_args = shlex.split(os.getenv("MATURIN_BUILD_ARGS", ""))
+
+    maturin("build", "-r", *cargo_args)
 
     wheel = list(wheels_dir.glob("*.whl"))[0]
     with zipfile.ZipFile(wheel.as_posix()) as whl:

@@ -224,5 +224,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0a6", "meson", "ninja", "maturin>=0.14,<0.15"]
+requires = ["poetry-core>=1.1.0a6", "meson", "ninja", "maturin>=1,<2"]
 build-backend = "poetry.core.masonry.api"
