@@ -46,8 +46,6 @@ pygments = "^2.2"
 markdown-include = "^0.5.1"
 
 [tool.poetry.group.lint.dependencies]
-black = { version = "^22.6.0", markers = "implementation_name != 'pypy'" }
-isort = "^5.10.1"
 pre-commit = "^2.20.0"
 
 [tool.poetry.group.typing.dependencies]
