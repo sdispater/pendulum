@@ -875,7 +875,7 @@ impl<'a> Parser<'a> {
         iso_week: u32,
         iso_day: u32,
     ) -> Result<(u32, u32, u32), ParseError> {
-        if iso_week > 53 || iso_week > 52 && !is_long_year(iso_year) {
+        if iso_week > 53 || iso_week > 52 && !is_long_year(iso_year as i32) {
             return Err(ParseError {
                 index: self.idx,
                 c: self.current,
@@ -895,7 +895,7 @@ impl<'a> Parser<'a> {
         }
 
         let ordinal: i32 =
-            iso_week as i32 * 7 + iso_day as i32 - (week_day(iso_year, 1, 4) as i32 + 3);
+            iso_week as i32 * 7 + iso_day as i32 - (week_day(iso_year as i32, 1, 4) as i32 + 3);
 
         self.ordinal_to_ymd(iso_year, ordinal, true)
     }
@@ -908,9 +908,7 @@ impl<'a> Parser<'a> {
     ) -> Result<(u32, u32, u32), ParseError> {
         let mut ord: i32 = ordinal;
         let mut y: u32 = year;
-        let mut leap: usize = is_leap(y) as usize;
-        let mut month: u32 = 1;
-        let mut day: u32 = 1;
+        let mut leap: usize = is_leap(y as i32) as usize;
 
         if ord < 1 {
             if !allow_out_of_bounds {
@@ -921,12 +919,12 @@ impl<'a> Parser<'a> {
                 )));
             }
             // Previous year
-            ord += days_in_year(year - 1) as i32;
+            ord += days_in_year((year - 1) as i32) as i32;
             y -= 1;
-            leap = is_leap(y) as usize;
+            leap = is_leap(y as i32) as usize;
         }
 
-        if ord > days_in_year(y) as i32 {
+        if ord > days_in_year(y as i32) as i32 {
             if !allow_out_of_bounds {
                 return Err(self.parse_error(format!(
                     "Invalid ordinal day: {} is too large for year {}",
@@ -936,15 +934,15 @@ impl<'a> Parser<'a> {
             }
 
             // Next year
-            ord -= days_in_year(y) as i32;
+            ord -= days_in_year(y as i32) as i32;
             y += 1;
-            leap = is_leap(y) as usize;
+            leap = is_leap(y as i32) as usize;
         }
 
         for i in 1..14 {
             if ord < MONTHS_OFFSETS[leap][i] {
-                day = ord as u32 - MONTHS_OFFSETS[leap][i - 1] as u32;
-                month = (i - 1) as u32;
+                let day = ord as u32 - MONTHS_OFFSETS[leap][i - 1] as u32;
+                let month = (i - 1) as u32;
 
                 return Ok((y as u32, month, day));
             }

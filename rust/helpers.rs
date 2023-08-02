@@ -4,19 +4,19 @@ use crate::constants::{
     SECS_PER_MIN, SECS_PER_YEAR, TM_DECEMBER, TM_JANUARY,
 };
 
-fn p(year: u32) -> u32 {
+fn p(year: i32) -> i32 {
     return year + year / 4 - year / 100 + year / 400;
 }
 
-pub fn is_leap(year: u32) -> bool {
+pub fn is_leap(year: i32) -> bool {
     year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }
 
-pub fn is_long_year(year: u32) -> bool {
+pub fn is_long_year(year: i32) -> bool {
     (p(year) % 7 == 4) || (p(year - 1) % 7 == 3)
 }
 
-pub fn days_in_year(year: u32) -> u32 {
+pub fn days_in_year(year: i32) -> u32 {
     if is_leap(year) {
         return DAYS_PER_L_YEAR;
     }
@@ -24,25 +24,32 @@ pub fn days_in_year(year: u32) -> u32 {
     DAYS_PER_N_YEAR
 }
 
-pub fn week_day(year: u32, month: u32, day: u32) -> u32 {
-    let y: u32 = year - (month < 3) as u32;
+pub fn week_day(year: i32, month: u32, day: u32) -> u32 {
+    let y: i32 = year - (month < 3) as i32;
 
-    let w: u32 = (p(y) + DAY_OF_WEEK_TABLE[(month - 1) as usize] + day) % 7;
+    let w: i32 = (p(y) + DAY_OF_WEEK_TABLE[(month - 1) as usize] as i32 + day as i32) % 7;
 
     if w == 0 {
         return 7;
     }
 
-    w
+    w.abs() as u32
+}
+
+pub fn day_number(year: i32, month: u8, day: u8) -> i32 {
+    let m = ((month + 9) % 12) as i32;
+    let y = year - m / 10;
+
+    return 365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (day as i32 - 1);
 }
 
 pub fn local_time(
-    unix_time: isize,
+    unix_time: f64,
     utc_offset: isize,
     microsecond: usize,
 ) -> (usize, usize, usize, usize, usize, usize, usize) {
     let mut year: usize = EPOCH_YEAR as usize;
-    let mut seconds: isize = unix_time;
+    let mut seconds: isize = unix_time.floor() as isize;
 
     // Shift to a base year that is 400-year aligned.
     if seconds >= 0 {

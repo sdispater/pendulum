@@ -40,7 +40,7 @@ jobs:
       - name: Install pendulum and check extensions
         run: |
           MATURIN_BUILD_ARGS="--no-default-features -vv" pip install -e . -v
-          python -c 'import _pendulum; from pendulum._extensions import _helpers; assert _pendulum.__pendulum_default_allocator__'
+          python -c 'import _pendulum; assert _pendulum.__pendulum_default_allocator__'
 
       - name: Run benchmarks
         uses: CodSpeedHQ/action@v1

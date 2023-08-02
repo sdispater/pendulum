@@ -7,26 +7,19 @@ import zipfile
 from pathlib import Path
 
 
-def meson(*args):
-    subprocess.call(["meson", *list(args)])
-
-
 def maturin(*args):
-    subprocess.call(["maturin"] + list(args))
+    subprocess.call(["maturin", *list(args)])
 
 
 def _build():
     build_dir = Path(__file__).parent.joinpath("build")
     build_dir.mkdir(parents=True, exist_ok=True)
 
-    meson("setup", build_dir.as_posix())
-    meson("compile", "-C", build_dir.as_posix())
-    meson("install", "-C", build_dir.as_posix())
-
     wheels_dir = Path(__file__).parent.joinpath("target/wheels")
     if wheels_dir.exists():
         shutil.rmtree(wheels_dir)
 
+    cargo_args = []
     if os.getenv("MATURIN_BUILD_ARGS"):
         cargo_args = shlex.split(os.getenv("MATURIN_BUILD_ARGS", ""))
 
