@@ -185,7 +185,7 @@ def parse_iso8601(
         if ambiguous_date:
             # We can "safely" assume that the ambiguous date
             # was actually a time in the form hhmmss
-            hhmmss = f"{year!s}{str(month):0>2}"
+            hhmmss = f"{year!s}{month!s:0>2}"
 
             return datetime.time(int(hhmmss[:2]), int(hhmmss[2:4]), int(hhmmss[4:]))
 
@@ -255,7 +255,7 @@ def parse_iso8601(
             tzinfo = FixedTimezone(offset)
 
     if is_time:
-        return datetime.time(hour, minute, second, microsecond)
+        return datetime.time(hour, minute, second, microsecond, tzinfo=tzinfo)
 
     return datetime.datetime(
         year, month, day, hour, minute, second, microsecond, tzinfo=tzinfo

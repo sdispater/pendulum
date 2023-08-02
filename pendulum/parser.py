@@ -5,6 +5,7 @@ import typing as t
 
 import pendulum
 
+from pendulum.duration import Duration
 from pendulum.parsing import _Interval
 from pendulum.parsing import parse as base_parse
 from pendulum.tz.timezone import UTC
@@ -13,7 +14,6 @@ from pendulum.tz.timezone import UTC
 if t.TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.datetime import DateTime
-    from pendulum.duration import Duration
     from pendulum.interval import Interval
     from pendulum.time import Time
 
@@ -109,6 +109,9 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
                 t.cast(datetime.datetime, parsed.end), tz=options.get("tz", UTC)
             ),
         )
+
+    if isinstance(parsed, Duration):
+        return parsed
 
     if CDuration and isinstance(parsed, CDuration):  # type: ignore[truthy-function]
         return pendulum.duration(
