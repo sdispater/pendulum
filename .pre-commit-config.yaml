@@ -20,3 +20,12 @@ repos:
     rev: v0.0.270
     hooks:
     -   id: ruff
+
+  - repo: local
+    hooks:
+      - id: lint-rust
+        name: Lint Rust
+        entry: make lint-rust
+        types: [rust]
+        language: rust
+        pass_filenames: false

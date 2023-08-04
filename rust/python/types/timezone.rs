@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use pyo3::types::{PyDateTime, PyDelta, PyDict, PyTzInfo};
+use pyo3::types::{PyDelta, PyDict, PyTzInfo};
 
 #[pyclass(module = "_pendulum", extends = PyTzInfo)]
 #[derive(Clone)]
@@ -42,7 +42,7 @@ impl FixedTimezone {
                 let sign = if self.offset < 0 { "-" } else { "+" };
                 let minutes = self.offset / 60;
                 let (hour, minute) = (minutes.abs() / 60, minutes.abs() % 60);
-                format!("{}{:.2}:{:.2}", sign, hour, minute)
+                format!("{sign}{hour:.2}:{minute:.2}")
             }
         }
     }

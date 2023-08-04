@@ -5,7 +5,7 @@ use crate::constants::{
 };
 
 fn p(year: i32) -> i32 {
-    return year + year / 4 - year / 100 + year / 400;
+    year + year / 4 - year / 100 + year / 400
 }
 
 pub fn is_leap(year: i32) -> bool {
@@ -25,7 +25,7 @@ pub fn days_in_year(year: i32) -> u32 {
 }
 
 pub fn week_day(year: i32, month: u32, day: u32) -> u32 {
-    let y: i32 = year - (month < 3) as i32;
+    let y: i32 = year - i32::from(month < 3);
 
     let w: i32 = (p(y) + DAY_OF_WEEK_TABLE[(month - 1) as usize] as i32 + day as i32) % 7;
 
@@ -33,14 +33,14 @@ pub fn week_day(year: i32, month: u32, day: u32) -> u32 {
         return 7;
     }
 
-    w.abs() as u32
+    w.unsigned_abs()
 }
 
 pub fn day_number(year: i32, month: u8, day: u8) -> i32 {
-    let m = ((month + 9) % 12) as i32;
+    let m = i32::from((month + 9) % 12);
     let y = year - m / 10;
 
-    return 365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (day as i32 - 1);
+    365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (i32::from(day) - 1)
 }
 
 pub fn local_time(
@@ -56,7 +56,7 @@ pub fn local_time(
         seconds -= (10957 * SECS_PER_DAY as usize) as isize;
         year += 30; // == 2000
     } else {
-        seconds += ((146097 - 10957) * SECS_PER_DAY as usize) as isize;
+        seconds += ((146_097 - 10957) * SECS_PER_DAY as usize) as isize;
         year -= 370; // == 1600
     }
 
@@ -97,12 +97,12 @@ pub fn local_time(
     }
 
     // Handle months and days
-    let mut month = (TM_DECEMBER + 1) as usize;
+    let mut month = TM_DECEMBER + 1;
     let mut day: usize = (seconds / (SECS_PER_DAY as isize) + 1) as usize;
     seconds %= SECS_PER_DAY as isize;
 
     let mut month_offset: usize;
-    while month != (TM_JANUARY + 1) as usize {
+    while month != (TM_JANUARY + 1) {
         month_offset = MONTHS_OFFSETS[leap_year][month] as usize;
         if day > month_offset {
             day -= month_offset;

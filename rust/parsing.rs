@@ -2,24 +2,19 @@ use core::str;
 use std::{fmt, str::CharIndices};
 
 use crate::{
-    constants::{DAYS_PER_MONTHS, MONTHS_OFFSETS},
+    constants::MONTHS_OFFSETS,
     helpers::{days_in_year, is_leap, is_long_year, week_day},
 };
-
-pub struct Duration {
-    years: i32,
-}
 
 #[derive(Debug, Clone)]
 pub struct ParseError {
     index: usize,
-    c: char,
     message: String,
 }
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} (Position: {})", self.message, self.index.to_string())
+        write!(f, "{} (Position: {})", self.message, self.index)
     }
 }
 
@@ -40,7 +35,7 @@ pub struct ParsedDateTime {
     pub time_is_midnight: bool,
 }
 
-impl<'a> ParsedDateTime {
+impl ParsedDateTime {
     pub fn new() -> ParsedDateTime {
         ParsedDateTime {
             year: 0,
@@ -72,7 +67,7 @@ pub struct ParsedDuration {
     pub microseconds: u32,
 }
 
-impl<'a> ParsedDuration {
+impl ParsedDuration {
     pub fn new() -> ParsedDuration {
         ParsedDuration {
             years: 0,
@@ -93,7 +88,7 @@ pub struct Parsed {
     pub second_datetime: Option<ParsedDateTime>,
 }
 
-impl<'a> Parsed {
+impl Parsed {
     pub fn new() -> Parsed {
         Parsed {
             datetime: None,
@@ -147,8 +142,7 @@ impl<'a> Parser<'a> {
     fn parse_error(&mut self, message: String) -> ParseError {
         ParseError {
             index: self.idx,
-            c: self.current,
-            message: message,
+            message,
         }
     }
 
@@ -195,7 +189,7 @@ impl<'a> Parser<'a> {
             }
 
             if self.current >= '0' && self.current <= '9' {
-                value = 10 * value + self.current.to_digit(10).unwrap() as u32;
+                value = 10 * value + self.current.to_digit(10).unwrap();
                 self.inc();
             } else {
                 return Err(self.unexpected_character_error(field_name, length - i));
@@ -225,7 +219,7 @@ impl<'a> Parser<'a> {
             self.parse_time(&mut datetime, false)?;
 
             if !self.end() {
-                return Err(self.parse_error(format!("Unconverted data remains")));
+                return Err(self.parse_error("Unconverted data remains".to_string()));
             }
 
             match &parsed.datetime {
@@ -255,7 +249,7 @@ impl<'a> Parser<'a> {
             self.parse_time(&mut datetime, true)?;
 
             if !self.end() {
-                return Err(self.parse_error(format!("Unconverted data remains")));
+                return Err(self.parse_error("Unconverted data remains".to_string()));
             }
 
             match &parsed.datetime {
@@ -341,19 +335,38 @@ impl<'a> Parser<'a> {
                     datetime.day = 1;
                 }
             }
-        } else {
-            if self.current == 'W' {
-                // Compact ISO week and day (WwwD)
-                self.inc();
+        } else if self.current == 'W' {
+            // Compact ISO week and day (WwwD)
+            self.inc();
 
-                let iso_week = self.parse_integer(2, "iso week")?;
-                let mut iso_day: u32 = 1;
+            let iso_week = self.parse_integer(2, "iso week")?;
+            let mut iso_day: u32 = 1;
 
-                if !self.end() && self.current != ' ' && self.current != 'T' {
-                    iso_day = self.parse_integer(1, "iso day")?;
+            if !self.end() && self.current != ' ' && self.current != 'T' {
+                iso_day = self.parse_integer(1, "iso day")?;
+            }
+
+            match self.iso_to_ymd(datetime.year, iso_week, iso_day) {
+                Ok((year, month, day)) => {
+                    datetime.year = year;
+                    datetime.month = month;
+                    datetime.day = day;
                 }
+                Err(error) => return Err(error),
+            }
+        } else {
+            /*
+            Month and day in compact format (MMDD) or ordinal date (DDD)
+            We'll assume first that the next part is a month and adjust if not.
+            */
+            datetime.month = self.parse_integer(2, "month")?;
+            let mut ordinal_day = self.parse_integer(1, "ordinal day")? as i32;
 
-                match self.iso_to_ymd(datetime.year, iso_week, iso_day) {
+            if self.end() || self.current == ' ' || self.current == 'T' {
+                // Ordinal day
+                ordinal_day += datetime.month as i32 * 10;
+
+                match self.ordinal_to_ymd(datetime.year, ordinal_day, false) {
                     Ok((year, month, day)) => {
                         datetime.year = year;
                         datetime.month = month;
@@ -362,29 +375,8 @@ impl<'a> Parser<'a> {
                     Err(error) => return Err(error),
                 }
             } else {
-                /*
-                Month and day in compact format (MMDD) or ordinal date (DDD)
-                We'll assume first that the next part is a month and adjust if not.
-                */
-                datetime.month = self.parse_integer(2, "month")?;
-                let mut ordinal_day = self.parse_integer(1, "ordinal day")? as i32;
-
-                if self.end() || self.current == ' ' || self.current == 'T' {
-                    // Ordinal day
-                    ordinal_day = datetime.month as i32 * 10 + ordinal_day;
-
-                    match self.ordinal_to_ymd(datetime.year, ordinal_day, false) {
-                        Ok((year, month, day)) => {
-                            datetime.year = year;
-                            datetime.month = month;
-                            datetime.day = day;
-                        }
-                        Err(error) => return Err(error),
-                    }
-                } else {
-                    // Day
-                    datetime.day = ordinal_day as u32 * 10 + self.parse_integer(1, "day")?;
-                }
+                // Day
+                datetime.day = ordinal_day as u32 * 10 + self.parse_integer(1, "day")?;
             }
         }
 
@@ -409,7 +401,7 @@ impl<'a> Parser<'a> {
                 return Ok(());
             }
 
-            return Err(self.parse_error(format!("Unconverted data remains")));
+            return Err(self.parse_error("Unconverted data remains".to_string()));
         }
 
         match &parsed.datetime {
@@ -512,7 +504,7 @@ impl<'a> Parser<'a> {
                     }
 
                     if !datetime.extended_date_format {
-                        return Err(self.parse_error(format!("Cannot combine \"basic\" date format with \"extended\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
+                        return Err(self.parse_error("Cannot combine \"basic\" date format with \"extended\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).".to_string()));
                     }
                 }
             } else {
@@ -563,7 +555,7 @@ impl<'a> Parser<'a> {
                 }
 
                 if datetime.extended_date_format {
-                    return Err(self.parse_error(format!("Cannot combine \"extended\" date format with \"basic\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).")));
+                    return Err(self.parse_error("Cannot combine \"extended\" date format with \"basic\" time format (Should be either `YYYY-MM-DDThh:mm:ss` or `YYYYMMDDThhmmss`).".to_string()));
                 }
             }
         }
@@ -576,7 +568,7 @@ impl<'a> Parser<'a> {
             // Special case for 24:00:00, which is valid for ISO 8601.
             // This is equivalent to 00:00:00 the next day.
             // We will store the information for now.
-            datetime.time_is_midnight = true
+            datetime.time_is_midnight = true;
         }
 
         if self.current == 'Z' || self.current == '+' || self.current == '-' {
@@ -606,24 +598,24 @@ impl<'a> Parser<'a> {
                     tzminute = self.parse_integer(2, "timezone minute")? as i32;
                 }
             } else {
-                datetime.tzname = Some("UTC".to_string())
+                datetime.tzname = Some("UTC".to_string());
             }
 
             if tzminute > 59 {
-                return Err(self.parse_error(format!("timezone minute must be in 0..59")));
+                return Err(self.parse_error("timezone minute must be in 0..59".to_string()));
             }
 
             tzminute += tzhour * 60;
             tzminute *= tzsign;
 
             if tzminute.abs() > 1440 {
-                return Err(self.parse_error(format!("The absolute offset is to large")));
+                return Err(self.parse_error("The absolute offset is to large".to_string()));
             }
 
             datetime.offset = Some(tzminute * 60);
         }
 
-        return Ok(());
+        Ok(())
     }
 
     fn parse_duration(&mut self, parsed: &mut Parsed) -> Result<(), ParseError> {
@@ -639,7 +631,7 @@ impl<'a> Parser<'a> {
                 'T' => {
                     if got_t {
                         return Err(
-                            self.parse_error(format!("Repeated time declaration in duration"))
+                            self.parse_error("Repeated time declaration in duration".to_string())
                         );
                     }
 
@@ -648,7 +640,7 @@ impl<'a> Parser<'a> {
                 _c => {
                     let (value, op_fraction) = self.parse_duration_number_frac()?;
                     if last_had_fraction {
-                        return Err(self.parse_error(format!("Invalid duration fraction")));
+                        return Err(self.parse_error("Invalid duration fraction".to_string()));
                     }
 
                     if op_fraction.is_some() {
@@ -663,45 +655,45 @@ impl<'a> Parser<'a> {
                                     || duration.microseconds != 0
                                 {
                                     return Err(
-                                        self.parse_error(format!("Duration units out of order"))
+                                        self.parse_error("Duration units out of order".to_string())
                                     );
                                 }
 
                                 duration.hours += value;
 
                                 if let Some(fraction) = op_fraction {
-                                    let extra_minutes = fraction * 60 as f64;
+                                    let extra_minutes = fraction * 60_f64;
                                     let extra_full_minutes: f64 = extra_minutes.trunc();
                                     duration.minutes += extra_full_minutes as u32;
                                     let extra_seconds =
                                         ((extra_minutes - extra_full_minutes) * 60.0).round();
                                     let extra_full_seconds = extra_seconds.trunc();
-                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    duration.seconds += extra_full_seconds as u32;
                                     let micro_extra = ((extra_seconds - extra_full_seconds)
                                         * 1_000_000.0)
                                         .round()
                                         as u32;
-                                    duration.microseconds = duration.microseconds + micro_extra;
+                                    duration.microseconds += micro_extra;
                                 }
                             }
                             'M' => {
                                 if duration.seconds != 0 || duration.microseconds != 0 {
                                     return Err(
-                                        self.parse_error(format!("Duration units out of order"))
+                                        self.parse_error("Duration units out of order".to_string())
                                     );
                                 }
 
                                 duration.minutes += value;
 
                                 if let Some(fraction) = op_fraction {
-                                    let extra_seconds = fraction * 60 as f64;
+                                    let extra_seconds = fraction * 60_f64;
                                     let extra_full_seconds = extra_seconds.trunc();
-                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    duration.seconds += extra_full_seconds as u32;
                                     let micro_extra = ((extra_seconds - extra_full_seconds)
                                         * 1_000_000.0)
                                         .round()
                                         as u32;
-                                    duration.microseconds = duration.microseconds + micro_extra;
+                                    duration.microseconds += micro_extra;
                                 }
                             }
                             'S' => {
@@ -713,21 +705,24 @@ impl<'a> Parser<'a> {
                                 }
                             }
                             _ => {
-                                return Err(self.parse_error(format!("Invalid duration time unit")))
+                                return Err(
+                                    self.parse_error("Invalid duration time unit".to_string())
+                                )
                             }
                         }
                     } else {
                         match self.current {
                             'Y' => {
                                 if last_had_fraction {
-                                    return Err(self.parse_error(format!(
+                                    return Err(self.parse_error(
                                         "Fractional years in duration are not supported"
-                                    )));
+                                            .to_string(),
+                                    ));
                                 }
 
                                 if duration.months != 0 || duration.days != 0 {
                                     return Err(
-                                        self.parse_error(format!("Duration units out of order"))
+                                        self.parse_error("Duration units out of order".to_string())
                                     );
                                 }
 
@@ -735,14 +730,15 @@ impl<'a> Parser<'a> {
                             }
                             'M' => {
                                 if last_had_fraction {
-                                    return Err(self.parse_error(format!(
+                                    return Err(self.parse_error(
                                         "Fractional months in duration are not supported"
-                                    )));
+                                            .to_string(),
+                                    ));
                                 }
 
                                 if duration.days != 0 {
                                     return Err(
-                                        self.parse_error(format!("Duration units out of order"))
+                                        self.parse_error("Duration units out of order".to_string())
                                     );
                                 }
 
@@ -750,17 +746,17 @@ impl<'a> Parser<'a> {
                             }
                             'W' => {
                                 if duration.years != 0 || duration.months != 0 {
-                                    return Err(self.parse_error(format!(
-                                        "Basic format durations cannot have weeks"
-                                    )));
+                                    return Err(self.parse_error(
+                                        "Basic format durations cannot have weeks".to_string(),
+                                    ));
                                 }
 
                                 duration.weeks = value;
 
                                 if let Some(fraction) = op_fraction {
-                                    let extra_days = fraction * 7 as f64;
+                                    let extra_days = fraction * 7_f64;
                                     let extra_full_days = extra_days.trunc();
-                                    duration.days = duration.days + extra_full_days as u32;
+                                    duration.days += extra_full_days as u32;
                                     let extra_hours = (extra_days - extra_full_days) * 24.0;
                                     let extra_full_hours = extra_hours.trunc();
                                     duration.hours += extra_full_hours as u32;
@@ -771,19 +767,19 @@ impl<'a> Parser<'a> {
                                     let extra_seconds =
                                         ((extra_minutes - extra_full_minutes) * 60.0).round();
                                     let extra_full_seconds = extra_seconds.trunc();
-                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    duration.seconds += extra_full_seconds as u32;
                                     let micro_extra = ((extra_seconds - extra_full_seconds)
                                         * 1_000_000.0)
                                         .round()
                                         as u32;
-                                    duration.microseconds = duration.microseconds + micro_extra;
+                                    duration.microseconds += micro_extra;
                                 }
                             }
                             'D' => {
                                 if duration.weeks != 0 {
-                                    return Err(self.parse_error(format!(
-                                        "Week format durations cannot have days"
-                                    )));
+                                    return Err(self.parse_error(
+                                        "Week format durations cannot have days".to_string(),
+                                    ));
                                 }
 
                                 duration.days += value;
@@ -798,21 +794,22 @@ impl<'a> Parser<'a> {
                                     let extra_seconds =
                                         ((extra_minutes - extra_full_minutes) * 60.0).round();
                                     let extra_full_seconds = extra_seconds.trunc();
-                                    duration.seconds = duration.seconds + extra_full_seconds as u32;
+                                    duration.seconds += extra_full_seconds as u32;
                                     let micro_extra = ((extra_seconds - extra_full_seconds)
                                         * 1_000_000.0)
                                         .round()
                                         as u32;
-                                    duration.microseconds = duration.microseconds + micro_extra;
+                                    duration.microseconds += micro_extra;
                                 }
                             }
                             _ => {
-                                return Err(self.parse_error(format!("Invalid duration time unit")))
+                                return Err(
+                                    self.parse_error("Invalid duration time unit".to_string())
+                                )
                             }
                         }
                     }
                 }
-                _ => break,
             }
             self.inc();
 
@@ -823,7 +820,7 @@ impl<'a> Parser<'a> {
 
         parsed.duration = Some(duration);
 
-        return Ok(());
+        Ok(())
     }
 
     fn parse_duration_number_frac(&mut self) -> Result<(u32, Option<f64>), ParseError> {
@@ -837,7 +834,7 @@ impl<'a> Parser<'a> {
                 match self.current {
                     c if c.is_ascii_digit() => {
                         decimal *= 10.0;
-                        decimal += c.to_digit(10).unwrap() as f64;
+                        decimal += f64::from(c.to_digit(10).unwrap());
                         denominator *= 10.0;
                     }
                     _ => return Ok((value, Some(decimal / denominator))),
@@ -850,9 +847,9 @@ impl<'a> Parser<'a> {
 
     fn parse_duration_number(&mut self) -> Result<u32, ParseError> {
         let mut value = match self.current {
-            c if c.is_ascii_digit() => c.to_digit(10).unwrap() as u32,
+            c if c.is_ascii_digit() => c.to_digit(10).unwrap(),
             _ => {
-                return Err(self.parse_error(format!("Invalid number in duration")));
+                return Err(self.parse_error("Invalid number in duration".to_string()));
             }
         };
 
@@ -861,8 +858,8 @@ impl<'a> Parser<'a> {
 
             match self.current {
                 c if c.is_ascii_digit() => {
-                    value = value * 10;
-                    value = value + c.to_digit(10).unwrap() as u32;
+                    value *= 10;
+                    value += c.to_digit(10).unwrap();
                 }
                 _ => return Ok(value),
             }
@@ -878,10 +875,8 @@ impl<'a> Parser<'a> {
         if iso_week > 53 || iso_week > 52 && !is_long_year(iso_year as i32) {
             return Err(ParseError {
                 index: self.idx,
-                c: self.current,
                 message: format!(
-                    "Invalid ISO date: week {} out of range for year {}",
-                    iso_week, iso_year
+                    "Invalid ISO date: week {iso_week} out of range for year {iso_year}"
                 ),
             });
         }
@@ -889,8 +884,7 @@ impl<'a> Parser<'a> {
         if iso_day > 7 {
             return Err(ParseError {
                 index: self.idx,
-                c: self.current,
-                message: format!("Invalid ISO date: week day is invalid"),
+                message: "Invalid ISO date: week day is invalid".to_string(),
             });
         }
 
@@ -908,35 +902,31 @@ impl<'a> Parser<'a> {
     ) -> Result<(u32, u32, u32), ParseError> {
         let mut ord: i32 = ordinal;
         let mut y: u32 = year;
-        let mut leap: usize = is_leap(y as i32) as usize;
+        let mut leap: usize = usize::from(is_leap(y as i32));
 
         if ord < 1 {
             if !allow_out_of_bounds {
                 return Err(self.parse_error(format!(
-                    "Invalid ordinal day: {} is too small for year {}",
-                    ordinal.to_string(),
-                    year.to_string()
+                    "Invalid ordinal day: {ordinal} is too small for year {year}"
                 )));
             }
             // Previous year
             ord += days_in_year((year - 1) as i32) as i32;
             y -= 1;
-            leap = is_leap(y as i32) as usize;
+            leap = usize::from(is_leap(y as i32));
         }
 
         if ord > days_in_year(y as i32) as i32 {
             if !allow_out_of_bounds {
                 return Err(self.parse_error(format!(
-                    "Invalid ordinal day: {} is too large for year {}",
-                    ordinal.to_string(),
-                    year.to_string()
+                    "Invalid ordinal day: {ordinal} is too large for year {year}"
                 )));
             }
 
             // Next year
             ord -= days_in_year(y as i32) as i32;
             y += 1;
-            leap = is_leap(y as i32) as usize;
+            leap = usize::from(is_leap(y as i32));
         }
 
         for i in 1..14 {
@@ -944,14 +934,12 @@ impl<'a> Parser<'a> {
                 let day = ord as u32 - MONTHS_OFFSETS[leap][i - 1] as u32;
                 let month = (i - 1) as u32;
 
-                return Ok((y as u32, month, day));
+                return Ok((y, month, day));
             }
         }
 
         Err(self.parse_error(format!(
-            "Invalid ordinal day: {} is too large for year {}",
-            ordinal.to_string(),
-            year.to_string()
+            "Invalid ordinal day: {ordinal} is too large for year {year}"
         )))
     }
 }

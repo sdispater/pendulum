@@ -4,7 +4,7 @@ use pyo3::types::PyDate;
 use pyo3::types::PyDateTime;
 use pyo3::types::PyTime;
 
-use crate::parsing::{ParseError, Parser};
+use crate::parsing::Parser;
 use crate::python::types::{Duration, FixedTimezone};
 
 #[pyfunction]
@@ -24,7 +24,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.hour as u8,
                             datetime.minute as u8,
                             datetime.second as u8,
-                            datetime.microsecond as u32,
+                            datetime.microsecond,
                             Some(
                                 Py::new(py, FixedTimezone::new(offset, datetime.tzname))?
                                     .to_object(py)
@@ -32,7 +32,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             ),
                         )?;
 
-                        return Ok(dt.to_object(py));
+                        Ok(dt.to_object(py))
                     }
                     None => {
                         let dt = PyDateTime::new(
@@ -43,11 +43,11 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.hour as u8,
                             datetime.minute as u8,
                             datetime.second as u8,
-                            datetime.microsecond as u32,
+                            datetime.microsecond,
                             None,
                         )?;
 
-                        return Ok(dt.to_object(py));
+                        Ok(dt.to_object(py))
                     }
                 },
                 (true, false) => {
@@ -58,7 +58,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                         datetime.day as u8,
                     )?;
 
-                    return Ok(dt.to_object(py));
+                    Ok(dt.to_object(py))
                 }
                 (false, true) => match datetime.offset {
                     Some(offset) => {
@@ -67,7 +67,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.hour as u8,
                             datetime.minute as u8,
                             datetime.second as u8,
-                            datetime.microsecond as u32,
+                            datetime.microsecond,
                             Some(
                                 Py::new(py, FixedTimezone::new(offset, datetime.tzname))?
                                     .to_object(py)
@@ -75,7 +75,7 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             ),
                         )?;
 
-                        return Ok(dt.to_object(py));
+                        Ok(dt.to_object(py))
                     }
                     None => {
                         let dt = PyTime::new(
@@ -83,35 +83,35 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                             datetime.hour as u8,
                             datetime.minute as u8,
                             datetime.second as u8,
-                            datetime.microsecond as u32,
+                            datetime.microsecond,
                             None,
                         )?;
 
-                        return Ok(dt.to_object(py));
+                        Ok(dt.to_object(py))
                     }
                 },
-                (_, _) => Err(exceptions::PyValueError::new_err(format!("Parsing error"))),
+                (_, _) => Err(exceptions::PyValueError::new_err(
+                    "Parsing error".to_string(),
+                )),
             },
-            (None, Some(duration), None) => {
-                return Ok(Py::new(
-                    py,
-                    Duration::new(
-                        Some(duration.years),
-                        Some(duration.months),
-                        Some(duration.weeks),
-                        Some(duration.days),
-                        Some(duration.hours),
-                        Some(duration.minutes),
-                        Some(duration.seconds),
-                        Some(duration.microseconds),
-                    ),
-                )?
-                .to_object(py));
-            }
-            (_, _, _) => Err(exceptions::PyValueError::new_err(format!(
-                "Not yet implemented"
-            ))),
+            (None, Some(duration), None) => Ok(Py::new(
+                py,
+                Duration::new(
+                    Some(duration.years),
+                    Some(duration.months),
+                    Some(duration.weeks),
+                    Some(duration.days),
+                    Some(duration.hours),
+                    Some(duration.minutes),
+                    Some(duration.seconds),
+                    Some(duration.microseconds),
+                ),
+            )?
+            .to_object(py)),
+            (_, _, _) => Err(exceptions::PyValueError::new_err(
+                "Not yet implemented".to_string(),
+            )),
         },
-        Err(error) => Err(exceptions::PyValueError::new_err(format!("{}", error))),
+        Err(error) => Err(exceptions::PyValueError::new_err(format!("{error}"))),
     }
 }

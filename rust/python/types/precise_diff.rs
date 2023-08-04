@@ -24,6 +24,7 @@ pub struct PreciseDiff {
 impl PreciseDiff {
     #[new]
     #[pyo3(signature = (years=0, months=0, days=0, hours=0, minutes=0, seconds=0, microseconds=0, total_days=0))]
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         years: Option<i32>,
         months: Option<i32>,

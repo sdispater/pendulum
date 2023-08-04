@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use pyo3::{
     intern,
     prelude::*,
@@ -28,7 +30,7 @@ struct DateTimeInfo<'py> {
 
 impl PartialEq for DateTimeInfo<'_> {
     fn eq(&self, other: &Self) -> bool {
-        return (
+        (
             self.year,
             self.month,
             self.day,
@@ -45,13 +47,13 @@ impl PartialEq for DateTimeInfo<'_> {
                 other.minute,
                 other.second,
                 other.microsecond,
-            ));
+            ))
     }
 }
 
 impl PartialOrd for DateTimeInfo<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        return (
+        (
             self.year,
             self.month,
             self.day,
@@ -68,7 +70,7 @@ impl PartialOrd for DateTimeInfo<'_> {
                 other.minute,
                 other.second,
                 other.microsecond,
-            ));
+            ))
     }
 }
 
@@ -82,7 +84,7 @@ pub fn get_tz_name<'py>(py: Python, dt: &'py PyAny) -> PyResult<&'py str> {
     let tzinfo = dt.getattr("tzinfo");
 
     match tzinfo {
-        Err(_) => return Ok(tz),
+        Err(_) => Ok(tz),
         Ok(tzinfo) => {
             if tzinfo.is_none() {
                 return Ok(tz);
@@ -114,14 +116,14 @@ pub fn get_tz_name<'py>(py: Python, dt: &'py PyAny) -> PyResult<&'py str> {
                     .unwrap();
 
                 return tzname.to_str();
-            } else {
-                return Ok(tz);
             }
+
+            Ok(tz)
         }
     }
 }
 
-pub fn get_offset<'py>(dt: &'py PyAny) -> PyResult<i32> {
+pub fn get_offset(dt: &PyAny) -> PyResult<i32> {
     if !PyDateTime::is_type_of(dt) {
         return Ok(0);
     }
@@ -134,7 +136,7 @@ pub fn get_offset<'py>(dt: &'py PyAny) -> PyResult<i32> {
 
     let offset: &PyDelta = tzinfo.call_method1("utcoffset", (dt,))?.downcast()?;
 
-    return Ok(offset.get_days() * SECS_PER_DAY as i32 + offset.get_seconds());
+    Ok(offset.get_days() * SECS_PER_DAY as i32 + offset.get_seconds())
 }
 
 #[pyfunction]
@@ -171,8 +173,8 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
     let mut sign = 1;
     let mut dtinfo1 = DateTimeInfo {
         year: dt1.downcast::<PyDate>()?.get_year(),
-        month: dt1.downcast::<PyDate>()?.get_month() as i32,
-        day: dt1.downcast::<PyDate>()?.get_day() as i32,
+        month: i32::from(dt1.downcast::<PyDate>()?.get_month()),
+        day: i32::from(dt1.downcast::<PyDate>()?.get_day()),
         hour: 0,
         minute: 0,
         second: 0,
@@ -184,8 +186,8 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
     };
     let mut dtinfo2 = DateTimeInfo {
         year: dt2.downcast::<PyDate>()?.get_year(),
-        month: dt2.downcast::<PyDate>()?.get_month() as i32,
-        day: dt2.downcast::<PyDate>()?.get_day() as i32,
+        month: i32::from(dt2.downcast::<PyDate>()?.get_month()),
+        day: i32::from(dt2.downcast::<PyDate>()?.get_day()),
         hour: 0,
         minute: 0,
         second: 0,
@@ -195,16 +197,16 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
         offset: get_offset(dt2)?,
         is_datetime: PyDateTime::is_type_of(dt2),
     };
-    let in_same_tz: bool = dtinfo1.tz == dtinfo2.tz && dtinfo1.tz.len() > 0;
+    let in_same_tz: bool = dtinfo1.tz == dtinfo2.tz && !dtinfo1.tz.is_empty();
     let mut total_days = helpers::day_number(dtinfo2.year, dtinfo2.month as u8, dtinfo2.day as u8)
         - helpers::day_number(dtinfo1.year, dtinfo1.month as u8, dtinfo1.day as u8);
 
     if dtinfo1.is_datetime {
         let dt1dt: &PyDateTime = dt1.downcast()?;
 
-        dtinfo1.hour = dt1dt.get_hour() as i32;
-        dtinfo1.minute = dt1dt.get_minute() as i32;
-        dtinfo1.second = dt1dt.get_second() as i32;
+        dtinfo1.hour = i32::from(dt1dt.get_hour());
+        dtinfo1.minute = i32::from(dt1dt.get_minute());
+        dtinfo1.second = i32::from(dt1dt.get_second());
         dtinfo1.microsecond = dt1dt.get_microsecond() as i32;
 
         if !in_same_tz && dtinfo1.offset != 0 || total_days == 0 {
@@ -247,9 +249,9 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
     if dtinfo2.is_datetime {
         let dt2dt: &PyDateTime = dt2.downcast()?;
 
-        dtinfo2.hour = dt2dt.get_hour() as i32;
-        dtinfo2.minute = dt2dt.get_minute() as i32;
-        dtinfo2.second = dt2dt.get_second() as i32;
+        dtinfo2.hour = i32::from(dt2dt.get_hour());
+        dtinfo2.minute = i32::from(dt2dt.get_minute());
+        dtinfo2.second = i32::from(dt2dt.get_second());
         dtinfo2.microsecond = dt2dt.get_microsecond() as i32;
 
         if !in_same_tz && dtinfo2.offset != 0 || total_days == 0 {
@@ -305,7 +307,7 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
     let mut microsecond_diff = dtinfo2.microsecond - dtinfo1.microsecond;
 
     if microsecond_diff < 0 {
-        microsecond_diff += 1000000;
+        microsecond_diff += 1_000_000;
         second_diff -= 1;
     }
 
@@ -339,26 +341,30 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
 
         let leap = helpers::is_leap(year);
 
-        let days_in_last_month = DAYS_PER_MONTHS[leap as usize][month as usize];
+        let days_in_last_month = DAYS_PER_MONTHS[usize::from(leap)][month as usize];
         let days_in_month =
-            DAYS_PER_MONTHS[helpers::is_leap(dtinfo2.year) as usize][dtinfo2.month as usize];
+            DAYS_PER_MONTHS[usize::from(helpers::is_leap(dtinfo2.year))][dtinfo2.month as usize];
 
-        if day_diff < days_in_month - days_in_last_month {
-            // We don't have a full month, we calculate days
-            if (days_in_last_month < dtinfo1.day) {
-                day_diff += dtinfo1.day;
-            } else {
+        match day_diff.cmp(&(days_in_month - days_in_last_month)) {
+            Ordering::Less => {
+                // We don't have a full month, we calculate days
+                if days_in_last_month < dtinfo1.day {
+                    day_diff += dtinfo1.day;
+                } else {
+                    day_diff += days_in_last_month;
+                }
+            }
+            Ordering::Equal => {
+                // We have exactly a full month
+                // We remove the days difference
+                // and add one to the months difference
+                day_diff = 0;
+                month_diff += 1;
+            }
+            Ordering::Greater => {
+                // We have a full month
                 day_diff += days_in_last_month;
             }
-        } else if day_diff == days_in_month - days_in_last_month {
-            // We have exactly a full month
-            // We remove the days difference
-            // and add one to the months difference
-            day_diff = 0;
-            month_diff += 1;
-        } else {
-            // We have a full month
-            day_diff += days_in_last_month;
         }
 
         month_diff -= 1;
@@ -369,7 +375,7 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
         year_diff -= 1;
     }
 
-    return Ok(PreciseDiff {
+    Ok(PreciseDiff {
         years: year_diff * sign,
         months: month_diff * sign,
         days: day_diff * sign,
@@ -378,5 +384,5 @@ pub fn precise_diff<'py>(py: Python, dt1: &'py PyAny, dt2: &'py PyAny) -> PyResu
         seconds: second_diff * sign,
         microseconds: microsecond_diff * sign,
         total_days: total_days * sign,
-    });
+    })
 }
