@@ -18,9 +18,9 @@ if t.TYPE_CHECKING:
     from pendulum.time import Time
 
 try:
-    from _pendulum import Duration as CDuration
+    from _pendulum import Duration as RustDuration
 except ImportError:
-    CDuration = None  # type: ignore[assignment,misc]
+    RustDuration = None  # type: ignore[assignment,misc]
 
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
@@ -113,7 +113,7 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
     if isinstance(parsed, Duration):
         return parsed
 
-    if CDuration and isinstance(parsed, CDuration):  # type: ignore[truthy-function]
+    if RustDuration is not None and isinstance(parsed, RustDuration):
         return pendulum.duration(
             years=parsed.years,
             months=parsed.months,

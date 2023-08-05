@@ -17,9 +17,6 @@ packages = [
 include = [
     { path = "meson.build", format = "sdist" },
     { path = "pendulum/py.typed" },
-    # C extensions must be included in the wheel distributions
-    { path = "pendulum/_extensions/*.so", format = "wheel" },
-    { path = "pendulum/_extensions/*.pyd", format = "wheel" },
     # Typing stubs
     { path = "*.pyi"},
     # Rust source
@@ -224,5 +221,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0a6", "maturin>=1,<2"]
+requires = ["poetry-core>=1.6.1", "maturin>=1,<2"]
 build-backend = "poetry.core.masonry.api"
