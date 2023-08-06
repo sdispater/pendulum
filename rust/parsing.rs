@@ -124,18 +124,15 @@ impl<'a> Parser<'a> {
 
     /// Increments the parser if the end of the input has not been reached.
     /// Returns whether or not it was able to advance.
-    fn inc(&mut self) -> bool {
-        match self.chars.next() {
-            Some((i, ch)) => {
-                self.idx = i;
-                self.current = ch;
-                true
-            }
-            None => {
-                self.idx = self.src.len();
-                self.current = '\0';
-                false
-            }
+    fn inc(&mut self) -> Option<char> {
+        if let Some((i, ch)) = self.chars.next() {
+            self.idx = i;
+            self.current = ch;
+            Some(ch)
+        } else {
+            self.idx = self.src.len();
+            self.current = '\0';
+            None
         }
     }
 
@@ -156,10 +153,10 @@ impl<'a> Parser<'a> {
                 "Unexpected end of string while parsing {}. Expected {} more character{}.",
                 field_name,
                 expected_character_count,
-                if expected_character_count != 1 {
-                    "s"
-                } else {
+                if expected_character_count == 1 {
                     ""
+                } else {
+                    "s"
                 }
             ));
         }
@@ -188,8 +185,8 @@ impl<'a> Parser<'a> {
                 )));
             }
 
-            if self.current >= '0' && self.current <= '9' {
-                value = 10 * value + self.current.to_digit(10).unwrap();
+            if let Some(digit) = self.current.to_digit(10) {
+                value = 10 * value + digit;
                 self.inc();
             } else {
                 return Err(self.unexpected_character_error(field_name, length - i));
@@ -297,14 +294,11 @@ impl<'a> Parser<'a> {
                     iso_day = self.parse_integer(1, "iso day")?;
                 }
 
-                match self.iso_to_ymd(datetime.year, iso_week, iso_day) {
-                    Ok((year, month, day)) => {
-                        datetime.year = year;
-                        datetime.month = month;
-                        datetime.day = day;
-                    }
-                    Err(error) => return Err(error),
-                }
+                let (year, month, day) = self.iso_to_ymd(datetime.year, iso_week, iso_day)?;
+
+                datetime.year = year;
+                datetime.month = month;
+                datetime.day = day;
             } else {
                 /*
                 Month and day in extended format (MM-DD) or ordinal date (DDD)
@@ -322,14 +316,12 @@ impl<'a> Parser<'a> {
                         let ordinal_day =
                             (datetime.month * 10 + self.parse_integer(1, "ordinal day")?) as i32;
 
-                        match self.ordinal_to_ymd(datetime.year, ordinal_day, false) {
-                            Ok((year, month, day)) => {
-                                datetime.year = year;
-                                datetime.month = month;
-                                datetime.day = day;
-                            }
-                            Err(error) => return Err(error),
-                        }
+                        let (year, month, day) =
+                            self.ordinal_to_ymd(datetime.year, ordinal_day, false)?;
+
+                        datetime.year = year;
+                        datetime.month = month;
+                        datetime.day = day;
                     }
                 } else {
                     datetime.day = 1;
@@ -366,14 +358,11 @@ impl<'a> Parser<'a> {
                 // Ordinal day
                 ordinal_day += datetime.month as i32 * 10;
 
-                match self.ordinal_to_ymd(datetime.year, ordinal_day, false) {
-                    Ok((year, month, day)) => {
-                        datetime.year = year;
-                        datetime.month = month;
-                        datetime.day = day;
-                    }
-                    Err(error) => return Err(error),
-                }
+                let (year, month, day) = self.ordinal_to_ymd(datetime.year, ordinal_day, false)?;
+
+                datetime.year = year;
+                datetime.month = month;
+                datetime.day = day;
             } else {
                 // Day
                 datetime.day = ordinal_day as u32 * 10 + self.parse_integer(1, "day")?;
@@ -477,9 +466,8 @@ impl<'a> Parser<'a> {
                         let mut i: u8 = 0;
 
                         while i < 6 {
-                            if self.current >= '0' && self.current <= '9' {
-                                datetime.microsecond =
-                                    datetime.microsecond * 10 + self.current.to_digit(10).unwrap();
+                            if let Some(digit) = self.current.to_digit(10) {
+                                datetime.microsecond = datetime.microsecond * 10 + digit;
                             } else if i == 0 {
                                 // One digit minimum is required
                                 return Err(self.unexpected_character_error("subsecond", 1));
@@ -492,7 +480,7 @@ impl<'a> Parser<'a> {
                         }
 
                         // Drop extraneous digits
-                        while self.current >= '0' && self.current <= '9' {
+                        while self.current.is_ascii_digit() {
                             self.inc();
                         }
 
@@ -527,9 +515,8 @@ impl<'a> Parser<'a> {
                         let mut i: u8 = 0;
 
                         while i < 6 {
-                            if self.current >= '0' && self.current <= '9' {
-                                datetime.microsecond =
-                                    datetime.microsecond * 10 + self.current.to_digit(10).unwrap();
+                            if let Some(digit) = self.current.to_digit(10) {
+                                datetime.microsecond = datetime.microsecond * 10 + digit;
                             } else if i == 0 {
                                 // One digit minimum is required
                                 return Err(self.unexpected_character_error("subsecond", 1));
@@ -542,7 +529,7 @@ impl<'a> Parser<'a> {
                         }
 
                         // Drop extraneous digits
-                        while self.current >= '0' && self.current <= '9' {
+                        while self.current.is_ascii_digit() {
                             self.inc();
                         }
 
@@ -571,47 +558,32 @@ impl<'a> Parser<'a> {
             datetime.time_is_midnight = true;
         }
 
-        if self.current == 'Z' || self.current == '+' || self.current == '-' {
-            // Optional timezone offset
-            let mut tzsign = 0;
-
-            if self.current == '+' {
-                tzsign = 1;
-            } else if self.current == '-' {
-                tzsign = -1;
-            }
-
+        if self.current == 'Z' {
+            // UTC
+            datetime.offset = Some(0);
+            datetime.tzname = Some("UTC".to_string());
             self.inc();
-
-            let mut tzhour: i32 = 0;
-            let mut tzminute: i32 = 0;
-
-            if tzsign != 0 {
-                // Offset hour
-                tzhour = self.parse_integer(2, "timezone hour")? as i32;
-                if self.current == ':' {
-                    // Optional separator
-                    self.inc();
-
-                    tzminute = self.parse_integer(2, "timezone minute")? as i32;
-                } else if !self.end() {
-                    tzminute = self.parse_integer(2, "timezone minute")? as i32;
-                }
+        } else if matches!(self.current, '+' | '-') {
+            // Optional timezone offset
+            let tzsign = if self.current == '+' { 1 } else { -1 };
+            self.inc();
+            // Offset hour
+            let tzhour = self.parse_integer(2, "timezone hour")? as i32;
+            if self.current == ':' {
+                // Optional separator
+                self.inc();
+            }
+            let mut tzminute = if self.end() {
+                0
             } else {
-                datetime.tzname = Some("UTC".to_string());
-            }
-
-            if tzminute > 59 {
-                return Err(self.parse_error("timezone minute must be in 0..59".to_string()));
-            }
-
+                // Optional minute
+                self.parse_integer(2, "timezone minute")? as i32
+            };
             tzminute += tzhour * 60;
             tzminute *= tzsign;
-
-            if tzminute.abs() > 1440 {
-                return Err(self.parse_error("The absolute offset is to large".to_string()));
+            if tzminute > 24 * 60 {
+                return Err(self.parse_error("Timezone offset is too large".to_string()));
             }
-
             datetime.offset = Some(tzminute * 60);
         }
 
@@ -825,45 +797,33 @@ impl<'a> Parser<'a> {
 
     fn parse_duration_number_frac(&mut self) -> Result<(u32, Option<f64>), ParseError> {
         let value = self.parse_duration_number()?;
-        if self.current == '.' || self.current == ',' {
+        let fraction = matches!(self.current, '.' | ',').then(|| {
             let mut decimal = 0_f64;
             let mut denominator = 1_f64;
-            loop {
-                self.inc();
 
-                match self.current {
-                    c if c.is_ascii_digit() => {
-                        decimal *= 10.0;
-                        decimal += f64::from(c.to_digit(10).unwrap());
-                        denominator *= 10.0;
-                    }
-                    _ => return Ok((value, Some(decimal / denominator))),
-                }
+            while let Some(digit) = self.inc().and_then(|ch| ch.to_digit(10)) {
+                decimal *= 10.0;
+                decimal += f64::from(digit);
+                denominator *= 10.0;
             }
-        } else {
-            Ok((value, None))
-        }
+
+            decimal / denominator
+        });
+
+        Ok((value, fraction))
     }
 
     fn parse_duration_number(&mut self) -> Result<u32, ParseError> {
-        let mut value = match self.current {
-            c if c.is_ascii_digit() => c.to_digit(10).unwrap(),
-            _ => {
-                return Err(self.parse_error("Invalid number in duration".to_string()));
-            }
+        let Some(mut value) = self.current.to_digit(10) else {
+            return Err(self.parse_error("Invalid number in duration".to_string()));
         };
 
-        loop {
-            self.inc();
-
-            match self.current {
-                c if c.is_ascii_digit() => {
-                    value *= 10;
-                    value += c.to_digit(10).unwrap();
-                }
-                _ => return Ok(value),
-            }
+        while let Some(digit) = self.inc().and_then(|ch| ch.to_digit(10)) {
+            value *= 10;
+            value += digit;
         }
+
+        Ok(value)
     }
 
     fn iso_to_ymd(

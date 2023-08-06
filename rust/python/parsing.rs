@@ -112,6 +112,6 @@ pub fn parse_iso8601(py: Python, input: &str) -> PyResult<PyObject> {
                 "Not yet implemented".to_string(),
             )),
         },
-        Err(error) => Err(exceptions::PyValueError::new_err(format!("{error}"))),
+        Err(error) => Err(exceptions::PyValueError::new_err(error.to_string())),
     }
 }

@@ -36,14 +36,13 @@ impl FixedTimezone {
     }
 
     fn __str__(&self) -> String {
-        match self.name.clone() {
-            Some(n) => n,
-            None => {
-                let sign = if self.offset < 0 { "-" } else { "+" };
-                let minutes = self.offset / 60;
-                let (hour, minute) = (minutes.abs() / 60, minutes.abs() % 60);
-                format!("{sign}{hour:.2}:{minute:.2}")
-            }
+        if let Some(n) = &self.name {
+            n.clone()
+        } else {
+            let sign = if self.offset < 0 { "-" } else { "+" };
+            let minutes = self.offset.abs() / 60;
+            let (hour, minute) = (minutes / 60, minutes % 60);
+            format!("{sign}{hour:.2}:{minute:.2}")
         }
     }
 
