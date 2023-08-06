@@ -3,6 +3,7 @@ from __future__ import annotations
 import calendar
 import datetime
 import sys
+import traceback
 
 from typing import TYPE_CHECKING
 from typing import Any
@@ -1218,9 +1219,7 @@ class DateTime(datetime.datetime, Date):
             # This is a workaround for Python 3.8+
             # since calling astimezone() will call this method
             # instead of the base datetime class one.
-            import inspect
-
-            caller = inspect.stack()[1][3]
+            caller = traceback.extract_stack(limit=2)[0].name
             if caller == "astimezone":
                 return super().__add__(other)
 
