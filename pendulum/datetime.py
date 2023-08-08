@@ -129,7 +129,7 @@ class DateTime(datetime.datetime, Date):
         cls,
         dt: datetime.datetime,
         tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = UTC,
-    ) -> DateTime:
+    ) -> Self:
         """
         Create a DateTime instance from a datetime one.
         """
@@ -205,7 +205,7 @@ class DateTime(datetime.datetime, Date):
         return cls.now()
 
     @classmethod
-    def strptime(cls, time: str, fmt: str) -> DateTime:
+    def strptime(cls, time: str, fmt: str) -> Self:
         return cls._instance(datetime.datetime.strptime(time, fmt))
 
     # Getters/Setters
@@ -505,7 +505,7 @@ class DateTime(datetime.datetime, Date):
         )
 
     # Comparisons
-    def closest(self, *dts: datetime.datetime) -> DateTime:  # type: ignore[override]
+    def closest(self, *dts: datetime.datetime) -> Self:  # type: ignore[override]
         """
         Get the farthest date from the instance.
         """
@@ -513,7 +513,7 @@ class DateTime(datetime.datetime, Date):
 
         return min((abs(self - dt), dt) for dt in pdts)[1]
 
-    def farthest(self, *dts: datetime.datetime) -> DateTime:  # type: ignore[override]
+    def farthest(self, *dts: datetime.datetime) -> Self:  # type: ignore[override]
         """
         Get the farthest date from the instance.
         """
@@ -540,7 +540,7 @@ class DateTime(datetime.datetime, Date):
         See link `https://en.wikipedia.org/wiki/ISO_8601#Week_dates`_
         """
         return (
-            DateTime.create(self.year, 12, 28, 0, 0, 0, tz=self.tz).isocalendar()[1]
+            self.create(self.year, 12, 28, 0, 0, 0, tz=self.tz).isocalendar()[1]
             == 53
         )
 
@@ -1263,17 +1263,17 @@ class DateTime(datetime.datetime, Date):
     # Native methods override
 
     @classmethod
-    def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> DateTime:
+    def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> Self:
         tzinfo = pendulum._safe_timezone(tz)
 
         return cls._instance(datetime.datetime.fromtimestamp(t, tz=tzinfo), tz=tzinfo)
 
     @classmethod
-    def utcfromtimestamp(cls, t: float) -> DateTime:
+    def utcfromtimestamp(cls, t: float) -> Self:
         return cls._instance(datetime.datetime.utcfromtimestamp(t), tz=None)
 
     @classmethod
-    def fromordinal(cls, n: int) -> DateTime:
+    def fromordinal(cls, n: int) -> Self:
         return cls._instance(datetime.datetime.fromordinal(n), tz=None)
 
     @classmethod
@@ -1282,7 +1282,7 @@ class DateTime(datetime.datetime, Date):
         date: datetime.date,
         time: datetime.time,
         tzinfo: datetime.tzinfo | None = None,
-    ) -> DateTime:
+    ) -> Self:
         return cls._instance(datetime.datetime.combine(date, time), tz=tzinfo)
 
     def astimezone(self, tz: datetime.tzinfo | None = None) -> Self:
@@ -1346,7 +1346,7 @@ class DateTime(datetime.datetime, Date):
             fold=fold,
         )
 
-    def __getnewargs__(self) -> tuple[DateTime]:
+    def __getnewargs__(self) -> tuple[Self]:
         return (self,)
 
     def _getstate(
@@ -1366,14 +1366,14 @@ class DateTime(datetime.datetime, Date):
     def __reduce__(
         self,
     ) -> tuple[
-        type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:
         return self.__reduce_ex__(2)
 
     def __reduce_ex__(
         self, protocol: SupportsIndex
     ) -> tuple[
-        type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:
         return self.__class__, self._getstate(protocol)
 
