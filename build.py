@@ -35,6 +35,8 @@ def _build():
         for extension in wheels_dir.rglob("**/*.so"):
             shutil.copyfile(extension, Path(__file__).parent.joinpath(extension.name))
 
+    shutil.rmtree(wheels_dir)
+
 
 def build(setup_kwargs):
     """
@@ -44,7 +46,7 @@ def build(setup_kwargs):
         _build()
     except Exception as e:
         print(
-            "  Unable to build C extensions, "
+            "  Unable to build Rust extensions, "
             "Pendulum will use the pure python version of the extensions."
         )
         print(e)
