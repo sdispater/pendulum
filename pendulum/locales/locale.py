@@ -4,14 +4,10 @@ from importlib import import_module
 from pathlib import Path
 
 import re
-import sys
 from typing import Any, cast
 from typing import Dict
 
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
+from pendulum.utils._compat import resources
 
 
 class Locale:

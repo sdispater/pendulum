@@ -8,13 +8,14 @@ from tests.conftest import assert_duration
 from tests.conftest import assert_time
 
 
-def test_parse():
+def test_parse() -> None:
     text = "2016-10-16T12:34:56.123456+01:30"
 
     dt = pendulum.parse(text)
 
     assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
+    assert dt.tz is not None
     assert dt.tz.name == "+01:30"
     assert dt.offset == 5400
 
@@ -36,16 +37,18 @@ def test_parse():
     assert dt.offset == 0
 
 
-def test_parse_with_timezone():
+def test_parse_with_timezone() -> None:
     text = "2016-10-16T12:34:56.123456"
 
     dt = pendulum.parse(text, tz="Europe/Paris")
+    assert isinstance(dt, pendulum.DateTime)
     assert_datetime(dt, 2016, 10, 16, 12, 34, 56, 123456)
+    assert dt.tz is not None
     assert dt.tz.name == "Europe/Paris"
     assert dt.offset == 7200
 
 
-def test_parse_exact():
+def test_parse_exact() -> None:
     text = "2016-10-16T12:34:56.123456+01:30"
 
     dt = pendulum.parse(text, exact=True)
@@ -76,7 +79,7 @@ def test_parse_exact():
     assert_time(dt, 13, 0, 0)
 
 
-def test_parse_duration():
+def test_parse_duration() -> None:
     text = "P2Y3M4DT5H6M7S"
 
     duration = pendulum.parse(text)
@@ -92,7 +95,7 @@ def test_parse_duration():
     assert_duration(duration, 0, 0, 2, 0, 0, 0, 0)
 
 
-def test_parse_interval():
+def test_parse_interval() -> None:
     text = "2008-05-11T15:30:00Z/P1Y2M10DT2H30M"
 
     period = pendulum.parse(text)
@@ -124,7 +127,7 @@ def test_parse_interval():
     assert period.end.offset == 0
 
 
-def test_parse_now():
+def test_parse_now() -> None:
     dt = pendulum.parse("now")
 
     assert dt.timezone_name == "America/Toronto"
@@ -135,7 +138,7 @@ def test_parse_now():
         assert pendulum.parse("now") == mock_now
 
 
-def test_parse_with_utc_timezone():
+def test_parse_with_utc_timezone() -> None:
     dt = pendulum.parse("2020-02-05T20:05:37.364951Z")
 
     assert dt.to_iso8601_string() == "2020-02-05T20:05:37.364951Z"

@@ -75,7 +75,7 @@ def test_not_equal_with_timezone_true():
 def test_not_equal_to_none():
     d1 = pendulum.datetime(2000, 1, 1, 1, 2, 3)
 
-    assert d1 != None  # noqa
+    assert d1 is not None
 
 
 def test_greater_than_true():

@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def meson(*args):
-    subprocess.call(["meson"] + list(args))
+    subprocess.call(["meson", *list(args)])
 
 
 def _build():

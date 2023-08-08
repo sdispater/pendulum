@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import math
 
-from collections import namedtuple
+from typing import NamedTuple
 from typing import cast
 
 from pendulum.constants import DAY_OF_WEEK_TABLE
@@ -25,12 +25,7 @@ from pendulum.tz.timezone import Timezone
 from pendulum.utils._compat import zoneinfo
 
 
-class PreciseDiff(
-    namedtuple(
-        "PreciseDiff",
-        "years months days " "hours minutes seconds microseconds " "total_days",
-    )
-):
+class PreciseDiff(NamedTuple):
     years: int
     months: int
     days: int
@@ -359,6 +354,6 @@ def _get_tzinfo_name(tzinfo: datetime.tzinfo | None) -> str | None:
         return cast(Timezone, tzinfo).name
     elif hasattr(tzinfo, "zone"):
         # pytz timezone
-        return tzinfo.zone  # type: ignore
+        return tzinfo.zone  # type: ignore[no-any-return]
 
     return None

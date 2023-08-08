@@ -8,14 +8,22 @@ import pytz
 import pendulum
 
 from pendulum import timezone
+from pendulum.helpers import PreciseDiff
 from pendulum.helpers import days_in_year
 from pendulum.helpers import precise_diff
 from pendulum.helpers import week_day
 
 
 def assert_diff(
-    diff, years=0, months=0, days=0, hours=0, minutes=0, seconds=0, microseconds=0
-):
+    diff: PreciseDiff,
+    years: int = 0,
+    months: int = 0,
+    days: int = 0,
+    hours: int = 0,
+    minutes: int = 0,
+    seconds: int = 0,
+    microseconds: int = 0,
+) -> None:
     assert diff.years == years
     assert diff.months == months
     assert diff.days == days
@@ -25,7 +33,7 @@ def assert_diff(
     assert diff.microseconds == microseconds
 
 
-def test_precise_diff():
+def test_precise_diff() -> None:
     dt1 = datetime(2003, 3, 1, 0, 0, 0)
     dt2 = datetime(2003, 1, 31, 23, 59, 59)
 
@@ -76,7 +84,7 @@ def test_precise_diff():
     assert_diff(diff, days=6, hours=0)
 
 
-def test_precise_diff_timezone():
+def test_precise_diff_timezone() -> None:
     paris = pendulum.timezone("Europe/Paris")
     toronto = pendulum.timezone("America/Toronto")
 
@@ -92,16 +100,16 @@ def test_precise_diff_timezone():
     assert_diff(diff, days=1, hours=5)
 
     # pytz
-    paris = pytz.timezone("Europe/Paris")
-    toronto = pytz.timezone("America/Toronto")
+    paris_pytz = pytz.timezone("Europe/Paris")
+    toronto_pytz = pytz.timezone("America/Toronto")
 
-    dt1 = paris.localize(datetime(2013, 3, 31, 1, 30))
-    dt2 = paris.localize(datetime(2013, 4, 1, 1, 30))
+    dt1 = paris_pytz.localize(datetime(2013, 3, 31, 1, 30))
+    dt2 = paris_pytz.localize(datetime(2013, 4, 1, 1, 30))
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, days=1, hours=0)
 
-    dt2 = toronto.localize(datetime(2013, 4, 1, 1, 30))
+    dt2 = toronto_pytz.localize(datetime(2013, 4, 1, 1, 30))
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, days=1, hours=5)
@@ -113,17 +121,17 @@ def test_precise_diff_timezone():
     assert_diff(diff, minutes=10)
 
 
-def test_week_day():
+def test_week_day() -> None:
     assert week_day(2017, 6, 2) == 5
     assert week_day(2017, 1, 1) == 7
 
 
-def test_days_in_years():
+def test_days_in_years() -> None:
     assert days_in_year(2017) == 365
     assert days_in_year(2016) == 366
 
 
-def test_locale():
+def test_locale() -> None:
     dt = pendulum.datetime(2000, 11, 10, 12, 34, 56, 123456)
     pendulum.set_locale("fr")
 
@@ -133,7 +141,7 @@ def test_locale():
     assert dt.date().format("MMMM") == "novembre"
 
 
-def test_set_locale_invalid():
+def test_set_locale_invalid() -> None:
     with pytest.raises(ValueError):
         pendulum.set_locale("invalid")
 
@@ -141,13 +149,13 @@ def test_set_locale_invalid():
 @pytest.mark.parametrize(
     "locale", ["DE", "pt-BR", "pt-br", "PT-br", "PT-BR", "pt_br", "PT_BR", "PT_BR"]
 )
-def test_set_locale_malformed_locale(locale):
+def test_set_locale_malformed_locale(locale: str) -> None:
     pendulum.set_locale(locale)
 
     pendulum.set_locale("en")
 
 
-def test_week_starts_at():
+def test_week_starts_at() -> None:
     pendulum.week_starts_at(pendulum.SATURDAY)
 
     dt = pendulum.now().start_of("week")
@@ -155,7 +163,7 @@ def test_week_starts_at():
     assert dt.date().day_of_week == pendulum.SATURDAY
 
 
-def test_week_starts_at_invalid_value():
+def test_week_starts_at_invalid_value() -> None:
     with pytest.raises(ValueError):
         pendulum.week_starts_at(-1)
 
@@ -163,7 +171,7 @@ def test_week_starts_at_invalid_value():
         pendulum.week_starts_at(11)
 
 
-def test_week_ends_at():
+def test_week_ends_at() -> None:
     pendulum.week_ends_at(pendulum.SATURDAY)
 
     dt = pendulum.now().end_of("week")
@@ -171,7 +179,7 @@ def test_week_ends_at():
     assert dt.date().day_of_week == pendulum.SATURDAY
 
 
-def test_week_ends_at_invalid_value():
+def test_week_ends_at_invalid_value() -> None:
     with pytest.raises(ValueError):
         pendulum.week_ends_at(-1)
 

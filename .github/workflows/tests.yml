@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, MacOS, Windows]
-        python-version: [3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
     defaults:
       run:
         shell: bash
@@ -64,8 +64,15 @@ jobs:
         if: steps.cache.outputs.cache-hit == 'true' && matrix.os != 'MacOS'
         run: timeout 10s poetry run pip --version || rm -rf .venv
 
-      - name: Install dependencies
-        run: poetry install --only main --only test -vvv
+      - name: Install runtime, testing, and typing dependencies
+        run: poetry install --only main --only test --only typing -vvv
+
+      - name: Run type checking
+        run: poetry run mypy
+
+      - name: Uninstall typing dependencies
+        # This ensures pendulum runs without typing_extensions installed
+        run: poetry install --only main --only test --sync --no-root -vvv
 
       - name: Test Pure Python
         run: |

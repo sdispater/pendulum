@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pendulum.formatting import Formatter
 
+
 _formatter = Formatter()
 
 

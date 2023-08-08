@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import calendar
 import datetime
+import sys
+import traceback
 
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import ClassVar
 from typing import Optional
 from typing import Union
 from typing import cast
@@ -39,14 +42,18 @@ from pendulum.tz import UTC
 from pendulum.tz import local_timezone
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
-from pendulum.utils._compat import PY38
+
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from typing_extensions import Literal
+    from typing_extensions import Self
+    from typing_extensions import SupportsIndex
 
 
 class DateTime(datetime.datetime, Date):
-    EPOCH: DateTime
+    EPOCH: ClassVar[DateTime]
+    min: ClassVar[DateTime]
+    max: ClassVar[DateTime]
 
     # Formats
 
@@ -81,17 +88,17 @@ class DateTime(datetime.datetime, Date):
     @classmethod
     def create(
         cls,
-        year: int,
-        month: int,
-        day: int,
-        hour: int = 0,
-        minute: int = 0,
-        second: int = 0,
-        microsecond: int = 0,
+        year: SupportsIndex,
+        month: SupportsIndex,
+        day: SupportsIndex,
+        hour: SupportsIndex = 0,
+        minute: SupportsIndex = 0,
+        second: SupportsIndex = 0,
+        microsecond: SupportsIndex = 0,
         tz: str | float | Timezone | FixedTimezone | None | datetime.tzinfo = UTC,
         fold: int = 1,
         raise_on_unknown_times: bool = False,
-    ) -> DateTime:
+    ) -> Self:
         """
         Creates a new DateTime instance from a specific date and time.
         """
@@ -150,18 +157,18 @@ class DateTime(datetime.datetime, Date):
 
     @overload
     @classmethod
-    def now(cls, tz: datetime.tzinfo | None = None) -> DateTime:
+    def now(cls, tz: datetime.tzinfo | None = None) -> Self:
         ...
 
     @overload
     @classmethod
-    def now(cls, tz: str | Timezone | FixedTimezone | None = None) -> DateTime:
+    def now(cls, tz: str | Timezone | FixedTimezone | None = None) -> Self:
         ...
 
     @classmethod
     def now(
         cls, tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = None
-    ) -> DateTime:
+    ) -> Self:
         """
         Get a DateTime instance for the current date and time.
         """
@@ -187,14 +194,14 @@ class DateTime(datetime.datetime, Date):
         )
 
     @classmethod
-    def utcnow(cls) -> DateTime:
+    def utcnow(cls) -> Self:
         """
         Get a DateTime instance for the current date and time in UTC.
         """
         return cls.now(UTC)
 
     @classmethod
-    def today(cls) -> DateTime:
+    def today(cls) -> Self:
         return cls.now()
 
     @classmethod
@@ -213,7 +220,7 @@ class DateTime(datetime.datetime, Date):
         second: int | None = None,
         microsecond: int | None = None,
         tz: str | float | Timezone | FixedTimezone | datetime.tzinfo | None = None,
-    ) -> DateTime:
+    ) -> Self:
         if year is None:
             year = self.year
         if month is None:
@@ -231,7 +238,9 @@ class DateTime(datetime.datetime, Date):
         if tz is None:
             tz = self.tz
 
-        return self.create(year, month, day, hour, minute, second, microsecond, tz=tz)
+        return self.__class__.create(
+            year, month, day, hour, minute, second, microsecond, tz=tz
+        )
 
     @property
     def float_timestamp(self) -> float:
@@ -316,7 +325,7 @@ class DateTime(datetime.datetime, Date):
     def time(self) -> Time:
         return Time(self.hour, self.minute, self.second, self.microsecond)
 
-    def naive(self) -> DateTime:
+    def naive(self) -> Self:
         """
         Return the DateTime without timezone information.
         """
@@ -330,7 +339,7 @@ class DateTime(datetime.datetime, Date):
             self.microsecond,
         )
 
-    def on(self, year: int, month: int, day: int) -> DateTime:
+    def on(self, year: int, month: int, day: int) -> Self:
         """
         Returns a new instance with the current date set to a different date.
         """
@@ -338,7 +347,7 @@ class DateTime(datetime.datetime, Date):
 
     def at(
         self, hour: int, minute: int = 0, second: int = 0, microsecond: int = 0
-    ) -> DateTime:
+    ) -> Self:
         """
         Returns a new instance with the current time to a different time.
         """
@@ -346,7 +355,7 @@ class DateTime(datetime.datetime, Date):
             hour=hour, minute=minute, second=second, microsecond=microsecond
         )
 
-    def in_timezone(self, tz: str | Timezone | FixedTimezone) -> DateTime:
+    def in_timezone(self, tz: str | Timezone | FixedTimezone) -> Self:
         """
         Set the instance's timezone from a string or object.
         """
@@ -356,9 +365,9 @@ class DateTime(datetime.datetime, Date):
         if not self.timezone:
             dt = dt.replace(fold=1)
 
-        return cast(DateTime, tz.convert(dt))
+        return tz.convert(dt)
 
-    def in_tz(self, tz: str | Timezone | FixedTimezone) -> DateTime:
+    def in_tz(self, tz: str | Timezone | FixedTimezone) -> Self:
         """
         Set the instance's timezone from a string or object.
         """
@@ -570,7 +579,7 @@ class DateTime(datetime.datetime, Date):
         minutes: int = 0,
         seconds: float = 0,
         microseconds: int = 0,
-    ) -> DateTime:
+    ) -> Self:
         """
         Add a duration to the instance.
 
@@ -607,7 +616,7 @@ class DateTime(datetime.datetime, Date):
         )
 
         if units_of_variable_length or self.tz is None:
-            return DateTime.create(
+            return self.__class__.create(
                 dt.year,
                 dt.month,
                 dt.day,
@@ -653,7 +662,7 @@ class DateTime(datetime.datetime, Date):
         minutes: int = 0,
         seconds: float = 0,
         microseconds: int = 0,
-    ) -> DateTime:
+    ) -> Self:
         """
         Remove duration from the instance.
         """
@@ -671,7 +680,7 @@ class DateTime(datetime.datetime, Date):
     # Adding a final underscore to the method name
     # to avoid errors for PyPy which already defines
     # a _add_timedelta method
-    def _add_timedelta_(self, delta: datetime.timedelta) -> DateTime:
+    def _add_timedelta_(self, delta: datetime.timedelta) -> Self:
         """
         Add timedelta duration to the instance.
         """
@@ -693,7 +702,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.add(seconds=delta.total_seconds())
 
-    def _subtract_timedelta(self, delta: datetime.timedelta) -> DateTime:
+    def _subtract_timedelta(self, delta: datetime.timedelta) -> Self:
         """
         Remove timedelta duration from the instance.
         """
@@ -752,7 +761,7 @@ class DateTime(datetime.datetime, Date):
         return pendulum.format_diff(diff, is_now, absolute, locale)
 
     # Modifiers
-    def start_of(self, unit: str) -> DateTime:
+    def start_of(self, unit: str) -> Self:
         """
         Returns a copy of the instance with the time reset
         with the following rules:
@@ -770,9 +779,9 @@ class DateTime(datetime.datetime, Date):
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError(f'Invalid unit "{unit}" for start_of()')
 
-        return cast(DateTime, getattr(self, f"_start_of_{unit}")())
+        return cast("Self", getattr(self, f"_start_of_{unit}")())
 
-    def end_of(self, unit: str) -> DateTime:
+    def end_of(self, unit: str) -> Self:
         """
         Returns a copy of the instance with the time reset
         with the following rules:
@@ -790,83 +799,83 @@ class DateTime(datetime.datetime, Date):
         if unit not in self._MODIFIERS_VALID_UNITS:
             raise ValueError(f'Invalid unit "{unit}" for end_of()')
 
-        return cast(DateTime, getattr(self, f"_end_of_{unit}")())
+        return cast("Self", getattr(self, f"_end_of_{unit}")())
 
-    def _start_of_second(self) -> DateTime:
+    def _start_of_second(self) -> Self:
         """
         Reset microseconds to 0.
         """
         return self.set(microsecond=0)
 
-    def _end_of_second(self) -> DateTime:
+    def _end_of_second(self) -> Self:
         """
         Set microseconds to 999999.
         """
         return self.set(microsecond=999999)
 
-    def _start_of_minute(self) -> DateTime:
+    def _start_of_minute(self) -> Self:
         """
         Reset seconds and microseconds to 0.
         """
         return self.set(second=0, microsecond=0)
 
-    def _end_of_minute(self) -> DateTime:
+    def _end_of_minute(self) -> Self:
         """
         Set seconds to 59 and microseconds to 999999.
         """
         return self.set(second=59, microsecond=999999)
 
-    def _start_of_hour(self) -> DateTime:
+    def _start_of_hour(self) -> Self:
         """
         Reset minutes, seconds and microseconds to 0.
         """
         return self.set(minute=0, second=0, microsecond=0)
 
-    def _end_of_hour(self) -> DateTime:
+    def _end_of_hour(self) -> Self:
         """
         Set minutes and seconds to 59 and microseconds to 999999.
         """
         return self.set(minute=59, second=59, microsecond=999999)
 
-    def _start_of_day(self) -> DateTime:
+    def _start_of_day(self) -> Self:
         """
         Reset the time to 00:00:00.
         """
         return self.at(0, 0, 0, 0)
 
-    def _end_of_day(self) -> DateTime:
+    def _end_of_day(self) -> Self:
         """
         Reset the time to 23:59:59.999999.
         """
         return self.at(23, 59, 59, 999999)
 
-    def _start_of_month(self) -> DateTime:
+    def _start_of_month(self) -> Self:
         """
         Reset the date to the first day of the month and the time to 00:00:00.
         """
         return self.set(self.year, self.month, 1, 0, 0, 0, 0)
 
-    def _end_of_month(self) -> DateTime:
+    def _end_of_month(self) -> Self:
         """
         Reset the date to the last day of the month
         and the time to 23:59:59.999999.
         """
         return self.set(self.year, self.month, self.days_in_month, 23, 59, 59, 999999)
 
-    def _start_of_year(self) -> DateTime:
+    def _start_of_year(self) -> Self:
         """
         Reset the date to the first day of the year and the time to 00:00:00.
         """
         return self.set(self.year, 1, 1, 0, 0, 0, 0)
 
-    def _end_of_year(self) -> DateTime:
+    def _end_of_year(self) -> Self:
         """
         Reset the date to the last day of the year
         and the time to 23:59:59.999999.
         """
         return self.set(self.year, 12, 31, 23, 59, 59, 999999)
 
-    def _start_of_decade(self) -> DateTime:
+    def _start_of_decade(self) -> Self:
         """
         Reset the date to the first day of the decade
         and the time to 00:00:00.
@@ -874,7 +883,7 @@ class DateTime(datetime.datetime, Date):
         year = self.year - self.year % YEARS_PER_DECADE
         return self.set(year, 1, 1, 0, 0, 0, 0)
 
-    def _end_of_decade(self) -> DateTime:
+    def _end_of_decade(self) -> Self:
         """
         Reset the date to the last day of the decade
         and the time to 23:59:59.999999.
@@ -883,7 +892,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.set(year, 12, 31, 23, 59, 59, 999999)
 
-    def _start_of_century(self) -> DateTime:
+    def _start_of_century(self) -> Self:
         """
         Reset the date to the first day of the century
         and the time to 00:00:00.
@@ -892,7 +901,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.set(year, 1, 1, 0, 0, 0, 0)
 
-    def _end_of_century(self) -> DateTime:
+    def _end_of_century(self) -> Self:
         """
         Reset the date to the last day of the century
         and the time to 23:59:59.999999.
@@ -901,7 +910,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.set(year, 12, 31, 23, 59, 59, 999999)
 
-    def _start_of_week(self) -> DateTime:
+    def _start_of_week(self) -> Self:
         """
         Reset the date to the first day of the week
         and the time to 00:00:00.
@@ -913,7 +922,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.start_of("day")
 
-    def _end_of_week(self) -> DateTime:
+    def _end_of_week(self) -> Self:
         """
         Reset the date to the last day of the week
         and the time to 23:59:59.
@@ -925,7 +934,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.end_of("day")
 
-    def next(self, day_of_week: int | None = None, keep_time: bool = False) -> DateTime:
+    def next(self, day_of_week: int | None = None, keep_time: bool = False) -> Self:
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -938,10 +947,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
             raise ValueError("Invalid day of week")
 
-        if keep_time:
-            dt = self
-        else:
-            dt = self.start_of("day")
+        dt = self if keep_time else self.start_of("day")
 
         dt = dt.add(days=1)
         while dt.day_of_week != day_of_week:
@@ -949,9 +955,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt
 
-    def previous(
-        self, day_of_week: int | None = None, keep_time: bool = False
-    ) -> DateTime:
+    def previous(self, day_of_week: int | None = None, keep_time: bool = False) -> Self:
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -964,10 +968,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week < SUNDAY or day_of_week > SATURDAY:
             raise ValueError("Invalid day of week")
 
-        if keep_time:
-            dt = self
-        else:
-            dt = self.start_of("day")
+        dt = self if keep_time else self.start_of("day")
 
         dt = dt.subtract(days=1)
         while dt.day_of_week != day_of_week:
@@ -975,35 +976,37 @@ class DateTime(datetime.datetime, Date):
 
         return dt
 
-    def first_of(self, unit: str, day_of_week: int | None = None) -> DateTime:
+    def first_of(self, unit: str, day_of_week: int | None = None) -> Self:
         """
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the first day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
         """
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return cast(DateTime, getattr(self, f"_first_of_{unit}")(day_of_week))
+        return cast("Self", getattr(self, f"_first_of_{unit}")(day_of_week))
 
-    def last_of(self, unit: str, day_of_week: int | None = None) -> DateTime:
+    def last_of(self, unit: str, day_of_week: int | None = None) -> Self:
         """
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
         If no day_of_week is provided, modify to the last day of the unit.
-        Use the supplied consts to indicate the desired day_of_week, ex. DateTime.MONDAY.
+        Use the supplied consts to indicate the desired day_of_week,
+        ex. DateTime.MONDAY.
 
         Supported units are month, quarter and year.
         """
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        return cast(DateTime, getattr(self, f"_last_of_{unit}")(day_of_week))
+        return cast("Self", getattr(self, f"_last_of_{unit}")(day_of_week))
 
-    def nth_of(self, unit: str, nth: int, day_of_week: int) -> DateTime:
+    def nth_of(self, unit: str, nth: int, day_of_week: int) -> Self:
         """
         Returns a new instance set to the given occurrence
         of a given day of the week in the current unit.
@@ -1016,9 +1019,7 @@ class DateTime(datetime.datetime, Date):
         if unit not in ["month", "quarter", "year"]:
             raise ValueError(f'Invalid unit "{unit}" for first_of()')
 
-        dt = cast(
-            Optional[DateTime], getattr(self, f"_nth_of_{unit}")(nth, day_of_week)
-        )
+        dt = cast(Optional["Self"], getattr(self, f"_nth_of_{unit}")(nth, day_of_week))
         if not dt:
             raise PendulumException(
                 f"Unable to find occurence {nth}"
@@ -1027,7 +1028,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt
 
-    def _first_of_month(self, day_of_week: int | None = None) -> DateTime:
+    def _first_of_month(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -1050,7 +1051,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.set(day=day_of_month)
 
-    def _last_of_month(self, day_of_week: int | None = None) -> DateTime:
+    def _last_of_month(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -1073,9 +1074,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.set(day=day_of_month)
 
-    def _nth_of_month(
-        self, nth: int, day_of_week: int | None = None
-    ) -> DateTime | None:
+    def _nth_of_month(self, nth: int, day_of_week: int | None = None) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current month. If the calculated occurrence is outside,
@@ -1096,7 +1095,7 @@ class DateTime(datetime.datetime, Date):
 
         return None
 
-    def _first_of_quarter(self, day_of_week: int | None = None) -> DateTime:
+    def _first_of_quarter(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -1107,7 +1106,7 @@ class DateTime(datetime.datetime, Date):
             "month", day_of_week
         )
 
-    def _last_of_quarter(self, day_of_week: int | None = None) -> DateTime:
+    def _last_of_quarter(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -1116,9 +1115,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.on(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
-    def _nth_of_quarter(
-        self, nth: int, day_of_week: int | None = None
-    ) -> DateTime | None:
+    def _nth_of_quarter(self, nth: int, day_of_week: int | None = None) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
@@ -1141,7 +1138,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.on(self.year, dt.month, dt.day).start_of("day")
 
-    def _first_of_year(self, day_of_week: int | None = None) -> DateTime:
+    def _first_of_year(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -1150,7 +1147,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.set(month=1).first_of("month", day_of_week)
 
-    def _last_of_year(self, day_of_week: int | None = None) -> DateTime:
+    def _last_of_year(self, day_of_week: int | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -1159,7 +1156,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.set(month=MONTHS_PER_YEAR).last_of("month", day_of_week)
 
-    def _nth_of_year(self, nth: int, day_of_week: int | None = None) -> DateTime | None:
+    def _nth_of_year(self, nth: int, day_of_week: int | None = None) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current year. If the calculated occurrence is outside,
@@ -1182,7 +1179,7 @@ class DateTime(datetime.datetime, Date):
 
     def average(  # type: ignore[override]
         self, dt: datetime.datetime | None = None
-    ) -> DateTime:
+    ) -> Self:
         """
         Modify the current instance to the average
         of a given instance (default now) and the current instance.
@@ -1196,16 +1193,14 @@ class DateTime(datetime.datetime, Date):
         )
 
     @overload  # type: ignore[override]
-    def __sub__(self, other: datetime.timedelta) -> DateTime:
+    def __sub__(self, other: datetime.timedelta) -> Self:
         ...
 
     @overload
     def __sub__(self, other: DateTime) -> Interval:
         ...
 
-    def __sub__(
-        self, other: datetime.datetime | datetime.timedelta
-    ) -> DateTime | Interval:
+    def __sub__(self, other: datetime.datetime | datetime.timedelta) -> Self | Interval:
         if isinstance(other, datetime.timedelta):
             return self._subtract_timedelta(other)
 
@@ -1248,23 +1243,21 @@ class DateTime(datetime.datetime, Date):
 
         return self.diff(other, False)
 
-    def __add__(self, other: datetime.timedelta) -> DateTime:
+    def __add__(self, other: datetime.timedelta) -> Self:
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
 
-        if PY38:
+        if sys.version_info >= (3, 8):
             # This is a workaround for Python 3.8+
             # since calling astimezone() will call this method
             # instead of the base datetime class one.
-            import inspect
-
-            caller = inspect.stack()[1][3]
+            caller = traceback.extract_stack(limit=2)[0].name
             if caller == "astimezone":
-                return cast(DateTime, super().__add__(other))
+                return super().__add__(other)
 
         return self._add_timedelta_(other)
 
-    def __radd__(self, other: datetime.timedelta) -> DateTime:
+    def __radd__(self, other: datetime.timedelta) -> Self:
         return self.__add__(other)
 
     # Native methods override
@@ -1292,7 +1285,7 @@ class DateTime(datetime.datetime, Date):
     ) -> DateTime:
         return cls._instance(datetime.datetime.combine(date, time), tz=tzinfo)
 
-    def astimezone(self, tz: datetime.tzinfo | None = None) -> DateTime:
+    def astimezone(self, tz: datetime.tzinfo | None = None) -> Self:
         dt = super().astimezone(tz)
 
         return self.__class__(
@@ -1309,16 +1302,16 @@ class DateTime(datetime.datetime, Date):
 
     def replace(
         self,
-        year: int | None = None,
-        month: int | None = None,
-        day: int | None = None,
-        hour: int | None = None,
-        minute: int | None = None,
-        second: int | None = None,
-        microsecond: int | None = None,
+        year: SupportsIndex | None = None,
+        month: SupportsIndex | None = None,
+        day: SupportsIndex | None = None,
+        hour: SupportsIndex | None = None,
+        minute: SupportsIndex | None = None,
+        second: SupportsIndex | None = None,
+        microsecond: SupportsIndex | None = None,
         tzinfo: bool | datetime.tzinfo | Literal[True] | None = True,
         fold: int | None = None,
-    ) -> DateTime:
+    ) -> Self:
         if year is None:
             year = self.year
         if month is None:
@@ -1341,7 +1334,7 @@ class DateTime(datetime.datetime, Date):
         if tzinfo is not None:
             tzinfo = pendulum._safe_timezone(tzinfo)
 
-        return self.__class__(
+        return self.__class__.create(
             year,
             month,
             day,
@@ -1357,7 +1350,7 @@ class DateTime(datetime.datetime, Date):
         return (self,)
 
     def _getstate(
-        self, protocol: int = 3
+        self, protocol: SupportsIndex = 3
     ) -> tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]:
         return (
             self.year,
@@ -1377,8 +1370,8 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__reduce_ex__(2)
 
-    def __reduce_ex__(  # type: ignore[override]
-        self, protocol: int
+    def __reduce_ex__(
+        self, protocol: SupportsIndex
     ) -> tuple[
         type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:
@@ -1402,8 +1395,6 @@ class DateTime(datetime.datetime, Date):
         return 0 if dt == other else 1 if dt > other else -1
 
 
-DateTime.min: DateTime = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)  # type: ignore[misc]
-DateTime.max: DateTime = DateTime(  # type: ignore[misc]
-    9999, 12, 31, 23, 59, 59, 999999, tzinfo=UTC
-)
-DateTime.EPOCH: DateTime = DateTime(1970, 1, 1, tzinfo=UTC)  # type: ignore[misc]
+DateTime.min = DateTime(1, 1, 1, 0, 0, tzinfo=UTC)
+DateTime.max = DateTime(9999, 12, 31, 23, 59, 59, 999999, tzinfo=UTC)
+DateTime.EPOCH = DateTime(1970, 1, 1, tzinfo=UTC)

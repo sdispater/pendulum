@@ -17,11 +17,13 @@ from pendulum.constants import MONTHS_PER_YEAR
 from pendulum.duration import Duration
 from pendulum.helpers import precise_diff
 
+
 if TYPE_CHECKING:
-    from typing import SupportsIndex
+    from typing_extensions import Self
+    from typing_extensions import SupportsIndex
 
     from pendulum.helpers import PreciseDiff
-    from pendulum.locales.locale import Locale  # noqa
+    from pendulum.locales.locale import Locale
 
 
 class Interval(Duration):
@@ -35,7 +37,7 @@ class Interval(Duration):
         start: pendulum.DateTime | datetime,
         end: pendulum.DateTime | datetime,
         absolute: bool = False,
-    ) -> Interval:
+    ) -> Self:
         ...
 
     @overload
@@ -44,7 +46,7 @@ class Interval(Duration):
         start: pendulum.Date | date,
         end: pendulum.Date | date,
         absolute: bool = False,
-    ) -> Interval:
+    ) -> Self:
         ...
 
     def __new__(
@@ -52,7 +54,7 @@ class Interval(Duration):
         start: pendulum.DateTime | pendulum.Date | datetime | date,
         end: pendulum.DateTime | pendulum.Date | datetime | date,
         absolute: bool = False,
-    ) -> Interval:
+    ) -> Self:
         if (
             isinstance(start, datetime)
             and not isinstance(end, datetime)
@@ -125,7 +127,7 @@ class Interval(Duration):
 
         delta: timedelta = _end - _start  # type: ignore[operator]
 
-        return cast(Interval, super().__new__(cls, seconds=delta.total_seconds()))
+        return super().__new__(cls, seconds=delta.total_seconds())
 
     def __init__(
         self,
@@ -263,7 +265,7 @@ class Interval(Duration):
         :param locale: The locale to use. Defaults to current locale.
         :param separator: The separator to use between each unit
         """
-        from pendulum.locales.locale import Locale  # noqa
+        from pendulum.locales.locale import Locale
 
         periods = [
             ("year", self.years),
@@ -316,9 +318,9 @@ class Interval(Duration):
 
             i += amount
 
-    def as_interval(self) -> Duration:
+    def as_duration(self) -> Duration:
         """
-        Return the Period as a Duration.
+        Return the Interval as a Duration.
         """
         return Duration(seconds=self.total_seconds())
 
@@ -330,23 +332,23 @@ class Interval(Duration):
     ) -> bool:
         return self.start <= item <= self.end
 
-    def __add__(self, other: timedelta) -> Duration:
-        return self.as_interval().__add__(other)
+    def __add__(self, other: timedelta) -> Duration:  # type: ignore[override]
+        return self.as_duration().__add__(other)
 
-    __radd__ = __add__
+    __radd__ = __add__  # type: ignore[assignment]
 
-    def __sub__(self, other: timedelta) -> Duration:
-        return self.as_interval().__sub__(other)
+    def __sub__(self, other: timedelta) -> Duration:  # type: ignore[override]
+        return self.as_duration().__sub__(other)
 
-    def __neg__(self) -> Interval:
+    def __neg__(self) -> Self:
         return self.__class__(self.end, self.start, self._absolute)
 
-    def __mul__(self, other: int | float) -> Duration:
-        return self.as_interval().__mul__(other)
+    def __mul__(self, other: int | float) -> Duration:  # type: ignore[override]
+        return self.as_duration().__mul__(other)
 
-    __rmul__ = __mul__
+    __rmul__ = __mul__  # type: ignore[assignment]
 
-    @overload
+    @overload  # type: ignore[override]
     def __floordiv__(self, other: timedelta) -> int:
         ...
 
@@ -355,11 +357,11 @@ class Interval(Duration):
         ...
 
     def __floordiv__(self, other: int | timedelta) -> int | Duration:
-        return self.as_interval().__floordiv__(other)
+        return self.as_duration().__floordiv__(other)
 
     __div__ = __floordiv__  # type: ignore[assignment]
 
-    @overload
+    @overload  # type: ignore[override]
     def __truediv__(self, other: timedelta) -> float:
         ...
 
@@ -368,15 +370,15 @@ class Interval(Duration):
         ...
 
     def __truediv__(self, other: float | timedelta) -> Duration | float:
-        return self.as_interval().__truediv__(other)
+        return self.as_duration().__truediv__(other)
 
-    def __mod__(self, other: timedelta) -> Duration:
-        return self.as_interval().__mod__(other)
+    def __mod__(self, other: timedelta) -> Duration:  # type: ignore[override]
+        return self.as_duration().__mod__(other)
 
     def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
-        return self.as_interval().__divmod__(other)
+        return self.as_duration().__divmod__(other)
 
-    def __abs__(self) -> Interval:
+    def __abs__(self) -> Self:
         return self.__class__(self.start, self.end, absolute=True)
 
     def __repr__(self) -> str:
@@ -413,7 +415,7 @@ class Interval(Duration):
     def __reduce__(
         self,
     ) -> tuple[
-        type[Interval],
+        type[Self],
         tuple[
             pendulum.DateTime | pendulum.Date | datetime | date,
             pendulum.DateTime | pendulum.Date | datetime | date,
@@ -425,7 +427,7 @@ class Interval(Duration):
     def __reduce_ex__(
         self, protocol: SupportsIndex
     ) -> tuple[
-        type[Interval],
+        type[Self],
         tuple[
             pendulum.DateTime | pendulum.Date | datetime | date,
             pendulum.DateTime | pendulum.Date | datetime | date,
@@ -445,4 +447,7 @@ class Interval(Duration):
                 other._absolute,
             )
         else:
-            return self.as_interval() == other
+            return self.as_duration() == other
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)

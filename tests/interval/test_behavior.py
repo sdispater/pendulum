@@ -52,3 +52,16 @@ def test_equality_to_timedelta():
     period = dt2 - dt1
 
     assert period == timedelta(days=2)
+
+
+def test_inequality():
+    dt1 = pendulum.datetime(2016, 11, 18)
+    dt2 = pendulum.datetime(2016, 11, 20)
+    dt3 = pendulum.datetime(2016, 11, 22)
+
+    period1 = dt2 - dt1
+    period2 = dt3 - dt2
+    period3 = dt3 - dt1
+
+    assert period1 != period2
+    assert period1 != period3

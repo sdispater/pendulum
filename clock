@@ -47,7 +47,6 @@ class _LambdaCompiler(_GettextCompiler):
 
 
 class LocaleCreate(Command):
-
     name = "locale create"
     description = "Creates locale translations."
 
@@ -229,7 +228,6 @@ translations = {{}}
 
 
 class LocaleRecreate(Command):
-
     name = "locale recreate"
     description = "Recreate existing locales."
 
@@ -244,7 +242,6 @@ class LocaleRecreate(Command):
 
 
 class WindowsTzDump(Command):
-
     name = "windows dump-timezones"
     description = "Dumps the mapping of Windows timezones to IANA timezones."
 

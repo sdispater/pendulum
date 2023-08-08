@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from typing import TYPE_CHECKING
 from typing import cast
 from typing import overload
 
@@ -11,6 +12,10 @@ from pendulum.constants import SECONDS_PER_HOUR
 from pendulum.constants import SECONDS_PER_MINUTE
 from pendulum.constants import US_PER_SECOND
 from pendulum.utils._compat import PYPY
+
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 def _divide_and_round(a: float, b: float) -> int:
@@ -74,7 +79,7 @@ class Duration(timedelta):
         weeks: float = 0,
         years: float = 0,
         months: float = 0,
-    ) -> Duration:
+    ) -> Self:
         if not isinstance(years, int) or not isinstance(months, int):
             raise ValueError("Float year and months are not supported")
 
@@ -313,7 +318,7 @@ class Duration(timedelta):
 
         return rep.replace(", )", ")")
 
-    def __add__(self, other: timedelta) -> Duration:
+    def __add__(self, other: timedelta) -> Self:
         if isinstance(other, timedelta):
             return self.__class__(seconds=self.total_seconds() + other.total_seconds())
 
@@ -321,13 +326,13 @@ class Duration(timedelta):
 
     __radd__ = __add__
 
-    def __sub__(self, other: timedelta) -> Duration:
+    def __sub__(self, other: timedelta) -> Self:
         if isinstance(other, timedelta):
             return self.__class__(seconds=self.total_seconds() - other.total_seconds())
 
         return NotImplemented
 
-    def __neg__(self) -> Duration:
+    def __neg__(self) -> Self:
         return self.__class__(
             years=-self._years,
             months=-self._months,
@@ -340,7 +345,7 @@ class Duration(timedelta):
     def _to_microseconds(self) -> int:
         return (self._days * (24 * 3600) + self._seconds) * 1000000 + self._microseconds
 
-    def __mul__(self, other: int | float) -> Duration:
+    def __mul__(self, other: int | float) -> Self:
         if isinstance(other, int):
             return self.__class__(
                 years=self._years * other,
@@ -363,7 +368,7 @@ class Duration(timedelta):
         ...
 
     @overload
-    def __floordiv__(self, other: int) -> Duration:
+    def __floordiv__(self, other: int) -> Self:
         ...
 
     def __floordiv__(self, other: int | timedelta) -> int | Duration:
@@ -372,7 +377,9 @@ class Duration(timedelta):
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return cast(int, usec // other._to_microseconds())  # type: ignore[attr-defined]
+            return cast(
+                int, usec // other._to_microseconds()  # type: ignore[attr-defined]
+            )
 
         if isinstance(other, int):
             return self.__class__(
@@ -388,16 +395,18 @@ class Duration(timedelta):
         ...
 
     @overload
-    def __truediv__(self, other: float) -> Duration:
+    def __truediv__(self, other: float) -> Self:
         ...
 
-    def __truediv__(self, other: int | float | timedelta) -> Duration | float:
+    def __truediv__(self, other: int | float | timedelta) -> Self | float:
         if not isinstance(other, (int, float, timedelta)):
             return NotImplemented
 
         usec = self._to_microseconds()
         if isinstance(other, timedelta):
-            return cast(float, usec / other._to_microseconds())  # type: ignore[attr-defined]
+            return cast(
+                float, usec / other._to_microseconds()  # type: ignore[attr-defined]
+            )
 
         if isinstance(other, int):
             return self.__class__(
@@ -421,9 +430,9 @@ class Duration(timedelta):
 
     __div__ = __floordiv__
 
-    def __mod__(self, other: timedelta) -> Duration:
+    def __mod__(self, other: timedelta) -> Self:
         if isinstance(other, timedelta):
-            r = self._to_microseconds() % other._to_microseconds()  # type: ignore[attr-defined]
+            r = self._to_microseconds() % other._to_microseconds()  # type: ignore[attr-defined] # noqa: E501
 
             return self.__class__(0, 0, r)
 
@@ -431,7 +440,7 @@ class Duration(timedelta):
 
     def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         if isinstance(other, timedelta):
-            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined]
+            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined] # noqa: E501
 
             return q, self.__class__(0, 0, r)
 

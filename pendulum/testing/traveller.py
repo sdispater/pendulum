@@ -6,18 +6,21 @@ from typing import cast
 from pendulum.datetime import DateTime
 from pendulum.utils._compat import PYPY
 
+
 if TYPE_CHECKING:
     from types import TracebackType
+
+    from typing_extensions import Self
 
 
 class BaseTraveller:
     def __init__(self, datetime_class: type[DateTime] = DateTime) -> None:
         self._datetime_class: type[DateTime] = datetime_class
 
-    def freeze(self: BaseTraveller) -> BaseTraveller:
+    def freeze(self) -> Self:
         raise NotImplementedError()
 
-    def travel_back(self: BaseTraveller) -> BaseTraveller:
+    def travel_back(self) -> Self:
         raise NotImplementedError()
 
     def travel(
@@ -30,11 +33,22 @@ class BaseTraveller:
         minutes: int = 0,
         seconds: int = 0,
         microseconds: int = 0,
-    ) -> BaseTraveller:
+    ) -> Self:
         raise NotImplementedError()
 
-    def travel_to(self, dt: DateTime) -> BaseTraveller:
+    def travel_to(self, dt: DateTime, *, freeze: bool = False) -> Self:
         raise NotImplementedError()
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType,
+    ) -> None:
+        ...
 
 
 if not PYPY:
@@ -48,7 +62,7 @@ if not PYPY:
             self._traveller: time_machine.travel | None = None
             self._coordinates: time_machine.Coordinates | None = None
 
-        def freeze(self) -> Traveller:
+        def freeze(self) -> Self:
             if self._started:
                 cast(time_machine.Coordinates, self._coordinates).move_to(
                     self._datetime_class.now(), tick=False
@@ -58,7 +72,7 @@ if not PYPY:
 
             return self
 
-        def travel_back(self) -> Traveller:
+        def travel_back(self) -> Self:
             if not self._started:
                 return self
 
@@ -81,7 +95,7 @@ if not PYPY:
             microseconds: int = 0,
             *,
             freeze: bool = False,
-        ) -> Traveller:
+        ) -> Self:
             self._start(freeze=freeze)
 
             cast(time_machine.Coordinates, self._coordinates).move_to(
@@ -99,7 +113,7 @@ if not PYPY:
 
             return self
 
-        def travel_to(self, dt: DateTime, *, freeze: bool = False) -> Traveller:
+        def travel_to(self, dt: DateTime, *, freeze: bool = False) -> Self:
             self._start(freeze=freeze)
 
             cast(time_machine.Coordinates, self._coordinates).move_to(dt)
@@ -119,7 +133,7 @@ if not PYPY:
 
             self._started = True
 
-        def __enter__(self) -> Traveller:
+        def __enter__(self) -> Self:
             self._start()
 
             return self
@@ -135,5 +149,4 @@ if not PYPY:
 else:
 
     class Traveller(BaseTraveller):  # type: ignore[no-redef]
-
         ...

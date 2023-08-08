@@ -46,7 +46,7 @@ def test_not_equal_to_false():
 def test_not_equal_to_none():
     d1 = pendulum.Date(2000, 1, 1)
 
-    assert d1 != None  # noqa
+    assert d1 is not None
 
 
 def test_greater_than_true():

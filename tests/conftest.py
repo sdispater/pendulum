@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 import pendulum
 
 
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     pendulum.set_local_timezone(pendulum.timezone("America/Toronto"))
 
     yield
@@ -18,8 +24,15 @@ def setup():
 
 
 def assert_datetime(
-    d, year, month, day, hour=None, minute=None, second=None, microsecond=None
-):
+    d: pendulum.DateTime,
+    year: int,
+    month: int,
+    day: int,
+    hour: int | None = None,
+    minute: int | None = None,
+    second: int | None = None,
+    microsecond: int | None = None,
+) -> None:
     assert year == d.year
     assert month == d.month
     assert day == d.day
@@ -37,13 +50,19 @@ def assert_datetime(
         assert microsecond == d.microsecond
 
 
-def assert_date(d, year, month, day):
+def assert_date(d: pendulum.Date, year: int, month: int, day: int) -> None:
     assert year == d.year
     assert month == d.month
     assert day == d.day
 
 
-def assert_time(t, hour, minute, second, microsecond=None):
+def assert_time(
+    t: pendulum.Time,
+    hour: int,
+    minute: int,
+    second: int,
+    microsecond: int | None = None,
+) -> None:
     assert hour == t.hour
     assert minute == t.minute
     assert second == t.second
@@ -53,15 +72,15 @@ def assert_time(t, hour, minute, second, microsecond=None):
 
 
 def assert_duration(
-    dur,
-    years=None,
-    months=None,
-    weeks=None,
-    days=None,
-    hours=None,
-    minutes=None,
-    seconds=None,
-    microseconds=None,
+    dur: pendulum.Duration,
+    years: int | None = None,
+    months: int | None = None,
+    weeks: int | None = None,
+    days: int | None = None,
+    hours: int | None = None,
+    minutes: int | None = None,
+    seconds: int | None = None,
+    microseconds: int | None = None,
 ) -> None:
     expected = {}
     actual = {}

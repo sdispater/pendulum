@@ -17,6 +17,7 @@ from dateutil import parser
 
 from pendulum.parsing.exceptions import ParserError
 
+
 with_extensions = os.getenv("PENDULUM_EXTENSIONS", "1") == "1"
 
 try:
@@ -26,11 +27,11 @@ try:
     from pendulum.parsing._iso8601 import Duration
     from pendulum.parsing._iso8601 import parse_iso8601
 except ImportError:
-    from pendulum.duration import Duration  # type: ignore[misc]
-    from pendulum.parsing.iso8601 import parse_iso8601  # type: ignore[misc]
+    from pendulum.duration import Duration  # type: ignore[assignment]
+    from pendulum.parsing.iso8601 import parse_iso8601  # type: ignore[assignment]
 
 COMMON = re.compile(
-    # Date (optional)  # noqa: E800
+    # Date (optional)  # noqa: ERA001
     "^"
     "(?P<date>"
     "    (?P<classic>"  # Classic date (YYYY-MM-DD)
@@ -41,10 +42,10 @@ COMMON = re.compile(
     "        )?"
     "    )"
     ")?"
-    # Time (optional)  # noqa: E800
-    "(?P<time>"
-    r"    (?P<timesep>\ )?"  # Separator (space)
-    r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
+    # Time (optional)  # noqa: ERA001
+    "(?P<time>" r"    (?P<timesep>\ )?"  # Separator (space)
+    # HH:mm:ss (optional mm and ss)
+    r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"
     # Subsecond part (optional)
     "    (?P<subsecondsection>"
     "        (?:[.|,])"  # Subsecond separator (optional)
@@ -173,10 +174,7 @@ def _parse_common(text: str, **options: Any) -> datetime | date | time:
 
     minute = int(m.group("minute"))
 
-    if m.group("second"):
-        second = int(m.group("second"))
-    else:
-        second = 0
+    second = int(m.group("second")) if m.group("second") else 0
 
     # Grabbing subseconds, if any
     microsecond = 0
