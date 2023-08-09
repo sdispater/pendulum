@@ -49,10 +49,10 @@ def diff_for_humans():
     assert d.diff_for_humans(locale=locale) == "2 ay önce"
 
     d = pendulum.now().subtract(years=1)
-    assert d.diff_for_humans(locale=locale) == "1 yıl önce"
+    assert d.diff_for_humans(locale=locale) == "1 yıl önce"  # noqa: RUF001
 
     d = pendulum.now().subtract(years=2)
-    assert d.diff_for_humans(locale=locale) == "2 yıl önce"
+    assert d.diff_for_humans(locale=locale) == "2 yıl önce"  # noqa: RUF001
 
     d = pendulum.now().add(seconds=1)
     assert d.diff_for_humans(locale=locale) == "1 saniye sonra"

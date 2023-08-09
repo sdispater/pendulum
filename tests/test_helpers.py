@@ -48,6 +48,7 @@ def test_precise_diff() -> None:
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, months=-1, seconds=-1)
+    assert diff.total_days == -30
 
     diff = precise_diff(dt2, dt1)
     assert_diff(diff, months=1, seconds=1)
@@ -93,11 +94,13 @@ def test_precise_diff_timezone() -> None:
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, days=1, hours=0)
+    assert diff.total_days == 1
 
     dt2 = toronto.datetime(2013, 4, 1, 1, 30)
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, days=1, hours=5)
+    assert diff.total_days == 1
 
     # pytz
     paris_pytz = pytz.timezone("Europe/Paris")
@@ -108,6 +111,7 @@ def test_precise_diff_timezone() -> None:
 
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, days=1, hours=0)
+    assert diff.total_days == 1
 
     dt2 = toronto_pytz.localize(datetime(2013, 4, 1, 1, 30))
 
@@ -119,6 +123,7 @@ def test_precise_diff_timezone() -> None:
     dt2 = timezone("Europe/Paris").datetime(2018, 6, 20, 3, 40)  # UTC+2
     diff = precise_diff(dt1, dt2)
     assert_diff(diff, minutes=10)
+    assert diff.total_days == 0
 
 
 def test_week_day() -> None:

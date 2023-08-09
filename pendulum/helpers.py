@@ -31,23 +31,21 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from pendulum._extensions._helpers import PreciseDiff
-    from pendulum._extensions._helpers import days_in_year
-    from pendulum._extensions._helpers import is_leap
-    from pendulum._extensions._helpers import is_long_year
-    from pendulum._extensions._helpers import local_time
-    from pendulum._extensions._helpers import precise_diff
-    from pendulum._extensions._helpers import timestamp
-    from pendulum._extensions._helpers import week_day
+    from _pendulum import PreciseDiff
+    from _pendulum import days_in_year
+    from _pendulum import is_leap
+    from _pendulum import is_long_year
+    from _pendulum import local_time
+    from _pendulum import precise_diff
+    from _pendulum import week_day
 except ImportError:
-    from pendulum._extensions.helpers import PreciseDiff  # type: ignore[assignment]
-    from pendulum._extensions.helpers import days_in_year
-    from pendulum._extensions.helpers import is_leap
-    from pendulum._extensions.helpers import is_long_year
-    from pendulum._extensions.helpers import local_time
-    from pendulum._extensions.helpers import precise_diff  # type: ignore[assignment]
-    from pendulum._extensions.helpers import timestamp
-    from pendulum._extensions.helpers import week_day
+    from pendulum._helpers import PreciseDiff  # type: ignore[assignment]
+    from pendulum._helpers import days_in_year
+    from pendulum._helpers import is_leap
+    from pendulum._helpers import is_long_year
+    from pendulum._helpers import local_time
+    from pendulum._helpers import precise_diff  # type: ignore[assignment]
+    from pendulum._helpers import week_day
 
 difference_formatter = DifferenceFormatter()
 
@@ -211,7 +209,6 @@ __all__ = [
     "is_long_year",
     "local_time",
     "precise_diff",
-    "timestamp",
     "week_day",
     "add_duration",
     "format_diff",

@@ -5,6 +5,7 @@ import typing as t
 
 import pendulum
 
+from pendulum.duration import Duration
 from pendulum.parsing import _Interval
 from pendulum.parsing import parse as base_parse
 from pendulum.tz.timezone import UTC
@@ -13,14 +14,13 @@ from pendulum.tz.timezone import UTC
 if t.TYPE_CHECKING:
     from pendulum.date import Date
     from pendulum.datetime import DateTime
-    from pendulum.duration import Duration
     from pendulum.interval import Interval
     from pendulum.time import Time
 
 try:
-    from pendulum.parsing._iso8601 import Duration as CDuration
+    from _pendulum import Duration as RustDuration
 except ImportError:
-    CDuration = None  # type: ignore[misc, assignment]
+    RustDuration = None  # type: ignore[assignment,misc]
 
 
 def parse(text: str, **options: t.Any) -> Date | Time | DateTime | Duration:
@@ -110,7 +110,10 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
             ),
         )
 
-    if CDuration and isinstance(parsed, CDuration):  # type: ignore[truthy-function]
+    if isinstance(parsed, Duration):
+        return parsed
+
+    if RustDuration is not None and isinstance(parsed, RustDuration):
         return pendulum.duration(
             years=parsed.years,
             months=parsed.months,
@@ -122,4 +125,4 @@ def _parse(text: str, **options: t.Any) -> Date | DateTime | Time | Duration | I
             microseconds=parsed.microseconds,
         )
 
-    return parsed
+    raise NotImplementedError

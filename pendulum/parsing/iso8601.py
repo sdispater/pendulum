@@ -255,7 +255,7 @@ def parse_iso8601(
             tzinfo = FixedTimezone(offset)
 
     if is_time:
-        return datetime.time(hour, minute, second, microsecond)
+        return datetime.time(hour, minute, second, microsecond, tzinfo=tzinfo)
 
     return datetime.datetime(
         year, month, day, hour, minute, second, microsecond, tzinfo=tzinfo

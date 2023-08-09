@@ -24,11 +24,12 @@ try:
     if not with_extensions or struct.calcsize("P") == 4:
         raise ImportError()
 
-    from pendulum.parsing._iso8601 import Duration
-    from pendulum.parsing._iso8601 import parse_iso8601
+    from _pendulum import Duration
+    from _pendulum import parse_iso8601
 except ImportError:
     from pendulum.duration import Duration  # type: ignore[assignment]
     from pendulum.parsing.iso8601 import parse_iso8601  # type: ignore[assignment]
+
 
 COMMON = re.compile(
     # Date (optional)  # noqa: ERA001

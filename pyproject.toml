@@ -15,13 +15,14 @@ packages = [
     { include = "tests", format = "sdist" },
 ]
 include = [
-    { path = "meson.build", format = "sdist" },
     { path = "pendulum/py.typed" },
-    # C extensions must be included in the wheel distributions
-    { path = "pendulum/_extensions/*.so", format = "wheel" },
-    { path = "pendulum/_extensions/*.pyd", format = "wheel" },
-    { path = "pendulum/parsing/*.so", format = "wheel" },
-    { path = "pendulum/parsing/*.pyd", format = "wheel" },
+    # Typing stubs
+    { path = "*.pyi"},
+    # Rust source
+    { path = "rust", format = "sdist" },
+    # Rust extension
+    { path = "_pendulum*.so", format = "wheel" },
+    { path = "_pendulum*.pyd", format = "wheel" },
 ]
 
 
@@ -57,13 +58,6 @@ types-pytz = ">=2022.7.1.2"
 babel = "^2.10.3"
 cleo = ">=1,<3"
 tox = "^3.25.1"
-
-[tool.poetry.group.build]
-optional = true
-
-[tool.poetry.group.build.dependencies]
-meson = "^0.63.2"
-ninja = "^1.10.2.3"
 
 [tool.poetry.group.benchmark.dependencies]
 pytest-codspeed = "^1.2.2"
@@ -220,5 +214,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0a6", "meson", "ninja"]
+requires = ["poetry-core>=1.6.1", "maturin>=1,<2"]
 build-backend = "poetry.core.masonry.api"

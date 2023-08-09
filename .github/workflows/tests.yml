@@ -13,6 +13,20 @@ on:
       - '**'
 
 jobs:
+  Linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: "Install pre-commit"
+        run: pip install pre-commit
+      - name: "Install Rust toolchain"
+        run: rustup component add rustfmt clippy
+      - run: pre-commit run --all-files
+
   Tests:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest

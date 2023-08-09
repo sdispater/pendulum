@@ -51,3 +51,13 @@ build_wheels_i686:
 # run tests against all supported python versions
 tox:
 	@tox
+
+
+lint-rust:
+	cargo fmt --all -- --check
+	cargo clippy --tests -- -D warnings
+
+
+format-rust:
+	cargo fmt --all
+	cargo clippy --tests --fix --allow-dirty -- -D warnings
