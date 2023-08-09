@@ -9,6 +9,7 @@ from datetime import date
 from datetime import datetime
 from datetime import timedelta
 from typing import TYPE_CHECKING
+from typing import ClassVar
 from typing import NoReturn
 from typing import cast
 from typing import overload
@@ -38,7 +39,7 @@ if TYPE_CHECKING:
 
 class Date(FormattableMixin, date):
     # Names of days of the week
-    _days = {
+    _days: ClassVar[dict[int, str]] = {
         SUNDAY: "Sunday",
         MONDAY: "Monday",
         TUESDAY: "Tuesday",
@@ -48,7 +49,14 @@ class Date(FormattableMixin, date):
         SATURDAY: "Saturday",
     }
 
-    _MODIFIERS_VALID_UNITS = ["day", "week", "month", "year", "decade", "century"]
+    _MODIFIERS_VALID_UNITS: ClassVar[list[str]] = [
+        "day",
+        "week",
+        "month",
+        "year",
+        "decade",
+        "century",
+    ]
 
     # Getters/Setters
 

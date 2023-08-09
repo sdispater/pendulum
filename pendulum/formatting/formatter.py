@@ -6,6 +6,7 @@ import re
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import ClassVar
 from typing import Match
 from typing import Sequence
 from typing import cast
@@ -66,7 +67,9 @@ class Formatter:
 
     _FROM_FORMAT_RE: re.Pattern[str] = re.compile(r"(?<!\\\[)" + _TOKENS + r"(?!\\\])")
 
-    _LOCALIZABLE_TOKENS: dict[str, str | Callable[[Locale], Sequence[str]] | None] = {
+    _LOCALIZABLE_TOKENS: ClassVar[
+        dict[str, str | Callable[[Locale], Sequence[str]] | None]
+    ] = {
         "Qo": None,
         "MMMM": "months.wide",
         "MMM": "months.abbreviated",
@@ -91,7 +94,7 @@ class Formatter:
         ),
     }
 
-    _TOKENS_RULES: dict[str, Callable[[pendulum.DateTime], str]] = {
+    _TOKENS_RULES: ClassVar[dict[str, Callable[[pendulum.DateTime], str]]] = {
         # Year
         "YYYY": lambda dt: f"{dt.year:d}",
         "YY": lambda dt: f"{dt.year:d}"[2:],
@@ -137,7 +140,7 @@ class Formatter:
         "z": lambda dt: f'{dt.timezone_name or ""}',
     }
 
-    _DATE_FORMATS = {
+    _DATE_FORMATS: ClassVar[dict[str, str]] = {
         "LTS": "formats.time.full",
         "LT": "formats.time.short",
         "L": "formats.date.short",
@@ -146,7 +149,7 @@ class Formatter:
         "LLLL": "formats.datetime.full",
     }
 
-    _DEFAULT_DATE_FORMATS = {
+    _DEFAULT_DATE_FORMATS: ClassVar[dict[str, str]] = {
         "LTS": "h:mm:ss A",
         "LT": "h:mm A",
         "L": "MM/DD/YYYY",
@@ -155,7 +158,7 @@ class Formatter:
         "LLLL": "dddd, MMMM D, YYYY h:mm A",
     }
 
-    _REGEX_TOKENS: dict[str, str | Sequence[str] | None] = {
+    _REGEX_TOKENS: ClassVar[dict[str, str | Sequence[str] | None]] = {
         "Y": _MATCH_SIGNED,
         "YY": (_MATCH_1_TO_2, _MATCH_2),
         "YYYY": (_MATCH_1_TO_4, _MATCH_4),
@@ -196,7 +199,7 @@ class Formatter:
         "z": _MATCH_TIMEZONE,
     }
 
-    _PARSE_TOKENS: dict[str, Callable[[str], Any]] = {
+    _PARSE_TOKENS: ClassVar[dict[str, Callable[[str], Any]]] = {
         "YYYY": lambda year: int(year),
         "YY": lambda year: int(year),
         "Q": lambda quarter: int(quarter),

@@ -55,7 +55,7 @@ class DateTime(datetime.datetime, Date):
 
     # Formats
 
-    _FORMATS: dict[str, str | Callable[[datetime.datetime], str]] = {
+    _FORMATS: ClassVar[dict[str, str | Callable[[datetime.datetime], str]]] = {
         "atom": ATOM,
         "cookie": COOKIE,
         "iso8601": lambda dt: dt.isoformat(),
@@ -69,7 +69,7 @@ class DateTime(datetime.datetime, Date):
         "w3c": W3C,
     }
 
-    _MODIFIERS_VALID_UNITS: list[str] = [
+    _MODIFIERS_VALID_UNITS: ClassVar[list[str]] = [
         "second",
         "minute",
         "hour",
