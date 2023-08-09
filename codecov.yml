@@ -1,7 +1,0 @@
-comment: false
-
-coverage:
-  status:
-    patch:
-      default:
-        enabled: false
