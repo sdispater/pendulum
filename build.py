@@ -28,7 +28,7 @@ def _build():
     # We won't use the wheel built by maturin directly since
     # we want Poetry to build it but we need to retrieve the
     # compiled extensions from the maturin wheel.
-    wheel = list(wheels_dir.glob("*.whl"))[0]
+    wheel = next(iter(wheels_dir.glob("*.whl")))
     with zipfile.ZipFile(wheel.as_posix()) as whl:
         whl.extractall(wheels_dir.as_posix())
 
