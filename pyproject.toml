@@ -127,6 +127,7 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.extend-per-file-ignores]
 "build.py" = ["I002"]
+"clock" = ["RUF012"]
 
 [tool.mypy]
 strict = true
