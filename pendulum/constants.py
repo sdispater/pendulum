@@ -2,14 +2,6 @@
 from __future__ import annotations
 
 
-SUNDAY = 0
-MONDAY = 1
-TUESDAY = 2
-WEDNESDAY = 3
-THURSDAY = 4
-FRIDAY = 5
-SATURDAY = 6
-
 # Number of X in Y.
 YEARS_PER_CENTURY = 100
 YEARS_PER_DECADE = 10

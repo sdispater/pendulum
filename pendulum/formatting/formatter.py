@@ -49,7 +49,7 @@ class Formatter:
         r"\[([^\[]*)\]|\\(.)|"
         "("
         "Mo|MM?M?M?"
-        "|Do|DDDo|DD?D?D?|ddd?d?|do?"
+        "|Do|DDDo|DD?D?D?|ddd?d?|do?|eo?"
         "|E{1,4}"
         "|w[o|w]?|W[o|W]?|Qo?"
         "|YYYY|YY|Y"
@@ -82,6 +82,8 @@ class Formatter:
         "ddd": "days.abbreviated",
         "dd": "days.short",
         "do": None,
+        "e": None,
+        "eo": None,
         "Wo": None,
         "wo": None,
         "A": lambda locale: (
@@ -111,7 +113,7 @@ class Formatter:
         "DDDD": lambda dt: f"{dt.day_of_year:03d}",
         "DDD": lambda dt: f"{dt.day_of_year:d}",
         # Day of Week
-        "d": lambda dt: f"{dt.day_of_week:d}",
+        "d": lambda dt: f"{(dt.day_of_week + 1) % 7:d}",
         # Day of ISO Week
         "E": lambda dt: f"{dt.isoweekday():d}",
         # Hour
@@ -176,6 +178,7 @@ class Formatter:
         "ddd": _MATCH_WORD,
         "dd": _MATCH_WORD,
         "d": _MATCH_1,
+        "e": _MATCH_1,
         "E": _MATCH_1,
         "Do": None,
         "H": _MATCH_1_TO_2,
@@ -214,8 +217,8 @@ class Formatter:
         "dddd": lambda weekday: weekday,
         "ddd": lambda weekday: weekday,
         "dd": lambda weekday: weekday,
-        "d": lambda weekday: int(weekday) % 7,
-        "E": lambda weekday: int(weekday),
+        "d": lambda weekday: int(weekday),
+        "E": lambda weekday: int(weekday) - 1,
         "HH": lambda hour: int(hour),
         "H": lambda hour: int(hour),
         "hh": lambda hour: int(hour),
@@ -318,14 +321,19 @@ class Formatter:
             return cast(str, locale.get("translations.days.short")[dt.day_of_week])
         elif token == "ddd":
             return cast(
-                str, locale.get("translations.days.abbreviated")[dt.day_of_week]
+                str,
+                locale.get("translations.days.abbreviated")[dt.day_of_week],
             )
         elif token == "dddd":
             return cast(str, locale.get("translations.days.wide")[dt.day_of_week])
+        elif token == "e":
+            first_day = cast(int, locale.get("translations.week_data.first_day"))
+
+            return str((dt.day_of_week % 7 - first_day) % 7)
         elif token == "Do":
             return locale.ordinalize(dt.day)
         elif token == "do":
-            return locale.ordinalize(dt.day_of_week)
+            return locale.ordinalize((dt.day_of_week + 1) % 7)
         elif token == "Mo":
             return locale.ordinalize(dt.month)
         elif token == "Qo":
@@ -334,6 +342,10 @@ class Formatter:
             return locale.ordinalize(dt.week_of_year)
         elif token == "DDDo":
             return locale.ordinalize(dt.day_of_year)
+        elif token == "eo":
+            first_day = cast(int, locale.get("translations.week_data.first_day"))
+
+            return locale.ordinalize((dt.day_of_week % 7 - first_day) % 7 + 1)
         elif token == "A":
             key = "translations.day_periods"
             if dt.hour >= 12:

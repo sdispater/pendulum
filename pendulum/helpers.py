@@ -14,6 +14,7 @@ from typing import overload
 import pendulum
 
 from pendulum.constants import DAYS_PER_MONTHS
+from pendulum.day import WeekDay
 from pendulum.formatting.difference_formatter import DifferenceFormatter
 from pendulum.locales.locale import Locale
 
@@ -188,16 +189,16 @@ def get_locale() -> str:
     return pendulum._LOCALE
 
 
-def week_starts_at(wday: int) -> None:
-    if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
-        raise ValueError("Invalid week day as start of week.")
+def week_starts_at(wday: WeekDay) -> None:
+    if wday < WeekDay.MONDAY or wday > WeekDay.SUNDAY:
+        raise ValueError("Invalid day of week")
 
     pendulum._WEEK_STARTS_AT = wday
 
 
-def week_ends_at(wday: int) -> None:
-    if wday < pendulum.SUNDAY or wday > pendulum.SATURDAY:
-        raise ValueError("Invalid week day as start of week.")
+def week_ends_at(wday: WeekDay) -> None:
+    if wday < WeekDay.MONDAY or wday > WeekDay.SUNDAY:
+        raise ValueError("Invalid day of week")
 
     pendulum._WEEK_ENDS_AT = wday
 

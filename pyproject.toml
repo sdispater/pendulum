@@ -33,6 +33,7 @@ python-dateutil = "^2.6"
 time-machine = { version = "^2.6.0", markers = "implementation_name != 'pypy'" }
 tzdata = ">=2020.1"
 importlib-resources = { version = "^5.9.0", python = ">=3.7,<3.9" }
+cleo = "^2.0.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.2"
@@ -92,6 +93,7 @@ ignore = [
     "B904", # use 'raise ... from err'
     "B905", # use explicit 'strict=' parameter with 'zip()'
     "N818", #  Exception name should be named with an Error suffix
+    "RUF001",
 ]
 extend-exclude = [
     # External to the project's coding standards:

@@ -8,24 +8,18 @@ from typing import overload
 
 from pendulum.__version__ import __version__
 from pendulum.constants import DAYS_PER_WEEK
-from pendulum.constants import FRIDAY
 from pendulum.constants import HOURS_PER_DAY
 from pendulum.constants import MINUTES_PER_HOUR
-from pendulum.constants import MONDAY
 from pendulum.constants import MONTHS_PER_YEAR
-from pendulum.constants import SATURDAY
 from pendulum.constants import SECONDS_PER_DAY
 from pendulum.constants import SECONDS_PER_HOUR
 from pendulum.constants import SECONDS_PER_MINUTE
-from pendulum.constants import SUNDAY
-from pendulum.constants import THURSDAY
-from pendulum.constants import TUESDAY
-from pendulum.constants import WEDNESDAY
 from pendulum.constants import WEEKS_PER_YEAR
 from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.date import Date
 from pendulum.datetime import DateTime
+from pendulum.day import WeekDay
 from pendulum.duration import Duration
 from pendulum.formatting import Formatter
 from pendulum.helpers import format_diff
@@ -48,10 +42,19 @@ from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
 
+MONDAY = WeekDay.MONDAY
+TUESDAY = WeekDay.TUESDAY
+WEDNESDAY = WeekDay.WEDNESDAY
+THURSDAY = WeekDay.THURSDAY
+FRIDAY = WeekDay.FRIDAY
+SATURDAY = WeekDay.SATURDAY
+SUNDAY = WeekDay.SUNDAY
+
+
 _TEST_NOW: DateTime | None = None
 _LOCALE = "en"
-_WEEK_STARTS_AT = MONDAY
-_WEEK_ENDS_AT = SUNDAY
+_WEEK_STARTS_AT: WeekDay = WeekDay.MONDAY
+_WEEK_ENDS_AT: WeekDay = WeekDay.SUNDAY
 
 _formatter = Formatter()
 
@@ -335,19 +338,12 @@ travel_back = _traveller.travel_back
 __all__ = [
     "__version__",
     "DAYS_PER_WEEK",
-    "FRIDAY",
     "HOURS_PER_DAY",
     "MINUTES_PER_HOUR",
-    "MONDAY",
     "MONTHS_PER_YEAR",
-    "SATURDAY",
     "SECONDS_PER_DAY",
     "SECONDS_PER_HOUR",
     "SECONDS_PER_MINUTE",
-    "SUNDAY",
-    "THURSDAY",
-    "TUESDAY",
-    "WEDNESDAY",
     "WEEKS_PER_YEAR",
     "YEARS_PER_CENTURY",
     "YEARS_PER_DECADE",
@@ -355,6 +351,7 @@ __all__ = [
     "DateTime",
     "Duration",
     "Formatter",
+    "WeekDay",
     "date",
     "datetime",
     "duration",

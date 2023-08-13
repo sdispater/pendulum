@@ -113,6 +113,20 @@ def test_day_of_week():
     assert f.format(d, "do") == "0th"
 
 
+def test_localized_day_of_week():
+    f = Formatter()
+    d = pendulum.datetime(2016, 8, 28)
+    assert f.format(d, "e") == "0"
+    assert f.format(d, "e", locale="en-gb") == "6"
+    assert f.format(d.add(days=2), "e") == "2"
+    assert f.format(d.add(days=2), "e", locale="en-gb") == "1"
+
+    assert f.format(d, "eo") == "1st"
+    assert f.format(d, "eo", locale="en-gb") == "7th"
+    assert f.format(d.add(days=2), "eo") == "3rd"
+    assert f.format(d.add(days=2), "eo", locale="en-gb") == "2nd"
+
+
 def test_day_of_iso_week():
     f = Formatter()
     d = pendulum.datetime(2016, 8, 28)
