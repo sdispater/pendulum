@@ -170,10 +170,10 @@ def test_week_starts_at() -> None:
 
 def test_week_starts_at_invalid_value() -> None:
     with pytest.raises(ValueError):
-        pendulum.week_starts_at(-1)
+        pendulum.week_starts_at(-1)  # type: ignore[arg-type]
 
     with pytest.raises(ValueError):
-        pendulum.week_starts_at(11)
+        pendulum.week_starts_at(11)  # type: ignore[arg-type]
 
 
 def test_week_ends_at() -> None:
@@ -186,7 +186,7 @@ def test_week_ends_at() -> None:
 
 def test_week_ends_at_invalid_value() -> None:
     with pytest.raises(ValueError):
-        pendulum.week_ends_at(-1)
+        pendulum.week_ends_at(-1)  # type: ignore[arg-type]
 
     with pytest.raises(ValueError):
-        pendulum.week_ends_at(11)
+        pendulum.week_ends_at(11)  # type: ignore[arg-type]

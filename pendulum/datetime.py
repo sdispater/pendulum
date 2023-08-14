@@ -25,14 +25,13 @@ from pendulum.constants import RFC1036
 from pendulum.constants import RFC1123
 from pendulum.constants import RFC2822
 from pendulum.constants import RSS
-from pendulum.constants import SATURDAY
 from pendulum.constants import SECONDS_PER_DAY
 from pendulum.constants import SECONDS_PER_MINUTE
-from pendulum.constants import SUNDAY
 from pendulum.constants import W3C
 from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
 from pendulum.date import Date
+from pendulum.day import WeekDay
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
 from pendulum.interval import Interval
@@ -902,7 +901,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.end_of("day")
 
-    def next(self, day_of_week: int | None = None, keep_time: bool = False) -> Self:
+    def next(self, day_of_week: WeekDay | None = None, keep_time: bool = False) -> Self:
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -912,7 +911,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+        if day_of_week < WeekDay.MONDAY or day_of_week > WeekDay.SUNDAY:
             raise ValueError("Invalid day of week")
 
         dt = self if keep_time else self.start_of("day")
@@ -923,7 +922,9 @@ class DateTime(datetime.datetime, Date):
 
         return dt
 
-    def previous(self, day_of_week: int | None = None, keep_time: bool = False) -> Self:
+    def previous(
+        self, day_of_week: WeekDay | None = None, keep_time: bool = False
+    ) -> Self:
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -933,7 +934,7 @@ class DateTime(datetime.datetime, Date):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+        if day_of_week < WeekDay.MONDAY or day_of_week > WeekDay.SUNDAY:
             raise ValueError("Invalid day of week")
 
         dt = self if keep_time else self.start_of("day")
@@ -944,7 +945,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt
 
-    def first_of(self, unit: str, day_of_week: int | None = None) -> Self:
+    def first_of(self, unit: str, day_of_week: WeekDay | None = None) -> Self:
         """
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
@@ -959,7 +960,7 @@ class DateTime(datetime.datetime, Date):
 
         return cast("Self", getattr(self, f"_first_of_{unit}")(day_of_week))
 
-    def last_of(self, unit: str, day_of_week: int | None = None) -> Self:
+    def last_of(self, unit: str, day_of_week: WeekDay | None = None) -> Self:
         """
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
@@ -974,7 +975,7 @@ class DateTime(datetime.datetime, Date):
 
         return cast("Self", getattr(self, f"_last_of_{unit}")(day_of_week))
 
-    def nth_of(self, unit: str, nth: int, day_of_week: int) -> Self:
+    def nth_of(self, unit: str, nth: int, day_of_week: WeekDay) -> Self:
         """
         Returns a new instance set to the given occurrence
         of a given day of the week in the current unit.
@@ -991,12 +992,12 @@ class DateTime(datetime.datetime, Date):
         if not dt:
             raise PendulumException(
                 f"Unable to find occurence {nth}"
-                f" of {self._days[day_of_week]} in {unit}"
+                f" of {WeekDay(day_of_week).name.capitalize()} in {unit}"
             )
 
         return dt
 
-    def _first_of_month(self, day_of_week: int | None = None) -> Self:
+    def _first_of_month(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -1010,7 +1011,7 @@ class DateTime(datetime.datetime, Date):
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
-        calendar_day = (day_of_week - 1) % 7
+        calendar_day = day_of_week
 
         if month[0][calendar_day] > 0:
             day_of_month = month[0][calendar_day]
@@ -1019,7 +1020,7 @@ class DateTime(datetime.datetime, Date):
 
         return dt.set(day=day_of_month)
 
-    def _last_of_month(self, day_of_week: int | None = None) -> Self:
+    def _last_of_month(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -1033,7 +1034,7 @@ class DateTime(datetime.datetime, Date):
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
-        calendar_day = (day_of_week - 1) % 7
+        calendar_day = day_of_week
 
         if month[-1][calendar_day] > 0:
             day_of_month = month[-1][calendar_day]
@@ -1042,7 +1043,9 @@ class DateTime(datetime.datetime, Date):
 
         return dt.set(day=day_of_month)
 
-    def _nth_of_month(self, nth: int, day_of_week: int | None = None) -> Self | None:
+    def _nth_of_month(
+        self, nth: int, day_of_week: WeekDay | None = None
+    ) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current month. If the calculated occurrence is outside,
@@ -1063,7 +1066,7 @@ class DateTime(datetime.datetime, Date):
 
         return None
 
-    def _first_of_quarter(self, day_of_week: int | None = None) -> Self:
+    def _first_of_quarter(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -1074,7 +1077,7 @@ class DateTime(datetime.datetime, Date):
             "month", day_of_week
         )
 
-    def _last_of_quarter(self, day_of_week: int | None = None) -> Self:
+    def _last_of_quarter(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -1083,7 +1086,9 @@ class DateTime(datetime.datetime, Date):
         """
         return self.on(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
-    def _nth_of_quarter(self, nth: int, day_of_week: int | None = None) -> Self | None:
+    def _nth_of_quarter(
+        self, nth: int, day_of_week: WeekDay | None = None
+    ) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
@@ -1106,7 +1111,7 @@ class DateTime(datetime.datetime, Date):
 
         return self.on(self.year, dt.month, dt.day).start_of("day")
 
-    def _first_of_year(self, day_of_week: int | None = None) -> Self:
+    def _first_of_year(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -1115,7 +1120,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.set(month=1).first_of("month", day_of_week)
 
-    def _last_of_year(self, day_of_week: int | None = None) -> Self:
+    def _last_of_year(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -1124,7 +1129,7 @@ class DateTime(datetime.datetime, Date):
         """
         return self.set(month=MONTHS_PER_YEAR).last_of("month", day_of_week)
 
-    def _nth_of_year(self, nth: int, day_of_week: int | None = None) -> Self | None:
+    def _nth_of_year(self, nth: int, day_of_week: WeekDay | None = None) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current year. If the calculated occurrence is outside,

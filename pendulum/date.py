@@ -16,16 +16,10 @@ from typing import overload
 
 import pendulum
 
-from pendulum.constants import FRIDAY
-from pendulum.constants import MONDAY
 from pendulum.constants import MONTHS_PER_YEAR
-from pendulum.constants import SATURDAY
-from pendulum.constants import SUNDAY
-from pendulum.constants import THURSDAY
-from pendulum.constants import TUESDAY
-from pendulum.constants import WEDNESDAY
 from pendulum.constants import YEARS_PER_CENTURY
 from pendulum.constants import YEARS_PER_DECADE
+from pendulum.day import WeekDay
 from pendulum.exceptions import PendulumException
 from pendulum.helpers import add_duration
 from pendulum.interval import Interval
@@ -38,17 +32,6 @@ if TYPE_CHECKING:
 
 
 class Date(FormattableMixin, date):
-    # Names of days of the week
-    _days: ClassVar[dict[int, str]] = {
-        SUNDAY: "Sunday",
-        MONDAY: "Monday",
-        TUESDAY: "Tuesday",
-        WEDNESDAY: "Wednesday",
-        THURSDAY: "Thursday",
-        FRIDAY: "Friday",
-        SATURDAY: "Saturday",
-    }
-
     _MODIFIERS_VALID_UNITS: ClassVar[list[str]] = [
         "day",
         "week",
@@ -66,11 +49,11 @@ class Date(FormattableMixin, date):
         return self.replace(year=year, month=month, day=day)
 
     @property
-    def day_of_week(self) -> int:
+    def day_of_week(self) -> WeekDay:
         """
         Returns the day of the week (0-6).
         """
-        return self.isoweekday() % 7
+        return WeekDay(self.weekday())
 
     @property
     def day_of_year(self) -> int:
@@ -479,7 +462,7 @@ class Date(FormattableMixin, date):
 
         return dt.end_of("day")
 
-    def next(self, day_of_week: int | None = None) -> Self:
+    def next(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the next occurrence of a given day of the week.
         If no day_of_week is provided, modify to the next occurrence
@@ -491,7 +474,7 @@ class Date(FormattableMixin, date):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+        if day_of_week < WeekDay.MONDAY or day_of_week > WeekDay.SUNDAY:
             raise ValueError("Invalid day of week")
 
         dt = self.add(days=1)
@@ -500,7 +483,7 @@ class Date(FormattableMixin, date):
 
         return dt
 
-    def previous(self, day_of_week: int | None = None) -> Self:
+    def previous(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the previous occurrence of a given day of the week.
         If no day_of_week is provided, modify to the previous occurrence
@@ -512,7 +495,7 @@ class Date(FormattableMixin, date):
         if day_of_week is None:
             day_of_week = self.day_of_week
 
-        if day_of_week < SUNDAY or day_of_week > SATURDAY:
+        if day_of_week < WeekDay.MONDAY or day_of_week > WeekDay.SUNDAY:
             raise ValueError("Invalid day of week")
 
         dt = self.subtract(days=1)
@@ -521,7 +504,7 @@ class Date(FormattableMixin, date):
 
         return dt
 
-    def first_of(self, unit: str, day_of_week: int | None = None) -> Self:
+    def first_of(self, unit: str, day_of_week: WeekDay | None = None) -> Self:
         """
         Returns an instance set to the first occurrence
         of a given day of the week in the current unit.
@@ -539,7 +522,7 @@ class Date(FormattableMixin, date):
 
         return cast("Self", getattr(self, f"_first_of_{unit}")(day_of_week))
 
-    def last_of(self, unit: str, day_of_week: int | None = None) -> Self:
+    def last_of(self, unit: str, day_of_week: WeekDay | None = None) -> Self:
         """
         Returns an instance set to the last occurrence
         of a given day of the week in the current unit.
@@ -557,7 +540,7 @@ class Date(FormattableMixin, date):
 
         return cast("Self", getattr(self, f"_last_of_{unit}")(day_of_week))
 
-    def nth_of(self, unit: str, nth: int, day_of_week: int) -> Self:
+    def nth_of(self, unit: str, nth: int, day_of_week: WeekDay) -> Self:
         """
         Returns a new instance set to the given occurrence
         of a given day of the week in the current unit.
@@ -578,12 +561,12 @@ class Date(FormattableMixin, date):
         if not dt:
             raise PendulumException(
                 f"Unable to find occurence {nth}"
-                f" of {self._days[day_of_week]} in {unit}"
+                f" of {WeekDay(day_of_week).name.capitalize()} in {unit}"
             )
 
         return dt
 
-    def _first_of_month(self, day_of_week: int) -> Self:
+    def _first_of_month(self, day_of_week: WeekDay) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -599,7 +582,7 @@ class Date(FormattableMixin, date):
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
-        calendar_day = (day_of_week - 1) % 7
+        calendar_day = day_of_week
 
         if month[0][calendar_day] > 0:
             day_of_month = month[0][calendar_day]
@@ -608,7 +591,7 @@ class Date(FormattableMixin, date):
 
         return dt.set(day=day_of_month)
 
-    def _last_of_month(self, day_of_week: int | None = None) -> Self:
+    def _last_of_month(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current month. If no day_of_week is provided,
@@ -624,7 +607,7 @@ class Date(FormattableMixin, date):
 
         month = calendar.monthcalendar(dt.year, dt.month)
 
-        calendar_day = (day_of_week - 1) % 7
+        calendar_day = day_of_week
 
         if month[-1][calendar_day] > 0:
             day_of_month = month[-1][calendar_day]
@@ -633,7 +616,7 @@ class Date(FormattableMixin, date):
 
         return dt.set(day=day_of_month)
 
-    def _nth_of_month(self, nth: int, day_of_week: int) -> Self | None:
+    def _nth_of_month(self, nth: int, day_of_week: WeekDay) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current month. If the calculated occurrence is outside,
@@ -654,7 +637,7 @@ class Date(FormattableMixin, date):
 
         return None
 
-    def _first_of_quarter(self, day_of_week: int | None = None) -> Self:
+    def _first_of_quarter(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -665,7 +648,7 @@ class Date(FormattableMixin, date):
             "month", day_of_week
         )
 
-    def _last_of_quarter(self, day_of_week: int | None = None) -> Self:
+    def _last_of_quarter(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current quarter. If no day_of_week is provided,
@@ -674,7 +657,7 @@ class Date(FormattableMixin, date):
         """
         return self.set(self.year, self.quarter * 3, 1).last_of("month", day_of_week)
 
-    def _nth_of_quarter(self, nth: int, day_of_week: int) -> Self | None:
+    def _nth_of_quarter(self, nth: int, day_of_week: WeekDay) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current quarter. If the calculated occurrence is outside,
@@ -697,7 +680,7 @@ class Date(FormattableMixin, date):
 
         return self.set(self.year, dt.month, dt.day)
 
-    def _first_of_year(self, day_of_week: int | None = None) -> Self:
+    def _first_of_year(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the first occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -706,7 +689,7 @@ class Date(FormattableMixin, date):
         """
         return self.set(month=1).first_of("month", day_of_week)
 
-    def _last_of_year(self, day_of_week: int | None = None) -> Self:
+    def _last_of_year(self, day_of_week: WeekDay | None = None) -> Self:
         """
         Modify to the last occurrence of a given day of the week
         in the current year. If no day_of_week is provided,
@@ -715,7 +698,7 @@ class Date(FormattableMixin, date):
         """
         return self.set(month=MONTHS_PER_YEAR).last_of("month", day_of_week)
 
-    def _nth_of_year(self, nth: int, day_of_week: int) -> Self | None:
+    def _nth_of_year(self, nth: int, day_of_week: WeekDay) -> Self | None:
         """
         Modify to the given occurrence of a given day of the week
         in the current year. If the calculated occurrence is outside,

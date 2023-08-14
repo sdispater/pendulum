@@ -49,7 +49,7 @@ def test_next_monday():
 
 
 def test_next_saturday():
-    d = pendulum.date(1975, 5, 21).next(6)
+    d = pendulum.date(1975, 5, 21).next(5)
     assert_date(d, 1975, 5, 24)
 
 
@@ -71,7 +71,7 @@ def test_previous_monday():
 
 
 def test_previous_saturday():
-    d = pendulum.date(1975, 5, 21).previous(6)
+    d = pendulum.date(1975, 5, 21).previous(5)
     assert_date(d, 1975, 5, 17)
 
 
@@ -93,7 +93,7 @@ def test_first_wednesday_of_month():
 
 
 def test_first_friday_of_month():
-    d = pendulum.date(1975, 11, 21).first_of("month", 5)
+    d = pendulum.date(1975, 11, 21).first_of("month", 4)
     assert_date(d, 1975, 11, 7)
 
 
@@ -108,7 +108,7 @@ def test_last_tuesday_of_month():
 
 
 def test_last_friday_of_month():
-    d = pendulum.date(1975, 12, 5).last_of("month", 5)
+    d = pendulum.date(1975, 12, 5).last_of("month", 4)
     assert_date(d, 1975, 12, 26)
 
 
@@ -139,7 +139,7 @@ def test_2nd_monday_of_month():
 
 
 def test_3rd_wednesday_of_month():
-    d = pendulum.date(1975, 12, 5).nth_of("month", 3, 3)
+    d = pendulum.date(1975, 12, 5).nth_of("month", 3, 2)
 
     assert_date(d, 1975, 12, 17)
 
@@ -155,7 +155,7 @@ def test_first_wednesday_of_quarter():
 
 
 def test_first_friday_of_quarter():
-    d = pendulum.date(1975, 11, 21).first_of("quarter", 5)
+    d = pendulum.date(1975, 11, 21).first_of("quarter", 4)
     assert_date(d, 1975, 10, 3)
 
 
@@ -215,7 +215,7 @@ def test_2nd_monday_of_quarter():
 
 
 def test_3rd_wednesday_of_quarter():
-    d = pendulum.date(1975, 8, 5).nth_of("quarter", 3, 3)
+    d = pendulum.date(1975, 8, 5).nth_of("quarter", 3, 2)
     assert_date(d, 1975, 7, 16)
 
 
@@ -230,7 +230,7 @@ def test_first_wednesday_of_year():
 
 
 def test_first_friday_of_year():
-    d = pendulum.date(1975, 11, 21).first_of("year", 5)
+    d = pendulum.date(1975, 11, 21).first_of("year", 4)
     assert_date(d, 1975, 1, 3)
 
 
@@ -245,7 +245,7 @@ def test_last_tuesday_of_year():
 
 
 def test_last_friday_of_year():
-    d = pendulum.date(1975, 8, 5).last_of("year", 5)
+    d = pendulum.date(1975, 8, 5).last_of("year", 4)
     assert_date(d, 1975, 12, 26)
 
 
