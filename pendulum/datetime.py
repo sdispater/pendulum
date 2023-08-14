@@ -122,6 +122,29 @@ class DateTime(datetime.datetime, Date):
             fold=dt.fold,
         )
 
+    @classmethod
+    def instance(
+        cls,
+        dt: datetime.datetime,
+        tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = UTC,
+    ) -> Self:
+        tz = dt.tzinfo or tz
+
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz, dt=dt)
+
+        return cls.create(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            dt.microsecond,
+            tz=tz,
+            fold=dt.fold,
+        )
+
     @overload
     @classmethod
     def now(cls, tz: datetime.tzinfo | None = None) -> Self:
@@ -172,8 +195,8 @@ class DateTime(datetime.datetime, Date):
         return cls.now()
 
     @classmethod
-    def strptime(cls, time: str, fmt: str) -> DateTime:
-        return pendulum.instance(datetime.datetime.strptime(time, fmt))
+    def strptime(cls, time: str, fmt: str) -> Self:
+        return cls.instance(datetime.datetime.strptime(time, fmt))
 
     # Getters/Setters
 
@@ -472,19 +495,19 @@ class DateTime(datetime.datetime, Date):
         )
 
     # Comparisons
-    def closest(self, *dts: datetime.datetime) -> DateTime:  # type: ignore[override]
+    def closest(self, *dts: datetime.datetime) -> Self:  # type: ignore[override]
         """
         Get the farthest date from the instance.
         """
-        pdts = [pendulum.instance(x) for x in dts]
+        pdts = [self.instance(x) for x in dts]
 
         return min((abs(self - dt), dt) for dt in pdts)[1]
 
-    def farthest(self, *dts: datetime.datetime) -> DateTime:  # type: ignore[override]
+    def farthest(self, *dts: datetime.datetime) -> Self:  # type: ignore[override]
         """
         Get the farthest date from the instance.
         """
-        pdts = [pendulum.instance(x) for x in dts]
+        pdts = [self.instance(x) for x in dts]
 
         return max((abs(self - dt), dt) for dt in pdts)[1]
 
@@ -516,7 +539,7 @@ class DateTime(datetime.datetime, Date):
         Checks if the passed in date is the same day
         as the instance current day.
         """
-        dt = pendulum.instance(dt)
+        dt = self.instance(dt)
 
         return self.to_date_string() == dt.to_date_string()
 
@@ -530,7 +553,7 @@ class DateTime(datetime.datetime, Date):
         if dt is None:
             dt = self.now(self.tz)
 
-        instance = pendulum.instance(dt)
+        instance = self.instance(dt)
 
         return (self.month, self.day) == (instance.month, instance.day)
 
@@ -1192,7 +1215,7 @@ class DateTime(datetime.datetime, Date):
                     other.microsecond,
                 )
             else:
-                other = pendulum.instance(other)
+                other = self.instance(other)
 
         return other.diff(self, False)
 
@@ -1212,7 +1235,7 @@ class DateTime(datetime.datetime, Date):
                     other.microsecond,
                 )
             else:
-                other = pendulum.instance(other)
+                other = self.instance(other)
 
         return self.diff(other, False)
 
@@ -1236,20 +1259,18 @@ class DateTime(datetime.datetime, Date):
     # Native methods override
 
     @classmethod
-    def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> DateTime:
+    def fromtimestamp(cls, t: float, tz: datetime.tzinfo | None = None) -> Self:
         tzinfo = pendulum._safe_timezone(tz)
 
-        return pendulum.instance(
-            datetime.datetime.fromtimestamp(t, tz=tzinfo), tz=tzinfo
-        )
+        return cls.instance(datetime.datetime.fromtimestamp(t, tz=tzinfo), tz=tzinfo)
 
     @classmethod
-    def utcfromtimestamp(cls, t: float) -> DateTime:
-        return pendulum.instance(datetime.datetime.utcfromtimestamp(t), tz=None)
+    def utcfromtimestamp(cls, t: float) -> Self:
+        return cls.instance(datetime.datetime.utcfromtimestamp(t), tz=None)
 
     @classmethod
-    def fromordinal(cls, n: int) -> DateTime:
-        return pendulum.instance(datetime.datetime.fromordinal(n), tz=None)
+    def fromordinal(cls, n: int) -> Self:
+        return cls.instance(datetime.datetime.fromordinal(n), tz=None)
 
     @classmethod
     def combine(
@@ -1257,8 +1278,8 @@ class DateTime(datetime.datetime, Date):
         date: datetime.date,
         time: datetime.time,
         tzinfo: datetime.tzinfo | None = None,
-    ) -> DateTime:
-        return pendulum.instance(datetime.datetime.combine(date, time), tz=tzinfo)
+    ) -> Self:
+        return cls.instance(datetime.datetime.combine(date, time), tz=tzinfo)
 
     def astimezone(self, tz: datetime.tzinfo | None = None) -> Self:
         dt = super().astimezone(tz)
@@ -1321,7 +1342,7 @@ class DateTime(datetime.datetime, Date):
             fold=fold,
         )
 
-    def __getnewargs__(self) -> tuple[DateTime]:
+    def __getnewargs__(self) -> tuple[Self]:
         return (self,)
 
     def _getstate(
@@ -1341,14 +1362,14 @@ class DateTime(datetime.datetime, Date):
     def __reduce__(
         self,
     ) -> tuple[
-        type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:
         return self.__reduce_ex__(2)
 
     def __reduce_ex__(
         self, protocol: SupportsIndex
     ) -> tuple[
-        type[DateTime], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
     ]:
         return self.__class__, self._getstate(protocol)
 

@@ -17,6 +17,7 @@ from pendulum.constants import USECS_PER_SEC
 from pendulum.duration import AbsoluteDuration
 from pendulum.duration import Duration
 from pendulum.mixins.default import FormattableMixin
+from pendulum.tz.timezone import UTC
 
 
 if TYPE_CHECKING:
@@ -24,11 +25,25 @@ if TYPE_CHECKING:
     from typing_extensions import Self
     from typing_extensions import SupportsIndex
 
+    from pendulum.tz.timezone import FixedTimezone
+    from pendulum.tz.timezone import Timezone
+
 
 class Time(FormattableMixin, time):
     """
     Represents a time instance as hour, minute, second, microsecond.
     """
+
+    @classmethod
+    def instance(
+        cls, t: time, tz: str | Timezone | FixedTimezone | datetime.tzinfo | None = UTC
+    ) -> Self:
+        tz = t.tzinfo or tz
+
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz)
+
+        return cls(t.hour, t.minute, t.second, t.microsecond, tzinfo=tz, fold=t.fold)
 
     # String formatting
     def __repr__(self) -> str:

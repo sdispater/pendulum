@@ -239,24 +239,10 @@ def instance(
     if isinstance(obj, _datetime.date) and not isinstance(obj, _datetime.datetime):
         return date(obj.year, obj.month, obj.day)
 
-    tz = obj.tzinfo or tz
-
-    if tz is not None:
-        tz = _safe_timezone(tz, dt=obj if isinstance(obj, _datetime.datetime) else None)
-
     if isinstance(obj, _datetime.time):
-        return Time(obj.hour, obj.minute, obj.second, obj.microsecond, tzinfo=tz)
+        return Time.instance(obj, tz=tz)
 
-    return datetime(
-        obj.year,
-        obj.month,
-        obj.day,
-        obj.hour,
-        obj.minute,
-        obj.second,
-        obj.microsecond,
-        tz=cast(Union[str, int, Timezone, FixedTimezone, None], tz),
-    )
+    return DateTime.instance(obj, tz=tz)
 
 
 def now(tz: str | Timezone | None = None) -> DateTime:
