@@ -7,9 +7,9 @@ import pendulum
 
 def test_to_string():
     d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 0, tz="local")
-    assert str(d) == d.to_iso8601_string()
+    assert str(d) == "1975-12-25 00:00:00-05:00"
     d = pendulum.datetime(1975, 12, 25, 0, 0, 0, 123456, tz="local")
-    assert str(d) == d.to_iso8601_string()
+    assert str(d) == "1975-12-25 00:00:00.123456-05:00"
 
 
 def test_to_date_string():
@@ -135,7 +135,7 @@ def test_for_json():
 
 def test_format():
     d = pendulum.datetime(1975, 12, 25, 14, 15, 16, tz="Europe/Paris")
-    assert f"{d}" == "1975-12-25T14:15:16+01:00"
+    assert f"{d}" == "1975-12-25 14:15:16+01:00"
     assert f"{d:YYYY}" == "1975"
     assert f"{d:%Y}" == "1975"
     assert f"{d:%H:%M %d.%m.%Y}" == "14:15 25.12.1975"

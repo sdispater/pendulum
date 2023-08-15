@@ -22,7 +22,7 @@ class FormattableMixin:
         """
         Methods for automatic json serialization by simplejson.
         """
-        return str(self)
+        return self.isoformat()
 
     def __format__(self, format_spec: str) -> str:
         if len(format_spec) > 0:

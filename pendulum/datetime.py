@@ -58,13 +58,13 @@ class DateTime(datetime.datetime, Date):
     _FORMATS: ClassVar[dict[str, str | Callable[[datetime.datetime], str]]] = {
         "atom": ATOM,
         "cookie": COOKIE,
-        "iso8601": lambda dt: dt.isoformat(),
+        "iso8601": lambda dt: dt.isoformat("T"),
         "rfc822": RFC822,
         "rfc850": RFC850,
         "rfc1036": RFC1036,
         "rfc1123": RFC1123,
         "rfc2822": RFC2822,
-        "rfc3339": lambda dt: dt.isoformat(),
+        "rfc3339": lambda dt: dt.isoformat("T"),
         "rss": RSS,
         "w3c": W3C,
     }
@@ -468,7 +468,7 @@ class DateTime(datetime.datetime, Date):
         return self.format(fmt_value, locale=locale)
 
     def __str__(self) -> str:
-        return self.isoformat("T")
+        return self.isoformat(" ")
 
     def __repr__(self) -> str:
         us = ""

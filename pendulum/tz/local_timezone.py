@@ -4,12 +4,14 @@ import contextlib
 import os
 import re
 import sys
+import warnings
 
 from contextlib import contextmanager
 from typing import Iterator
 from typing import cast
 
 from pendulum.tz.exceptions import InvalidTimezone
+from pendulum.tz.timezone import UTC
 from pendulum.tz.timezone import FixedTimezone
 from pendulum.tz.timezone import Timezone
 
@@ -239,7 +241,11 @@ def _get_unix_timezone(_root: str = "/") -> Timezone:
         with open(tzpath, "rb") as f:
             return Timezone.from_file(f)
 
-    raise RuntimeError("Unable to find any timezone configuration")
+    warnings.warn(
+        "Unable not find any timezone configuration, defaulting to UTC.", stacklevel=1
+    )
+
+    return UTC
 
 
 def _tz_from_env(tzenv: str) -> Timezone:

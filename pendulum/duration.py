@@ -446,6 +446,17 @@ class Duration(timedelta):
 
         return NotImplemented
 
+    def __deepcopy__(self, _: dict[int, Self]) -> Self:
+        return self.__class__(
+            days=self.remaining_days,
+            seconds=self.remaining_seconds,
+            microseconds=self.microseconds,
+            minutes=self.minutes,
+            hours=self.hours,
+            years=self.years,
+            months=self.months,
+        )
+
 
 Duration.min = Duration(days=-999999999)
 Duration.max = Duration(
