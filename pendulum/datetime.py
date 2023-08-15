@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import calendar
 import datetime
-import sys
 import traceback
 
 from typing import TYPE_CHECKING
@@ -1243,13 +1242,9 @@ class DateTime(datetime.datetime, Date):
         if not isinstance(other, datetime.timedelta):
             return NotImplemented
 
-        if sys.version_info >= (3, 8):
-            # This is a workaround for Python 3.8+
-            # since calling astimezone() will call this method
-            # instead of the base datetime class one.
-            caller = traceback.extract_stack(limit=2)[0].name
-            if caller == "astimezone":
-                return super().__add__(other)
+        caller = traceback.extract_stack(limit=2)[0].name
+        if caller == "astimezone":
+            return super().__add__(other)
 
         return self._add_timedelta_(other)
 
