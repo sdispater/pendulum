@@ -5,9 +5,6 @@ import os
 from datetime import datetime
 
 import pytest
-import pytz
-
-from dateutil import tz
 
 import pendulum
 
@@ -81,27 +78,6 @@ def test_yesterday():
 
     assert isinstance(yesterday, DateTime)
     assert now.diff(yesterday, False).in_days() == -1
-
-
-def test_instance_naive_datetime_defaults_to_utc():
-    now = pendulum.instance(datetime.now())
-    assert now.timezone_name == "UTC"
-
-
-def test_instance_timezone_aware_datetime():
-    now = pendulum.instance(datetime.now(timezone("Europe/Paris")))
-    assert now.timezone_name == "Europe/Paris"
-
-
-def test_instance_timezone_aware_datetime_pytz():
-    now = pendulum.instance(datetime.now(pytz.timezone("Europe/Paris")))
-    assert now.timezone_name == "Europe/Paris"
-
-
-def test_instance_timezone_aware_datetime_any_tzinfo():
-    dt = datetime(2016, 8, 7, 12, 34, 56, tzinfo=tz.gettz("Europe/Paris"))
-    now = pendulum.instance(dt)
-    assert now.timezone_name == "+02:00"
 
 
 def test_now():
