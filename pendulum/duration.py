@@ -500,12 +500,9 @@ class AbsoluteDuration(Duration):
         total = abs(self._total)
 
         self._microseconds = round(total % 1 * 1e6)
-        self._seconds = int(total) % SECONDS_PER_DAY
-
-        days = int(total) // SECONDS_PER_DAY
+        days, self._seconds = divmod(int(total), SECONDS_PER_DAY)
         self._days = abs(days + years * 365 + months * 30)
-        self._remaining_days = days % 7
-        self._weeks = days // 7
+        self._weeks, self._remaining_days = divmod(days, 7)
         self._months = abs(months)
         self._years = abs(years)
 

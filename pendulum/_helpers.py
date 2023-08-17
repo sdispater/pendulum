@@ -147,10 +147,8 @@ def local_time(
         month -= 1
 
     # Handle hours, minutes, seconds and microseconds
-    hour = seconds // SECS_PER_HOUR
-    seconds %= SECS_PER_HOUR
-    minute = seconds // SECS_PER_MIN
-    second = seconds % SECS_PER_MIN
+    hour, seconds = divmod(seconds, SECS_PER_HOUR)
+    minute, second = divmod(seconds, SECS_PER_MIN)
 
     return year, month, day, hour, minute, second, microseconds
 
