@@ -261,7 +261,7 @@ def today(tz: str | Timezone = "local") -> DateTime:
 
 def tomorrow(tz: str | Timezone = "local") -> DateTime:
     """
-    Create a DateTime instance for tommorow.
+    Create a DateTime instance for tomorrow.
     """
     return today(tz).add(days=1)
 

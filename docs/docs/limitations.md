@@ -4,7 +4,7 @@ Even though the `DateTime` class is a subclass of `datetime`,
 there are some rare cases where it can't replace the native class directly.
 Here is a list (non-exhaustive) of the reported cases with a possible solution, if any:
 
-* `sqlite3` will use the the `type()` function to determine the type of the object by default. To work around it you can register a new adapter:
+* `sqlite3` will use the `type()` function to determine the type of the object by default. To work around it you can register a new adapter:
 
     ```python
     import pendulum
@@ -13,7 +13,7 @@ Here is a list (non-exhaustive) of the reported cases with a possible solution, 
     register_adapter(pendulum.DateTime, lambda val: val.isoformat(' '))
     ```
 
-* `mysqlclient` (former `MySQLdb`) and `PyMySQL` will use the the `type()` function to determine the type of the object by default. To work around it you can register a new adapter:
+* `mysqlclient` (former `MySQLdb`) and `PyMySQL` will use the `type()` function to determine the type of the object by default. To work around it you can register a new adapter:
 
     ```python
     import pendulum

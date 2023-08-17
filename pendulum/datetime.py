@@ -496,7 +496,7 @@ class DateTime(datetime.datetime, Date):
     # Comparisons
     def closest(self, *dts: datetime.datetime) -> Self:  # type: ignore[override]
         """
-        Get the farthest date from the instance.
+        Get the closest date to the instance.
         """
         pdts = [self.instance(x) for x in dts]
 
@@ -1013,7 +1013,7 @@ class DateTime(datetime.datetime, Date):
         dt = cast(Optional["Self"], getattr(self, f"_nth_of_{unit}")(nth, day_of_week))
         if not dt:
             raise PendulumException(
-                f"Unable to find occurence {nth}"
+                f"Unable to find occurrence {nth}"
                 f" of {WeekDay(day_of_week).name.capitalize()} in {unit}"
             )
 
