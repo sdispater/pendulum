@@ -560,7 +560,7 @@ class Date(FormattableMixin, date):
         dt = cast("Self", getattr(self, f"_nth_of_{unit}")(nth, day_of_week))
         if not dt:
             raise PendulumException(
-                f"Unable to find occurence {nth}"
+                f"Unable to find occurrence {nth}"
                 f" of {WeekDay(day_of_week).name.capitalize()} in {unit}"
             )
 
