@@ -92,7 +92,7 @@ def local_time(
     for a particular transition type.
     """
     year = EPOCH_YEAR
-    seconds = int(math.floor(unix_time))
+    seconds = math.floor(unix_time)
 
     # Shift to a base year that is 400-year aligned.
     if seconds >= 0:

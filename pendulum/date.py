@@ -84,7 +84,7 @@ class Date(FormattableMixin, date):
 
     @property
     def quarter(self) -> int:
-        return int(math.ceil(self.month / 3))
+        return math.ceil(self.month / 3)
 
     # String Formatting
 
