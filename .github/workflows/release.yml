@@ -4,10 +4,11 @@ on:
   push:
     tags:
       - '*.*.*'
+  workflow_dispatch:
 
 jobs:
 
-  build:
+  build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -18,8 +19,11 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.10.1
+        uses: pypa/cibuildwheel@v2.12.1
         env:
+          CIBW_ARCHS_LINUX: x86_64
+          CIBW_ARCHS_MACOS: x86_64
+          CIBW_ARCHS_WINDOWS: AMD64
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
         with:
           package-dir: .
@@ -30,8 +34,39 @@ jobs:
           name: dist
           path: ./dist/*
 
+  build_wheels_macos_arm:
+    name: Build arm64 wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-12 ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.1
+        env:
+          CIBW_ARCHS_MACOS: arm64
+          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
+        with:
+          package-dir: .
+          output-dir: dist
+
+      - name: Fix wheel tags
+        run: |
+          pip install wheel==0.40
+          wheel tags --platform-tag macosx_12_0_arm64 dist/*-macosx*.whl --remove
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: ./dist/*
+
+
   Release:
-    needs: [ build ]
+    needs: [ build_wheel, build_wheels_macos_arm ]
+    if: success() && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
