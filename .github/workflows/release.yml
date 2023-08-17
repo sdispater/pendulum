@@ -18,6 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1
         env:
@@ -44,6 +54,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1
         env:
@@ -55,8 +75,8 @@ jobs:
 
       - name: Fix wheel tags
         run: |
-          pip install wheel==0.40
-          wheel tags --platform-tag macosx_12_0_arm64 dist/*-macosx*.whl --remove
+          python3 -m pip install wheel
+          python3 -m wheel tags --platform-tag macosx_12_0_arm64 dist/*-macosx*.whl --remove
 
       - uses: actions/upload-artifact@v3
         with:
