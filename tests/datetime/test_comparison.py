@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
+from datetime import timedelta
 
+import pytest
 import pytz
+
+from pytz import timezone
 
 import pendulum
 
@@ -193,6 +197,95 @@ def test_less_than_with_timezone_false():
 
     assert not d1 < d2
     assert not d1 < d3
+
+
+@pytest.mark.parametrize(
+    "truth_fun",
+    (
+        lambda earlier, later: earlier < later,
+        lambda earlier, later: earlier <= later,
+        lambda earlier, later: later > earlier,
+        lambda earlier, later: later >= earlier,
+    ),
+)
+def test_comparison_crossing_dst_transitioning_off_pendulum_pendulum(truth_fun):
+    # We only need to test turning off DST, since that's when the time
+    # component goes backwards.
+    # We start with 2019-11-03T01:30:00-0700
+    earlier = pendulum.datetime(2019, 11, 3, 8, 30).in_tz("US/Pacific")
+    # Adding 55 minutes to it, we turn off DST, but the time component is
+    # slightly less than before, i.e. we get 2019-11-03T01:25:00-0800
+    later = earlier.add(minutes=55)
+    # Run through all inequality-comparison functions
+    assert truth_fun(earlier, later)
+
+
+@pytest.mark.parametrize(
+    "truth_fun",
+    (
+        lambda earlier, later: earlier < later,
+        lambda earlier, later: earlier <= later,
+        lambda earlier, later: later > earlier,
+        lambda earlier, later: later >= earlier,
+    ),
+)
+def test_comparison_crossing_dst_transitioning_off_pendulum_datetime(truth_fun):
+    # We only need to test turning off DST, since that's when the time
+    # component goes backwards.
+    # We start with 2019-11-03T01:30:00-0700
+    earlier_pendulum = pendulum.datetime(2019, 11, 3, 8, 30).in_tz("US/Pacific")
+    us_pacific = timezone("US/Pacific")
+    earlier_datetime = datetime(2019, 11, 3, 1, 30, tzinfo=us_pacific)
+    # Adding 55 minutes to it, we turn off DST, but the time component is
+    # slightly less than before, i.e. we get 2019-11-03T01:25:00-0800
+    later_datetime = earlier_datetime + timedelta(minutes=55)
+    # Run through all inequality-comparison functions
+    assert truth_fun(earlier_pendulum, later_datetime)
+
+
+@pytest.mark.parametrize(
+    "truth_fun",
+    (
+        lambda earlier, later: earlier < later,
+        lambda earlier, later: earlier <= later,
+        lambda earlier, later: later > earlier,
+        lambda earlier, later: later >= earlier,
+    ),
+)
+def test_comparison_crossing_dst_transitioning_off_datetime_pendulum(truth_fun):
+    # We only need to test turning off DST, since that's when the time
+    # component goes backwards.
+    # We start with 2019-11-03T01:30:00-0700
+    earlier_pendulum = pendulum.datetime(2019, 11, 3, 8, 30).in_tz("US/Pacific")
+    us_pacific = timezone("US/Pacific")
+    earlier_datetime = datetime(2019, 11, 3, 1, 30, tzinfo=us_pacific)
+    # Adding 55 minutes to it, we turn off DST, but the time component is
+    # slightly less than before, i.e. we get 2019-11-03T01:25:00-0800
+    later_pendulum = earlier_pendulum.add(minutes=55)
+    # Run through all inequality-comparison functions
+    assert truth_fun(earlier_datetime, later_pendulum)
+
+
+@pytest.mark.parametrize(
+    "truth_fun",
+    (
+        lambda earlier, later: earlier < later,
+        lambda earlier, later: earlier <= later,
+        lambda earlier, later: later > earlier,
+        lambda earlier, later: later >= earlier,
+    ),
+)
+def test_comparison_crossing_dst_transitioning_off_datetime_datetime(truth_fun):
+    # We only need to test turning off DST, since that's when the time
+    # component goes backwards.
+    # We start with 2019-11-03T01:30:00-0700
+    us_pacific = timezone("US/Pacific")
+    earlier = datetime(2019, 11, 3, 1, 30, tzinfo=us_pacific)
+    # Adding 55 minutes to it, we turn off DST, but the time component is
+    # slightly less than before, i.e. we get 2019-11-03T01:25:00-0800
+    later = earlier + timedelta(minutes=55)
+    # Run through all inequality-comparison functions
+    assert truth_fun(earlier, later)
 
 
 def test_less_than_or_equal_true():

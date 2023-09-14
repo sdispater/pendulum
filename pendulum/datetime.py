@@ -1368,6 +1368,24 @@ class DateTime(datetime.datetime, Date):
     ]:
         return self.__class__, self._getstate(protocol)
 
+    def __le__(self, other: datetime.date) -> bool:
+        if isinstance(other, DateTime):
+            return self._cmp(other) <= 0
+        return super().__le__(other.date())
+
+    def __lt__(self, other: datetime.date) -> bool:
+        if isinstance(other, DateTime):
+            return self._cmp(other) < 0
+        return super().__lt__(other.date())
+
+    def __ge__(self, other: datetime.date) -> bool:
+        # Will default to the negative of its reflection
+        return NotImplemented
+
+    def __gt__(self, other: datetime.date) -> bool:
+        # Will default to the negative of its reflection
+        return NotImplemented
+
     def _cmp(self, other: datetime.datetime, **kwargs: Any) -> int:
         # Fix for pypy which compares using this method
         # which would lead to infinite recursion if we didn't override
