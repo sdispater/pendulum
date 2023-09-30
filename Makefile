@@ -9,10 +9,10 @@ list:
 no_targets__:
 
 lint-rust:
-	cargo fmt --all -- --check
-	cargo clippy --tests -- -D warnings
+	cd rust && cargo fmt --all -- --check
+	cd rust && cargo clippy --tests -- -D warnings
 
 
 format-rust:
-	cargo fmt --all
-	cargo clippy --tests --fix --allow-dirty -- -D warnings
+	cd rust && cargo fmt --all
+	cd rust && cargo clippy --tests --fix --allow-dirty -- -D warnings

@@ -10,7 +10,7 @@ from pendulum.parsing import parse_iso8601
 
 
 try:
-    from _pendulum import FixedTimezone
+    from pendulum._pendulum import FixedTimezone
 except ImportError:
     from pendulum.tz.timezone import FixedTimezone
 
