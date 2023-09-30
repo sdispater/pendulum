@@ -1,5 +1,24 @@
 # Change Log
 
+## [3.0.0b1] - 2023-10-01
+
+### Added
+
+- Made `instance()` support all native types (date, time, datetime). [#732](https://github.com/sdispater/pendulum/pull/732)
+
+### Changed
+
+- Dropped support for Python 3.7. [#734](https://github.com/sdispater/pendulum/pull/734)
+- Rewrote extensions in Rust. [#721](https://github.com/sdispater/pendulum/pull/721)
+- Made day of week convention more consistent across the codebase. [#731](https://github.com/sdispater/pendulum/pull/731)
+
+### Fixed
+
+- Fixed datetime string representation to match the native library. [#733](https://github.com/sdispater/pendulum/pull/733)
+- Fixed issues on some system when retrieving the local timezone. [#733](https://github.com/sdispater/pendulum/pull/733)
+- Fixed DST handling in `start_of()/end_of()` methods. [#713](https://github.com/sdispater/pendulum/pull/713)
+
+
 ## [3.0.0a1] - 2022-11-23
 
 ### Added
@@ -165,7 +184,8 @@
 
 
 
-[Unreleased]: https://github.com/sdispater/pendulum/compare/3.0.0a1...master
+[Unreleased]: https://github.com/sdispater/pendulum/compare/3.0.0b1...master
+[3.0.0b1]: https://github.com/sdispater/pendulum/releases/tag/3.0.0b1
 [3.0.0a1]: https://github.com/sdispater/pendulum/releases/tag/3.0.0a1
 [2.1.1]: https://github.com/sdispater/pendulum/releases/tag/2.1.1
 [2.1.0]: https://github.com/sdispater/pendulum/releases/tag/2.1.0
