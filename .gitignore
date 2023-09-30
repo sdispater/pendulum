@@ -36,3 +36,4 @@ setup.py
 
 .vscode
 /target
+/rust/target

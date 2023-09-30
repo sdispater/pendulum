@@ -35,12 +35,15 @@ jobs:
         run: poetry config virtualenvs.create false
 
       - name: Install dependencies
-        run: poetry install --only test --only benchmark -vvv --no-root
+        run: poetry install --only test --only benchmark --only build -vvv --no-root
+
+      - name: Install project
+        run: poetry install --only test --only benchmark --only build -vvv --no-root
 
       - name: Install pendulum and check extensions
         run: |
-          MATURIN_BUILD_ARGS="--no-default-features -vv" pip install -e . -v
-          python -c 'import _pendulum; assert _pendulum.__pendulum_default_allocator__'
+          poetry run pip install -e . -vvv
+          python -c 'import pendulum._pendulum'
 
       - name: Run benchmarks
         uses: CodSpeedHQ/action@v1

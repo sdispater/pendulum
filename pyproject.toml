@@ -1,3 +1,37 @@
+[project]
+name = "pendulum"
+version = "3.0.0a1"
+description = "Python datetimes made easy"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+authors = [{name = "Sébastien Eustace", email="sebastien@eustace.io>"}]
+keywords = ['datetime', 'date', 'time']
+
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies =[
+    "python-dateutil>=2.6,<3.0",
+    "tzdata>=2020.1",
+    'backports.zoneinfo>=0.2.1,<0.3.0; python_version >= "3.7" and python_version < "3.9"',
+    'time-machine>=2.6.0,<3.0.0; implementation_name != "pypy"',
+    'importlib-resources>=5.9.0,<6.0.0; python_version >= "3.7" and python_version < "3.9"'
+]
+
+[project.urls]
+Homepage = "https://pendulum.eustace.io"
+Documentation = "https://pendulum.eustace.io/docs"
+Repository = "https://github.com/sdispater/pendulum"
+
+
 [tool.poetry]
 name = "pendulum"
 version = "3.0.0a1"
@@ -10,24 +44,9 @@ repository = "https://github.com/sdispater/pendulum"
 documentation = "https://pendulum.eustace.io/docs"
 keywords = ['datetime', 'date', 'time']
 
-packages = [
-    { include = "pendulum" },
-    { include = "tests", format = "sdist" },
-]
-include = [
-    { path = "pendulum/py.typed" },
-    # Typing stubs
-    { path = "*.pyi"},
-    # Rust source
-    { path = "rust", format = "sdist" },
-    # Rust extension
-    { path = "_pendulum*.so", format = "wheel" },
-    { path = "_pendulum*.pyd", format = "wheel" },
-]
-
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8"
 python-dateutil = "^2.6"
 "backports.zoneinfo" = { version = "^0.2.1", python = "<3.9" }
 time-machine = { version = "^2.6.0", markers = "implementation_name != 'pypy'" }
@@ -56,14 +75,17 @@ types-pytz = ">=2022.7.1.2"
 
 [tool.poetry.group.dev.dependencies]
 babel = "^2.10.3"
-cleo = "^2.0.1"
+cleo = {version = "^2.0.1", python = ">=3.8,<4.0"}
 tox = "^4.0.0"
 
 [tool.poetry.group.benchmark.dependencies]
 pytest-codspeed = "^1.2.2"
 
-[tool.poetry.build]
-script = "build.py"
+[tool.poetry.group.build.dependencies]
+maturin = ">=1.0,<2.0"
+
+[tool.maturin]
+module-name = "pendulum._pendulum"
 
 
 [tool.ruff]
@@ -97,7 +119,7 @@ extend-exclude = [
     # External to the project's coding standards:
     "docs/*",
     # Machine-generated, too many false-positives
-    "pendulum/locales/*",
+    "src/pendulum/locales/*",
     # ruff disagrees with black when it comes to formatting
     "*.pyi",
 ]
@@ -125,7 +147,7 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.mypy]
 strict = true
-files = "pendulum, tests"
+files = "src, tests"
 show_error_codes = true
 pretty = true
 warn_unused_ignores = true
@@ -214,5 +236,5 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.6.1", "maturin>=1,<2"]
-build-backend = "poetry.core.masonry.api"
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"

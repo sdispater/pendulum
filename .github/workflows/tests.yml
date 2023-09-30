@@ -80,14 +80,17 @@ jobs:
         run: timeout 10s poetry run pip --version || rm -rf .venv
 
       - name: Install runtime, testing, and typing dependencies
-        run: poetry install --only main --only test --only typing -vvv
+        run: poetry install --only main --only test --only typing --only build --no-root -vvv
+
+      - name: Install project
+        run: poetry run maturin develop
 
       - name: Run type checking
         run: poetry run mypy
 
       - name: Uninstall typing dependencies
         # This ensures pendulum runs without typing_extensions installed
-        run: poetry install --only main --only test --sync --no-root -vvv
+        run: poetry install --only main --only test --only build --sync --no-root -vvv
 
       - name: Test Pure Python
         run: |
