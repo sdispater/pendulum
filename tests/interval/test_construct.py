@@ -72,17 +72,17 @@ def test_accuracy():
 def test_dst_transition():
     start = pendulum.datetime(2017, 3, 7, tz="America/Toronto")
     end = start.add(days=6)
-    period = end - start
+    interval = end - start
 
-    assert period.days == 5
-    assert period.seconds == 82800
+    assert interval.days == 5
+    assert interval.seconds == 82800
 
-    assert period.remaining_days == 6
-    assert period.hours == 0
-    assert period.remaining_seconds == 0
+    assert interval.remaining_days == 6
+    assert interval.hours == 0
+    assert interval.remaining_seconds == 0
 
-    assert period.in_days() == 6
-    assert period.in_hours() == 5 * 24 + 23
+    assert interval.in_days() == 6
+    assert interval.in_hours() == 5 * 24 + 23
 
 
 def test_timedelta_behavior():
@@ -108,14 +108,14 @@ def test_timedelta_behavior():
 def test_different_timezones_same_time():
     dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz="Europe/Paris")
     dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz="Europe/Paris")
-    period = dt2 - dt1
+    interval = dt2 - dt1
 
-    assert period.in_words() == "1 day"
-    assert period.in_hours() == 23
+    assert interval.in_words() == "1 day"
+    assert interval.in_hours() == 23
 
     dt1 = pendulum.datetime(2013, 3, 31, 1, 30, tz="Europe/Paris")
     dt2 = pendulum.datetime(2013, 4, 1, 1, 30, tz="America/Toronto")
-    period = dt2 - dt1
+    interval = dt2 - dt1
 
-    assert period.in_words() == "1 day 5 hours"
-    assert period.in_hours() == 29
+    assert interval.in_words() == "1 day 5 hours"
+    assert interval.in_hours() == 29

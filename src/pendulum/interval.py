@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 class Interval(Duration):
     """
-    A period of time between two datetimes.
+    An interval of time between two datetimes.
     """
 
     @overload
@@ -61,7 +61,9 @@ class Interval(Duration):
             or not isinstance(start, datetime)
             and isinstance(end, datetime)
         ):
-            raise ValueError("Both start and end of a Period must have the same type")
+            raise ValueError(
+                "Both start and end of an Interval must have the same type"
+            )
 
         if (
             isinstance(start, datetime)
@@ -234,13 +236,13 @@ class Interval(Duration):
 
     def in_years(self) -> int:
         """
-        Gives the duration of the Period in full years.
+        Gives the duration of the Interval in full years.
         """
         return self.years
 
     def in_months(self) -> int:
         """
-        Gives the duration of the Period in full months.
+        Gives the duration of the Interval in full months.
         """
         return self.years * MONTHS_PER_YEAR + self.months
 
@@ -267,7 +269,7 @@ class Interval(Duration):
         """
         from pendulum.locales.locale import Locale
 
-        periods = [
+        intervals = [
             ("year", self.years),
             ("month", self.months),
             ("week", self.weeks),
@@ -278,13 +280,13 @@ class Interval(Duration):
         ]
         loaded_locale: Locale = Locale.load(locale or pendulum.get_locale())
         parts = []
-        for period in periods:
-            unit, period_count = period
-            if abs(period_count) > 0:
+        for interval in intervals:
+            unit, interval_count = interval
+            if abs(interval_count) > 0:
                 translation = loaded_locale.translation(
-                    f"units.{unit}.{loaded_locale.plural(abs(period_count))}"
+                    f"units.{unit}.{loaded_locale.plural(abs(interval_count))}"
                 )
-                parts.append(translation.format(period_count))
+                parts.append(translation.format(interval_count))
 
         if not parts:
             count: str | int = 0
@@ -382,7 +384,7 @@ class Interval(Duration):
         return self.__class__(self.start, self.end, absolute=True)
 
     def __repr__(self) -> str:
-        return f"<Period [{self._start} -> {self._end}]>"
+        return f"<Interval [{self._start} -> {self._end}]>"
 
     def __str__(self) -> str:
         return self.__repr__()

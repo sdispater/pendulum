@@ -98,33 +98,33 @@ def test_parse_duration() -> None:
 def test_parse_interval() -> None:
     text = "2008-05-11T15:30:00Z/P1Y2M10DT2H30M"
 
-    period = pendulum.parse(text)
+    interval = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Interval)
-    assert_datetime(period.start, 2008, 5, 11, 15, 30, 0, 0)
-    assert period.start.offset == 0
-    assert_datetime(period.end, 2009, 7, 21, 18, 0, 0, 0)
-    assert period.end.offset == 0
+    assert isinstance(interval, pendulum.Interval)
+    assert_datetime(interval.start, 2008, 5, 11, 15, 30, 0, 0)
+    assert interval.start.offset == 0
+    assert_datetime(interval.end, 2009, 7, 21, 18, 0, 0, 0)
+    assert interval.end.offset == 0
 
     text = "P1Y2M10DT2H30M/2008-05-11T15:30:00Z"
 
-    period = pendulum.parse(text)
+    interval = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Interval)
-    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
-    assert period.start.offset == 0
-    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
-    assert period.end.offset == 0
+    assert isinstance(interval, pendulum.Interval)
+    assert_datetime(interval.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert interval.start.offset == 0
+    assert_datetime(interval.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert interval.end.offset == 0
 
     text = "2007-03-01T13:00:00Z/2008-05-11T15:30:00Z"
 
-    period = pendulum.parse(text)
+    interval = pendulum.parse(text)
 
-    assert isinstance(period, pendulum.Interval)
-    assert_datetime(period.start, 2007, 3, 1, 13, 0, 0, 0)
-    assert period.start.offset == 0
-    assert_datetime(period.end, 2008, 5, 11, 15, 30, 0, 0)
-    assert period.end.offset == 0
+    assert isinstance(interval, pendulum.Interval)
+    assert_datetime(interval.start, 2007, 3, 1, 13, 0, 0, 0)
+    assert interval.start.offset == 0
+    assert_datetime(interval.end, 2008, 5, 11, 15, 30, 0, 0)
+    assert interval.end.offset == 0
 
 
 def test_parse_now() -> None:
