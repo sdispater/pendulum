@@ -70,7 +70,7 @@ So it's still ``datetime`` but better.
 
 Unlike other datetime libraries for Python, Pendulum is a drop-in replacement
 for the standard ``datetime`` class (it inherits from it), so, basically, you can replace all your ``datetime``
-instances by ``DateTime`` instances in you code (exceptions exist for libraries that check
+instances by ``DateTime`` instances in your code (exceptions exist for libraries that check
 the type of the objects by using the ``type`` function like ``sqlite3`` or ``PyMySQL`` for instance).
 
 It also removes the notion of naive datetimes: each ``Pendulum`` instance is timezone-aware
