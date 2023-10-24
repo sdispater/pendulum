@@ -236,7 +236,7 @@ class Duration(timedelta):
         :param locale: The locale to use. Defaults to current locale.
         :param separator: The separator to use between each unit
         """
-        periods = [
+        intervals = [
             ("year", self.years),
             ("month", self.months),
             ("week", self.weeks),
@@ -252,13 +252,13 @@ class Duration(timedelta):
         loaded_locale = pendulum.locale(locale)
 
         parts = []
-        for period in periods:
-            unit, period_count = period
-            if abs(period_count) > 0:
+        for interval in intervals:
+            unit, interval_count = interval
+            if abs(interval_count) > 0:
                 translation = loaded_locale.translation(
-                    f"units.{unit}.{loaded_locale.plural(abs(period_count))}"
+                    f"units.{unit}.{loaded_locale.plural(abs(interval_count))}"
                 )
-                parts.append(translation.format(period_count))
+                parts.append(translation.format(interval_count))
 
         if not parts:
             count: int | str = 0
