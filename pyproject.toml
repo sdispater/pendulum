@@ -77,5 +77,8 @@ known_third_party = [
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0a9"]
+requires = [
+    "poetry-core>=1.0.0a9",
+    "setuptools>=67.2.0; python_version>='3.12'",
+]
 build-backend = "poetry.core.masonry.api"
