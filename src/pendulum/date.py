@@ -82,10 +82,12 @@ class Date(FormattableMixin, date):
         ) - timedelta(days=1)
 
         week_of_month = self.week_of_year - first_day_of_month.week_of_year + 1
-        
-        if self.month == 1 and first_day_of_month.week_of_year >= 52:
-            if self.week_of_year >= 52:
-                return week_of_month
+
+        if (
+            self.month == 1
+            and first_day_of_month.week_of_year >= 52
+            and self.week_of_year < 52
+        ):
             return self.week_of_year + 1
 
         elif self.month == 12 and (

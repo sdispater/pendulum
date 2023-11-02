@@ -80,6 +80,9 @@ def test_week_of_month_negative():
     assert pendulum.Date(2021, 1, 17).week_of_month == 3
     assert pendulum.Date(2021, 1, 23).week_of_month == 4
     assert pendulum.Date(2021, 1, 30).week_of_month == 5
+    assert pendulum.Date(2021, 12, 19).week_of_month == 3
+    assert pendulum.Date(2021, 12, 25).week_of_month == 4
+    assert pendulum.Date(2021, 12, 26).week_of_month == 4
     assert pendulum.Date(2021, 12, 29).week_of_month == 5
     assert pendulum.Date(2021, 12, 30).week_of_month == 5
     assert pendulum.Date(2021, 12, 31).week_of_month == 5
