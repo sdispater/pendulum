@@ -50,7 +50,6 @@ FRIDAY = WeekDay.FRIDAY
 SATURDAY = WeekDay.SATURDAY
 SUNDAY = WeekDay.SUNDAY
 
-
 _TEST_NOW: DateTime | None = None
 _LOCALE = "en"
 _WEEK_STARTS_AT: WeekDay = WeekDay.MONDAY

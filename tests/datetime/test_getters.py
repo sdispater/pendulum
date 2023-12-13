@@ -195,6 +195,14 @@ def test_week_of_year_last_week():
     assert pendulum.datetime(2012, 12, 31).week_of_year == 1
 
 
+def test_week_of_month_edge_case():
+    assert pendulum.datetime(2020, 1, 1).week_of_month == 1
+    assert pendulum.datetime(2020, 1, 7).week_of_month == 2
+    assert pendulum.datetime(2020, 1, 14).week_of_month == 3
+    assert pendulum.datetime(2023, 1, 1).week_of_month == 1
+    assert pendulum.datetime(2023, 1, 31).week_of_month == 6
+
+
 def test_timezone():
     d = pendulum.datetime(2000, 1, 1, tz="America/Toronto")
     assert d.timezone.name == "America/Toronto"
@@ -247,3 +255,41 @@ def test_time():
     t = dt.time()
     assert isinstance(t, pendulum.Time)
     assert_time(t, 10, 40, 34, 123456)
+
+
+@pytest.mark.parametrize(
+    "date, expected",
+    [
+        (pendulum.Date(2000, 1, 1), 1),
+        (pendulum.Date(2000, 1, 3), 2),
+        (pendulum.Date(2019, 12, 29), 5),
+        (pendulum.Date(2019, 12, 30), 6),
+        (pendulum.Date(2019, 12, 31), 6),
+        (pendulum.Date(2020, 1, 7), 2),
+        (pendulum.Date(2020, 1, 14), 3),
+        (pendulum.Date(2021, 1, 1), 1),
+        (pendulum.Date(2021, 1, 2), 1),
+        (pendulum.Date(2021, 1, 9), 2),
+        (pendulum.Date(2021, 1, 10), 2),
+        (pendulum.Date(2021, 1, 11), 3),
+        (pendulum.Date(2021, 1, 15), 3),
+        (pendulum.Date(2021, 1, 16), 3),
+        (pendulum.Date(2021, 1, 17), 3),
+        (pendulum.Date(2021, 1, 23), 4),
+        (pendulum.Date(2021, 1, 31), 5),
+        (pendulum.Date(2021, 12, 19), 3),
+        (pendulum.Date(2021, 12, 25), 4),
+        (pendulum.Date(2021, 12, 26), 4),
+        (pendulum.Date(2021, 12, 29), 5),
+        (pendulum.Date(2021, 12, 30), 5),
+        (pendulum.Date(2021, 12, 31), 5),
+        (pendulum.Date(2022, 1, 1), 1),
+        (pendulum.Date(2022, 1, 3), 2),
+        (pendulum.Date(2022, 1, 10), 3),
+        (pendulum.Date(2023, 1, 1), 1),
+        (pendulum.Date(2023, 1, 2), 2),
+        (pendulum.Date(2029, 12, 31), 6),
+    ],
+)
+def test_week_of_month_negative(date, expected):
+    assert date.week_of_month == expected
