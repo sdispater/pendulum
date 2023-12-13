@@ -19,11 +19,11 @@ classifiers = [
 ]
 
 dependencies =[
-    "python-dateutil>=2.6,<3.0",
+    "python-dateutil>=2.6",
     "tzdata>=2020.1",
-    'backports.zoneinfo>=0.2.1,<0.3.0; python_version >= "3.7" and python_version < "3.9"',
-    'time-machine>=2.6.0,<3.0.0; implementation_name != "pypy"',
-    'importlib-resources>=5.9.0,<6.0.0; python_version >= "3.7" and python_version < "3.9"'
+    'backports.zoneinfo>=0.2.1; python_version < "3.9"',
+    'time-machine>=2.6.0; implementation_name != "pypy"',
+    'importlib-resources>=5.9.0; python_version < "3.9"'
 ]
 
 [project.urls]
@@ -47,11 +47,11 @@ keywords = ['datetime', 'date', 'time']
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-python-dateutil = "^2.6"
-"backports.zoneinfo" = { version = "^0.2.1", python = "<3.9" }
-time-machine = { version = "^2.6.0", markers = "implementation_name != 'pypy'" }
+python-dateutil = ">=2.6"
+"backports.zoneinfo" = { version = ">=0.2.1", python = "<3.9" }
+time-machine = { version = ">=2.6.0", markers = "implementation_name != 'pypy'" }
 tzdata = ">=2020.1"
-importlib-resources = { version = "^5.9.0", python = "<3.9" }
+importlib-resources = { version = ">=5.9.0", python = "<3.9" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.2"
