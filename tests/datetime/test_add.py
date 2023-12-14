@@ -252,11 +252,23 @@ def test_add_time_to_new_transition_repeated_big():
     assert not dt.is_dst()
 
 
-def test_add_interval():
+def test_add_duration_across_transition():
     dt = pendulum.datetime(2017, 3, 11, 10, 45, tz="America/Los_Angeles")
     new = dt + pendulum.duration(hours=24)
 
     assert_datetime(new, 2017, 3, 12, 11, 45)
+
+
+def test_add_duration_across_transition_days():
+    dt = pendulum.datetime(2017, 3, 11, 10, 45, tz="America/Los_Angeles")
+    new = dt + pendulum.duration(days=1)
+
+    assert_datetime(new, 2017, 3, 12, 10, 45)
+
+    dt = pendulum.datetime(2023, 11, 5, 0, 0, tz="America/Chicago")
+    new = dt + pendulum.duration(days=1)
+
+    assert_datetime(new, 2023, 11, 6, 0, 0)
 
 
 def test_interval_over_midnight_tz():
