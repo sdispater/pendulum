@@ -63,6 +63,37 @@ def test_week_of_month():
     assert pendulum.date(2020, 1, 14).week_of_month == 3
 
 
+def test_week_of_month_negative():
+    assert pendulum.Date(2000, 1, 1).week_of_month == 1
+    assert pendulum.Date(2000, 1, 3).week_of_month == 2
+    assert pendulum.Date(2019, 12, 29).week_of_month == 5
+    assert pendulum.Date(2019, 12, 30).week_of_month == 6
+    assert pendulum.Date(2019, 12, 31).week_of_month == 6
+    assert pendulum.Date(2020, 1, 7).week_of_month == 2
+    assert pendulum.Date(2020, 1, 14).week_of_month == 3
+    assert pendulum.Date(2021, 1, 1).week_of_month == 1
+    assert pendulum.Date(2021, 1, 2).week_of_month == 1
+    assert pendulum.Date(2021, 1, 9).week_of_month == 2
+    assert pendulum.Date(2021, 1, 10).week_of_month == 2
+    assert pendulum.Date(2021, 1, 15).week_of_month == 3
+    assert pendulum.Date(2021, 1, 16).week_of_month == 3
+    assert pendulum.Date(2021, 1, 17).week_of_month == 3
+    assert pendulum.Date(2021, 1, 23).week_of_month == 4
+    assert pendulum.Date(2021, 1, 30).week_of_month == 5
+    assert pendulum.Date(2021, 12, 19).week_of_month == 3
+    assert pendulum.Date(2021, 12, 25).week_of_month == 4
+    assert pendulum.Date(2021, 12, 26).week_of_month == 4
+    assert pendulum.Date(2021, 12, 29).week_of_month == 5
+    assert pendulum.Date(2021, 12, 30).week_of_month == 5
+    assert pendulum.Date(2021, 12, 31).week_of_month == 5
+    assert pendulum.Date(2022, 1, 1).week_of_month == 1
+    assert pendulum.Date(2022, 1, 3).week_of_month == 2
+    assert pendulum.Date(2022, 1, 10).week_of_month == 3
+    assert pendulum.Date(2023, 1, 1).week_of_month == 1
+    assert pendulum.Date(2023, 1, 2).week_of_month == 2
+    assert pendulum.Date(2029, 12, 31).week_of_month == 6
+
+
 def test_week_of_year_first_week():
     assert pendulum.Date(2012, 1, 1).week_of_year == 52
     assert pendulum.Date(2012, 1, 2).week_of_year == 1

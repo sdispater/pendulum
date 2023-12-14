@@ -75,8 +75,28 @@ class Date(FormattableMixin, date):
     @property
     def week_of_month(self) -> int:
         first_day_of_month = self.replace(day=1)
+        last_day_of_month = self.replace(
+            day=1,
+            month=1 if self.month == 12 else self.month + 1,
+            year=self.year + 1 if self.month == 12 else self.year,
+        ) - timedelta(days=1)
 
-        return self.week_of_year - first_day_of_month.week_of_year + 1
+        week_of_month = self.week_of_year - first_day_of_month.week_of_year + 1
+
+        if (
+            self.month == 1
+            and first_day_of_month.week_of_year >= 52
+            and self.week_of_year < 52
+        ):
+            return self.week_of_year + 1
+
+        elif self.month == 12 and (
+            last_day_of_month.week_of_year < 52
+            and self.week_of_year == last_day_of_month.week_of_year
+        ):
+            return 52 + week_of_month
+
+        return week_of_month
 
     @property
     def age(self) -> int:
