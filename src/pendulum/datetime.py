@@ -1355,16 +1355,31 @@ class DateTime(datetime.datetime, Date):
     def __reduce__(
         self,
     ) -> tuple[
-        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self],
+        tuple[int, int, int, int, int, int, int, datetime.tzinfo | None],
     ]:
         return self.__reduce_ex__(2)
 
     def __reduce_ex__(
         self, protocol: SupportsIndex
     ) -> tuple[
-        type[Self], tuple[int, int, int, int, int, int, int, datetime.tzinfo | None]
+        type[Self],
+        tuple[int, int, int, int, int, int, int, datetime.tzinfo | None],
     ]:
         return self.__class__, self._getstate(protocol)
+
+    def __deepcopy__(self, _: dict[int, Self]) -> Self:
+        return self.__class__(
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute,
+            self.second,
+            self.microsecond,
+            tzinfo=self.tz,
+            fold=self.fold,
+        )
 
     def _cmp(self, other: datetime.datetime, **kwargs: Any) -> int:
         # Fix for pypy which compares using this method

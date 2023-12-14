@@ -158,6 +158,14 @@ def test_deepcopy():
     assert dt == deepcopy(dt)
 
 
+def test_deepcopy_on_transition():
+    dt = pendulum.datetime(2023, 11, 5, 1, 0, 0, tz="US/Pacific")
+    clone = deepcopy(dt)
+
+    assert dt == clone
+    assert dt.offset == clone.offset
+
+
 def test_pickle_timezone():
     dt1 = pendulum.timezone("Europe/Amsterdam")
     s = pickle.dumps(dt1)
