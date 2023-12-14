@@ -112,6 +112,17 @@ class Duration(timedelta):
         self._months = months
         self._years = years
 
+        self._signature = {
+            "years": years,
+            "months": months,
+            "weeks": weeks,
+            "days": days,
+            "hours": hours,
+            "minutes": minutes,
+            "seconds": seconds,
+            "microseconds": microseconds + milliseconds * 1000,
+        }
+
         return self
 
     def total_minutes(self) -> float:

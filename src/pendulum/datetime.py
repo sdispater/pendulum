@@ -685,9 +685,7 @@ class DateTime(datetime.datetime, Date):
                 microseconds=delta.microseconds,
             )
         elif isinstance(delta, pendulum.Duration):
-            return self.add(
-                years=delta.years, months=delta.months, seconds=delta._total
-            )
+            return self.add(**delta._signature)
 
         return self.add(seconds=delta.total_seconds())
 
