@@ -12,6 +12,6 @@
 {!docs/modifiers.md!}
 {!docs/timezones.md!}
 {!docs/duration.md!}
-{!docs/period.md!}
+{!docs/interval.md!}
 {!docs/testing.md!}
 {!docs/limitations.md!}
