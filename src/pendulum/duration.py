@@ -112,6 +112,17 @@ class Duration(timedelta):
         self._months = months
         self._years = years
 
+        self._signature = {  # type: ignore[attr-defined]
+            "years": years,
+            "months": months,
+            "weeks": weeks,
+            "days": days,
+            "hours": hours,
+            "minutes": minutes,
+            "seconds": seconds,
+            "microseconds": microseconds + milliseconds * 1000,
+        }
+
         return self
 
     def total_minutes(self) -> float:
@@ -440,7 +451,10 @@ class Duration(timedelta):
 
     def __divmod__(self, other: timedelta) -> tuple[int, Duration]:
         if isinstance(other, timedelta):
-            q, r = divmod(self._to_microseconds(), other._to_microseconds())  # type: ignore[attr-defined] # noqa: E501
+            q, r = divmod(
+                self._to_microseconds(),
+                other._to_microseconds(),  # type: ignore[attr-defined]
+            )
 
             return q, self.__class__(0, 0, r)
 
