@@ -1,6 +1,6 @@
 # Difference
 
-The `diff()` method returns a [Period](#period) instance that represents the total duration
+The `diff()` method returns an [Interval](#interval) instance that represents the total duration
 between two `DateTime` instances. This interval can be then expressed in various units.
 These interval methods always return *the total difference expressed* in the specified time requested.
 All values are truncated and not rounded.

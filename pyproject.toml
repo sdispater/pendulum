@@ -63,7 +63,7 @@ pytest-benchmark = "^4.0.0"
 mkdocs = "^1.0"
 pymdown-extensions = ">=6,<11"
 pygments = "^2.2"
-markdown-include = "^0.5.1"
+markdown-include = "^0.8.1"
 
 [tool.poetry.group.lint.dependencies]
 pre-commit = "^3.0.0"
