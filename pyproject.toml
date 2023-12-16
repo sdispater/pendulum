@@ -4,8 +4,8 @@ version = "3.0.0b1"
 description = "Python datetimes made easy"
 readme = "README.rst"
 requires-python = ">=3.8"
-license = {text = "MIT License"}
-authors = [{name = "Sébastien Eustace", email="sebastien@eustace.io>"}]
+license = { text = "MIT License" }
+authors = [{ name = "Sébastien Eustace", email = "sebastien@eustace.io>" }]
 keywords = ['datetime', 'date', 'time']
 
 classifiers = [
@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
-dependencies =[
+dependencies = [
     "python-dateutil>=2.6",
     "tzdata>=2020.1",
     'backports.zoneinfo>=0.2.1; python_version < "3.9"',
@@ -49,14 +49,14 @@ keywords = ['datetime', 'date', 'time']
 python = ">=3.8"
 python-dateutil = ">=2.6"
 "backports.zoneinfo" = { version = ">=0.2.1", python = "<3.9" }
-time-machine = { version = ">=2.6.0", markers = "implementation_name != 'pypy'" }
+time-machine = { version = ">=2.6.0", markers = "implementation_name != 'pypy'", optional = true }
 tzdata = ">=2020.1"
 importlib-resources = { version = ">=5.9.0", python = "<3.9" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.2"
 pytz = ">=2022.1"
-time-machine = "^2.7.1"
+time-machine = ">=2.6.0"
 pytest-benchmark = "^4.0.0"
 
 [tool.poetry.group.doc.dependencies]
@@ -75,7 +75,7 @@ types-pytz = ">=2022.7.1.2"
 
 [tool.poetry.group.dev.dependencies]
 babel = "^2.10.3"
-cleo = {version = "^2.0.1", python = ">=3.8,<4.0"}
+cleo = { version = "^2.0.1", python = ">=3.8,<4.0" }
 tox = "^4.0.0"
 
 [tool.poetry.group.benchmark.dependencies]
@@ -83,6 +83,9 @@ pytest-codspeed = "^1.2.2"
 
 [tool.poetry.group.build.dependencies]
 maturin = ">=1.0,<2.0"
+
+[tool.poetry.extras]
+test = ["time-machine"]
 
 [tool.maturin]
 module-name = "pendulum._pendulum"
@@ -96,18 +99,18 @@ unfixable = [
 target-version = "py38"
 line-length = 88
 extend-select = [
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
     "ERA", # flake8-eradicate/eradicate
-    "I",   # isort
-    "N",   # pep8-naming
+    "I", # isort
+    "N", # pep8-naming
     "PIE", # flake8-pie
     "PGH", # pygrep
     "RUF", # ruff checks
     "SIM", # flake8-simplify
     "TCH", # flake8-type-checking
     "TID", # flake8-tidy-imports
-    "UP",  # pyupgrade
+    "UP", # pyupgrade
 ]
 ignore = [
     "B904", # use 'raise ... from err'
