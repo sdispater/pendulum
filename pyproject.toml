@@ -34,7 +34,7 @@ Repository = "https://github.com/sdispater/pendulum"
 
 [tool.poetry]
 name = "pendulum"
-version = "3.0.0b1"
+version = "3.0.0"
 description = "Python datetimes made easy"
 authors = ["Sébastien Eustace <sebastien@eustace.io>"]
 license = "MIT"
