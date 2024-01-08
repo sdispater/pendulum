@@ -7,8 +7,8 @@ from __future__ import annotations
 translations = {
     "units": {"few_second": "кілька секунд"},
     # Relative time
-    "ago": "{} назад",
-    "from_now": "через {}",
+    "ago": "{} тому",
+    "from_now": "за {}",
     "after": "{0} посіля",
     "before": "{0} до",
     # Date formats
