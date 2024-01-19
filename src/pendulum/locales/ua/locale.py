@@ -265,9 +265,9 @@ locale = {
             "morning1": "ранку",
             "morning2": "до півдня",
             "afternoon1": "дня",
-            "afternoon2": "пополуднє",			
+            "afternoon2": "пополуднє",
             "evening1": "ввечері",
-            "evening2": "увечері",			
+            "evening2": "увечері",
             "night1": "в ніч",
         },
         "week_data": {
