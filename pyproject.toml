@@ -20,7 +20,6 @@ classifiers = [
 
 dependencies = [
     "python-dateutil>=2.6",
-    "tzdata>=2020.1",
     'backports.zoneinfo>=0.2.1; python_version < "3.9"',
     'time-machine>=2.6.0; implementation_name != "pypy"',
     'importlib-resources>=5.9.0; python_version < "3.9"'
@@ -50,7 +49,6 @@ python = ">=3.8"
 python-dateutil = ">=2.6"
 "backports.zoneinfo" = { version = ">=0.2.1", python = "<3.9" }
 time-machine = { version = ">=2.6.0", markers = "implementation_name != 'pypy'", optional = true }
-tzdata = ">=2020.1"
 importlib-resources = { version = ">=5.9.0", python = "<3.9" }
 
 [tool.poetry.group.test.dependencies]
