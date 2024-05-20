@@ -166,7 +166,7 @@ The ``locale.py`` file must not be modified. It contains the translations provid
 the CLDR database.
 
 The ``custom.py`` file is the one you want to modify. It contains the data needed
-by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/pendulum/locales/en/custom.py>`_
+by Pendulum that are not provided by the CLDR database. You can take the `en <https://github.com/sdispater/pendulum/tree/master/src/pendulum/locales/en/custom.py>`_
 data as a reference to see which data is needed.
 
 You should also add tests for the created or modified locale.
