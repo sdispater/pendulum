@@ -292,7 +292,7 @@ def from_timestamp(timestamp: int | float, tz: str | Timezone = UTC) -> DateTime
     """
     Create a DateTime instance from a timestamp.
     """
-    dt = _datetime.datetime.utcfromtimestamp(timestamp)
+    dt = _datetime.datetime.fromtimestamp(timestamp, tz=_datetime.UTC)
 
     dt = datetime(
         dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond

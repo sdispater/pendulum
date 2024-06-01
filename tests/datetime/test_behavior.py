@@ -102,7 +102,7 @@ def test_fromtimestamp():
 
 def test_utcfromtimestamp():
     p = pendulum.DateTime.utcfromtimestamp(0)
-    dt = datetime.utcfromtimestamp(0)
+    dt = datetime.fromtimestamp(0, pendulum.UTC)
 
     assert p == dt
 
