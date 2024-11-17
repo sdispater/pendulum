@@ -4,6 +4,17 @@ import typing as t
 
 from pendulum.locales.locale import Locale
 
+DAYS_THRESHOLD_FOR_HALF_WEEK = 3
+DAYS_THRESHOLD_FOR_HALF_MONTH = 15
+MONTHS_THRESHOLD_FOR_HALF_YEAR = 6
+
+HOURS_IN_NEARLY_A_DAY = 22
+DAYS_IN_NEARLY_A_MONTH = 27
+MONTHS_IN_NEARLY_A_YEAR = 11
+
+DAYS_OF_WEEK = 7
+SECONDS_OF_MINUTE = 60
+FEW_SECONDS_MAX = 10
 
 if t.TYPE_CHECKING:
     from pendulum import Duration
@@ -13,6 +24,11 @@ class DifferenceFormatter:
     """
     Handles formatting differences in text.
     """
+
+    KEY_FUTURE = ".future"
+    KEY_PAST = ".past"
+    KEY_AFTER = ".after"
+    KEY_BEFORE = ".before"
 
     def __init__(self, locale: str = "en") -> None:
         self._locale = Locale.load(locale)
@@ -38,28 +54,29 @@ class DifferenceFormatter:
             unit = "year"
             count = diff.years
 
-            if diff.months > 6:
+            if diff.months > MONTHS_THRESHOLD_FOR_HALF_YEAR:
                 count += 1
-        elif diff.months == 11 and (diff.weeks * 7 + diff.remaining_days) > 15:
+        elif (diff.months == MONTHS_IN_NEARLY_A_YEAR 
+            and (diff.weeks * DAYS_OF_WEEK + diff.remaining_days) > DAYS_THRESHOLD_FOR_HALF_MONTH):
             unit = "year"
             count = 1
         elif diff.months > 0:
             unit = "month"
             count = diff.months
 
-            if (diff.weeks * 7 + diff.remaining_days) >= 27:
+            if (diff.weeks * DAYS_OF_WEEK + diff.remaining_days) >= DAYS_IN_NEARLY_A_MONTH:
                 count += 1
         elif diff.weeks > 0:
             unit = "week"
             count = diff.weeks
 
-            if diff.remaining_days > 3:
+            if diff.remaining_days > DAYS_THRESHOLD_FOR_HALF_WEEK:
                 count += 1
         elif diff.remaining_days > 0:
             unit = "day"
             count = diff.remaining_days
 
-            if diff.hours >= 22:
+            if diff.hours >= HOURS_IN_NEARLY_A_DAY:
                 count += 1
         elif diff.hours > 0:
             unit = "hour"
@@ -67,7 +84,7 @@ class DifferenceFormatter:
         elif diff.minutes > 0:
             unit = "minute"
             count = diff.minutes
-        elif 10 < diff.remaining_seconds <= 59:
+        elif self.FEW_SECONDS_MAX < diff.remaining_seconds < SECONDS_OF_MINUTE:
             unit = "second"
             count = diff.remaining_seconds
         else:
@@ -86,10 +103,10 @@ class DifferenceFormatter:
                         key += ".ago"
                 else:
                     if is_future:
-                        key += ".after"
+                        key += self.KEY_AFTER
                     else:
-                        key += ".before"
-
+                        key += self.KEY_BEFORE
+                        
                 return t.cast(str, locale.get(key).format(time))
             else:
                 unit = "second"
@@ -109,9 +126,9 @@ class DifferenceFormatter:
                 key = f"translations.relative.{unit}"
 
                 if is_future:
-                    key += ".future"
+                    key += self.KEY_FUTURE
                 else:
-                    key += ".past"
+                    key += self.KEY_PAST
             else:
                 # Absolute comparison
                 # So we have to use the custom locale data
@@ -119,9 +136,9 @@ class DifferenceFormatter:
                 # Checking for special pluralization rules
                 key = "custom.units_relative"
                 if is_future:
-                    key += f".{unit}.future"
+                    key += f".{unit}{self.KEY_FUTURE}"
                 else:
-                    key += f".{unit}.past"
+                    key += f".{unit}{self.KEY_PAST}"
 
                 trans = locale.get(key)
                 if not trans:
@@ -133,10 +150,9 @@ class DifferenceFormatter:
 
                 key = "custom"
                 if is_future:
-                    key += ".after"
+                    key += self.KEY_AFTER
                 else:
-                    key += ".before"
-
+                    key += self.KEY_BEFORE
                 return t.cast(str, locale.get(key).format(time))
 
         key += f".{locale.plural(count)}"
