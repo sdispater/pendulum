@@ -84,7 +84,7 @@ class DifferenceFormatter:
         elif diff.minutes > 0:
             unit = "minute"
             count = diff.minutes
-        elif self.FEW_SECONDS_MAX < diff.remaining_seconds < SECONDS_OF_MINUTE:
+        elif FEW_SECONDS_MAX < diff.remaining_seconds < SECONDS_OF_MINUTE:
             unit = "second"
             count = diff.remaining_seconds
         else:
