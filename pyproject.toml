@@ -91,7 +91,7 @@ fix = true
 unfixable = [
     "ERA", # do not autoremove commented out code
 ]
-target-version = "py38"
+target-version = "py39"
 line-length = 88
 extend-select = [
     "B", # flake8-bugbear
