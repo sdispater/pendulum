@@ -7,7 +7,6 @@ from datetime import datetime
 from datetime import timedelta
 from typing import TYPE_CHECKING
 from typing import Generic
-from typing import Iterator
 from typing import TypeVar
 from typing import cast
 from typing import overload
@@ -20,6 +19,8 @@ from pendulum.helpers import precise_diff
 
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from typing_extensions import Self
     from typing_extensions import SupportsIndex
 

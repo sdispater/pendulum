@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import zoneinfo
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -11,7 +13,6 @@ from pendulum import timezone
 from pendulum.tz import fixed_timezone
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import NonExistingTime
-from pendulum.utils._compat import zoneinfo
 from tests.conftest import assert_datetime
 
 
