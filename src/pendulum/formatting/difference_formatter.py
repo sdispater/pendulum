@@ -4,6 +4,7 @@ import typing as t
 
 from pendulum.locales.locale import Locale
 
+
 DAYS_THRESHOLD_FOR_HALF_WEEK = 3
 DAYS_THRESHOLD_FOR_HALF_MONTH = 15
 MONTHS_THRESHOLD_FOR_HALF_YEAR = 6
@@ -56,15 +57,19 @@ class DifferenceFormatter:
 
             if diff.months > MONTHS_THRESHOLD_FOR_HALF_YEAR:
                 count += 1
-        elif (diff.months == MONTHS_IN_NEARLY_A_YEAR 
-            and (diff.weeks * DAYS_OF_WEEK + diff.remaining_days) > DAYS_THRESHOLD_FOR_HALF_MONTH):
+        elif (diff.months == MONTHS_IN_NEARLY_A_YEAR) and (
+            (diff.weeks * DAYS_OF_WEEK + diff.remaining_days)
+            > DAYS_THRESHOLD_FOR_HALF_MONTH
+        ):
             unit = "year"
             count = 1
         elif diff.months > 0:
             unit = "month"
             count = diff.months
 
-            if (diff.weeks * DAYS_OF_WEEK + diff.remaining_days) >= DAYS_IN_NEARLY_A_MONTH:
+            if (
+                diff.weeks * DAYS_OF_WEEK + diff.remaining_days
+            ) >= DAYS_IN_NEARLY_A_MONTH:
                 count += 1
         elif diff.weeks > 0:
             unit = "week"
@@ -106,7 +111,7 @@ class DifferenceFormatter:
                         key += self.KEY_AFTER
                     else:
                         key += self.KEY_BEFORE
-                        
+
                 return t.cast(str, locale.get(key).format(time))
             else:
                 unit = "second"
