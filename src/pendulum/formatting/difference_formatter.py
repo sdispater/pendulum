@@ -26,11 +26,6 @@ class DifferenceFormatter:
     Handles formatting differences in text.
     """
 
-    KEY_FUTURE = ".future"
-    KEY_PAST = ".past"
-    KEY_AFTER = ".after"
-    KEY_BEFORE = ".before"
-
     def __init__(self, locale: str = "en") -> None:
         self._locale = Locale.load(locale)
 
@@ -49,6 +44,11 @@ class DifferenceFormatter:
         :param absolute: Whether it's an absolute difference or not
         :param locale: The locale to use
         """
+        KEY_FUTURE = ".future"
+        KEY_PAST = ".past"
+        KEY_AFTER = ".after"
+        KEY_BEFORE = ".before"
+
         locale = self._locale if locale is None else Locale.load(locale)
 
         if diff.years > 0:
@@ -108,9 +108,9 @@ class DifferenceFormatter:
                         key += ".ago"
                 else:
                     if is_future:
-                        key += self.KEY_AFTER
+                        key += KEY_AFTER
                     else:
-                        key += self.KEY_BEFORE
+                        key += KEY_BEFORE
 
                 return t.cast(str, locale.get(key).format(time))
             else:
@@ -131,9 +131,9 @@ class DifferenceFormatter:
                 key = f"translations.relative.{unit}"
 
                 if is_future:
-                    key += self.KEY_FUTURE
+                    key += KEY_FUTURE
                 else:
-                    key += self.KEY_PAST
+                    key += KEY_PAST
             else:
                 # Absolute comparison
                 # So we have to use the custom locale data
@@ -141,9 +141,9 @@ class DifferenceFormatter:
                 # Checking for special pluralization rules
                 key = "custom.units_relative"
                 if is_future:
-                    key += f".{unit}{self.KEY_FUTURE}"
+                    key += f".{unit}{KEY_FUTURE}"
                 else:
-                    key += f".{unit}{self.KEY_PAST}"
+                    key += f".{unit}{KEY_PAST}"
 
                 trans = locale.get(key)
                 if not trans:
@@ -155,9 +155,9 @@ class DifferenceFormatter:
 
                 key = "custom"
                 if is_future:
-                    key += self.KEY_AFTER
+                    key += KEY_AFTER
                 else:
-                    key += self.KEY_BEFORE
+                    key += KEY_BEFORE
                 return t.cast(str, locale.get(key).format(time))
 
         key += f".{locale.plural(count)}"
