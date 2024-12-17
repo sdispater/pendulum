@@ -704,7 +704,7 @@ class DateTime(datetime.datetime, Date):
 
     def diff(  # type: ignore[override]
         self, dt: datetime.datetime | None = None, abs: bool = True
-    ) -> Interval:
+    ) -> Interval[datetime.datetime]:
         """
         Returns the difference between two DateTime objects represented as an Interval.
         """
@@ -1190,10 +1190,12 @@ class DateTime(datetime.datetime, Date):
         ...
 
     @overload
-    def __sub__(self, other: DateTime) -> Interval:
+    def __sub__(self, other: DateTime) -> Interval[datetime.datetime]:
         ...
 
-    def __sub__(self, other: datetime.datetime | datetime.timedelta) -> Self | Interval:
+    def __sub__(
+        self, other: datetime.datetime | datetime.timedelta
+    ) -> Self | Interval[datetime.datetime]:
         if isinstance(other, datetime.timedelta):
             return self._subtract_timedelta(other)
 
@@ -1216,7 +1218,7 @@ class DateTime(datetime.datetime, Date):
 
         return other.diff(self, False)
 
-    def __rsub__(self, other: datetime.datetime) -> Interval:
+    def __rsub__(self, other: datetime.datetime) -> Interval[datetime.datetime]:
         if not isinstance(other, datetime.datetime):
             return NotImplemented
 
