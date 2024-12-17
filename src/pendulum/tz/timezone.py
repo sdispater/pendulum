@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime as _datetime
+import zoneinfo
 
 from abc import ABC
 from abc import abstractmethod
@@ -12,7 +13,6 @@ from typing import cast
 from pendulum.tz.exceptions import AmbiguousTime
 from pendulum.tz.exceptions import InvalidTimezone
 from pendulum.tz.exceptions import NonExistingTime
-from pendulum.utils._compat import zoneinfo
 
 
 if TYPE_CHECKING:
