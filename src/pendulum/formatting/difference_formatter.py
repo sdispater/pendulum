@@ -25,6 +25,7 @@ KEY_PAST = ".past"
 KEY_AFTER = ".after"
 KEY_BEFORE = ".before"
 
+
 class DifferenceFormatter:
     """
     Handles formatting differences in text.
