@@ -8,6 +8,22 @@ from pendulum.locales.locale import Locale
 if t.TYPE_CHECKING:
     from pendulum import Duration
 
+DAYS_THRESHOLD_FOR_HALF_WEEK = 3
+DAYS_THRESHOLD_FOR_HALF_MONTH = 15
+MONTHS_THRESHOLD_FOR_HALF_YEAR = 6
+
+HOURS_IN_NEARLY_A_DAY = 22
+DAYS_IN_NEARLY_A_MONTH = 27
+MONTHS_IN_NEARLY_A_YEAR = 11
+
+DAYS_OF_WEEK = 7
+SECONDS_OF_MINUTE = 60
+FEW_SECONDS_MAX = 10
+
+KEY_FUTURE = ".future"
+KEY_PAST = ".past"
+KEY_AFTER = ".after"
+KEY_BEFORE = ".before"
 
 class DifferenceFormatter:
     """
@@ -32,22 +48,6 @@ class DifferenceFormatter:
         :param absolute: Whether it's an absolute difference or not
         :param locale: The locale to use
         """
-        DAYS_THRESHOLD_FOR_HALF_WEEK = 3
-        DAYS_THRESHOLD_FOR_HALF_MONTH = 15
-        MONTHS_THRESHOLD_FOR_HALF_YEAR = 6
-
-        HOURS_IN_NEARLY_A_DAY = 22
-        DAYS_IN_NEARLY_A_MONTH = 27
-        MONTHS_IN_NEARLY_A_YEAR = 11
-
-        DAYS_OF_WEEK = 7
-        SECONDS_OF_MINUTE = 60
-        FEW_SECONDS_MAX = 10
-
-        KEY_FUTURE = ".future"
-        KEY_PAST = ".past"
-        KEY_AFTER = ".after"
-        KEY_BEFORE = ".before"
         locale = self._locale if locale is None else Locale.load(locale)
 
         if diff.years > 0:
